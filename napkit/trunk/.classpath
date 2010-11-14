@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src.sample"/>
+	<classpathentry kind="src" path="lib/NyARToolkit-2.5.2/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/capture"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/connector"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/matereal"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
