@@ -54,7 +54,7 @@ public abstract class LocationBasedTaskAbstractImpl extends MobileTaskAbstractIm
 	 * Try to find and bind a proper location provider with this task on starting.
 	 * Subclasses should call super.onStart() when overriding this method.
 	 *
-	 * @see LocationProviderAbstractImpl#findProperLocationProvider(jp.digitalmuseum.mr.core.Entity)
+	 * @see LocationProviderAbstractImpl#findProperLocationProvider(jp.digitalmuseum.mr.entity.Entity)
 	 */
 	@Override
 	protected void onStart() {

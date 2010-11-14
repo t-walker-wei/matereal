@@ -78,8 +78,8 @@ public interface CoordProvider extends ImageProvider {
 
 	/**
 	 * Convert screen position to real position.
-	 * @param screenLocation
-	 * @param realLocation
+	 * @param screenPosition
+	 * @param realPosition
 	 */
 	public void screenToRealOut(ScreenPosition screenPosition, Position realPosition) throws IllegalArgumentException;
 

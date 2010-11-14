@@ -36,13 +36,13 @@
 	<property name="author" value="arc@dmz"/>
 
 <!-- #### (6) which copyright?  edit value.  #### -->
-	<property name="copyright" value="(c) 2009"/>
+	<property name="copyright" value="(c) 2009-2010"/>
 
 <!-- #### (7) give your library a name. edit value.  #### -->
 	<property name="libraryName"  value="CaptureDS"/>
 
 <!-- #### (8) give your library a name. edit value.   #### -->
-	<property name="versionNumber"  value="0.2"/>
+	<property name="versionNumber"  value="1.0.0"/>
 
 <!-- #### (9) your contact url. edit value. #### -->
 	<property name="yourLink"  value="http://digitalmuseum.jp/" />
@@ -51,10 +51,10 @@
 	<property name="keywords"  value="capture, windows, directshow" />
 
 <!-- #### (11) a comma separated list of platforms the library has been tested. edit value. #### -->
-	<property name="tested:platform"  value="Windows 7 (x64)" />
+	<property name="tested:platform"  value="Windows 7 (x86)" />
 
 <!-- #### (12) the processing version this library has been tested with. edit value. #### -->
-	<property name="tested:processingVersion"  value="1.01" />
+	<property name="tested:processingVersion"  value="1.09" />
 
 <!-- #### (13) does the library depend on any other library, dll, jnilib, etc. edit value. #### -->
 	<property name="tested:dependencies"  value="dsj (DirectShow for Java)" />

@@ -1,5 +1,5 @@
 ﻿CaptureDS library howto guide
-                                                              2010.01.29
+                                                              2010.11.15
                                                         arc@dmz (c) 2010
 ────────────────────────────────────
 
@@ -8,7 +8,7 @@
 
 1. Get DirectShow Java Wrapper
 
- Download latest version of dsj (version 0_8_6 as of 01/29/10) from
+ Download latest version of dsj (version 0_8_62 as of 11/15/10) from
  http://www.humatic.de/htools/dsj/download.htm
  and unzip the archive.
 
@@ -45,7 +45,7 @@ CaptureDS.jar is part of "capture" project, which allows capturing
 images from webcams on Java and is distributed under MPL 1.1/GPL 2.0/
 LGPL 2.1 license.
 Please refer to the distribution of "capture" project for further detail.
-http://sourceforge.jp/projects/matereal/
+http://mr.digitalmuseum.jp/
 
 Please note that the user of CaptureDS is also bound to the license of
 DirectShow Java Wrapper since CaptureDS.jar depends on dsj.jar.

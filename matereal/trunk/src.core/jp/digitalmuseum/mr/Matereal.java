@@ -232,7 +232,6 @@ public final class Matereal implements ServiceHolder {
 	 *
 	 * @param <T> Class to look for.
 	 * @param classObject Class object of the class <T>.
-	 * @param entityHolder
 	 * @return
 	 */
 	public <T extends Entity> Set<T> lookForEntities(Class<T> classObject) {
@@ -246,14 +245,12 @@ public final class Matereal implements ServiceHolder {
 	}
 
 	/**
-	 * Look for services with specific class/interface
-	 * in the matereal thread.
+	 * Look for services with specific class/interface.
 	 *
 	 * @param <T> Class to look for.
 	 * @param classObject Class object of the class <T>.
 	 * @return
-	 * @see ServiceGroupImpl
-	 * @see #lookForAllServices(Class)
+	 * @see ServiceGroup
 	 */
 	public <T extends Service> Set<T> lookForServices(Class<T> classObject) {
 
@@ -262,14 +259,12 @@ public final class Matereal implements ServiceHolder {
 	}
 
 	/**
-	 * Look for a service with specific class/interface
-	 * in the matereal thread.
+	 * Look for a service with specific class/interface.
 	 *
 	 * @param <T> Class to look for.
 	 * @param classObject Class object of the class <T>.
 	 * @return
-	 * @see ServiceGroupImpl
-	 * @see #lookForAllService(Class)
+	 * @see ServiceGroup
 	 */
 	public <T extends Service> T lookForService(Class<T> classObject) {
 
@@ -284,7 +279,7 @@ public final class Matereal implements ServiceHolder {
 	 * @param classObject Class object of the class <T>.
 	 * @param serviceIterator Iterator to look in.
 	 * @return Returns services satisfying given conditions.
-	 * @see #lookForAllServices(Class)
+	 * @see #lookForServices(Class)
 	 */
 	public <T extends Service> Set<T> lookForServices(Class<T> classObject, Iterable<Service> serviceIterator) {
 		Set<T> services = new HashSet<T>();
@@ -305,7 +300,7 @@ public final class Matereal implements ServiceHolder {
 	 * @param classObject Class object of the class <T>.
 	 * @param serviceIterator Iterator to look in.
 	 * @return Returns services satisfying given conditions.
-	 * @see #lookForAllServices(Class)
+	 * @see #lookForService(Class)
 	 */
 	public <T extends Service> T lookForService(Class<T> classObject, Iterable<Service> serviceIterator) {
 		synchronized (serviceIterator) {
