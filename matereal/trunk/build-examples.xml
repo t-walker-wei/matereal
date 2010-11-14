@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- exewrap must be on path; e.g. C:\Program Files\Java\jdk1.6.0_18\bin\exewrap.exe -->
+
+<project name="matereal-examples" default="BringItHere" basedir=".">
+	<import file="build.xml"/>
+	<!-- time stamp -->
+	<tstamp>
+		<format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+	</tstamp>
+
+	<!-- ****Properties**** -->
+	<property name="classpath-sample" value="${jar.dir}${jar.name};${classpath}" />
+
+	<!-- Source directory -->
+	<property name="src-sample.dir" value="src.sample" />
+
+	<!-- Classes destination directory -->
+	<property name="classes-sample.dir" value="bin.sample" />
+
+	<!-- ****Targets**** -->
+	<!-- BringItHere -->
+	<target name="BringItHere" depends="matereal.jar, compile-examples">
+		<jar jarfile="${dist.dir}/BringItHere.jar">
+			<fileset dir="${classes-sample.dir}" includes="**/BringItHere*.class" />
+		    <manifest>
+			      <attribute name="Main-Class" value="BringItHere"/>
+			      <attribute name="Class-Path" value="${lib.dir}${jar.name}"/>
+		    </manifest>
+		</jar>
+		<exec dir="${dist.dir}" executable="exewrap.exe">
+		  <arg line="-g BringItHere.jar"/>
+		</exec>
+	</target>
+
+	<!-- RunCamera -->
+	<target name="RunCamera" depends="matereal.jar, compile-examples">
+		<jar jarfile="${dist.dir}/RunCamera.jar">
+			<fileset dir="${classes-sample.dir}" includes="**/RunNetTansorCamera*.class" />
+		    <manifest>
+			      <attribute name="Main-Class" value="RunNetTansorCamera"/>
+			      <attribute name="Class-Path" value="${lib.dir}${jar.name}"/>
+		    </manifest>
+		</jar>
+		<exec dir="${dist.dir}" executable="exewrap.exe">
+		  <arg line="-g RunCamera.jar"/>
+		</exec>
+	</target>
+
+	<!-- ActivityDiagramTest -->
+	<target name="ActivityDiagramTest" depends="matereal.jar, compile-examples">
+		<jar jarfile="${dist.dir}/ActivityDiagramTest.jar">
+			<fileset dir="${classes-sample.dir}" includes="**/ActivityDiagramTest*.class" />
+		    <manifest>
+			      <attribute name="Main-Class" value="ActivityDiagramTest"/>
+			      <attribute name="Class-Path" value="${lib.dir}${jar.name}"/>
+		    </manifest>
+		</jar>
+		<exec dir="${dist.dir}" executable="exewrap.exe">
+		  <arg line="-g ActivityDiagramTest.jar"/>
+		</exec>
+	</target>
+
+	<!-- RobotCaligraphy -->
+	<target name="RobotCalligraphy" depends="matereal.jar, compile-examples">
+		<jar jarfile="${dist.dir}/RobotCalligraphy.jar">
+			<fileset dir="${classes-sample.dir}" includes="calligraphy/*.class" />
+		    <manifest>
+			      <attribute name="Main-Class" value="calligraphy.RobotCalligraphy"/>
+			      <attribute name="Class-Path" value="${lib.dir}${jar.name}"/>
+		    </manifest>
+		</jar>
+		<exec dir="${dist.dir}" executable="exewrap.exe">
+		  <arg line="-g RobotCalligraphy.jar"/>
+		</exec>
+	</target>
+
+	<!-- Compile -->
+	<target name="compile-examples">
+		<mkdir dir="${classes-sample.dir}" />
+		<javac srcdir="${src-sample.dir}" destdir="${classes-sample.dir}"
+				classpath="${classpath-sample}"
+				encoding="UTF-8" />
+	</target>
+</project>

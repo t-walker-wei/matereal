@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="p5/bin" path="src.p5"/>
+	<classpathentry kind="src" path="src.sample"/>
+	<classpathentry kind="lib" path="lib/dsj/dsj.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="capture/lib/dsj"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jmf/jmf.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/capture/lib/jmf/jmf-2_0-spec.zip!/jmf20-apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/qtj/QTJava.zip"/>
+	<classpathentry kind="lib" path="lib/p5/core.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

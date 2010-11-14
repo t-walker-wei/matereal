@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="capture" default="jar" basedir=".">
+	<!-- time stamp -->
+	<tstamp>
+		<format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+	</tstamp>
+
+	<!-- ****Properties**** -->
+	<!-- Software version -->
+	<property name="capture-version" value="1.0.0" />
+
+	<!-- Dependent class pathes -->
+	<property name="capture-classpath" value="lib/dsj/dsj.jar;lib/jmf/jmf.jar;lib/qtj/QTJava.zip" />
+
+	<!-- Source directory -->
+	<property name="capture-src.dir" value="src" />
+
+	<!-- Classes destination directory -->
+	<property name="capture-classes.dir" value="bin" />
+
+	<!-- Javadoc destination -->
+	<property name="capture-javadoc.dir" value="docs" />
+
+	<!-- jar file name -->
+	<property name="capture-jar.name" value="capture-${capture-version}.jar" />
+
+	<!-- ****Targets**** -->
+	<!-- jar -->
+	<target name="jar" depends="compile">
+		<jar jarfile="${capture-jar.name}">
+			<fileset dir="${capture-classes.dir}" includes="**/*.class" />
+			<fileset dir="${capture-src.dir}" includes="**/*.java" />
+		</jar>
+	</target>
+
+	<!-- Compile -->
+	<target name="compile">
+		<mkdir dir="${capture-classes.dir}" />
+		<javac srcdir="${capture-src.dir}" destdir="${capture-classes.dir}" classpath="${capture-classpath}" />
+	</target>
+
+	<!-- Javadoc -->
+	<target name="javadoc">
+		<javadoc sourcepath="${capture-src.dir}"
+			destdir="${capture-javadoc.dir}"
+			packagenames="jp.digitalmuseum.*"
+			charset="UTF-8"
+			encoding="UTF-8"
+			docencoding="UTF-8"
+			locale="en"
+			classpath="${capture-classpath}"
+			bottom="Copyright by Jun KATO (arc@dmz) at http://matereal.sourceforge.jp/" />
+	</target>
+
+	<!-- Cleaning -->
+	<target name="clean">
+		<delete dir="${capture-classes.dir}" />
+		<delete dir="${capture-javadoc.dir}" />
+		<delete file="${capture-jar.name}" />
+	</target>
+</project>
