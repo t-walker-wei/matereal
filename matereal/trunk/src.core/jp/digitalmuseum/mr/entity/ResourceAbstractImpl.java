@@ -121,7 +121,7 @@ public abstract class ResourceAbstractImpl implements Resource {
 	 * Called when disposing this resource.<br />
 	 * <b>Caution:</b> This method should not be called outside this class.
 	 *
-	 * @see #free()
+	 * @see #free(Object)
 	 */
 	protected void onFree() {
 		//

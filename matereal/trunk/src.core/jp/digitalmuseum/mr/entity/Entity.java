@@ -54,8 +54,8 @@ public interface Entity extends EventProvider {
 	public void dispose();
 
 	/**
+	 * Set name of this entity.
 	 * @param name
-	 * @return Set name of this entity.
 	 */
 	public void setName(String name);
 

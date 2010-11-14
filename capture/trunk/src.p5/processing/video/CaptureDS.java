@@ -174,7 +174,7 @@ public class CaptureDS extends PImage implements Runnable {
 			return;
 		}
 		pin = null;
-		float fps = 30.0f;
+		float fps = frameRate;
 		float currentFps = Float.MAX_VALUE;
 		for (DSPinInfo p : pins) {
 
@@ -185,8 +185,8 @@ public class CaptureDS extends PImage implements Runnable {
 			formats = p.getFormats();
 			for (int i = 0; i < formats.length; i ++) {
 				final DSMediaType format = formats[i];
-				if (format.getWidth() == width &&
-						format.getHeight() == height &&
+				if (format.getWidth() == requestWidth &&
+						format.getHeight() == requestHeight &&
 						(format.getSubType() == DSMediaType.VST_YUY2 ||
 						format.getSubType() == DSMediaType.VST_RGB24)) {
 					if (Math.abs(fps - format.getFrameRate()) < Math.abs(fps - currentFps)) {

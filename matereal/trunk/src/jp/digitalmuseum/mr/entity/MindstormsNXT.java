@@ -194,7 +194,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	/**
 	 * Retrieves the current output state for a port.
 	 * @param port 0 to 3
-	 * @param state a container object for output state variables.
+	 * @param outputState a container object for output state variables.
 	 */
 	public static void getOutputState(final int port, final Connector connector,
 			final OutputState outputState) {

@@ -1,5 +1,5 @@
 ﻿CaptureDSライブラリ 仮ドキュメント
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 2010.01.29 版
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 2010.11.15 版
 　　　　　　　　　　　　　　　　　　　　　　　　　　　　arc@dmz (c) 2010
 ────────────────────────────────────
 
@@ -9,7 +9,7 @@
 1. DirectShow Java Wrapperの入手
 
  http://www.humatic.de/htools/dsj/download.htm から、
- 最新版のdsj(10/01/29時点で0_8_6)をダウンロード、
+ 最新版のdsj(10/11/15時点で0_8_62)をダウンロード、
  解凍して出てきたファイルのうち dsj.dll と dsj.jar を使います。
 
 2. DirectShow Java WrapperとCaptureDSの利用
@@ -47,7 +47,7 @@ CaptureDS.jar はJavaでWebカメラの映像入力を使えるようにする c
 ジェクトの一環で開発されており、MPL 1.1/GPL 2.0/LGPL 2.1ライセンスの元で
 配布されています。
 詳しくは下記サイトにある capture プロジェクト本体の配布物をご覧ください。
-http://sourceforge.jp/projects/matereal/
+http://mr.digitalmuseum.jp/
 
 また、CaptureDS.jar の利用には DirectShow Java Wrapper が必要です。
 従って、CaptureDS.jar の利用者は DirectShow Java Wrapper のライセンス
