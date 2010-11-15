@@ -43,6 +43,7 @@ public class Position {
 	private jp.digitalmuseum.utils.ScreenPosition screenPosition;
 
 	public Position() {
+		Andy.getInstance();
 		position = new jp.digitalmuseum.utils.Position();
 		screenPosition = new jp.digitalmuseum.utils.ScreenPosition();
 	}

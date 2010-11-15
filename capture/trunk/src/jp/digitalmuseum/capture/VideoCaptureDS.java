@@ -257,7 +257,13 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 			return null;
 		}
 		final byte[] pixels = capture.getData();
-		return isGrayScale() ? RawImageUtils.rgbToGrayScale(pixels) : pixels;
+		if (pixels == null) {
+			return null;
+		} else if (isGrayScale()) {
+			return RawImageUtils.rgbToGrayScale(pixels);
+		} else {
+			return RawImageUtils.rgbToBgr(pixels);
+		}
 	}
 
 	public boolean setFrameRate(float fps) {

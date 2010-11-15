@@ -54,6 +54,7 @@ public class MrImage extends PImage implements EventListener {
 	public int cropH;
 
 	public MrImage(ImageProvider imageProvider) {
+		Andy.getInstance();
 		this.imageProvider = imageProvider;
 		imageProvider.addEventListener(this);
 		if (!imageProvider.isStarted()) {
@@ -87,7 +88,10 @@ public class MrImage extends PImage implements EventListener {
 		if (e instanceof ImageUpdateEvent) {
 			loadPixels();
 			synchronized (pixels) {
-				data = imageProvider.getImageData();
+				data = ((ImageProvider) e.getSource()).getImageData();
+				if (data == null) {
+					return;
+				}
 				int index = 0;
 				if (crop) {
 					int byteIndex = cropX * 3;
@@ -98,6 +102,12 @@ public class MrImage extends PImage implements EventListener {
 								 (data[byteIndex++] & 0xff)
 								|((data[byteIndex++] & 0xff) << 8)
 								|((data[byteIndex++] & 0xff) << 16);
+							/*
+							pixels[index++] =
+								 ((data[byteIndex++] & 0xff) << 16)
+								|((data[byteIndex++] & 0xff) << 8)
+								| (data[byteIndex++] & 0xff);
+							*/
 						}
 						byteIndex += byteOffset;
 					}

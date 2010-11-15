@@ -40,19 +40,15 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.utils.EntityPainter;
 import jp.digitalmuseum.mr.service.CoordProvider;
 import jp.digitalmuseum.mr.service.LocationProvider;
 
 public class Andy {
 	private static Andy instance;
-	private EntityPainter painter;
 	private CoordProvider coordProvider;
 	private LocationProvider locationProvider;
 
 	private Andy() {
-		painter = new EntityPainter();
-		painter.setCoordProvider(getCoordProvider());
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {

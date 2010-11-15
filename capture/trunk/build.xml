@@ -8,7 +8,7 @@
 
 	<!-- ****Properties**** -->
 	<!-- Software version -->
-	<property name="capture-version" value="1.0.0" />
+	<property name="capture-version" value="1.0.1" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture-classpath" value="lib/dsj/dsj.jar;lib/jmf/jmf.jar;lib/qtj/QTJava.zip" />

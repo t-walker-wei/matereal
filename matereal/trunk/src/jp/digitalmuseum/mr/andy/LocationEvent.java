@@ -41,6 +41,7 @@ public class LocationEvent {
 	private Location location;
 
 	public LocationEvent(Entity entity, Location location) {
+		Andy.getInstance();
 		this.entity = entity;
 		this.location = location;
 	}
