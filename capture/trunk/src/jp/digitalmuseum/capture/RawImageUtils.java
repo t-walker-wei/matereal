@@ -111,6 +111,23 @@ public class RawImageUtils {
 	}
 
 	/**
+	 * Convert an image data array in RGB order to BGR or vice versa.
+	 * @param pixels Image data in a byte array.
+	 * @return Converted image data array.
+	 */
+	public static byte[] rgbToBgr(final byte[] pixels) {
+		final byte[] pixels_publish = new byte[pixels.length];
+		int idx = 0;
+		for (int i = 0; i < pixels.length/3; i ++) {
+			pixels_publish[idx]     = pixels[idx + 2];
+			pixels_publish[idx + 1] = pixels[idx + 1];
+			pixels_publish[idx + 2] = pixels[idx];
+			idx += 3;
+		}
+		return pixels_publish;
+	}
+
+	/**
 	 * Reverse RGB/BGR image data in a byte array.
 	 * @param pixels Image data in a byte array.
 	 * @param width Width of the image [pixel].

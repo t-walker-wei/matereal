@@ -55,6 +55,7 @@ public class MobileRobot extends Entity {
 	private Entity entity;
 
 	public MobileRobot(Robot robot) {
+		Andy.getInstance();
 		position = new Position();
 		this.robot = robot;
 	}

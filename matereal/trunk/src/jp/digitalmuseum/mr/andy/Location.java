@@ -43,6 +43,7 @@ public class Location {
 	private jp.digitalmuseum.utils.ScreenLocation screenLocation;
 
 	public Location() {
+		Andy.getInstance();
 		location = new jp.digitalmuseum.utils.Location();
 		screenLocation = new jp.digitalmuseum.utils.ScreenLocation();
 	}

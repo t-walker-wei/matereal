@@ -50,6 +50,7 @@ public abstract class Entity {
 	private EventListener listener;
 
 	public Entity() {
+		Andy.getInstance();
 		listeners = new HashSet<LocationListener>();
 		location = new jp.digitalmuseum.utils.Location();
 		position = new jp.digitalmuseum.utils.Position();

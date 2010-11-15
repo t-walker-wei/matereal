@@ -43,6 +43,7 @@
 package jp.digitalmuseum.capture;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 
 
 /**
@@ -137,8 +138,12 @@ public abstract class VideoCaptureAbstractImpl implements VideoCapture {
 		// Set data elements of the raster of the image object
 		// to the captured image data.
 		try {
-			image.getRaster().setDataElements(0, 0, getWidth(), getHeight(),
+			byte[] imageData = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
+			System.arraycopy(grabFrameData(), 0, imageData, 0, imageData.length);
+			/*
+			setDataElements(0, 0, getWidth(), getHeight(),
 					grabFrameData());
+			 */
 		} catch (Exception e) {
 			// BufferedImage won't be refreshed
 			// when setting data elements failed.
