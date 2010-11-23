@@ -139,7 +139,6 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 			}
 			throw new IllegalArgumentException("Specified source not found.");
 		}
-
 		throw new IllegalArgumentException("Source specification by an illegal type of object.");
 	}
 
@@ -166,13 +165,14 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 
 			// Capture YUY2 and RGB none-compressed images by default.
 			final DSMediaType[] formats = p.getFormats();
-			for (int i = 0; i < formats.length; i ++) {
+			for (int i = 0; i < formats.length; i++) {
 				final DSMediaType format = formats[i];
-				if (format.getWidth() == width &&
-						format.getHeight() == height &&
-						(format.getSubType() == DSMediaType.VST_YUY2 ||
-						format.getSubType() == DSMediaType.VST_RGB24)) {
-					if (Math.abs(fps - format.getFrameRate()) < Math.abs(fps - currentFps)) {
+				if (format.getWidth() == width
+						&& format.getHeight() == height
+						&& (format.getSubTypeString().contains("RGB")
+								|| format.getSubTypeString().contains("YUY2"))) {
+					if (Math.abs(fps - format.getFrameRate()) <
+							Math.abs(fps - currentFps)) {
 						pin = p;
 						p.setPreferredFormat(i);
 						currentFps = format.getFrameRate();
@@ -262,6 +262,7 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		} else if (isGrayScale()) {
 			return RawImageUtils.rgbToGrayScale(pixels);
 		} else {
+			// return pixels;
 			return RawImageUtils.rgbToBgr(pixels);
 		}
 	}

@@ -185,10 +185,10 @@ public class CaptureDS extends PImage implements Runnable {
 			formats = p.getFormats();
 			for (int i = 0; i < formats.length; i ++) {
 				final DSMediaType format = formats[i];
-				if (format.getWidth() == requestWidth &&
-						format.getHeight() == requestHeight &&
-						(format.getSubType() == DSMediaType.VST_YUY2 ||
-						format.getSubType() == DSMediaType.VST_RGB24)) {
+				if (format.getWidth() == requestWidth
+						&& format.getHeight() == requestHeight
+						&& (format.getSubTypeString().contains("RGB")
+								|| format.getSubTypeString().contains("YUY2"))) {
 					if (Math.abs(fps - format.getFrameRate()) < Math.abs(fps - currentFps)) {
 						pin = p;
 						p.setPreferredFormat(i);
@@ -210,12 +210,13 @@ public class CaptureDS extends PImage implements Runnable {
 				DSFiltergraph.JAVA_POLL_RGB,
 				dsFilter, false, DSFilterInfo.doNotRender(), null);
 		dsCapture.play();
-		dataWidth = requestWidth;
-		dataHeight = requestHeight;
 
 		// 実際に画像を取れるようになるまで待つ
 		while (true) {
-			if (dsCapture.getDataSize() > 0) {
+			final int dataSize = dsCapture.getDataSize();
+			if (dataSize > 0) {
+				dataWidth = requestWidth;
+				dataHeight = dataSize / requestWidth / 3;
 				break;
 			}
 			try { Thread.sleep(100); }
@@ -223,7 +224,7 @@ public class CaptureDS extends PImage implements Runnable {
 		}
 
 		// PImageとして初期化を実行
-		super.init(requestWidth, requestHeight, RGB);
+		super.init(dataWidth, dataHeight, RGB);
 
 		// キャプチャ実行時に呼ぶコールバックメソッドを取得
 		try {
