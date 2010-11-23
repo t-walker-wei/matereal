@@ -140,10 +140,7 @@ public abstract class VideoCaptureAbstractImpl implements VideoCapture {
 		try {
 			byte[] imageData = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
 			System.arraycopy(grabFrameData(), 0, imageData, 0, imageData.length);
-			/*
-			setDataElements(0, 0, getWidth(), getHeight(),
-					grabFrameData());
-			 */
+			// image.getRaster().setDataElements(0, 0, getWidth(), getHeight(), grabFrameData());
 		} catch (Exception e) {
 			// BufferedImage won't be refreshed
 			// when setting data elements failed.

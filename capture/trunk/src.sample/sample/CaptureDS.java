@@ -1,5 +1,7 @@
 package sample;
 
+import javax.swing.JOptionPane;
+
 import de.humatic.dsj.DSFilterInfo;
 import de.humatic.dsj.DSJException;
 import de.humatic.dsj.DSMediaType;
@@ -7,6 +9,7 @@ import de.humatic.dsj.DSFilterInfo.DSPinInfo;
 
 import jp.digitalmuseum.capture.VideoCapture;
 import jp.digitalmuseum.capture.VideoCaptureDS;
+import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 
 /** Capture images with DirectShow. */
 public class CaptureDS extends AbstractCapture {
@@ -49,6 +52,15 @@ public class CaptureDS extends AbstractCapture {
 		// Configure capture object.
 		final VideoCapture capture = new VideoCaptureDS();
 		try {
+
+			// Let users select a device to capture images.
+			final String identifier = (String) JOptionPane.showInputDialog(this,
+					"Select a device to capture images.", "Device list",
+					JOptionPane.QUESTION_MESSAGE, null, new VideoCaptureFactoryImpl()
+							.queryIdentifiers(), null);
+			if ((identifier != null) && (identifier.length() > 0)) {
+				capture.setSource(identifier);
+			}
 			capture.setSize(800, 600);
 		} catch (Exception e) {
 			e.printStackTrace();
