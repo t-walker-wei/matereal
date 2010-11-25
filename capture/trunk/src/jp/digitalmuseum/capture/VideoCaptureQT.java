@@ -245,9 +245,9 @@ public class VideoCaptureQT extends VideoCaptureAbstractImpl {
 		} else {
 			rawEncodedImage.copyToArray(0, pixels_int, 0, pixels_int.length);
 			for (int idx_byte = 0, idx = 0; idx < pixels_int.length; idx ++) {
-				pixels[idx_byte ++] = (byte) (pixels_int[idx] >> 16 );
-				pixels[idx_byte ++] = (byte) (pixels_int[idx] >> 8  & 0xff);
 				pixels[idx_byte ++] = (byte) (pixels_int[idx]       & 0xff);
+				pixels[idx_byte ++] = (byte) (pixels_int[idx] >> 8  & 0xff);
+				pixels[idx_byte ++] = (byte) (pixels_int[idx] >> 16);
 			}
 		}
 
