@@ -38,6 +38,7 @@ package jp.digitalmuseum.mr.service;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 
 import javax.swing.JComponent;
 
@@ -46,6 +47,7 @@ import jp.digitalmuseum.capture.VideoCaptureDummy;
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.gui.CoordProviderPanel;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.mr.service.HomographyCoordProviderAbstractImpl;
 import jp.digitalmuseum.utils.Array;
 
@@ -136,8 +138,8 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 				// Set data elements of the raster of the image object
 				// to the captured image data.
 				try {
-					image.getRaster().setDataElements(
-							0, 0, getWidth(), getHeight(), pixels);
+					byte[] data = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
+					System.arraycopy(pixels, 0, data, 0, data.length);
 				} catch (Exception e) {
 					// BufferedImage won't be refreshed
 					// when setting data elements failed.
@@ -184,6 +186,7 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 		}
 		capture = newCapture;
 		updateSize();
+		distributeEvent(new ServiceUpdateEvent(this, "source", capture));
 		return true;
 	}
 
@@ -203,6 +206,7 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 			final boolean succeeded = capture.setSize(width, height);
 			if (succeeded) {
 				updateSize();
+				distributeEvent(new ServiceUpdateEvent(this, "size", new int[] { width, height }));
 			}
 			return succeeded;
 		}

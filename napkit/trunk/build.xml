@@ -9,9 +9,9 @@
 	<!-- ****Properties**** -->
 	<!-- Software version -->
 	<property name="version" value="1.0.0" />
-	<property name="version-matereal" value="1.0.0" />
-	<property name="version-capture" value="1.0.0" />
-	<property name="version-connector" value="1.0.0" />
+	<property name="version-matereal" value="1.0.1" />
+	<property name="version-capture" value="1.0.1" />
+	<property name="version-connector" value="1.0.1" />
 
 	<!-- Dependent class pathes -->
 	<property name="matereal" value="../matereal/dist/lib/matereal-${version-matereal}.jar"/>
@@ -35,7 +35,22 @@
 	<!-- jar file name -->
 	<property name="jar.name" value="napkit-${version}.jar" />
 
+	<!-- jar file name -->
+	<property name="zip.name" value="napkit-${version}.zip" />
+
 	<!-- ****Targets**** -->
+
+	<!-- zip -->
+	<target name="zip" depends="jar">
+		<zip destfile="${zip.name}">
+			<fileset dir="./">
+				<include name="${jar.name}"/>
+				<include name="LICENSE.txt"/>
+				<include name="README.txt"/>
+			</fileset>
+		</zip>
+	</target>
+
 	<!-- jar -->
 	<target name="jar" depends="compile, extract">
 		<jar jarfile="${jar.name}">

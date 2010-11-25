@@ -25,7 +25,22 @@
 	<!-- jar file name -->
 	<property name="capture-jar.name" value="capture-${capture-version}.jar" />
 
+	<!-- zip file name -->
+	<property name="capture-zip.name" value="capture-${capture-version}.zip" />
+
 	<!-- ****Targets**** -->
+
+	<!-- zip -->
+	<target name="zip" depends="jar">
+		<zip destfile="${capture-zip.name}">
+			<fileset dir="./">
+				<include name="${capture-jar.name}"/>
+				<include name="LICENSE.txt"/>
+				<include name="README.txt"/>
+			</fileset>
+		</zip>
+	</target>
+
 	<!-- jar -->
 	<target name="jar" depends="compile">
 		<jar jarfile="${capture-jar.name}">

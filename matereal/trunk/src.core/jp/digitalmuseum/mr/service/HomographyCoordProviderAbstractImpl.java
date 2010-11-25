@@ -36,12 +36,12 @@
  */
 package jp.digitalmuseum.mr.service;
 
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenLocation;
 import jp.digitalmuseum.utils.ScreenPosition;
 import jp.digitalmuseum.utils.ScreenRectangle;
-
 
 /**
  * Abstract implementation of CoordProvider.
@@ -89,14 +89,18 @@ public abstract class HomographyCoordProviderAbstractImpl extends ServiceAbstrac
 	public void setRealSize(double realWidth, double realHeight) {
 		this.realWidth = realWidth;
 		this.realHeight = realHeight;
+		distributeEvent(new ServiceUpdateEvent(this,
+				"real size", new double[] { realWidth, realHeight }));
 	}
 
 	public void setRealWidth(double realWidth) {
 		this.realWidth = realWidth;
+		distributeEvent(new ServiceUpdateEvent(this, "real width", realWidth));
 	}
 
 	public void setRealHeight(double realHeight) {
 		this.realHeight = realHeight;
+		distributeEvent(new ServiceUpdateEvent(this, "real height", realHeight));
 	}
 
 	public ScreenRectangle getRectangle() {
@@ -109,14 +113,20 @@ public abstract class HomographyCoordProviderAbstractImpl extends ServiceAbstrac
 
 	public void setRectangle(ScreenRectangle rectangle) {
 		this.rectangle.set(rectangle);
+		distributeEvent(new ServiceUpdateEvent(this,
+				"rectangle", new ScreenRectangle(rectangle)));
 	}
 
 	public void setRectangleCorner(int i, ScreenPosition p) {
 		rectangle.set(i, p);
+		distributeEvent(new ServiceUpdateEvent(this,
+				"rectangle", new ScreenRectangle(rectangle)));
 	}
 
 	public void setRectangleCorner(int i, int x, int y) {
 		rectangle.set(i, x, y);
+		distributeEvent(new ServiceUpdateEvent(this,
+				"rectangle", new ScreenRectangle(rectangle)));
 	}
 
 	public void resetRectangle() {
@@ -124,6 +134,8 @@ public abstract class HomographyCoordProviderAbstractImpl extends ServiceAbstrac
 		rectangle.setRightTop(getWidth(), 0);
 		rectangle.setRightBottom(getWidth(), getHeight());
 		rectangle.setLeftBottom(0, getHeight());
+		distributeEvent(new ServiceUpdateEvent(this,
+				"rectangle", new ScreenRectangle(rectangle)));
 	}
 
 	public ScreenLocation realToScreen(Location location) {

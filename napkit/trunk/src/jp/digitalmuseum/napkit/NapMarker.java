@@ -25,12 +25,16 @@
  */
 package jp.digitalmuseum.napkit;
 
-import java.util.HashMap;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StreamTokenizer;
 
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.NyARCode;
 import jp.nyatla.nyartoolkit.core.match.NyARMatchPatt_Color_WITHOUT_PCA;
-
 
 /**
  * Marker class. Immutable.
@@ -38,14 +42,10 @@ import jp.nyatla.nyartoolkit.core.match.NyARMatchPatt_Color_WITHOUT_PCA;
  * @author Jun KATO
  */
 public class NapMarker {
-	private static HashMap<String, NyARCode> codeMap;
 	private NyARCode code;
 	private double size;
 	private NyARMatchPatt_Color_WITHOUT_PCA pattern;
-
-	static {
-		codeMap = new HashMap<String, NyARCode>();
-	}
+	private Image[] images;
 
 	/**
 	 * Constructor with a marker file name and real size in [mm] specified.
@@ -53,22 +53,14 @@ public class NapMarker {
 	 */
 	public NapMarker(String fileName, double size) {
 		this.size = size;
-		code = getCode(fileName);
-		pattern = new NyARMatchPatt_Color_WITHOUT_PCA(code);
-	}
-
-	private static NyARCode getCode(String fileName) {
-		NyARCode code = codeMap.get(fileName);
-		if (code == null) {
-			try {
-				code = new NyARCode(16, 16);
-				code.loadARPattFromFile(fileName);
-			} catch (NyARException e) {
-				throw new IllegalArgumentException("Failed to instantiate a marker object from file: "+fileName);
-			}
-			codeMap.put(fileName, code);
+		try {
+			code = new NyARCode(16, 16);
+			code.loadARPattFromFile(fileName);
+			images = load(fileName);
+		} catch (NyARException e) {
+			throw new IllegalArgumentException("Failed to instantiate a marker object from file: "+fileName);
 		}
-		return code;
+		pattern = new NyARMatchPatt_Color_WITHOUT_PCA(code);
 	}
 
 	/**
@@ -97,5 +89,48 @@ public class NapMarker {
 	 */
 	public double getRealSize() {
 		return size;
+	}
+
+	/**
+	 * Get marker image.
+	 * @param direction Direction of the image.
+	 */
+	public Image getImage(int direction) {
+		return images[direction];
+	}
+
+	/**
+	 * Load marker pattern file and return images.
+	 * @param fileName
+	 * @return An array of loaded images.
+	 */
+	public static Image[] load(String fileName) {
+		BufferedImage[] images = new BufferedImage[4];
+		try {
+			StreamTokenizer st = new StreamTokenizer(new FileReader(fileName));
+			boolean eof = false;
+			int[] rgbTable = new int[] { 1, 0, 2 };
+			for (int direction = 0; direction < 4; direction++) {
+				images[direction] = new BufferedImage(16, 16,
+						BufferedImage.TYPE_3BYTE_BGR);
+				byte[] data = ((DataBufferByte) images[direction].getRaster()
+						.getDataBuffer()).getData();
+				for (int rgbFlag = 0; rgbFlag < 3 && !eof; rgbFlag++) {
+					for (int i = 0; i < 256; i++) {
+						switch (st.nextToken()) {
+						case StreamTokenizer.TT_NUMBER:
+							data[i * 3 + rgbTable[rgbFlag]] = (byte) (0xff & (int) st.nval);
+							break;
+						case StreamTokenizer.TT_EOF:
+							eof = true;
+							break;
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			// Do nothing.
+		}
+		return images;
 	}
 }

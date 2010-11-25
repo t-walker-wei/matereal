@@ -51,6 +51,7 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.CoordProvider;
 import jp.digitalmuseum.mr.service.HomographyCoordProvider;
@@ -120,6 +121,8 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 					if (((ServiceEvent) e).getStatus() == STATUS.DISPOSED) {
 						dispose();
 					}
+				} else if (e instanceof ServiceUpdateEvent) {
+					updateRealSize();
 				}
 			}
 		};

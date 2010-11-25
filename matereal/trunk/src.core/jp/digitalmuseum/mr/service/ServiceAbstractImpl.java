@@ -43,6 +43,7 @@ import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.utils.Array;
 
 /**
@@ -70,6 +71,7 @@ public abstract class ServiceAbstractImpl implements Service {
 		if (isStarted()) {
 			restart();
 		}
+		distributeEvent(new ServiceUpdateEvent(this, "interval", interval));
 	}
 
 	public synchronized long getInterval() {
@@ -83,6 +85,7 @@ public abstract class ServiceAbstractImpl implements Service {
 		if (isStarted()) {
 			stop();
 			start(serviceGroup);
+			distributeEvent(new ServiceUpdateEvent(this, "service group", serviceGroup));
 		} else {
 			this.serviceGroup = serviceGroup;
 		}
