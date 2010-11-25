@@ -1,7 +1,7 @@
 connector
 Copyright (C) 2010 Jun KATO
 
-version 1.0.0
+version 1.0.1
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 "connector" is a simple wrapper package for connecting Java VM

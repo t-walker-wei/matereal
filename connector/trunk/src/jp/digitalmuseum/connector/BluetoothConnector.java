@@ -37,7 +37,17 @@
 package jp.digitalmuseum.connector;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.bluetooth.BluetoothStateException;
+import javax.bluetooth.DeviceClass;
+import javax.bluetooth.DiscoveryAgent;
+import javax.bluetooth.DiscoveryListener;
+import javax.bluetooth.LocalDevice;
+import javax.bluetooth.RemoteDevice;
+import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 
 
@@ -49,6 +59,27 @@ public final class BluetoothConnector extends ConnectorAbstractImpl {
 	public BluetoothConnector(String con) {
 		host = formatConnectionString(con);
 		if (host == null) {
+			if (con != null) {
+
+				// Remove prefix.
+				if (con.startsWith(CON_PREFIX)) {
+					con = con.substring(CON_PREFIX.length());
+				}
+
+				// Look for friendly name.
+				Set<RemoteDevice> devices = queryDevices();
+				for (RemoteDevice device : devices) {
+					try {
+						final String friendlyName = device.getFriendlyName(false);
+						if (con.equals(friendlyName)) {
+							host = device.getBluetoothAddress();
+							return;
+						}
+					} catch (IOException e) {
+						// Do nothing and continue when connection fails.
+					}
+				}
+			}
 			throw new IllegalArgumentException();
 		}
 	}
@@ -144,4 +175,70 @@ public final class BluetoothConnector extends ConnectorAbstractImpl {
 		return CON_PREFIX+host;
 	}
 
+	public static Set<RemoteDevice> queryDevices() {
+		final Set<RemoteDevice> devices = new HashSet<RemoteDevice>();
+		try {
+			LocalDevice localDevice = LocalDevice.getLocalDevice();
+			System.out.println("Bluetooth Host Address: " + localDevice.getBluetoothAddress());
+			System.out.println("Bluetooth Host Name: " + localDevice.getFriendlyName());
+			System.out.println("Starting device discovery...");
+			final DiscoveryAgent agent = localDevice.getDiscoveryAgent();
+			agent.startInquiry(DiscoveryAgent.GIAC, new DiscoveryListener() {
+				public void servicesDiscovered(int transID, ServiceRecord[] serviceRecords) { }
+				public void serviceSearchCompleted(int transID, int responseCode) { }
+				public void inquiryCompleted(int discoveryType) {
+					synchronized (agent) {
+						agent.notify();
+					}
+				}
+				public void deviceDiscovered(RemoteDevice remoteDevice, DeviceClass deviceClass) {
+					devices.add(remoteDevice);
+				}
+			});
+			synchronized (agent) {
+				agent.wait();
+				System.out.println("Completed device discovery.");
+			}
+		} catch (BluetoothStateException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return devices;
+	}
+
+	public static String[] queryFriendNames() {
+
+		// Query devices.
+		final Set<RemoteDevice> devices = queryDevices();
+		final ArrayList<String> friendlyNames = new ArrayList<String>();
+		for (RemoteDevice device : devices) {
+			try {
+				String friendlyName = device.getFriendlyName(false);
+				friendlyNames.add(friendlyName);
+			} catch (IOException e) {
+				// Do nothing and continue when connection fails.
+			}
+		}
+
+		// Convert to a String array and returns it.
+		String[] friendlyNamesArray = new String[friendlyNames.size()];
+		friendlyNamesArray = friendlyNames.toArray(friendlyNamesArray);
+		return friendlyNamesArray;
+	}
+
+	public static String[] queryIdentifiers() {
+
+		// Query devices.
+		final Set<RemoteDevice> devices = queryDevices();
+		final ArrayList<String> ids = new ArrayList<String>();
+		for (RemoteDevice device : devices) {
+			ids.add(CON_PREFIX + device.getBluetoothAddress());
+		}
+
+		// Convert to a String array and returns it.
+		String[] idsArray = new String[ids.size()];
+		idsArray = ids.toArray(idsArray);
+		return idsArray;
+	}
 }
