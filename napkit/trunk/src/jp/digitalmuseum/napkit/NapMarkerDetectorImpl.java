@@ -127,6 +127,18 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		return true;
 	}
 
+	public boolean removeMarkers(Set<NapMarker> markers) {
+		boolean result = true;
+		for (NapMarker marker : markers) {
+			result = markers.remove(marker) && result;
+		}
+		return result;
+	}
+
+	public boolean removeMarker(NapMarker marker) {
+		return markers.remove(marker);
+	}
+
 	public Array<NapDetectionResult> detectMarker(byte[] imageData) {
 		synchronized (squareDetector) {
 			squares.clear();

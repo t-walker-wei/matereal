@@ -51,6 +51,7 @@ import javax.swing.JComponent;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.message.LocationUpdateEvent;
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.mr.service.CoordProvider;
 import jp.digitalmuseum.mr.service.ImageProvider;
 import jp.digitalmuseum.mr.service.LocationProvider;
@@ -117,6 +118,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		if (imageProvider instanceof CoordProvider) {
 			setCoordsProvider((CoordProvider) imageProvider);
 		}
+		distributeEvent(new ServiceUpdateEvent(this, "image provider", imageProvider));
 	}
 
 	public synchronized ImageProvider getImageProvider() {
@@ -125,6 +127,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 
 	public void setCoordsProvider(CoordProvider coordProvider) {
 		this.coordProvider = coordProvider;
+		distributeEvent(new ServiceUpdateEvent(this, "coord provider", coordProvider));
 	}
 
 	public CoordProvider getCoordProvider() {
@@ -136,6 +139,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 	 */
 	public void setThreshold(int threshold) {
 		detector.setThreshold(threshold);
+		distributeEvent(new ServiceUpdateEvent(this, "threshold", threshold));
 	}
 
 	/**
@@ -154,6 +158,16 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		}
 		markerEntityMap.put(marker, e);
 		detector.addMarker(marker);
+		distributeEvent(new ServiceUpdateEvent(this, "marker registration", marker));
+	}
+
+	/**
+	 * @see NapMarkerDetector#removeMarker(NapMarker)
+	 */
+	public synchronized void remove(NapMarker marker) {
+		markerEntityMap.remove(marker);
+		detector.removeMarker(marker);
+		distributeEvent(new ServiceUpdateEvent(this, "marker unregistration", marker));
 	}
 
 	public synchronized NapDetectionResult getResult(Entity e) {
@@ -277,6 +291,10 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 
 	public synchronized Set<Entity> getEntities() {
 		return new HashSet<Entity>(markerEntityMap.values());
+	}
+
+	public synchronized Set<NapMarker> getMarkers() {
+		return new HashSet<NapMarker>(markerEntityMap.keySet());
 	}
 
 	public synchronized boolean contains(Entity entity) {

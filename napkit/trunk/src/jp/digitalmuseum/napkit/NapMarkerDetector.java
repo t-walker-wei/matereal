@@ -44,7 +44,7 @@ public interface NapMarkerDetector {
 	final public static int THRESHOLD_MAX = 255;
 
 	/**
-	 * Set markers to detect.
+	 * Add markers to detect.
 	 *
 	 * @param markers
 	 * @return Returns false if the given set is null or specified markers have mixed formats.
@@ -58,6 +58,22 @@ public interface NapMarkerDetector {
 	 * @return Returns false if the specified marker has different formats from the existing markers.
 	 */
 	public abstract boolean addMarker(NapMarker marker);
+
+	/**
+	 * Remove markers to detect.
+	 *
+	 * @param markers
+	 * @return Returns false if the given set is null or specified markers have mixed formats.
+	 */
+	public abstract boolean removeMarkers(Set<NapMarker> markers);
+
+	/**
+	 * Remove a marker to detect.
+	 *
+	 * @param marker
+	 * @return Returns false if the specified marker has different formats from the existing markers.
+	 */
+	public abstract boolean removeMarker(NapMarker marker);
 
 	/**
 	 * Load a camera parameter from a file.

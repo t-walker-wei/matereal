@@ -58,6 +58,7 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.LocationUpdateEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.ImageProvider;
 import jp.digitalmuseum.mr.service.MarkerDetector;
@@ -190,6 +191,11 @@ public class MarkerDetectorPanel extends JPanel {
 					getJPreviewPanel().repaint();
 				} else if (e instanceof ServiceEvent) {
 					if (((ServiceEvent) e).getStatus() == STATUS.DISPOSED) {
+						dispose();
+					}
+				} else if (e instanceof ServiceUpdateEvent) {
+					if (((ServiceUpdateEvent) e).getParameter() == "threshold") {
+						getJSlider().setValue(markerDetector.getThreshold());
 					}
 				}
 			}

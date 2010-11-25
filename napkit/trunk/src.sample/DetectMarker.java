@@ -18,6 +18,7 @@ import jp.digitalmuseum.mr.service.Camera;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
+import jp.digitalmuseum.napkit.gui.MarkerEntityPanel;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
@@ -55,6 +56,9 @@ public class DetectMarker {
 
 		// Show a configuration window.
 		final JFrame configFrame = new DisposeOnCloseFrame(new MarkerDetectorPanel(detector));
+
+		// Show a marker/entity panel.
+		final JFrame markerFrame = new DisposeOnCloseFrame(new MarkerEntityPanel(detector));
 
 		// Detect a marker.
 		final NapMarker marker = new NapMarker("markers\\4x4_190.patt", 120);
@@ -116,6 +120,7 @@ public class DetectMarker {
 			private static final long serialVersionUID = 1L;
 			@Override public void dispose() {
 				configFrame.dispose();
+				markerFrame.dispose();
 				super.dispose();
 				Matereal.getInstance().dispose();
 			}
