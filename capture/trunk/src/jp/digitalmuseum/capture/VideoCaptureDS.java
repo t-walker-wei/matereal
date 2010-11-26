@@ -160,9 +160,6 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		float currentFps = Float.MAX_VALUE;
 		for (DSPinInfo p : filter.getDownstreamPins()) {
 
-			// Set the first pin as default.
-			if (pin == null) pin = p;
-
 			// Capture YUY2 and RGB none-compressed images by default.
 			final DSMediaType[] formats = p.getFormats();
 			for (int i = 0; i < formats.length; i++) {
@@ -177,7 +174,6 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 						p.setPreferredFormat(i);
 						currentFps = format.getFrameRate();
 					}
-					break;
 				}
 			}
 			if (pin != null && (int) currentFps == (int) fps) {
@@ -185,7 +181,8 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 			}
 		}
 		if (pin == null) {
-			throw new Exception("No suitable pin to capture was found for filter:"+filter);
+			// throw new IllegalStateException("No suitable pin to capture was found for filter:"+filter);
+			pin = filter.getDownstreamPins()[0];
 		}
 
 		// Instantiate a capture object.
