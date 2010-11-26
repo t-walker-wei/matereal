@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import de.humatic.dsj.DSCapture;
 import de.humatic.dsj.DSFilterInfo;
 import de.humatic.dsj.DSFiltergraph;
+import de.humatic.dsj.DSJException;
 import de.humatic.dsj.DSMediaType;
 import de.humatic.dsj.DSCapture.CaptureDevice;
 import de.humatic.dsj.DSFilter.DSPin;
@@ -158,31 +159,37 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		// Choose a downstream pin to capture images.
 		pin = null;
 		float currentFps = Float.MAX_VALUE;
-		for (DSPinInfo p : filter.getDownstreamPins()) {
+		try {
+			for (DSPinInfo p : filter.getDownstreamPins()) {
 
-			// Capture YUY2 and RGB none-compressed images by default.
-			final DSMediaType[] formats = p.getFormats();
-			for (int i = 0; i < formats.length; i++) {
-				final DSMediaType format = formats[i];
-				if (format.getWidth() == width
-						&& format.getHeight() == height
-						&& (format.getSubTypeString().contains("RGB")
-								|| format.getSubTypeString().contains("YUY2"))) {
-					if (Math.abs(fps - format.getFrameRate()) <
-							Math.abs(fps - currentFps)) {
-						pin = p;
-						p.setPreferredFormat(i);
-						currentFps = format.getFrameRate();
+				// Capture YUY2 and RGB none-compressed images by default.
+				final DSMediaType[] formats = p.getFormats();
+				for (int i = 0; i < formats.length; i++) {
+					final DSMediaType format = formats[i];
+					if (format.getWidth() == width
+							&& format.getHeight() == height
+							&& (format.getSubTypeString().contains("RGB")
+									|| format.getSubTypeString().contains("YUY2"))) {
+						if (Math.abs(fps - format.getFrameRate()) <
+								Math.abs(fps - currentFps)) {
+							pin = p;
+							p.setPreferredFormat(i);
+							currentFps = format.getFrameRate();
+						}
 					}
 				}
+				if (pin != null && (int) currentFps == (int) fps) {
+					break;
+				}
 			}
-			if (pin != null && (int) currentFps == (int) fps) {
-				break;
+			if (pin == null) {
+				// throw new IllegalStateException("No suitable pin to capture was found for filter:"+filter);
+				pin = filter.getDownstreamPins()[0];
 			}
-		}
-		if (pin == null) {
-			// throw new IllegalStateException("No suitable pin to capture was found for filter:"+filter);
-			pin = filter.getDownstreamPins()[0];
+
+		} catch (DSJException e) {
+			// Can't retrieve pin list from the filter.
+			// (Do nothing.)
 		}
 
 		// Instantiate a capture object.
@@ -210,13 +217,18 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		}
 
 		final CaptureDevice device = capture.getActiveVideoDevice();
-		for (DSPin p : device.getPins()) {
-			final DSPinInfo pi = p.getPinInfo();
-			if (pi.getID().equals(pin.getID())) {
-				final DSMediaType format = pin.getFormats()[device.getSelectedFormat(p)];
-				this.fps = format.getFrameRate();
-				this.width = format.getWidth();
-				this.height = format.getHeight();
+		if (pin == null) {
+			// Can't retrieve pin list from the filter.
+			// (Do nothing though this is not desirable.)
+		} else {
+			for (DSPin p : device.getPins()) {
+				final DSPinInfo pi = p.getPinInfo();
+				if (pi.getID().equals(pin.getID())) {
+					final DSMediaType format = pin.getFormats()[device.getSelectedFormat(p)];
+					this.fps = format.getFrameRate();
+					this.width = format.getWidth();
+					this.height = format.getHeight();
+				}
 			}
 		}
 	}
