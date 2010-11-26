@@ -51,7 +51,10 @@ public class resources_ja extends PropertyResourceBundle {
 		"MarkerDetectorPanel.showBinarizedImage=二値化された画像を表示\n" +
 		"MarkerDetectorPanel.slideToDetectRobustlly=正方形が安定して検出されるようにバーをドラッグして閾値を調整してください.\n" +
 		"TypicalMDCPane.detector=マーカー検出器\n" +
-		"TypicalMDCPane.worldCoord=世界座標系";
+		"TypicalMDCPane.entity=検出対象\n" +
+		"TypicalMDCPane.worldCoord=世界座標系\n" +
+		"MarkerEntityPanel.2=選択されたマーカー:\n" +
+		"MarkerEntityPanel.0=※マーカーパターンは↑←↓→の向きに表示されています";
 
 	public resources_ja() throws IOException {
 		super(new StringReader(resourcesString));

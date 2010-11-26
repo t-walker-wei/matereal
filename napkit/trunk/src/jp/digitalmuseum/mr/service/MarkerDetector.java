@@ -170,6 +170,10 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		distributeEvent(new ServiceUpdateEvent(this, "marker unregistration", marker));
 	}
 
+	public synchronized Entity getEntity(NapMarker marker) {
+		return markerEntityMap.get(marker);
+	}
+
 	public synchronized NapDetectionResult getResult(Entity e) {
 		return entityResultMap.get(e);
 	}

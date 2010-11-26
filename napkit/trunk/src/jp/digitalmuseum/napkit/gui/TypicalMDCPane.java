@@ -58,6 +58,7 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 	private MarkerDetector markerDetector;
 	private CoordProvider coordProvider;
 	private MarkerDetectorPanel markerDetectorPanel;
+	private MarkerEntityPanel markerEntityPanel;
 	private CoordProviderPanel coordProviderPanel;
 
 	/**
@@ -68,6 +69,8 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 		this.markerDetector = detector;
 		this.coordProvider = null;
 		markerDetectorPanel = new MarkerDetectorPanel(detector);
+		markerEntityPanel = new MarkerEntityPanel(detector);
+
 		initialize();
 
 		// Start watcher service.
@@ -83,6 +86,7 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 	private void initialize() {
 		this.setSize(720, 640);
 		addTab(Messages.getString("TypicalMDCPane.detector"), markerDetectorPanel);
+		addTab(Messages.getString("TypicalMDCPane.entity"), markerEntityPanel);
 	}
 
 	private void updateCoordsTab() {
@@ -91,7 +95,7 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 		final CoordProvider coordinate = (CoordProvider) imageProvider;
 		coordProviderPanel = new CoordProviderPanel(coordinate);
 		if (coordProvider != null) {
-			removeTabAt(1);
+			removeTabAt(2);
 			coordProviderPanel.dispose();
 		}
 		addTab(Messages.getString("TypicalMDCPane.worldCoord"), coordProviderPanel);
