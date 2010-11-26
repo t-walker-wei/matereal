@@ -177,7 +177,10 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 	public boolean setSource(VideoCapture newCapture) {
 		try {
 			newCapture.setSize(width, height);
-			newCapture.setFrameRate(1000f/getInterval());
+			if (isStarted()) {
+				newCapture.setFrameRate(1000f/getInterval());
+			}
+			// Otherwise, getInterval() returns 0.
 		} catch (Exception e) {
 			if (capture == null) {
 				capture = new VideoCaptureDummy(width, height);
@@ -244,6 +247,7 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 	public void start() {
 		try {
 			capture.start();
+			updateSize();
 		} catch (Exception e) {
 			// If an error occurred starting capture,
 			// simply throw an exception and do not start this service.
