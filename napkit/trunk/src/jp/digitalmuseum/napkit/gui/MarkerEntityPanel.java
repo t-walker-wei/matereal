@@ -9,7 +9,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import java.util.HashMap;
 
 import javax.swing.JList;
@@ -22,17 +21,23 @@ import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.mr.service.MarkerDetector;
 import jp.digitalmuseum.napkit.NapMarker;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import javax.swing.ListSelectionModel;
+import java.awt.Insets;
+import java.awt.Font;
+import javax.swing.SwingConstants;
 
 public class MarkerEntityPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JList jMarkerList = null;
-	private JPanel jEntityPanel = null;
 	private MarkerImagePanel markerImagePanel = null;
 	private JPanel jEntityInformationPanel = null;
 	private transient MarkerDetector markerDetector;
 	private transient DefaultListModel model;
 	private transient HashMap<Object, Icon> icons;  //  @jve:decl-index=0:
+	private JLabel jLabel = null;
+	private JLabel jLabel1 = null;
 
 	/**
 	 * This is the default constructor
@@ -50,10 +55,10 @@ public class MarkerEntityPanel extends JPanel {
 				public void eventOccurred(Event e) {
 					if (e instanceof ServiceUpdateEvent) {
 						String prm = ((ServiceUpdateEvent) e).getParameter();
-						if (prm == "marker registration") {
+						if (prm == "marker registration") { //$NON-NLS-1$
 							NapMarker marker = (NapMarker) ((ServiceUpdateEvent) e).getValue();
 							addMarker(marker);
-						} else if (prm == "marker unregistration") {
+						} else if (prm == "marker unregistration") { //$NON-NLS-1$
 							NapMarker marker = (NapMarker) ((ServiceUpdateEvent) e).getValue();
 							removeMarker(marker);
 						}
@@ -90,10 +95,51 @@ public class MarkerEntityPanel extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(300, 200);
-		this.setLayout(new BorderLayout());
-		this.add(getJMarkerList(), BorderLayout.WEST);
-		this.add(getJEntityPanel(), BorderLayout.CENTER);
+		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+		gridBagConstraints4.gridx = 1;
+		gridBagConstraints4.gridwidth = 2;
+		gridBagConstraints4.fill = GridBagConstraints.BOTH;
+		gridBagConstraints4.weighty = 0.0D;
+		gridBagConstraints4.insets = new Insets(0, 0, 5, 0);
+		gridBagConstraints4.gridy = 1;
+		jLabel1 = new JLabel();
+		jLabel1.setText(Messages.getString("MarkerEntityPanel.0")); //$NON-NLS-1$
+		jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
+		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+		gridBagConstraints3.fill = GridBagConstraints.BOTH;
+		gridBagConstraints3.insets = new Insets(0, 0, 5, 5);
+		jLabel = new JLabel();
+		jLabel.setText(Messages.getString("MarkerEntityPanel.2")); //$NON-NLS-1$
+		jLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+		gridBagConstraints2.gridx = 1;
+		gridBagConstraints2.gridy = 2;
+		gridBagConstraints2.fill = GridBagConstraints.BOTH;
+		gridBagConstraints2.gridwidth = 2;
+		gridBagConstraints2.weighty = 0.85D;
+		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+		gridBagConstraints11.gridx = 2;
+		gridBagConstraints11.gridy = 0;
+		gridBagConstraints11.weightx = 0.85D;
+		gridBagConstraints11.fill = GridBagConstraints.BOTH;
+		gridBagConstraints11.insets = new Insets(0, 0, 5, 0);
+		gridBagConstraints11.weighty = 0.15D;
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.weightx = 0.15D;
+		gridBagConstraints.insets = new Insets(0, 0, 0, 5);
+		gridBagConstraints.gridheight = 3;
+		gridBagConstraints.weighty = 1D;
+		this.setSize(375, 300);
+		this.setLayout(new GridBagLayout());
+		this.setPreferredSize(new Dimension(375, 300));
+		this.add(getJMarkerList(), gridBagConstraints);
+		this.add(jLabel, gridBagConstraints3);
+		this.add(getMarkerImagePanel(), gridBagConstraints11);
+		this.add(getJEntityInformationPanel(), gridBagConstraints2);
+		this.add(jLabel1, gridBagConstraints4);
 		icons = new HashMap<Object, Icon>();
 		model = new DefaultListModel();
 		getJMarkerList().setModel(model);
@@ -132,28 +178,17 @@ public class MarkerEntityPanel extends JPanel {
 					JLabel label = (JLabel) super.getListCellRendererComponent(
 							jList, value, modelIndex, isSelected, cellHasFocus);
 					label.setIcon(MarkerEntityPanel.this.getIcon(value));
+					if (value instanceof NapMarker) {
+						label.setText(markerDetector.getEntity((NapMarker) value).getName());
+					}
 					return label;
 				}
 			});
 			jMarkerList.setFixedCellHeight(20);
-			jMarkerList.setPreferredSize(new Dimension(200, 200));
+			jMarkerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			jMarkerList.setPreferredSize(new Dimension(160, 200));
 		}
 		return jMarkerList;
-	}
-
-	/**
-	 * This method initializes jEntityPanel
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJEntityPanel() {
-		if (jEntityPanel == null) {
-			jEntityPanel = new JPanel();
-			jEntityPanel.setLayout(new BorderLayout());
-			jEntityPanel.add(getMarkerImagePanel(), BorderLayout.NORTH);
-			jEntityPanel.add(getJEntityInformationPanel(), BorderLayout.CENTER);
-		}
-		return jEntityPanel;
 	}
 
 	/**
@@ -164,7 +199,8 @@ public class MarkerEntityPanel extends JPanel {
 	private MarkerImagePanel getMarkerImagePanel() {
 		if (markerImagePanel == null) {
 			markerImagePanel = new MarkerImagePanel();
-			markerImagePanel.setPreferredSize(new Dimension(240, 48));
+			markerImagePanel.setMinimumSize(new Dimension(115, 42));
+			markerImagePanel.setPreferredSize(new Dimension(200, 48));
 		}
 		return markerImagePanel;
 	}

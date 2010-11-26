@@ -51,7 +51,10 @@ public class resources extends PropertyResourceBundle {
 		"MarkerDetectorPanel.showBinarizedImage=Show binarized image\n" +
 		"MarkerDetectorPanel.slideToDetectRobustlly=Slide the bar so that squares can be detected robustlly.\n" +
 		"TypicalMDCPane.detector=Detector\n" +
-		"TypicalMDCPane.worldCoord=World coordinate";
+		"TypicalMDCPane.entity=Target markers\n" +
+		"TypicalMDCPane.worldCoord=World coordinate\n" +
+		"MarkerEntityPanel.2=Selected marker:\n" +
+		"MarkerEntityPanel.0=Directions of the marker patterns are: up, left, down, right";
 
 	public resources() throws IOException {
 		super(new StringReader(resourcesString));
