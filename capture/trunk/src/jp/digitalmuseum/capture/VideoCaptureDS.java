@@ -42,6 +42,7 @@
  */
 package jp.digitalmuseum.capture;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 
 import de.humatic.dsj.DSCapture;
@@ -50,7 +51,6 @@ import de.humatic.dsj.DSFiltergraph;
 import de.humatic.dsj.DSJException;
 import de.humatic.dsj.DSMediaType;
 import de.humatic.dsj.DSCapture.CaptureDevice;
-import de.humatic.dsj.DSFilter.DSPin;
 import de.humatic.dsj.DSFilterInfo.DSPinInfo;
 
 /**
@@ -194,7 +194,7 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 
 		// Instantiate a capture object.
 		capture = new DSCapture(
-				DSFiltergraph.JAVA_POLL_RGB,
+				DSFiltergraph.JAVA_POLL,
 				filter, false, DSFilterInfo.doNotRender(), null);
 		capture.play();
 
@@ -216,21 +216,10 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 			catch (InterruptedException e) { }
 		}
 
-		final CaptureDevice device = capture.getActiveVideoDevice();
-		if (pin == null) {
-			// Can't retrieve pin list from the filter.
-			// (Do nothing though this is not desirable.)
-		} else {
-			for (DSPin p : device.getPins()) {
-				final DSPinInfo pi = p.getPinInfo();
-				if (pi.getID().equals(pin.getID())) {
-					final DSMediaType format = pin.getFormats()[device.getSelectedFormat(p)];
-					this.fps = format.getFrameRate();
-					this.width = format.getWidth();
-					this.height = format.getHeight();
-				}
-			}
-		}
+		final Dimension d = capture.getDisplaySize();
+		width = d.width;
+		height = d.height;
+		fps = capture.getFrameRate();
 	}
 
 	public void pause() {
@@ -271,8 +260,7 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		} else if (isGrayScale()) {
 			return RawImageUtils.rgbToGrayScale(pixels);
 		} else {
-			// return pixels;
-			return RawImageUtils.rgbToBgr(pixels);
+			return pixels;
 		}
 	}
 
@@ -371,6 +359,9 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 	 * Get all formats supported by the device.
 	 */
 	public DSMediaType[] getFormats() {
+		if (pin == null) {
+			return null;
+		}
 		return pin.getFormats();
 	}
 
@@ -378,6 +369,9 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 	 * Get current format preferred by the device.
 	 */
 	public DSMediaType getPreferredFormat() {
+		if (pin == null) {
+			return null;
+		}
 		final int preferredFormatIndex = pin.getPreferredFormat();
 		return pin.getFormats()[
 				preferredFormatIndex < 0 ?
@@ -386,14 +380,30 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 	}
 
 	/**
-	 * Show dialog for setting parameters of the device.
-	 * (Currently doesn't work well.)
+	 * Show dialog for setting parameters of the device (saturation etc.).
 	 */
 	public void showDialog() {
 		if (capture != null) {
 			CaptureDevice device = capture.getActiveVideoDevice();
 			if (device != null) {
-				device.showPropertiesDialog();
+				device.showDialog(CaptureDevice.WDM_DEVICE);
+			}
+		}
+	}
+
+	/**
+	 * Show dialog for setting parameters of the device (resolution and frame-rate).
+	 */
+	public void showFormatDialog() {
+		if (capture != null) {
+			CaptureDevice device = capture.getActiveVideoDevice();
+			if (device != null) {
+				if (device.showDialog(CaptureDevice.WDM_CAPTURE) >= 0) {
+					final Dimension d = capture.getDisplaySize();
+					width = d.width;
+					height = d.height;
+					fps = capture.getFrameRate();
+				}
 			}
 		}
 	}

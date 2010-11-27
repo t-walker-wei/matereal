@@ -37,10 +37,13 @@ public abstract class AbstractCapture extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setVisible(true);
+		setFrameSize(capture.getWidth(), capture.getHeight());
+	}
+
+	public void setFrameSize(int width, int height) {
 		final Insets insets = getInsets();
-		setSize(capture.getWidth() + insets.left + insets.right, capture
-				.getHeight()
-				+ insets.top + insets.bottom);
+		setSize(width + insets.left + insets.right,
+				height + insets.top + insets.bottom);
 	}
 
 	/** Dispose the capture object and the GUI parts. */
