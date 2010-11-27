@@ -68,6 +68,11 @@ public class CaptureDS extends AbstractCapture {
 
 		// Start to capture.
 		initialize(capture);
+		if (capture.getWidth() != 800 ||
+				capture.getHeight() != 600) {
+			((VideoCaptureDS) capture).showFormatDialog();
+			setFrameSize(capture.getWidth(), capture.getHeight());
+		}
 		System.out.println("Capturing video with " + capture.getIdentifier()
 				+ "\nat " + capture.getWidth() + "x" + capture.getHeight()
 				+ ", " + capture.getFrameRate() + "fps.");
