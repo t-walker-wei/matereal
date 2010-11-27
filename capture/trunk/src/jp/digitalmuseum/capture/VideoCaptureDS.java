@@ -208,18 +208,7 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		}
 
 		// Wait till data arrives.
-		while (true) {
-			if (capture.getDataSize() > 0) {
-				break;
-			}
-			try { Thread.sleep(100); }
-			catch (InterruptedException e) { }
-		}
-
-		final Dimension d = capture.getDisplaySize();
-		width = d.width;
-		height = d.height;
-		fps = capture.getFrameRate();
+		updateInformation();
 	}
 
 	public void pause() {
@@ -254,13 +243,23 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 				isPaused()) {
 			return null;
 		}
-		final byte[] pixels = capture.getData();
-		if (pixels == null) {
-			return null;
-		} else if (isGrayScale()) {
-			return RawImageUtils.rgbToGrayScale(pixels);
-		} else {
-			return pixels;
+		int size = 0;
+		try {
+			size = capture.getDataSize();
+			final byte[] pixels = capture.getData();
+			if (pixels == null) {
+				return null;
+			} else if (isGrayScale()) {
+				return RawImageUtils.rgbToGrayScale(pixels);
+			} else {
+				return pixels;
+			}
+		} catch (DSJException e) {
+			if (size > 0) {
+				// Don't know why this happens...
+				return null;
+			}
+			throw e;
 		}
 	}
 
@@ -302,6 +301,20 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 
 		// Set the filter.
 		this.filter = filter;
+	}
+
+	private void updateInformation() {
+		while (true) {
+			if (capture.getDataSize() > 0) {
+				break;
+			}
+			try { Thread.sleep(100); }
+			catch (InterruptedException e) { }
+		}
+		final Dimension d = capture.getDisplaySize();
+		width = d.width;
+		height = d.height;
+		fps = capture.getFrameRate();
 	}
 
 	/**
@@ -399,10 +412,7 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 			CaptureDevice device = capture.getActiveVideoDevice();
 			if (device != null) {
 				if (device.showDialog(CaptureDevice.WDM_CAPTURE) >= 0) {
-					final Dimension d = capture.getDisplaySize();
-					width = d.width;
-					height = d.height;
-					fps = capture.getFrameRate();
+					updateInformation();
 				}
 			}
 		}
