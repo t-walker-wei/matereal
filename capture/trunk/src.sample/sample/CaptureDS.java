@@ -70,10 +70,17 @@ public class CaptureDS extends AbstractCapture {
 		initialize(capture);
 		if (capture.getWidth() != 800 ||
 				capture.getHeight() != 600) {
+			JOptionPane.showMessageDialog(this, "Please select 800x600 pixels for capturing image resolution in the next dialog.");
 			((VideoCaptureDS) capture).showFormatDialog();
+			if (capture.getWidth() != 800 ||
+					capture.getHeight() != 600) {
+				System.err.println("Failed to capture images in resolution of 800x600 pixels.");
+				capture.stop();
+				return;
+			}
 			setFrameSize(capture.getWidth(), capture.getHeight());
 		}
-		System.out.println("Capturing video with " + capture.getIdentifier()
+		System.out.println("Capturing images with " + capture.getIdentifier()
 				+ "\nat " + capture.getWidth() + "x" + capture.getHeight()
 				+ ", " + capture.getFrameRate() + "fps.");
 	}

@@ -42,6 +42,11 @@ import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
 import jp.digitalmuseum.mr.resource.WheelsController;
 
+/**
+ * Abstract implementation of MobileTask.
+ *
+ * @author Jun KATO
+ */
 public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements MobileTask {
 	private WheelsController w;
 

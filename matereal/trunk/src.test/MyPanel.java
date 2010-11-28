@@ -1,21 +1,14 @@
-package matereal;
 
-import java.awt.GridBagLayout;
+
 import javax.swing.JPanel;
-import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import java.awt.GridBagConstraints;
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.JCheckBox;
 import javax.swing.BoxLayout;
-import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.Dimension;
 import javax.swing.JButton;

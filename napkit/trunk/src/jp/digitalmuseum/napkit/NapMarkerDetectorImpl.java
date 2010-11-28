@@ -143,14 +143,12 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		synchronized (squareDetector) {
 			squares.clear();
 			results.clear();
-			if (markers.size() > 0) {
-				try {
-					image.wrapBuffer(imageData);
-					binarizationFilter.doFilter(image, binarizedImage);
-					squareDetector.detectMarkerCB(binarizedImage, detectorCallback);
-				} catch (NyARException e) {
-					e.printStackTrace();
-				}
+			try {
+				image.wrapBuffer(imageData);
+				binarizationFilter.doFilter(image, binarizedImage);
+				squareDetector.detectMarkerCB(binarizedImage, detectorCallback);
+			} catch (NyARException e) {
+				e.printStackTrace();
 			}
 			return results;
 		}
@@ -275,14 +273,20 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 			if (!squareImage.pickFromRaster(image, vertex)) {
 				return;
 			}
+
 			// 取得パターンをカラー差分データに変換して評価する。
 			deviationData.setRaster(squareImage);
 
-			// 最も一致するパターンを割り当てる。
+			// 最初のパターン候補を取得
 			int direction;
 			double confidence;
 			Iterator<NapMarker> markerIterator = markers.iterator();
 			NapMarker marker = markerIterator.next();
+			if (marker == null) {
+				return;
+			}
+
+			// 最も一致するパターンを割り当てる。
 			marker.getPattern().evaluate(deviationData, matchingResult);
 			direction = matchingResult.direction;
 			confidence = matchingResult.confidence;

@@ -2,10 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/matereal/capture/capture-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/matereal/connector/connector-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/matereal/matereal/matereal-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/matereal/napkit/napkit-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/jung/collections-generic-4.01.jar"/>
 	<classpathentry kind="lib" path="lib/jung/colt-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/jung/concurrent-1.3.4.jar"/>
@@ -13,5 +9,14 @@
 	<classpathentry kind="lib" path="lib/jung/jung-api-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jung/jung-graph-impl-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jung/jung-visualization-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/matereal/capture/capture-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/matereal/connector/connector-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/matereal/matereal/matereal-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/matereal/napkit/napkit-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/dsj/dsj.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="matereal-samples/lib/dsj"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
