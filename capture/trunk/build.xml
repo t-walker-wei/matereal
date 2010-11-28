@@ -8,7 +8,7 @@
 	<property name="capture-version" value="1.0.1" />
 
 	<!-- Dependent class pathes -->
-	<property name="capture-classpath" value="lib/dsj/dsj.jar;lib/jmf/jmf.jar;lib/qtj/QTJava.zip" />
+	<property name="capture-classpath" value="../capture/lib/dsj/dsj.jar;../capture/lib/jmf/jmf.jar;../capture/lib/qtj/QTJava.zip" />
 
 	<!-- Source directory -->
 	<property name="capture-src.dir" value="src" />
@@ -42,7 +42,7 @@
 	<target name="capture-jar" depends="capture-compile">
 		<jar jarfile="${capture-jar.name}">
 			<fileset dir="${capture-classes.dir}" includes="**/*.class" />
-			<fileset dir="${capture-src.dir}" includes="**/*.java" />
+			<!-- <fileset dir="${capture-src.dir}" includes="**/*.java" /> -->
 		</jar>
 	</target>
 

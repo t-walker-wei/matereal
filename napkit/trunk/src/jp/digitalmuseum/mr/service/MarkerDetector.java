@@ -73,7 +73,6 @@ import jp.digitalmuseum.utils.Array;
  * Marker detector service using NyARToolkit.
  *
  * @author Jun KATO
- * @see NapMarkerMatchingStrategy
  * @see NapMarker
  */
 public class MarkerDetector extends ScreenLocationProviderAbstractImpl implements LocationProvider {

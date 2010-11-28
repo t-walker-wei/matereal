@@ -14,9 +14,9 @@
 	<property name="connector" value="../connector/${connector-jar.name}"/>
 	<property name="bluecove" value="../connector/${connector-bluecove}" />
 	<property name="rxtxlib" value="../connector/${connector-rxtxlib}" />
-	<property name="jbox2d" value="lib/jbox2d/JBox2D-2.0.1-b229-Library.jar" />
-	<property name="jung" value="lib/jung/collections-generic-4.01.jar;lib/jung/colt-1.2.0.jar;lib/jung/concurrent-1.3.4.jar;lib/jung/jung-algorithms-2.0.1.jar;lib/jung/jung-api-2.0.1.jar;lib/jung/jung-graph-impl-2.0.1.jar;lib/jung/jung-visualization-2.0.1.jar;lib/jung/vecmath-1.3.1.jar" />
-	<property name="p5" value="lib/p5/core.jar" />
+	<property name="jbox2d" value="../matereal/lib/jbox2d/JBox2D-2.0.1-b229-Library.jar" />
+	<property name="jung" value="../matereal/lib/jung/collections-generic-4.01.jar;../matereal/lib/jung/colt-1.2.0.jar;../matereal/lib/jung/concurrent-1.3.4.jar;../matereal/lib/jung/jung-algorithms-2.0.1.jar;../matereal/lib/jung/jung-api-2.0.1.jar;../matereal/lib/jung/jung-graph-impl-2.0.1.jar;../matereal/lib/jung/jung-visualization-2.0.1.jar;../matereal/lib/jung/vecmath-1.3.1.jar" />
+	<property name="p5" value="../matereal/lib/p5/core.jar" />
 	<property name="matereal-classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${jung};${p5}" />
 
 	<!-- Source directory -->
@@ -28,6 +28,8 @@
 
 	<!-- Javadoc destination -->
 	<property name="matereal-javadoc.dir" value="docs" />
+	<property name="style" value="style.css" />
+	<property name="copyright" value="&lt;center&gt;Copyright by Jun KATO (arc@dmz) at &lt;a href=&quot;http://mr.digitalmuseum.jp/&quot;&gt;http://mr.digitalmuseum.jp/&lt;/a&gt;&lt;/center&gt;" />
 
 	<!-- Jar file name -->
 	<property name="matereal-dist.dir" value="dist/" />
@@ -37,6 +39,7 @@
 	<property name="matereal-jar-utils.name" value="matereal-utils-${matereal-version}.jar" />
 
 	<!-- ****Targets**** -->
+
 	<!-- Jar -->
 	<target name="jar" depends="compile, extract">
 		<mkdir dir="${matereal-jar.dir}" />
@@ -82,14 +85,14 @@
 			docencoding="UTF-8"
 			locale="en"
 			classpath="${matereal-classpath}"
-			bottom="Copyright by Jun KATO (arc@dmz) at http://mr.digitalmuseum.jp/" />
+			stylesheetfile="${style}"
+			bottom="${copyright}" />
 	</target>
 
 	<!-- Clean -->
 	<target name="clean">
 		<delete dir="${matereal-classes.dir}" />
 		<delete dir="${matereal-javadoc.dir}" />
-		<delete file="${matereal-jar.dir}${matereal-jar.name}" />
-		<delete file="${matereal-jar.dir}${matereal-jar-utils.name}" />
+		<delete dir="${matereal-dist.dir}" />
 	</target>
 </project>
