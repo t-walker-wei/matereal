@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+
+<project name="matereal-javadoc" default="javadoc" basedir=".">
+	<import file="../napkit/build.xml"/>
+
+	<!-- Javadoc -->
+	<target name="javadoc">
+		<javadoc sourcepath="../connector/${connector-src.dir};../capture/${capture-src.dir};${matereal-src-core.dir};${matereal-src.dir};../napkit/${napkit-src.dir};"
+			destdir="${matereal-javadoc.dir}"
+			packagenames="jp.digitalmuseum.*"
+			charset="UTF-8"
+			encoding="UTF-8"
+			docencoding="UTF-8"
+			locale="en"
+			classpath="${capture-classpath};${connector-classpath};${jbox2d};${jung};${p5};../napkit/${nyar-classes.dir}"
+			windowtitle="matereal Javadoc"
+			doctitle="matereal-${matereal-version}"
+			stylesheetfile="${style}"
+			use="true"
+			bottom="${copyright}">
+				<group packages="jp.digitalmuseum.connector" title="connector" />
+				<group packages="jp.digitalmuseum.capture" title="capture" />
+				<group packages="jp.digitalmuseum.napkit:jp.digitalmuseum.napkit.*" title="napkit" />
+				<group packages="jp.digitalmuseum.mr:jp.digitalmuseum.mr.*" title="matereal" />
+		</javadoc>
+	</target>
+
+</project>

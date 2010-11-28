@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- exewrap must be on path; e.g. C:\Program Files\Java\jdk1.6.0_18\bin\exewrap.exe -->
 
 <project name="napkit-examples" default="napkit-examples-compile" basedir=".">
 	<import file="build.xml"/>
 
 	<!-- ****Properties**** -->
 
-	<property name="napkit-examples-classpath" value="${napkit-jar.name};${classpath}" />
+	<property name="napkit-examples-classpath" value="${napkit-jar.dir}${napkit-jar.name};${classpath}" />
 
 	<!-- Source directory -->
 	<property name="napkit-examples-src.dir" value="src.sample" />
