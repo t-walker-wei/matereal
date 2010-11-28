@@ -1,4 +1,5 @@
 package napkit;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -37,7 +38,11 @@ public class DetectMarkerDialog {
 		} else {
 			camera = new Camera();
 		}
-		camera.start();
+		try {
+			camera.start();
+		} catch (IllegalStateException e) {
+			return;
+		}
 
 		// Run a marker detector.
 		MarkerDetector detector = new MarkerDetector();
@@ -48,9 +53,8 @@ public class DetectMarkerDialog {
 			private static final long serialVersionUID = 1L;
 			@Override public void dispose() {
 				super.dispose();
-				System.out.println("disposing?");
 				Matereal.getInstance().dispose();
 			}
-		});
+		}).setFrameSize(800, 600);
 	}
 }
