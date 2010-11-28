@@ -53,6 +53,7 @@ import java.awt.image.BufferedImage;
 import java.util.Set;
 
 import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.gui.DisposableComponent;
 import jp.digitalmuseum.mr.gui.utils.GUIUtils;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -70,7 +71,7 @@ import jp.digitalmuseum.utils.ScreenRectangle;
  * @author Jun KATO
  * @see jp.digitalmuseum.mr.service.MarkerDetector
  */
-public class MarkerDetectorPanel extends JPanel {
+public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 	private MarkerDetector markerDetector;  //  @jve:decl-index=0:
 	private ImageProvider imageProvider;  //  @jve:decl-index=0:
 	private EventListener eventListener;

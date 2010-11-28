@@ -1,5 +1,7 @@
+
 import javax.swing.JOptionPane;
 
+import jp.digitalmuseum.capture.VideoCaptureDS;
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.*;
@@ -24,13 +26,25 @@ public class RunCamera {
 				"Select a device to capture images.", "Device list",
 				JOptionPane.QUESTION_MESSAGE, null, new VideoCaptureFactoryImpl()
 						.queryIdentifiers(), null);
-		Camera camera;
-		if ((identifier != null) && (identifier.length() > 0)) {
-			camera = new Camera(identifier);
-		} else {
-			camera = new Camera();
+		VideoCaptureDS capture = new VideoCaptureDS();
+		try {
+			capture.setSource(identifier);
+			capture.setSize(800, 600);
+			capture.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
 		}
-		camera.setSize(800, 600);
+		if (capture.getWidth() != 800 ||
+				capture.getHeight() != 600) {
+			JOptionPane.showMessageDialog(null, "Please select 800x600 pixels for capturing image resolution the next dialog.");
+			capture.showFormatDialog();
+			if (capture.getWidth() != 800 ||
+					capture.getHeight() != 600) {
+				System.err.println("Failed to capture images in resolution of 800x600 pixels.");
+			}
+		}
+		Camera camera = new Camera(capture);
 		camera.start();
 
 		// Make and show a window for showing captured image.
