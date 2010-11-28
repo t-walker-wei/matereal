@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="capture" default="jar" basedir=".">
-	<!-- time stamp -->
-	<tstamp>
-		<format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
-	</tstamp>
+<project name="capture" default="capture-jar" basedir=".">
 
 	<!-- ****Properties**** -->
+
 	<!-- Software version -->
 	<property name="capture-version" value="1.0.1" />
 
@@ -22,16 +19,16 @@
 	<!-- Javadoc destination -->
 	<property name="capture-javadoc.dir" value="docs" />
 
-	<!-- jar file name -->
+	<!-- Jar file name -->
 	<property name="capture-jar.name" value="capture-${capture-version}.jar" />
 
-	<!-- zip file name -->
+	<!-- Zip file name -->
 	<property name="capture-zip.name" value="capture-${capture-version}.zip" />
 
 	<!-- ****Targets**** -->
 
-	<!-- zip -->
-	<target name="zip" depends="jar">
+	<!-- Zip -->
+	<target name="capture-zip" depends="capture-jar">
 		<zip destfile="${capture-zip.name}">
 			<fileset dir="./">
 				<include name="${capture-jar.name}"/>
@@ -41,8 +38,8 @@
 		</zip>
 	</target>
 
-	<!-- jar -->
-	<target name="jar" depends="compile">
+	<!-- Jar -->
+	<target name="capture-jar" depends="capture-compile">
 		<jar jarfile="${capture-jar.name}">
 			<fileset dir="${capture-classes.dir}" includes="**/*.class" />
 			<fileset dir="${capture-src.dir}" includes="**/*.java" />
@@ -50,13 +47,13 @@
 	</target>
 
 	<!-- Compile -->
-	<target name="compile">
+	<target name="capture-compile">
 		<mkdir dir="${capture-classes.dir}" />
 		<javac srcdir="${capture-src.dir}" destdir="${capture-classes.dir}" classpath="${capture-classpath}" />
 	</target>
 
 	<!-- Javadoc -->
-	<target name="javadoc">
+	<target name="capture-javadoc">
 		<javadoc sourcepath="${capture-src.dir}"
 			destdir="${capture-javadoc.dir}"
 			packagenames="jp.digitalmuseum.*"
@@ -68,10 +65,12 @@
 			bottom="Copyright by Jun KATO (arc@dmz) at http://matereal.sourceforge.jp/" />
 	</target>
 
-	<!-- Cleaning -->
-	<target name="clean">
+	<!-- Clean -->
+	<target name="capture-clean">
 		<delete dir="${capture-classes.dir}" />
 		<delete dir="${capture-javadoc.dir}" />
-		<delete file="${capture-jar.name}" />
+		<delete>
+			<fileset dir="./" includes="${capture-jar.name} ${capture-zip.name}" />
+		</delete>
 	</target>
 </project>

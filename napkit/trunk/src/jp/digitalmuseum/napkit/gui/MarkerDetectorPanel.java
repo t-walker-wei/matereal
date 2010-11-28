@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.napkit.gui;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -80,6 +81,7 @@ public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 
 	private class JPreviewPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
+		private final BasicStroke stroke = new BasicStroke(3);
 		@Override public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			if (image != null) {
@@ -89,6 +91,7 @@ public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 				g.drawImage(image, x, y, null);
 				final Graphics2D g2 = (Graphics2D) g;
 				g2.translate(x, y);
+				g2.setStroke(stroke);
 				g2.setColor(Color.orange);
 				for (ScreenRectangle rectangle : markerDetector.getSquares()) {
 					rectangle.draw(g2);

@@ -190,6 +190,8 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		} catch (DSJException e) {
 			// Can't retrieve pin list from the filter.
 			// (Do nothing.)
+		} catch (NoSuchMethodError nsme) {
+			// (NoSuchMethodError occurs instead of DSJException at p.getFormats() on Win7 x64 ... why?)
 		}
 
 		// Instantiate a capture object.

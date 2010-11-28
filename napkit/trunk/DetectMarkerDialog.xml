@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DetectMarkerDialog" default="runnable-jar" basedir=".">
+	<import file="build-examples.xml"/>
+
+	<!-- ****Properties**** -->
+
+	<property name="app.name" value="DetectMarkerDialog" />
+	<property name="app.classpath" value="${matereal-jar.name} ${capture-jar.name} ${napkit-jar.name}" />
+
+	<!-- ****Targets**** -->
+
+	<!-- Runnable Jar to Zip -->
+	<target name="runnable-jar-zip" depends="runnable-jar">
+		<zip destfile="${app.name}.zip">
+			<fileset dir="./" includes="${app.name}.jar" />
+			<zipfileset dir="./" file="README_app.txt" fullpath="README.txt" />
+		</zip>
+	</target>
+
+	<!-- Runnable Jar -->
+	<target name="runnable-jar" depends="napkit-examples-compile">
+		<copy file="../matereal/${matereal-jar.dir}${matereal-jar.name}" todir="." />
+		<copy file="../capture/${capture-jar.name}" todir="." />
+		<jar destfile="${app.name}.jar">
+			<zipfileset src="lib/jar-in-jar-loader.zip" />
+			<fileset dir="${napkit-examples-classes.dir}" includes="${app.name}*.class" />
+			<fileset dir="." includes="${app.classpath}" />
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Rsrc-Main-Class" value="${app.name}" />
+				<attribute name="Rsrc-Class-Path" value="./ ${app.classpath}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- Runnable Exe to Zip -->
+	<target name="runnable-exe-zip" depends="runnable-exe">
+		<copy file="../capture/lib/dsj/dsj.jar" todir="." />
+		<copy file="../capture/lib/dsj/dsj.dll" todir="." />
+		<zip destfile="${app.name}-exe.zip">
+			<fileset dir="./" includes="${app.name}.exe" />
+			<zipfileset dir="./" includes="${app.classpath} dsj.jar dsj.dll" prefix="lib" />
+			<zipfileset dir="./" file="README_app_win.txt" fullpath="README.txt" />
+		</zip>
+	</target>
+
+	<!-- Runnable Exe -->
+	<target name="runnable-exe" depends="runnable-jar">
+		<jar destfile="${app.name}_win.jar">
+			<fileset dir="${napkit-examples-classes.dir}" includes="${app.name}*.class" />
+			<manifest>
+				<attribute name="Main-Class" value="${app.name}" />
+			</manifest>
+		</jar>
+		<exec executable="exewrap.exe">
+		  <arg line="-g ${app.name}_win.jar"/>
+		</exec>
+		<move file="${app.name}_win.exe" tofile="${app.name}.exe" />
+	</target>
+
+	<!-- Clean -->
+	<target name="runnable-clean">
+		<delete file="${matereal-jar.name}" />
+		<delete file="${capture-jar.name}" />
+		<delete file="${app.name}_win.jar" />
+		<delete file="${app.name}.jar" />
+		<delete file="${app.name}.exe" />
+		<delete file="${app.name}.zip" />
+		<delete file="${app.name}-exe.zip" />
+		<delete dir="." includes="dsj.jar dsj.dll" />
+	</target>
+</project>

@@ -268,6 +268,16 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 			vertex[2].y = coordY[vertexIndex[2]];
 			vertex[3].x = coordX[vertexIndex[3]];
 			vertex[3].y = coordY[vertexIndex[3]];
+			ScreenRectangle square = NapUtils.convertToScreenRectangle(vertex);
+			squares.push(square);
+
+			// 最初のパターン候補を取得
+			int direction;
+			double confidence;
+			Iterator<NapMarker> markerIterator = markers.iterator();
+			if (!markerIterator.hasNext()) {
+				return;
+			}
 
 			// 画像を取得
 			if (!squareImage.pickFromRaster(image, vertex)) {
@@ -277,16 +287,8 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 			// 取得パターンをカラー差分データに変換して評価する。
 			deviationData.setRaster(squareImage);
 
-			// 最初のパターン候補を取得
-			int direction;
-			double confidence;
-			Iterator<NapMarker> markerIterator = markers.iterator();
-			NapMarker marker = markerIterator.next();
-			if (marker == null) {
-				return;
-			}
-
 			// 最も一致するパターンを割り当てる。
+			NapMarker marker = markerIterator.next();
 			marker.getPattern().evaluate(deviationData, matchingResult);
 			direction = matchingResult.direction;
 			confidence = matchingResult.confidence;
@@ -303,10 +305,8 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 			}
 
 			// 最も一致したマーカ情報を、この矩形の情報として記録する。
-			ScreenRectangle square = NapUtils.convertToScreenRectangle(vertex);
-			final NapDetectionResult result = new NapDetectionResult(marker,
-					square, confidence, direction);
-			squares.push(square);
+			final NapDetectionResult result = new NapDetectionResult(
+					marker, square, confidence, direction);
 			results.push(result);
 		}
 	}

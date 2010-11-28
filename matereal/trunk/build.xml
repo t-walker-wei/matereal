@@ -3,14 +3,11 @@
 <project name="matereal" default="jar" basedir=".">
 	<import file="../capture/build.xml"/>
 	<import file="../connector/build.xml"/>
-	<!-- time stamp -->
-	<tstamp>
-		<format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
-	</tstamp>
 
 	<!-- ****Properties**** -->
+
 	<!-- Software version -->
-	<property name="version" value="1.0.1" />
+	<property name="matereal-version" value="1.0.1" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture" value="../capture/${capture-jar.name}" />
@@ -20,54 +17,54 @@
 	<property name="jbox2d" value="lib/jbox2d/JBox2D-2.0.1-b229-Library.jar" />
 	<property name="jung" value="lib/jung/collections-generic-4.01.jar;lib/jung/colt-1.2.0.jar;lib/jung/concurrent-1.3.4.jar;lib/jung/jung-algorithms-2.0.1.jar;lib/jung/jung-api-2.0.1.jar;lib/jung/jung-graph-impl-2.0.1.jar;lib/jung/jung-visualization-2.0.1.jar;lib/jung/vecmath-1.3.1.jar" />
 	<property name="p5" value="lib/p5/core.jar" />
-	<property name="classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${jung};${p5}" />
+	<property name="matereal-classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${jung};${p5}" />
 
 	<!-- Source directory -->
-	<property name="src.dir" value="src" />
-	<property name="src-core.dir" value="src.core" />
+	<property name="matereal-src.dir" value="src" />
+	<property name="matereal-src-core.dir" value="src.core" />
 
 	<!-- Classes destination directory -->
-	<property name="classes.dir" value="bin" />
+	<property name="matereal-classes.dir" value="bin" />
 
 	<!-- Javadoc destination -->
-	<property name="javadoc.dir" value="docs" />
+	<property name="matereal-javadoc.dir" value="docs" />
 
-	<!-- jar file name -->
-	<property name="dist.dir" value="dist/" />
-	<property name="lib.dir" value="lib/" />
-	<property name="jar.dir" value="${dist.dir}${lib.dir}" />
-	<property name="jar.name" value="matereal-${version}.jar" />
-	<property name="jar-utils.name" value="matereal-utils-${version}.jar" />
+	<!-- Jar file name -->
+	<property name="matereal-dist.dir" value="dist/" />
+	<property name="matereal-lib.dir" value="lib/" />
+	<property name="matereal-jar.dir" value="${matereal-dist.dir}${matereal-lib.dir}" />
+	<property name="matereal-jar.name" value="matereal-${matereal-version}.jar" />
+	<property name="matereal-jar-utils.name" value="matereal-utils-${matereal-version}.jar" />
 
 	<!-- ****Targets**** -->
-	<!-- jar -->
+	<!-- Jar -->
 	<target name="jar" depends="compile, extract">
-		<mkdir dir="${jar.dir}" />
-		<jar jarfile="${jar.dir}${jar.name}">
-			<fileset dir="${classes.dir}" includes="**/*.class" />
+		<mkdir dir="${matereal-jar.dir}" />
+		<jar jarfile="${matereal-jar.dir}${matereal-jar.name}">
+			<fileset dir="${matereal-classes.dir}" includes="**/*.class" />
 			<!-- <fileset dir="${src.dir}" includes="**/*.java **/*.properties" /> -->
 		</jar>
 	</target>
 
-	<!-- jar -->
+	<!-- Jar (utility classes only) -->
 	<target name="jar-utils" depends="compile">
-		<jar jarfile="${jar.dir}${jar-utils.name}">
-			<fileset dir="${classes.dir}" includes="jp/digitalmuseum/utils/*.class" />
+		<jar jarfile="${matereal-jar.dir}${matereal-jar-utils.name}">
+			<fileset dir="${matereal-classes.dir}" includes="jp/digitalmuseum/utils/*.class" />
 			<!-- <fileset dir="${src.dir}" includes="jp/digitalmuseum/utils/*.java" /> -->
 		</jar>
 	</target>
 
 	<!-- Compile -->
 	<target name="compile">
-		<mkdir dir="${classes.dir}" />
-		<javac srcdir="${src-core.dir};${src.dir}" destdir="${classes.dir}"
-				classpath="${classpath}"
+		<mkdir dir="${matereal-classes.dir}" />
+		<javac srcdir="${matereal-src-core.dir};${matereal-src.dir}" destdir="${matereal-classes.dir}"
+				classpath="${matereal-classpath}"
 				encoding="UTF-8" />
 	</target>
 
 	<!-- Extract -->
 	<target name="extract">
-		<unjar src="${jbox2d}" dest="${classes.dir}">
+		<unjar src="${jbox2d}" dest="${matereal-classes.dir}">
 			<patternset>
 				<include name="**/*.class" />
 				<include name="**/*.html" />
@@ -77,22 +74,22 @@
 
 	<!-- Javadoc -->
 	<target name="javadoc">
-		<javadoc sourcepath="${src-core.dir};${src.dir}"
-			destdir="${javadoc.dir}"
+		<javadoc sourcepath="${matereal-src-core.dir};${matereal-src.dir}"
+			destdir="${matereal-javadoc.dir}"
 			packagenames="jp.digitalmuseum.*"
 			charset="UTF-8"
 			encoding="UTF-8"
 			docencoding="UTF-8"
 			locale="en"
-			classpath="${classpath}"
+			classpath="${matereal-classpath}"
 			bottom="Copyright by Jun KATO (arc@dmz) at http://mr.digitalmuseum.jp/" />
 	</target>
 
-	<!-- Cleaning -->
+	<!-- Clean -->
 	<target name="clean">
-		<delete dir="${classes.dir}" />
-		<delete dir="${javadoc.dir}" />
-		<delete file="${jar.name}" />
-		<delete file="${jar-utils.name}" />
+		<delete dir="${matereal-classes.dir}" />
+		<delete dir="${matereal-javadoc.dir}" />
+		<delete file="${matereal-jar.dir}${matereal-jar.name}" />
+		<delete file="${matereal-jar.dir}${matereal-jar-utils.name}" />
 	</target>
 </project>

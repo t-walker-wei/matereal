@@ -371,8 +371,10 @@ public class VideoCaptureQT extends VideoCaptureAbstractImpl {
 					throw new RuntimeException("Problem listing capture devices, " +
 					"read the video reference for more info.");
 				}
+			} catch (NullPointerException e) {
+				return null;
 			}
 		}
-		return deviceList.clone();
+		return deviceList == null ? null : deviceList.clone();
 	}
 }
