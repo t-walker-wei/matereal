@@ -36,6 +36,11 @@
  */
 package jp.digitalmuseum.mr.andy;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.util.Arrays;
+
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
@@ -44,6 +49,8 @@ import processing.core.PImage;
 
 public class MrImage extends PImage implements EventListener {
 	private ImageProvider imageProvider;
+	private BufferedImage image;
+	private Graphics2D g2;
 	public byte[] data;
 	public int dataWidth;
 	public int dataHeight;
@@ -65,6 +72,30 @@ public class MrImage extends PImage implements EventListener {
 		init(dataWidth, dataHeight, 1);
 	}
 
+	public MrImage(int width, int height) {
+		image = new BufferedImage(width, height,
+				BufferedImage.TYPE_3BYTE_BGR);
+		data = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();
+		g2 = image.createGraphics();
+		this.dataWidth = width;
+		this.dataHeight = height;
+		init(dataWidth, dataHeight, 1);
+	}
+
+	public Graphics2D beginDraw() {
+		return g2;
+	}
+
+	public void endDraw() {
+		updateImage(data);
+	}
+
+	public void clear() {
+		if (data != null) {
+			Arrays.fill(data, (byte)0xff);
+		}
+	}
+
 	public void crop(int x, int y, int w, int h) {
 		crop = true;
 		cropX = Math.max(0, x);
@@ -82,47 +113,47 @@ public class MrImage extends PImage implements EventListener {
 	public void dispose() {
 		imageProvider.removeEventListener(this);
 		imageProvider.stop();
+		if (g2 != null) {
+			g2.dispose();
+		}
 	}
 
 	public void eventOccurred(Event e) {
 		if (e instanceof ImageUpdateEvent) {
-			loadPixels();
-			synchronized (pixels) {
-				data = ((ImageProvider) e.getSource()).getImageData();
-				if (data == null) {
-					return;
-				}
-				int index = 0;
-				if (crop) {
-					int byteIndex = cropX * 3;
-					final int byteOffset = (dataWidth - cropW) * 3;
-					for (int y = 0; y < cropH; y++) {
-						for (int x = 0; x < cropW; x++) {
-							pixels[index++] =
-								 (data[byteIndex++] & 0xff)
-								|((data[byteIndex++] & 0xff) << 8)
-								|((data[byteIndex++] & 0xff) << 16);
-							/*
-							pixels[index++] =
-								 ((data[byteIndex++] & 0xff) << 16)
-								|((data[byteIndex++] & 0xff) << 8)
-								| (data[byteIndex++] & 0xff);
-							*/
-						}
-						byteIndex += byteOffset;
-					}
-				} else {
-					int byteIndex = 0;
-					final int dataLength = dataWidth * dataHeight;
-					while (index < dataLength) {
+			updateImage(((ImageProvider) e.getSource()).getImageData());
+		}
+	}
+
+	private void updateImage(byte[] data) {
+		loadPixels();
+		synchronized (pixels) {
+			if (data == null) {
+				return;
+			}
+			int index = 0;
+			if (crop) {
+				int byteIndex = cropX * 3;
+				final int byteOffset = (dataWidth - cropW) * 3;
+				for (int y = 0; y < cropH; y++) {
+					for (int x = 0; x < cropW; x++) {
 						pixels[index++] =
 							 (data[byteIndex++] & 0xff)
 							|((data[byteIndex++] & 0xff) << 8)
 							|((data[byteIndex++] & 0xff) << 16);
 					}
+					byteIndex += byteOffset;
 				}
-				updatePixels();
+			} else {
+				int byteIndex = 0;
+				final int dataLength = dataWidth * dataHeight;
+				while (index < dataLength) {
+					pixels[index++] =
+						 (data[byteIndex++] & 0xff)
+						|((data[byteIndex++] & 0xff) << 8)
+						|((data[byteIndex++] & 0xff) << 16);
+				}
 			}
+			updatePixels();
 		}
 	}
 }
