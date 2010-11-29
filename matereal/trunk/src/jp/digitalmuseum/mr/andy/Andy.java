@@ -49,9 +49,11 @@ public class Andy {
 	private LocationProvider locationProvider;
 
 	private Andy() {
+		System.out.println("---Starting Andy.");
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
+				System.out.println("---Shutting down Andy.");
 				Andy.this.dispose();
 			}
 		});

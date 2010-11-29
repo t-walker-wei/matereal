@@ -109,6 +109,14 @@ public class MobileRobot extends Entity {
 		task.stop();
 	}
 
+	public Task getTask() {
+		return task;
+	}
+
+	public Entity getSubject() {
+		return entity;
+	}
+
 	public boolean forward() {
 		return startTask(new GoForward());
 	}
@@ -151,7 +159,7 @@ public class MobileRobot extends Entity {
 
 	private boolean push() {
 		Task push = new Push(
-				entity.getEntityCore(), position.getX(), position.getY());
+				entity.getRobotCore(), position.getX(), position.getY());
 		return startTask(push);
 	}
 
@@ -177,7 +185,7 @@ public class MobileRobot extends Entity {
 		return startTask(new FollowVectorField(vf));
 	}
 
-	public jp.digitalmuseum.mr.entity.Entity getEntityCore() {
+	public Robot getRobotCore() {
 		return robot;
 	}
 }

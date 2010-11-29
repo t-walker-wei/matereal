@@ -61,7 +61,7 @@ public abstract class Entity {
 			public void eventOccurred(Event e) {
 				if (e instanceof LocationUpdateEvent) {
 					synchronized (listeners) {
-						((LocationUpdateEvent) e).getSource().getLocationOut(getEntityCore(), location);
+						((LocationUpdateEvent) e).getSource().getLocationOut(getRobotCore(), location);
 						if (!location.isNotFound()) {
 							final Location location = new Location();
 							location.setLocation(location);
@@ -114,7 +114,7 @@ public abstract class Entity {
 
 	public synchronized void getLocationOut(Location location) {
 		Andy.getInstance().getLocationProvider().getLocationOut(
-				getEntityCore(), this.location);
+				getRobotCore(), this.location);
 		location.setLocation(this.location);
 	}
 
@@ -126,9 +126,9 @@ public abstract class Entity {
 
 	public void getPositionOut(Position position) {
 		Andy.getInstance().getLocationProvider().getPositionOut(
-				getEntityCore(), this.position);
+				getRobotCore(), this.position);
 		position.set(this.position);
 	}
 
-	public abstract jp.digitalmuseum.mr.entity.Entity getEntityCore();
+	public abstract jp.digitalmuseum.mr.entity.Entity getRobotCore();
 }
