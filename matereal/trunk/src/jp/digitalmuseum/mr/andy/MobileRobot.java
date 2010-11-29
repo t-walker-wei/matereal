@@ -51,12 +51,12 @@ import jp.digitalmuseum.utils.VectorField;
 public class MobileRobot extends Entity {
 	private Robot robot;
 	private Task task;
-	private Position position;
+	private Position goal;
 	private Entity entity;
 
 	public MobileRobot(Robot robot) {
-		Andy.getInstance();
-		position = new Position();
+		super(robot);
+		goal = new Position();
 		this.robot = robot;
 	}
 
@@ -79,14 +79,14 @@ public class MobileRobot extends Entity {
 		if (task == null) {
 			return null;
 		}
-		return new Position(position);
+		return new Position(goal);
 	}
 
 	public boolean getGoalOut(Position p) {
 		if (task == null) {
 			return false;
 		}
-		p.set(position);
+		p.set(goal);
 		return true;
 	}
 
@@ -138,46 +138,46 @@ public class MobileRobot extends Entity {
 	}
 
 	private boolean move() {
-		Task move = new Move(position.getX(), position.getY());
+		Task move = new Move(goal.getX(), goal.getY());
 		return startTask(move);
 	}
 
 	public synchronized boolean moveTo(Position p) {
-		position.set(p);
+		goal.set(p);
 		return move();
 	}
 
 	public synchronized boolean moveTo(double x, double y) {
-		position.set(x, y);
+		goal.set(x, y);
 		return move();
 	}
 
 	public synchronized boolean moveTo(int screenX, int screenY) {
-		position.setScreen(screenX, screenY);
+		goal.setScreen(screenX, screenY);
 		return move();
 	}
 
 	private boolean push() {
 		Task push = new Push(
-				entity.getRobotCore(), position.getX(), position.getY());
+				entity.getEntityCore(), goal.getX(), goal.getY());
 		return startTask(push);
 	}
 
 	public synchronized boolean pushTo(Entity e, Position p) {
 		entity = e;
-		position.set(p);
+		goal.set(p);
 		return push();
 	}
 
 	public synchronized boolean pushTo(Entity e, double x, double y) {
 		entity = e;
-		position.set(x, y);
+		goal.set(x, y);
 		return push();
 	}
 
 	public synchronized boolean pushTo(Entity e, int screenX, int screenY) {
 		entity = e;
-		position.setScreen(screenX, screenY);
+		goal.setScreen(screenX, screenY);
 		return push();
 	}
 
@@ -185,7 +185,7 @@ public class MobileRobot extends Entity {
 		return startTask(new FollowVectorField(vf));
 	}
 
-	public Robot getRobotCore() {
+	public Robot getEntityCore() {
 		return robot;
 	}
 }
