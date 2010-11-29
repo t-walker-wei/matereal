@@ -42,15 +42,17 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.LocationUpdateEvent;
 
-public abstract class Entity {
+public class Entity {
 
 	private HashSet<LocationListener> listeners;
 	private jp.digitalmuseum.utils.Location location;
 	private jp.digitalmuseum.utils.Position position;
 	private EventListener listener;
+	private jp.digitalmuseum.mr.entity.Entity entityCore;
 
-	public Entity() {
+	public Entity(jp.digitalmuseum.mr.entity.Entity entity) {
 		Andy.getInstance();
+		this.entityCore = entity;
 		listeners = new HashSet<LocationListener>();
 		location = new jp.digitalmuseum.utils.Location();
 		position = new jp.digitalmuseum.utils.Position();
@@ -61,7 +63,7 @@ public abstract class Entity {
 			public void eventOccurred(Event e) {
 				if (e instanceof LocationUpdateEvent) {
 					synchronized (listeners) {
-						((LocationUpdateEvent) e).getSource().getLocationOut(getRobotCore(), location);
+						((LocationUpdateEvent) e).getSource().getLocationOut(getEntityCore(), location);
 						if (!location.isNotFound()) {
 							final Location location = new Location();
 							location.setLocation(location);
@@ -114,7 +116,7 @@ public abstract class Entity {
 
 	public synchronized void getLocationOut(Location location) {
 		Andy.getInstance().getLocationProvider().getLocationOut(
-				getRobotCore(), this.location);
+				getEntityCore(), this.location);
 		location.setLocation(this.location);
 	}
 
@@ -126,9 +128,11 @@ public abstract class Entity {
 
 	public void getPositionOut(Position position) {
 		Andy.getInstance().getLocationProvider().getPositionOut(
-				getRobotCore(), this.position);
+				getEntityCore(), this.position);
 		position.set(this.position);
 	}
 
-	public abstract jp.digitalmuseum.mr.entity.Entity getRobotCore();
+	public jp.digitalmuseum.mr.entity.Entity getEntityCore() {
+		return entityCore;
+	}
 }
