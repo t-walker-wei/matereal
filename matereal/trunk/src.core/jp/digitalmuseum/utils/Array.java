@@ -87,7 +87,12 @@ public class Array<T> implements Iterable<T> {
 		if (length <= elements.length) {
 			return;
 		}
-		elements = Arrays.copyOf(elements, length);
+		Class<?> type = elements.getClass().getComponentType();
+		@SuppressWarnings("unchecked")
+		T[] newElements = (T[]) java.lang.reflect.Array.newInstance(type, length);
+		System.arraycopy(elements, 0, newElements, 0,
+				length > elements.length ? elements.length : length);
+		elements = newElements;
 	}
 
 	/** Returns the number of elements. */

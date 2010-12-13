@@ -41,10 +41,7 @@ import java.util.ResourceBundle;
 
 public class Messages {
 	private static final String BUNDLE_NAME = "jp.digitalmuseum.mr.gui.resources";
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME,
-					ResourceBundle.Control.getControl(
-							ResourceBundle.Control.FORMAT_CLASS));
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 	private Messages() {}
 
 	public static String getString(String key) {
