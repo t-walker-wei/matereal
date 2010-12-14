@@ -36,8 +36,8 @@
  */
 package jp.digitalmuseum.napkit.gui;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.PropertyResourceBundle;
 
 public class resources extends PropertyResourceBundle {
@@ -57,6 +57,6 @@ public class resources extends PropertyResourceBundle {
 		"MarkerEntityPanel.0=Directions of the marker patterns are: up, left, down, right";
 
 	public resources() throws IOException {
-		super(new StringReader(resourcesString));
+		super(new ByteArrayInputStream(resourcesString.getBytes()));
 	}
 }

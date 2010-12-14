@@ -36,8 +36,8 @@
  */
 package jp.digitalmuseum.napkit.gui;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.PropertyResourceBundle;
 
 public class resources_ja extends PropertyResourceBundle {
@@ -57,6 +57,6 @@ public class resources_ja extends PropertyResourceBundle {
 		"MarkerEntityPanel.0=※マーカーパターンは↑←↓→の向きに表示されています";
 
 	public resources_ja() throws IOException {
-		super(new StringReader(resourcesString));
+		super(new ByteArrayInputStream(resourcesString.getBytes()));
 	}
 }
