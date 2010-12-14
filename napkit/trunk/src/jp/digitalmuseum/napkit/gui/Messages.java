@@ -45,10 +45,7 @@ import java.util.ResourceBundle;
 public class Messages {
 	private static final String BUNDLE_NAME = "jp.digitalmuseum.napkit.gui.resources"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME,
-					ResourceBundle.Control.getControl(
-							ResourceBundle.Control.FORMAT_CLASS));
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private Messages() {
 	}

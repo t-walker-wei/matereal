@@ -7,7 +7,7 @@
 	<!-- ****Properties**** -->
 
 	<!-- Software version -->
-	<property name="matereal-version" value="1.0.1" />
+	<property name="matereal.version" value="1.0.1" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture" value="../capture/${capture-jar.name}" />
@@ -35,10 +35,24 @@
 	<property name="matereal-dist.dir" value="dist/" />
 	<property name="matereal-lib.dir" value="lib/" />
 	<property name="matereal-jar.dir" value="${matereal-dist.dir}${matereal-lib.dir}" />
-	<property name="matereal-jar.name" value="matereal-${matereal-version}.jar" />
-	<property name="matereal-jar-utils.name" value="matereal-utils-${matereal-version}.jar" />
+	<property name="matereal-jar.name" value="matereal-${matereal.version}.jar" />
+	<property name="matereal-jar-utils.name" value="matereal-utils-${matereal.version}.jar" />
+
+	<!-- Zip file name -->
+	<property name="matereal-zip.name" value="matereal-${matereal.version}.zip" />
 
 	<!-- ****Targets**** -->
+
+	<!-- Zip -->
+	<target name="matereal-zip" depends="jar">
+		<zip destfile="${matereal-dist.dir}${matereal-zip.name}">
+			<fileset file="${matereal-jar.dir}${matereal-jar.name}" />
+			<fileset dir="./">
+				<include name="LICENSE.txt"/>
+				<include name="README.txt"/>
+			</fileset>
+		</zip>
+	</target>
 
 	<!-- Jar -->
 	<target name="jar" depends="compile, extract">
