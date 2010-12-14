@@ -42,7 +42,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 
 /**
- * An utility class to parse contents of a property file to a String array.
+ * An utility class to parse contents of a property file.
  *
  * @author Jun KATO
  * @see java.util.ListResourceBundle
@@ -65,5 +65,27 @@ public class StringResourceParser {
 		}
 		String[][] ret = new String[list.size()][];
 		return list.toArray(ret);
+	}
+
+	private static final char[] hexChar = {
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+	};
+
+	/** Get \udddd format string from UTF-8 string. */
+	public static String escapeUnicode(String s) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			if ((c >> 7) > 0) {
+				sb.append("\\u");
+				sb.append(hexChar[(c >> 12) & 0xF]);
+				sb.append(hexChar[(c >> 8) & 0xF]);
+				sb.append(hexChar[(c >> 4) & 0xF]);
+				sb.append(hexChar[c & 0xF]);
+			} else {
+				sb.append(c);
+			}
+		}
+		return sb.toString();
 	}
 }
