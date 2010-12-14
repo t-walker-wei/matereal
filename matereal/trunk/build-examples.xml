@@ -19,6 +19,9 @@
 	<target name="matereal-examples-compile" depends="jar">
 		<mkdir dir="${matereal-examples-classes.dir}" />
 		<javac srcdir="${matereal-examples-src.dir}" destdir="${matereal-examples-classes.dir}"
+				target="1.5"
+				source="1.5"
+				optimize="on"
 				classpath="${matereal-examples-classpath}"
 				encoding="UTF-8" />
 	</target>

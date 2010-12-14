@@ -6,7 +6,7 @@
 	<!-- ****Properties**** -->
 
 	<!-- Software version -->
-	<property name="napkit.version" value="1.0.1" />
+	<property name="napkit.version" value="1.0.2" />
 
 	<!-- Dependent class pathes -->
 	<property name="napkit-classpath" value="../matereal/${matereal-jar.dir}${matereal-jar.name};${capture};${connector}" />
@@ -63,13 +63,21 @@
 	<!-- Compile -->
 	<target name="napkit-compile" depends="nyar-compile">
 		<mkdir dir="${napkit-classes.dir}" />
-		<javac srcdir="${napkit-src.dir}" destdir="${napkit-classes.dir}" classpath="${napkit-classpath};${nyar-classes.dir}" encoding="UTF-8" />
+		<javac srcdir="${napkit-src.dir}" destdir="${napkit-classes.dir}"
+				source="1.5"
+				target="1.5"
+				optimize="on"
+				classpath="${napkit-classpath};${nyar-classes.dir}" encoding="UTF-8" />
 	</target>
 
 	<!-- Compile -->
 	<target name="nyar-compile">
 		<mkdir dir="${nyar-classes.dir}" />
-		<javac srcdir="${nyar-src.dir}" destdir="${nyar-classes.dir}" encoding="UTF-8" />
+		<javac srcdir="${nyar-src.dir}" destdir="${nyar-classes.dir}"
+				source="1.5"
+				target="1.5"
+				optimize="on"
+				encoding="UTF-8" />
 	</target>
 
 	<!-- Extract -->

@@ -40,6 +40,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.PropertyResourceBundle;
 
+import jp.digitalmuseum.utils.StringResourceParser;
+
 public class resources_ja extends PropertyResourceBundle {
 
 	private final static String resourcesString =
@@ -57,6 +59,7 @@ public class resources_ja extends PropertyResourceBundle {
 		"MarkerEntityPanel.0=※マーカーパターンは↑←↓→の向きに表示されています";
 
 	public resources_ja() throws IOException {
-		super(new ByteArrayInputStream(resourcesString.getBytes()));
+		super(new ByteArrayInputStream(
+				StringResourceParser.escapeUnicode(resourcesString).getBytes()));
 	}
 }

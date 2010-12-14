@@ -5,7 +5,7 @@
 	<!-- ****Properties**** -->
 
 	<!-- Software version -->
-	<property name="capture-version" value="1.0.1" />
+	<property name="capture-version" value="1.0.2" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture-classpath" value="../capture/lib/dsj/dsj.jar;../capture/lib/jmf/jmf.jar;../capture/lib/qtj/QTJava.zip" />
@@ -40,7 +40,7 @@
 
 	<!-- Jar -->
 	<target name="capture-jar" depends="capture-compile">
-		<jar jarfile="${capture-jar.name}">
+		<jar jarfile="${capture-jar.name}" >
 			<fileset dir="${capture-classes.dir}" includes="**/*.class" />
 			<!-- <fileset dir="${capture-src.dir}" includes="**/*.java" /> -->
 		</jar>
@@ -49,7 +49,11 @@
 	<!-- Compile -->
 	<target name="capture-compile">
 		<mkdir dir="${capture-classes.dir}" />
-		<javac srcdir="${capture-src.dir}" destdir="${capture-classes.dir}" classpath="${capture-classpath}" />
+		<javac srcdir="${capture-src.dir}" destdir="${capture-classes.dir}"
+				target="1.5"
+				source="1.5"
+				optimize="on"
+				classpath="${capture-classpath}" />
 	</target>
 
 	<!-- Javadoc -->

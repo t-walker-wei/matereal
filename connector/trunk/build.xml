@@ -5,7 +5,7 @@
 	<!-- ****Properties**** -->
 
 	<!-- Software version -->
-	<property name="connector-version" value="1.0.1" />
+	<property name="connector-version" value="1.0.2" />
 
 	<!-- Dependent class pathes -->
 	<property name="connector-bluecove" value="../connector/lib/bluecove/bluecove-2.1.0.jar" />
@@ -52,6 +52,9 @@
 	<target name="connector-compile">
 		<mkdir dir="${connector-classes.dir}" />
 		<javac srcdir="${connector-src.dir}" destdir="${connector-classes.dir}"
+				target="1.5"
+				source="1.5"
+				optimize="on"
 				classpath="${connector-classpath}"
 				encoding="UTF-8" />
 	</target>

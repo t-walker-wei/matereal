@@ -8,21 +8,23 @@
 
 	<property name="app.name" value="calligraphy.RobotCalligraphy" />
 	<property name="app.classes" value="calligraphy/*.class" />
-	<property name="app.classpath" value="${matereal-jar.name}" />
-	<property name="app.libs" value="${jung}" />
+	<property name="app.classpath" value="${matereal-jar.name} ${jung-list}" />
 
 	<!-- ****Targets**** -->
 
 	<!-- Runnable Jar to Zip -->
 	<target name="runnable-jar-zip" depends="runnable-jar">
 		<zip destfile="${matereal-dist.dir}${app.name}.zip">
-			<fileset dir="${matereal-jar.dir}" includes="${app.name}.jar" />
+			<fileset dir="${matereal-dist.dir}" includes="${app.name}.jar" />
 			<zipfileset dir="./" file="README_app.txt" fullpath="README.txt" />
 		</zip>
 	</target>
 
 	<!-- Runnable Jar -->
 	<target name="runnable-jar" depends="matereal-examples-compile">
+		<copy todir="${matereal-dist.dir}lib">
+			<fileset dir="lib/jung/" includes="${jung-list}" />
+		</copy>
 		<jar destfile="${matereal-dist.dir}${app.name}.jar">
 			<zipfileset src="lib/jar-in-jar-loader.zip" />
 			<fileset dir="${matereal-examples-classes.dir}" includes="${app.classes}" />
@@ -40,8 +42,8 @@
 	<target name="runnable-exe-zip" depends="runnable-exe">
 		<zip destfile="${matereal-dist.dir}${app.name}-exe.zip">
 			<fileset dir="${matereal-dist.dir}" includes="${app.name}.exe" />
-			<fileset dir="${matereal-dist.dir}" includes="libs/*.*" />
-			<zipfileset dir="./" file="README_app_win.txt" fullpath="README.txt" />
+			<zipfileset dir="${matereal-jar.dir}" prefix="lib" includes="${app.classpath}" />
+			<zipfileset dir="./" file="README_app.txt" fullpath="README.txt" />
 		</zip>
 	</target>
 
@@ -53,9 +55,6 @@
 				<attribute name="Main-Class" value="${app.name}" />
 			</manifest>
 		</jar>
-		<copy todir="${matereal-dist.dir}lib">
-			<fileset dir="." includes="${app.libs}" />
-		</copy>
 		<exec dir="${matereal-dist.dir}" executable="exewrap.exe">
 		  <arg line="-g ${app.name}_win.jar"/>
 		</exec>
