@@ -1,7 +1,7 @@
 Webcam capture package - capture
 Copyright (C) 2010 Jun KATO
 
-version 1.0.1
+version 1.0.2
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Webcam capture package, or simply "capture", is a simple

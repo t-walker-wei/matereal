@@ -3,6 +3,18 @@
 <project name="matereal-javadoc" default="javadoc" basedir=".">
 	<import file="../napkit/build.xml"/>
 
+	<!-- ****Properties**** -->
+
+	<!-- Javadoc zip -->
+	<property name="javadoc-zip.name" value="matereal-${matereal.version}-docs.zip" />
+
+	<!-- Zip -->
+	<target name="javadoc-zip" depends="javadoc">
+		<zip destfile="${matereal-dist.dir}${javadoc-zip.name}">
+			<fileset dir="${matereal-javadoc.dir}" includes="**/*" />
+		</zip>
+	</target>
+
 	<!-- Javadoc -->
 	<target name="javadoc">
 		<javadoc sourcepath="../connector/${connector-src.dir};../capture/${capture-src.dir};${matereal-src-core.dir};${matereal-src.dir};../napkit/${napkit-src.dir};"
