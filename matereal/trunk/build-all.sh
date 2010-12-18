@@ -19,3 +19,7 @@ ant napkit-zip
 
 cd ../matereal/
 ant -f build-javadoc.xml javadoc-zip
+
+cd ../matereal-samples/
+ant matereal-full-zip
+ant matereal-samples-zip
