@@ -1,7 +1,7 @@
 NyARToolkit Application Toolkit - napkit
 Copyright (C) 2009-2010 Jun KATO
 
-version 1.0.1
+version 1.0.2
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 NyARToolkit Application Toolkit, or simply "napkit", is a simple
