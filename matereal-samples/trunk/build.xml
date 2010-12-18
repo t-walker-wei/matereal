@@ -4,6 +4,50 @@
 	<import file="../napkit/build.xml"/>
 
 	<!-- Zip -->
+	<target name="matereal-full-zip" depends="update">
+		<zip destfile="matereal-${matereal.version}-full.zip" filesonly="true">
+
+			<zipfileset dir="./lib/bluecove/"
+					includes="README.txt" fullpath="README_bluecove.txt" />
+			<zipfileset dir="./lib/bluecove/"
+					includes="*.jar" />
+
+			<zipfileset dir="./lib/rxtx-2.1-7-bins-r2/"
+					includes="README.txt" fullpath="README_rxtx.txt" />
+			<zipfileset dir="./lib/rxtx-2.1-7-bins-r2/"
+					includes="*.jar *.dll" />
+
+			<zipfileset dir="./lib/matereal/connector/"
+					includes="README.txt" fullpath="README_connector.txt" />
+			<zipfileset dir="./lib/matereal/connector/"
+					includes="LICENSE.txt" fullpath="LICENSE_connector.txt" />
+			<zipfileset dir="./lib/matereal/connector/"
+					includes="*.jar" />
+
+			<zipfileset dir="./lib/matereal/capture/"
+					includes="README.txt" fullpath="README_capture.txt" />
+			<zipfileset dir="./lib/matereal/capture/"
+					includes="LICENSE.txt" fullpath="LICENSE_capture.txt" />
+			<zipfileset dir="./lib/matereal/capture/"
+					includes="*.jar" />
+
+			<zipfileset dir="./lib/matereal/matereal/"
+					includes="README.txt" fullpath="README_matereal.txt" />
+			<zipfileset dir="./lib/matereal/matereal/"
+					includes="LICENSE.txt" fullpath="LICENSE_matereal.txt" />
+			<zipfileset dir="./lib/matereal/matereal/"
+					includes="*.jar" />
+
+			<zipfileset dir="./lib/matereal/napkit/"
+					includes="README.txt" fullpath="README_napkit.txt" />
+			<zipfileset dir="./lib/matereal/napkit/"
+					includes="LICENSE.txt" fullpath="LICENSE_napkit.txt" />
+			<zipfileset dir="./lib/matereal/napkit/"
+					includes="*.jar" />
+		</zip>
+	</target>
+
+	<!-- Zip -->
 	<target name="matereal-samples-zip" depends="update">
 		<zip destfile="matereal-${matereal.version}-samples.zip">
 			<fileset dir="./"
