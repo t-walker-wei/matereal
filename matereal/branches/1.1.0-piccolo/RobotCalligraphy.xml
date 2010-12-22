@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- exewrap must be on path; e.g. C:\Program Files\Java\jdk1.6.0_18\bin\exewrap.exe -->
+
+<project name="RobotCalligraphy" default="runnable-jar" basedir=".">
+	<import file="build-examples.xml"/>
+
+	<!-- ****Properties**** -->
+
+	<property name="app.name" value="calligraphy.RobotCalligraphy" />
+	<property name="app.classes" value="calligraphy/*.class" />
+	<property name="app.classpath" value="${matereal-jar.name} ${jung-list}" />
+
+	<!-- ****Targets**** -->
+
+	<!-- Runnable Jar to Zip -->
+	<target name="runnable-jar-zip" depends="runnable-jar">
+		<zip destfile="${matereal-dist.dir}${app.name}.zip">
+			<fileset dir="${matereal-dist.dir}" includes="${app.name}.jar" />
+			<zipfileset dir="./" file="README_app.txt" fullpath="README.txt" />
+		</zip>
+	</target>
+
+	<!-- Runnable Jar -->
+	<target name="runnable-jar" depends="matereal-examples-compile">
+		<copy todir="${matereal-dist.dir}lib">
+			<fileset dir="lib/jung/" includes="${jung-list}" />
+		</copy>
+		<jar destfile="${matereal-dist.dir}${app.name}.jar">
+			<zipfileset src="lib/jar-in-jar-loader.zip" />
+			<fileset dir="${matereal-examples-classes.dir}" includes="${app.classes}" />
+			<fileset dir="${matereal-jar.dir}" includes="${app.classpath}" />
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Rsrc-Main-Class" value="${app.name}" />
+				<attribute name="Rsrc-Class-Path" value="./ ${app.classpath}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- Runnable Exe to Zip -->
+	<target name="runnable-exe-zip" depends="runnable-exe">
+		<zip destfile="${matereal-dist.dir}${app.name}-exe.zip">
+			<fileset dir="${matereal-dist.dir}" includes="${app.name}.exe" />
+			<zipfileset dir="${matereal-jar.dir}" prefix="lib" includes="${app.classpath}" />
+			<zipfileset dir="./" file="README_app.txt" fullpath="README.txt" />
+		</zip>
+	</target>
+
+	<!-- Runnable Exe -->
+	<target name="runnable-exe" depends="runnable-jar">
+		<jar destfile="${matereal-dist.dir}${app.name}_win.jar">
+			<fileset dir="${matereal-examples-classes.dir}" includes="${app.classes}" />
+			<manifest>
+				<attribute name="Main-Class" value="${app.name}" />
+			</manifest>
+		</jar>
+		<exec dir="${matereal-dist.dir}" executable="exewrap.exe">
+		  <arg line="-g ${app.name}_win.jar"/>
+		</exec>
+		<move file="${matereal-dist.dir}${app.name}_win.exe" tofile="${matereal-dist.dir}${app.name}.exe" />
+		<delete file="${matereal-dist.dir}${app.name}_win.jar" />
+	</target>
+
+	<!-- Clean -->
+	<target name="runnable-clean" depends="matereal-examples-clean">
+		<delete dir="${matereal-dist.dir}" />
+	</target>
+</project>
