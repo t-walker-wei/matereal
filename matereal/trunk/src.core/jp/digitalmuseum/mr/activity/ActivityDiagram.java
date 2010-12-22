@@ -57,6 +57,8 @@ import edu.uci.ics.jung.visualization.picking.PickedInfo;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 
 import jp.digitalmuseum.mr.gui.DisposableComponent;
+import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
+import jp.digitalmuseum.mr.message.ActivityDiagramEvent.STATUS;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 import jp.digitalmuseum.utils.Array;
 
@@ -96,6 +98,7 @@ public class ActivityDiagram extends Node {
 		}
 		node.setActivityDiagram(this);
 		compiled = false;
+		distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_ADDED));
 	}
 
 	public synchronized void add(Node... nodes) {
@@ -130,6 +133,7 @@ public class ActivityDiagram extends Node {
 			removeRelatedTransitions(node);
 			compiled = false;
 			repaintViewers();
+			distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_REMOVED));
 			return true;
 		}
 		return false;
@@ -141,6 +145,7 @@ public class ActivityDiagram extends Node {
 		graph.addEdge(transition, transition.getSource(), transition
 				.getDestination());
 		compiled = false;
+		distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED));
 	}
 
 	public boolean removeTransition(Transition transition) {
@@ -148,6 +153,7 @@ public class ActivityDiagram extends Node {
 		graph.removeEdge(transition);
 		if (source.removeTransition(transition)) {
 			compiled = false;
+			distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED));
 			return true;
 		}
 		return false;
