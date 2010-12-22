@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+
+<project name="napkit" default="napkit-jar" basedir=".">
+	<import file="../matereal/build.xml"/>
+
+	<!-- ****Properties**** -->
+
+	<!-- Software version -->
+	<property name="napkit.version" value="1.0.2" />
+
+	<!-- Dependent class pathes -->
+	<property name="napkit-classpath" value="../matereal/${matereal-jar.dir}${matereal-jar.name};${capture};${connector}" />
+
+	<!-- Source directory -->
+	<property name="napkit-src.dir" value="src" />
+
+	<!-- NyARToolkit directory -->
+	<property name="nyar-src.dir" value="lib/NyARToolkit-2.5.2/src" />
+	<property name="nyar-classes.dir" value="bin.nyar" />
+
+	<!-- Classes destination directory -->
+	<property name="napkit-classes.dir" value="bin" />
+
+	<!-- Javadoc destination -->
+	<property name="napkit-javadoc.dir" value="docs" />
+
+	<!-- Jar file name -->
+	<property name="napkit-dist.dir" value="dist/" />
+	<property name="napkit-lib.dir" value="lib/" />
+	<property name="napkit-jar.dir" value="${napkit-dist.dir}${napkit-lib.dir}" />
+	<property name="napkit-jar.name" value="napkit-${napkit.version}.jar" />
+
+	<!-- Zip file name -->
+	<property name="napkit-zip.name" value="napkit-${napkit.version}.zip" />
+
+	<!-- ****Targets**** -->
+
+	<!-- Zip -->
+	<target name="napkit-zip" depends="napkit-jar">
+		<zip destfile="${napkit-jar.dir}${napkit-zip.name}">
+			<fileset file="${napkit-jar.dir}${napkit-jar.name}" />
+			<fileset dir="./">
+				<include name="LICENSE.txt"/>
+				<include name="README.txt"/>
+			</fileset>
+		</zip>
+	</target>
+
+	<!-- Jar -->
+	<target name="napkit-jar" depends="napkit-compile, napkit-extract">
+		<mkdir dir="${napkit-jar.dir}"/>
+		<jar jarfile="${napkit-jar.dir}${napkit-jar.name}">
+			<fileset dir="${napkit-classes.dir}" includes="**/*.class" />
+			<fileset dir="${nyar-classes.dir}" includes="**/*.class" />
+			<!--
+			<fileset dir="${napkit-classes.dir}" includes="**/*.java" />
+			<fileset dir="${napkit-src.dir}" includes="**/*.java" />
+			<fileset dir="${nyar-src.dir}" includes="**/*.java" />
+			-->
+		</jar>
+	</target>
+
+	<!-- Compile -->
+	<target name="napkit-compile" depends="nyar-compile">
+		<mkdir dir="${napkit-classes.dir}" />
+		<javac srcdir="${napkit-src.dir}" destdir="${napkit-classes.dir}"
+				source="1.5"
+				target="1.5"
+				optimize="on"
+				classpath="${napkit-classpath};${nyar-classes.dir}" encoding="UTF-8" />
+	</target>
+
+	<!-- Compile -->
+	<target name="nyar-compile">
+		<mkdir dir="${nyar-classes.dir}" />
+		<javac srcdir="${nyar-src.dir}" destdir="${nyar-classes.dir}"
+				source="1.5"
+				target="1.5"
+				optimize="on"
+				encoding="UTF-8" />
+	</target>
+
+	<!-- Extract -->
+	<target name="napkit-extract">
+		<unjar src="../matereal/${matereal-jar.dir}${matereal-jar-utils.name}" dest="${napkit-classes.dir}" />
+	</target>
+
+	<!-- Javadoc -->
+	<target name="napkit-javadoc" depends="nyar-compile">
+		<javadoc sourcepath="${napkit-src.dir}"
+			destdir="${napkit-javadoc.dir}"
+			packagenames="jp.digitalmuseum.*"
+			charset="UTF-8"
+			encoding="UTF-8"
+			docencoding="UTF-8"
+			locale="en"
+			classpath="${napkit-classpath};${nyar-classes.dir}"
+			stylesheetfile="../matereal/${style}"
+			bottom="${copyright}" />
+	</target>
+
+	<!-- Cleaning -->
+	<target name="napkit-clean">
+		<delete dir="${napkit-classes.dir}" />
+		<delete dir="${nyar-classes.dir}" />
+		<delete dir="${napkit-javadoc.dir}" />
+		<delete dir="${napkit-dist.dir}" />
+	</target>
+</project>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="napkit-examples" default="napkit-examples-compile" basedir=".">
+	<import file="build.xml"/>
+
+	<!-- ****Properties**** -->
+
+	<property name="napkit-examples-classpath" value="${napkit-jar.dir}${napkit-jar.name};${napkit-classpath}" />
+
+	<!-- Source directory -->
+	<property name="napkit-examples-src.dir" value="src.sample" />
+
+	<!-- Classes destination directory -->
+	<property name="napkit-examples-classes.dir" value="bin.sample" />
+
+	<!-- ****Targets**** -->
+
+	<!-- Compile -->
+	<target name="napkit-examples-compile" depends="napkit-jar">
+		<mkdir dir="${napkit-examples-classes.dir}" />
+		<javac srcdir="${napkit-examples-src.dir}" destdir="${napkit-examples-classes.dir}"
+				source="1.5"
+				target="1.5"
+				optimize="on"
+				classpath="${napkit-examples-classpath}"
+				encoding="UTF-8" />
+	</target>
+
+	<!-- Clean -->
+	<target name="napkit-examples-clean">
+		<delete dir="${napkit-examples-classes.dir}"/>
+	</target>
+</project>
