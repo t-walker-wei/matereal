@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title type="text">Available robot list</title>
+	<updated>2010-01-05T07:30:00Z</updated>
+	<id>localhost.robots.list</id>
+	<link rel="alternate" type="text/html" hreflang="en" href="http://matereal.sourceforge.jp/robots/" />
+	<rights>Copyright (c) 2010, Jun Kato</rights>
+	<entry>
+		<title>Roomba</title>
+		<link rel="alternate" type="text/html" href="http://matereal.sourceforge.jp/robots/roomba" />
+		<id>jp.digitalmuseum.entity.Roomba</id>
+		<updated>2010-01-05T07:30:00Z</updated>
+		<published>2010-01-05T07:30:00Z</published>
+		<author>
+			<name>Jun Kato</name>
+			<uri>http://digitalmuseum.jp/en/user/arc/</uri>
+		</author>
+	</entry>
+</feed>
