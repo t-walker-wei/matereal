@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="connector" default="connector-jar" basedir=".">
+
+	<!-- ****Properties**** -->
+
+	<!-- Software version -->
+	<property name="connector-version" value="1.0.2" />
+
+	<!-- Dependent class pathes -->
+	<property name="connector-bluecove" value="../connector/lib/bluecove/bluecove-2.1.0.jar" />
+	<property name="connector-rxtxlib" value="../connector/lib/rxtx-2.1-7-bins-r2/RXTXcomm.jar" />
+	<property name="connector-classpath" value="${connector-bluecove};${connector-rxtxlib}" />
+
+	<!-- Source directory -->
+	<property name="connector-src.dir" value="src" />
+
+	<!-- Classes destination directory -->
+	<property name="connector-classes.dir" value="bin" />
+
+	<!-- Javadoc destination -->
+	<property name="connector-javadoc.dir" value="docs" />
+
+	<!-- Jar file name -->
+	<property name="connector-jar.name" value="connector-${connector-version}.jar" />
+
+	<!-- Zip file name -->
+	<property name="connector-zip.name" value="connector-${connector-version}.zip" />
+
+	<!-- ****Targets**** -->
+
+	<!-- Zip -->
+	<target name="connector-zip" depends="connector-jar">
+		<zip destfile="${connector-zip.name}">
+			<fileset dir="./">
+				<include name="${connector-jar.name}"/>
+				<include name="LICENSE.txt"/>
+				<include name="README.txt"/>
+			</fileset>
+		</zip>
+	</target>
+
+	<!-- Jar -->
+	<target name="connector-jar" depends="connector-compile">
+		<jar jarfile="${connector-jar.name}">
+			<fileset dir="${connector-classes.dir}" includes="**/*.class" />
+			<!-- <fileset dir="${connector-src.dir}" includes="**/*.java **/*.properties" /> -->
+		</jar>
+	</target>
+
+	<!-- Compile -->
+	<target name="connector-compile">
+		<mkdir dir="${connector-classes.dir}" />
+		<javac srcdir="${connector-src.dir}" destdir="${connector-classes.dir}"
+				target="1.5"
+				source="1.5"
+				optimize="on"
+				classpath="${connector-classpath}"
+				encoding="UTF-8" />
+	</target>
+
+	<!-- Javadoc -->
+	<target name="connector-javadoc">
+		<javadoc sourcepath="${connector-src.dir}"
+			destdir="${connector-javadoc.dir}"
+			packagenames="jp.digitalmuseum.*"
+			charset="UTF-8"
+			encoding="UTF-8"
+			docencoding="UTF-8"
+			locale="en"
+			classpath="${connector-classpath}"
+			bottom="Copyright by Jun KATO (arc@dmz) at http://matereal.sourceforge.jp/" />
+	</target>
+
+	<!-- Clean -->
+	<target name="connector-clean">
+		<delete dir="${connector-classes.dir}" />
+		<delete dir="${connector-javadoc.dir}" />
+		<delete>
+			<fileset dir="./" includes="${connector-jar.name} ${connector-zip.name}" />
+		</delete>
+	</target>
+</project>
