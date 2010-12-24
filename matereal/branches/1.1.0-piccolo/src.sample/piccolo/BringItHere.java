@@ -5,19 +5,14 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
-import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.PFrame;
-import edu.umd.cs.piccolox.nodes.PLine;
-import edu.umd.cs.piccolox.nodes.PNodeCache;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;

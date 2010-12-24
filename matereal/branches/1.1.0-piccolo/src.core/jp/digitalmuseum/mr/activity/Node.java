@@ -82,11 +82,6 @@ public class Node implements EventProvider {
 		}
 	}
 
-	protected final void setDone() {
-		done = true;
-		distributeEvent(new ActivityEvent(this, STATUS.DONE));
-	}
-
 	protected boolean isAllowedEntry() {
 		return true;
 	}
@@ -117,7 +112,7 @@ public class Node implements EventProvider {
 
 	void clearTransitions() {
 		for (Transition t : transitions) {
-			activityDiagram.getGraph().removeEdge(t);
+			activityDiagram.removeTransition(t);
 		}
 		transitions.clear();
 	}
@@ -128,7 +123,7 @@ public class Node implements EventProvider {
 
 	boolean removeTransition(Transition transition) {
 		if (transitions.remove(transition)) {
-			activityDiagram.getGraph().removeEdge(transition);
+			activityDiagram.removeTransition(transition);
 			return true;
 		}
 		return false;
@@ -138,9 +133,8 @@ public class Node implements EventProvider {
 		Iterator<Transition> it;
 		for (it = transitions.iterator(); it.hasNext();) {
 			Transition t = it.next();
-			if (t.getSource() == node ||
-					t.getDestination() == node) {
-				activityDiagram.getGraph().removeEdge(t);
+			if (t.getDestination() == node) {
+				activityDiagram.removeTransition(t);
 				it.remove();
 			}
 		}
@@ -152,6 +146,11 @@ public class Node implements EventProvider {
 		distributeEvent(
 				new ActivityEvent(this, STATUS.ENTERED));
 		onEnter();
+	}
+
+	protected final void setDone() {
+		done = true;
+		distributeEvent(new ActivityEvent(this, STATUS.DONE));
 	}
 
 	final void leave() {

@@ -154,7 +154,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 			ad.setInitialNode(fork);
 
 			// Show the activity diagram.
-			final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(ad.newActivityViewer());
+			final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(ad.newActivityDiagramEditor());
 			frame.setTitle("Activity viewer");
 
 			// Set event listener to notice the completion of the tasks.

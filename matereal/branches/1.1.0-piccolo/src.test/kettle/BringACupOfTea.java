@@ -84,6 +84,6 @@ public class BringACupOfTea {
 		});
 
 		// Show an activity diagram.
-		new DisposeOnCloseFrame(ad.newActivityViewer());
+		new DisposeOnCloseFrame(ad.newActivityDiagramEditor());
 	}
 }
