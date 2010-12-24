@@ -40,7 +40,9 @@ import jp.digitalmuseum.mr.activity.Node;
 
 public class ActivityEvent extends Event {
 	static public enum STATUS {
-		ENTERED, DONE, LEFT
+		/** Transition from another node. */ ENTERED,
+		/** Role of the node is completed and is ready for transition to another node. */ DONE,
+		/** Transition to another node. */ LEFT
 	}
 	private STATUS status;
 
