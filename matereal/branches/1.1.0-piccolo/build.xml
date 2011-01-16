@@ -7,7 +7,7 @@
 	<!-- ****Properties**** -->
 
 	<!-- Software version -->
-	<property name="matereal.version" value="1.0.2" />
+	<property name="matereal.version" value="1.1.0" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture" value="../capture/${capture-jar.name}" />

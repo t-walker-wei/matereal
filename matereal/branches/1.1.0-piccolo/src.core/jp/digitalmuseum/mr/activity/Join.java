@@ -75,9 +75,8 @@ public class Join extends ControlNode implements EventListener {
 		}
 		if (allAreDone) {
 			for (EdgeImpl in : ins) {
-				getActivityDiagram().stop(in.getSource(), false);
+				getActivityDiagram().stop(in.getSource());
 			}
-			getActivityDiagram().repaintViewers();
 			setDone();
 		}
 	}

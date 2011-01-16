@@ -34,40 +34,29 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.activity;
+package jp.digitalmuseum.mr.gui.activity;
 
-public class Fork extends ControlNode {
-	private EdgeImpl[] outs;
+import java.awt.Shape;
 
-	public Fork(Node... outs) {
-		this.outs = new EdgeImpl[outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			this.outs[i] = new EdgeImpl(this, outs[i]);
-		}
+import edu.umd.cs.piccolo.nodes.PPath;
+
+public abstract class PNodeAbstractImpl extends PPath {
+	private static final long serialVersionUID = 3592199380497357141L;
+	private int depth = 0;
+
+	public PNodeAbstractImpl() {
+		super();
 	}
 
-	public EdgeImpl[] getEdges() {
-		return outs.clone();
+	public PNodeAbstractImpl(Shape shape) {
+		super(shape);
 	}
 
-	public Node[] getOutput() {
-		Node[] outs = new Node[this.outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			outs[i] = this.outs[i].getDestination();
-		}
-		return outs;
+	void setDepth(int depth) {
+		this.depth = depth;
 	}
 
-	@Override
-	protected void onEnter() {
-		for (EdgeImpl edge : outs) {
-			getActivityDiagram().start(edge.getDestination());
-		}
-		setDone();
-	}
-
-	@Override
-	public String toString() {
-		return "Fork["+outs.length+"]";
+	public int getDepth() {
+		return depth;
 	}
 }

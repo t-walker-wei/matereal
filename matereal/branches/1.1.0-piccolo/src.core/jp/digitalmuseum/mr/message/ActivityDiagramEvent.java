@@ -43,6 +43,7 @@ import jp.digitalmuseum.mr.activity.Transition;
 public class ActivityDiagramEvent extends Event {
 	static public enum STATUS {
 		NODE_ADDED, NODE_REMOVED, TRANSITION_ADDED, TRANSITION_REMOVED,
+		INITIAL_NODE_SET, DIAGRAM_STARTED, DIAGRAM_DONE,
 		NODE_ENTERED, NODE_DONE
 	}
 	private STATUS status;

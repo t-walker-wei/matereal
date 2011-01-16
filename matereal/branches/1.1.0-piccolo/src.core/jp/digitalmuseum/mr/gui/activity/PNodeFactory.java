@@ -34,40 +34,22 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.activity;
+package jp.digitalmuseum.mr.gui.activity;
 
-public class Fork extends ControlNode {
-	private EdgeImpl[] outs;
+import jp.digitalmuseum.mr.activity.Action;
+import jp.digitalmuseum.mr.activity.ControlNode;
+import jp.digitalmuseum.mr.activity.Node;
 
-	public Fork(Node... outs) {
-		this.outs = new EdgeImpl[outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			this.outs[i] = new EdgeImpl(this, outs[i]);
+public class PNodeFactory {
+
+	public static PNodeAbstractImpl newInstance(Node node, int depth) {
+		if (node instanceof Action) {
+			return new PActionNode((Action) node);
+		} else if (node instanceof ControlNode) {
+			return new PControlNode((ControlNode) node);
 		}
+		System.err.println("Invalid type node: " + node.getClass().getSimpleName());
+		return null;
 	}
 
-	public EdgeImpl[] getEdges() {
-		return outs.clone();
-	}
-
-	public Node[] getOutput() {
-		Node[] outs = new Node[this.outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			outs[i] = this.outs[i].getDestination();
-		}
-		return outs;
-	}
-
-	@Override
-	protected void onEnter() {
-		for (EdgeImpl edge : outs) {
-			getActivityDiagram().start(edge.getDestination());
-		}
-		setDone();
-	}
-
-	@Override
-	public String toString() {
-		return "Fork["+outs.length+"]";
-	}
 }

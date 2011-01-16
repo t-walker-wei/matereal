@@ -34,40 +34,49 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.activity;
+package jp.digitalmuseum.mr.gui.activity;
 
-public class Fork extends ControlNode {
-	private EdgeImpl[] outs;
+import java.awt.Rectangle;
+import java.awt.geom.Line2D;
 
-	public Fork(Node... outs) {
-		this.outs = new EdgeImpl[outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			this.outs[i] = new EdgeImpl(this, outs[i]);
-		}
+import jp.digitalmuseum.mr.activity.Action;
+import jp.digitalmuseum.mr.entity.Robot;
+
+import edu.umd.cs.piccolo.nodes.PPath;
+import edu.umd.cs.piccolo.nodes.PText;
+
+public class PActionNode extends PNodeAbstractImpl {
+	private static final long serialVersionUID = 2317496617529842863L;
+	private Action action;
+
+	public PActionNode(Action action) {
+		super(new Rectangle(0, 0, 200, 70));
+		this.action = action;
+		Robot robot = action.getRobot();
+
+		PPath pBorder = new PPath(new Line2D.Float(70, 0, 70, 70));
+		addChild(pBorder);
+
+		PPath pBorder2 = new PPath(new Line2D.Float(75, 25, 195, 25));
+		addChild(pBorder2);
+
+		PText pText = new PText();
+		pText.translate(75, 5);
+		pText.setConstrainWidthToTextWidth(false);
+		pText.setConstrainHeightToTextHeight(false);
+		pText.setText(robot.getName());
+		pText.setWidth(120);
+		pText.setHeight(20);
+		addChild(pText);
+
+		PPath pRobotPath = new PPath(robot.getShape());
+		addChild(pRobotPath);
+		pRobotPath.translate(35, 35);
+		double w = pRobotPath.getWidth(), h = pRobotPath.getHeight();
+		pRobotPath.scale(w > 0 && h > 0 ? (w < h ? 60 / h : 60 / w) : 1);
 	}
 
-	public EdgeImpl[] getEdges() {
-		return outs.clone();
-	}
-
-	public Node[] getOutput() {
-		Node[] outs = new Node[this.outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			outs[i] = this.outs[i].getDestination();
-		}
-		return outs;
-	}
-
-	@Override
-	protected void onEnter() {
-		for (EdgeImpl edge : outs) {
-			getActivityDiagram().start(edge.getDestination());
-		}
-		setDone();
-	}
-
-	@Override
-	public String toString() {
-		return "Fork["+outs.length+"]";
+	public Action getAction() {
+		return action;
 	}
 }

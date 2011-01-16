@@ -106,8 +106,19 @@ public class Node implements EventProvider {
 		return done;
 	}
 
-	Set<Transition> getTransitions() {
+	Set<Transition> getTransitionsReference() {
 		return transitions;
+	}
+
+	public Set<Transition> getTransitions() {
+		Set<Transition> transitions = new HashSet<Transition>();
+		getTransitionsOut(transitions);
+		return transitions;
+	}
+
+	public void getTransitionsOut(Set<Transition> transitions) {
+		transitions.clear();
+		transitions.addAll(this.transitions);
 	}
 
 	void clearTransitions() {

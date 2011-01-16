@@ -39,11 +39,8 @@ package jp.digitalmuseum.mr.activity;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.umd.cs.piccolox.swing.PCacheCanvas;
-
+import jp.digitalmuseum.mr.gui.activity.ActivityDiagramCanvas;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent.STATUS;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 import jp.digitalmuseum.utils.Array;
@@ -54,7 +51,7 @@ public class ActivityDiagram extends Node {
 	private Set<Transition> transitions;
 	private Array<Node> currentNodes;
 	private TransitionMonitor monitor;
-	private Array<ActivityDiagramEditor> panels;
+	private boolean started;
 	private boolean compiled;
 
 	public ActivityDiagram() {
@@ -62,15 +59,22 @@ public class ActivityDiagram extends Node {
 		transitions = new HashSet<Transition>();
 		currentNodes = new Array<Node>();
 		monitor = new TransitionMonitor();
-		panels = new Array<ActivityDiagramEditor>();
+		started = false;
+		compiled = false;
 	}
 
-	public void setInitialNode(Node node) {
-		stop();
+	public synchronized void setInitialNode(Node node) {
+		if (isStarted()) {
+			throw new IllegalStateException("Initial node of the activity diagram cannot be set during its runtime.");
+		}
+		if (!nodes.contains(node)) {
+			add(node);
+		}
 		this.initialNode = node;
+		distributeEvent(new ActivityDiagramEvent(this, STATUS.INITIAL_NODE_SET, node));
 	}
 
-	public Node getInitialNode() {
+	public synchronized Node getInitialNode() {
 		return initialNode;
 	}
 
@@ -101,19 +105,18 @@ public class ActivityDiagram extends Node {
 	public synchronized boolean remove(Node node) {
 		if (node != null && nodes.remove(node)) {
 			if (currentNodes.contains(node)) {
-				stop(node, false);
+				stop(node);
 			}
 			node.setActivityDiagram(null);
 			removeRelatedTransitions(node);
 			compiled = false;
-			repaintViewers();
 			distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_REMOVED, node));
 			return true;
 		}
 		return false;
 	}
 
-	public void addTransition(Transition transition) {
+	public synchronized void addTransition(Transition transition) {
 		Node source = transition.getSource();
 		source.addTransition(transition);
 		transitions.add(transition);
@@ -121,7 +124,7 @@ public class ActivityDiagram extends Node {
 		distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED, transition));
 	}
 
-	public boolean removeTransition(Transition transition) {
+	public synchronized boolean removeTransition(Transition transition) {
 		Node source = transition.getSource();
 		if (source.removeTransition(transition)) {
 			transitions.remove(transition);
@@ -132,7 +135,7 @@ public class ActivityDiagram extends Node {
 		return false;
 	}
 
-	public void removeRelatedTransitions(Node node) {
+	public synchronized void removeRelatedTransitions(Node node) {
 		for (Node n : nodes) {
 			if (n == node) {
 				n.clearTransitions();
@@ -142,147 +145,102 @@ public class ActivityDiagram extends Node {
 		}
 	}
 
+	public Set<Transition> getTransitions() {
+		Set<Transition> transitions = new HashSet<Transition>();
+		getTransitionsOut(transitions);
+		return transitions;
+	}
+
+	public void getTransitionsOut(Set<Transition> transitions) {
+		transitions.clear();
+		for (Node n : nodes) {
+			transitions.addAll(n.getTransitionsReference());
+		}
+	}
+
 	/**
 	 * @throws IllegalStateException
 	 */
-	public synchronized void start() throws IllegalStateException {
+	public synchronized void start() {
 		if (currentNodes.size() > 0) {
 			throw new IllegalStateException(
 					"This activity diagram has been already started.");
 		}
-		if (!start(initialNode)) {
+		if (!initialNode.isAllowedEntry()) {
 			throw new IllegalStateException("Initial node was failed to start.");
 		}
+		currentNodes.push(initialNode);
+		initialNode.enter();
 		monitor.start();
 		enter();
+		started = true;
 	}
 
 	public synchronized boolean start(Node node) {
-		return start(node, true);
-	}
-
-	public synchronized boolean start(Node node, boolean repaint) {
-		if (!nodes.contains(node)) {
-			throw new IllegalStateException("Specified node (" + node
-					+ ") is not contained in the activity chart.");
-		}
-		if (!node.isAllowedEntry()) {
-			return false;
-		}
-		currentNodes.push(node);
-		node.enter();
-		if (repaint) {
-			repaintViewers();
-		}
 		return true;
 	}
 
+	public synchronized boolean isStarted() {
+		return started;
+	}
+
+	public synchronized void pause() {
+		if (!isStarted()) {
+			return;
+		}
+
+	}
+
+	public synchronized void resume() {
+
+	}
+
 	public synchronized void stop() {
-		if (monitor.isStarted()) {
+		if (started) {
 			for (Node node : currentNodes) {
 				node.leave();
 			}
 			currentNodes.clear();
 			monitor.stop();
 			leave();
-			repaintViewers();
+			started = false;
 		}
 	}
 
-	public synchronized void stop(Node node) {
-		stop(node, true);
-	}
-
-	synchronized void stop(Node node, boolean repaint) {
+	synchronized void stop(Node node) {
 		if (currentNodes.remove(node)) {
 			node.leave();
 		}
-		if (repaint) {
-			repaintViewers();
-		}
 	}
 
-	public void compile() {
-		if (compiled) {
-			return;
-		}
-
-		// Consistency check
-
-		compiled = true;
-		return;
-	}
-
-	public ActivityDiagramEditor newActivityDiagramEditor() {
-		return new ActivityDiagramEditor(this);
-	}
-
-	void repaintViewers() {
-		for (ActivityDiagramEditor viewer : panels) {
-			viewer.repaint();
-		}
+	public ActivityDiagramCanvas newActivityDiagramCanvas() {
+		return new ActivityDiagramCanvas(this);
 	}
 
 	private class TransitionMonitor extends ServiceAbstractImpl {
 		public void run() {
 			boolean allIsDone = true;
-			boolean repaint = false;
 			for (Node node : currentNodes) {
-				Set<Transition> transitions = node.getTransitions();
+				Set<Transition> transitions = node.getTransitionsReference();
 				if (transitions.size() > 0) {
 					for (Transition transition : transitions) {
 						if (transition.guard()) {
-							ActivityDiagram.this.stop(node, false);
+							ActivityDiagram.this.stop(node);
 							if (!currentNodes.contains(transition
 									.getDestination())) {
-								ActivityDiagram.this.start(transition
-										.getDestination(), false);
+								ActivityDiagram.this.start(
+										transition.getDestination());
 							}
-							repaint = true;
 							break;
 						}
 					}
 				} else if (node.isDone()) {
 					ActivityDiagram.this.stop(node);
-					repaint = true;
 				}
 				allIsDone = allIsDone && node.isDone();
 			}
 			if (allIsDone) {
 				ActivityDiagram.this.stop();
-			} else if (repaint) {
-				repaintViewers();
-			}
-		}
-	}
-
-	public static class ActivityDiagramEditor extends PCacheCanvas {
-		private static final long serialVersionUID = 1L;
-		private ActivityDiagram ad;
-
-		public ActivityDiagramEditor(ActivityDiagram ad) {
-			this.ad = ad;
-			ad.addEventListener(new ActivityDiagramListener());
-		}
-
-		private class ActivityDiagramListener implements EventListener {
-			public ActivityDiagramListener() {
-
-			}
-
-			public void eventOccurred(Event e) {
-				if (e.getSource() == ad &&
-						e instanceof ActivityDiagramEvent) {
-					final ActivityDiagramEvent ade = (ActivityDiagramEvent) e;
-					switch (ade.getStatus()) {
-						case NODE_ADDED:
-						case NODE_REMOVED:
-						case TRANSITION_ADDED:
-						case TRANSITION_REMOVED:
-						default:
-							break;
-					}
-				}
 			}
 		}
 	}

@@ -34,40 +34,25 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.activity;
+package jp.digitalmuseum.mr.gui.activity;
 
-public class Fork extends ControlNode {
-	private EdgeImpl[] outs;
+import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.activity.Transition;
 
-	public Fork(Node... outs) {
-		this.outs = new EdgeImpl[outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			this.outs[i] = new EdgeImpl(this, outs[i]);
-		}
+public class PTransitionLineNode extends PLineNodeAbstractImpl {
+	private static final long serialVersionUID = 5091941901786318920L;
+	private Transition transition;
+
+	public PTransitionLineNode(Transition transition, PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
+		super(pSourceNode, pDestinationNode);
+		this.transition = transition;
 	}
 
-	public EdgeImpl[] getEdges() {
-		return outs.clone();
+	public Node getSource() {
+		return transition.getSource();
 	}
 
-	public Node[] getOutput() {
-		Node[] outs = new Node[this.outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			outs[i] = this.outs[i].getDestination();
-		}
-		return outs;
-	}
-
-	@Override
-	protected void onEnter() {
-		for (EdgeImpl edge : outs) {
-			getActivityDiagram().start(edge.getDestination());
-		}
-		setDone();
-	}
-
-	@Override
-	public String toString() {
-		return "Fork["+outs.length+"]";
+	public Node getDestination() {
+		return transition.getDestination();
 	}
 }

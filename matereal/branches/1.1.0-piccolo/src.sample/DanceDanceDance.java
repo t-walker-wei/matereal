@@ -76,7 +76,7 @@ public class DanceDanceDance {
 		ad.setInitialNode(fork);
 
 		// Make windows for showing an activity diagram and status of hakoniwa.
-		final DisposeOnCloseFrame graph = new DisposeOnCloseFrame(ad.newActivityDiagramEditor());
+		final DisposeOnCloseFrame graph = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
 		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
 			private static final long serialVersionUID = 1L;
 			@Override

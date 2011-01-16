@@ -1,13 +1,12 @@
-
-
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.MindstormsNXT;
+import jp.digitalmuseum.mr.entity.Noopy;
+import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DrawableFrame;
-import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
+import jp.digitalmuseum.mr.resource.WheelsController;
 
 /**
  * Show a controller GUI for a robot.
@@ -16,8 +15,8 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
  */
 public class SimpleKeyController {
 	private final DrawableFrame drawableFrame;
-	private final MindstormsNXT nxt;
-	private final DifferentialWheelsController wheels;
+	private final Robot robot;
+	private final WheelsController wheels;
 
 	public static void main(String[] args) {
 		new SimpleKeyController();
@@ -25,8 +24,8 @@ public class SimpleKeyController {
 
 	public SimpleKeyController() {
 		super();
-		nxt = new MindstormsNXT("btspp://00165305b308");
-		wheels = nxt.requestResource(DifferentialWheelsController.class, this);
+		robot = new Noopy("Noopy4", "btspp://00043E3A6561");
+		wheels = robot.requestResource(WheelsController.class, this);
 
 		drawableFrame = new DrawableFrame() {
 			private static final long serialVersionUID = 1L;
@@ -34,7 +33,7 @@ public class SimpleKeyController {
 			@Override
 			public void dispose() {
 				super.dispose();
-				nxt.freeResource(wheels, this);
+				robot.freeResource(wheels, this);
 				Matereal.getInstance().dispose();
 			}
 			public void paint2D(Graphics2D g) {
@@ -71,6 +70,7 @@ public class SimpleKeyController {
 					stop();
 					break;
 				}
+				drawableFrame.repaint();
 			}
 		});
 	}

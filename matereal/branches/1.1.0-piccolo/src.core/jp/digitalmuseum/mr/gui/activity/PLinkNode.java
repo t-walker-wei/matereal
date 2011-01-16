@@ -34,40 +34,22 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.activity;
+package jp.digitalmuseum.mr.gui.activity;
 
-public class Fork extends ControlNode {
-	private EdgeImpl[] outs;
+import java.awt.Rectangle;
 
-	public Fork(Node... outs) {
-		this.outs = new EdgeImpl[outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			this.outs[i] = new EdgeImpl(this, outs[i]);
-		}
+import jp.digitalmuseum.mr.activity.Node;
+
+public class PLinkNode extends PNodeAbstractImpl {
+	private static final long serialVersionUID = 8045477318985209583L;
+	private Node node;
+
+	public PLinkNode(Node node) {
+		super(new Rectangle(0, 0, 200, 70));
+		this.node = node;
 	}
 
-	public EdgeImpl[] getEdges() {
-		return outs.clone();
-	}
-
-	public Node[] getOutput() {
-		Node[] outs = new Node[this.outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			outs[i] = this.outs[i].getDestination();
-		}
-		return outs;
-	}
-
-	@Override
-	protected void onEnter() {
-		for (EdgeImpl edge : outs) {
-			getActivityDiagram().start(edge.getDestination());
-		}
-		setDone();
-	}
-
-	@Override
-	public String toString() {
-		return "Fork["+outs.length+"]";
+	public Node getLinkedNode() {
+		return node;
 	}
 }
