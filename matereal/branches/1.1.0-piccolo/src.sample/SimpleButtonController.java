@@ -4,7 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 
-import jp.digitalmuseum.mr.entity.NetTansor;
+import jp.digitalmuseum.mr.entity.Noopy;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.resource.WheelsController;
 
@@ -34,7 +34,7 @@ public class SimpleButtonController extends JFrame {
 	 */
 	public SimpleButtonController() {
 		super();
-		robot = new NetTansor("Tansor", "http://192.168.32.94:8081");
+		robot = new Noopy("Noopy4", "btspp://00043E3A6561");
 		wheels = robot.requestResource(WheelsController.class, this);
 		initialize();
 		setVisible(true);

@@ -137,6 +137,9 @@ public abstract class ServiceAbstractImpl implements Service {
 	}
 
 	public synchronized void pause() {
+		if (!isStarted()) {
+			return;
+		}
 		isPaused = true;
 
 		// Distribute this event.
@@ -148,6 +151,9 @@ public abstract class ServiceAbstractImpl implements Service {
 	}
 
 	public synchronized void resume() {
+		if (!isStarted()) {
+			return;
+		}
 		isPaused = false;
 
 		// Distribute this event.

@@ -56,7 +56,7 @@ import jp.digitalmuseum.mr.resource.WheelsController;
  * @author Jun KATO
  * @see NoopyWheels
  */
-public class Noopy extends PhysicalRobotAbstractImpl {
+public class NoopyBeta extends PhysicalRobotAbstractImpl {
 	final public static double WIDTH = 12;
 	final public static double HEIGHT = 16;
 	private NoopyWheels wheels;
@@ -64,32 +64,32 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 	private Shape shape;
 	private static int instances = 0;
 
-	public Noopy(String connectionString) {
+	public NoopyBeta(String connectionString) {
 		super(connectionString);
 		initialize(null);
 	}
 
-	public Noopy(String connectionString, Class<Resource>... plugins) {
+	public NoopyBeta(String connectionString, Class<Resource>... plugins) {
 		super(connectionString);
 		initialize(null, plugins);
 	}
 
-	public Noopy(String name, String connectionString) {
+	public NoopyBeta(String name, String connectionString) {
 		super(connectionString);
 		initialize(name);
 	}
 
-	public Noopy(String name, String connectionString, Class<Resource>... plugins) {
+	public NoopyBeta(String name, String connectionString, Class<Resource>... plugins) {
 		super(connectionString);
 		initialize(name, plugins);
 	}
 
-	public Noopy(String name, Connector connector) {
+	public NoopyBeta(String name, Connector connector) {
 		super(connector);
 		initialize(name);
 	}
 
-	public Noopy(String name, Connector connector, Class<Resource>... plugins) {
+	public NoopyBeta(String name, Connector connector, Class<Resource>... plugins) {
 		super(connector);
 		initialize(name, plugins);
 	}
@@ -120,7 +120,7 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 				PhysicalResourceAbstractImpl plugin;
 				try {
 					plugin = (PhysicalResourceAbstractImpl) pluginClass
-							.getConstructor(Noopy.class).newInstance(this);
+							.getConstructor(NoopyBeta.class).newInstance(this);
 				} catch (Exception e) {
 					throw new RuntimeException("Plugin could't be plugged in.", e);
 				}
@@ -153,12 +153,12 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 	 * Wheels of Noopy.
 	 *
 	 * @author Jun KATO
-	 * @see Noopy
+	 * @see NoopyBeta
 	 */
 	public static class NoopyWheels extends PhysicalResourceAbstractImpl implements WheelsController {
 		private STATUS status;
 
-		public NoopyWheels(Noopy noopy) {
+		public NoopyWheels(NoopyBeta noopy) {
 			super(noopy);
 			initialize();
 		}
@@ -179,14 +179,14 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 
 		public void goBackward() {
 			if (status != STATUS.GO_BACKWARD) {
-				getConnector().write("b\n");
+				getConnector().write("i");
 				status = STATUS.GO_BACKWARD;
 			}
 		}
 
 		public void goForward() {
 			if (status != STATUS.GO_FORWARD) {
-				getConnector().write("f\n");
+				getConnector().write("d");
 				status = STATUS.GO_FORWARD;
 			}
 		}
@@ -194,13 +194,12 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 		public void spin(SPIN direction) {
 			if (direction.equals(SPIN.LEFT)) {
 				if (status != STATUS.SPIN_LEFT) {
-					// getConnector().write("l"); 90d
-					getConnector().write("j\n");
+					getConnector().write("p");
 					status = STATUS.SPIN_LEFT;
 				}
 			} else {
 				if (status != STATUS.SPIN_RIGHT) {
-					getConnector().write("y\n");
+					getConnector().write("w");
 					status = STATUS.SPIN_RIGHT;
 				}
 			}
@@ -208,21 +207,21 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 
 		public void spinLeft() {
 			if (status != STATUS.SPIN_LEFT) {
-				getConnector().write("j\n");
+				getConnector().write("p");
 				status = STATUS.SPIN_LEFT;
 			}
 		}
 
 		public void spinRight() {
 			if (status != STATUS.SPIN_RIGHT) {
-				getConnector().write("y\n");
+				getConnector().write("w");
 				status = STATUS.SPIN_RIGHT;
 			}
 		}
 
 		public void stopWheels() {
 			if (status != STATUS.STOP) {
-				getConnector().write("s\n");
+				getConnector().write("y");
 				status = STATUS.STOP;
 			}
 		}
@@ -236,12 +235,12 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 	 * Pen of Noopy.
 	 *
 	 * @author Jun KATO
-	 * @see Noopy
+	 * @see NoopyBeta
 	 */
 	public static class NoopyPen extends PhysicalResourceAbstractImpl implements Pen {
 		private STATUS penStatus;
 
-		public NoopyPen(Noopy noopy) {
+		public NoopyPen(NoopyBeta noopy) {
 			super(noopy);
 			initialize();
 		}
