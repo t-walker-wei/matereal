@@ -52,11 +52,11 @@ public class DanceDanceDance {
 				Action a = new Action(robots[i], new GoForward());
 				Action b = new Action(robots[i], new SpinLeft());
 				ad.add(a, b);
-				ad.addTransition(new TimeoutTransition(a, b, 3000));
+				ad.addTransition(new TimeoutTransition(a, b, 7000));
 				if (loop == 0) {
 					initialNodes[i] = a;
 				} else {
-					ad.addTransition(new TimeoutTransition(tail, a, 3000));
+					ad.addTransition(new TimeoutTransition(tail, a, 7000));
 				}
 				tail = b;
 			}
@@ -64,7 +64,7 @@ public class DanceDanceDance {
 			// Stop at last.
 			finalNodes[i] = new Action(robots[i], new Stop());
 			ad.add(finalNodes[i]);
-			ad.addTransition(new TimeoutTransition(tail, finalNodes[i], 3000));
+			ad.addTransition(new TimeoutTransition(tail, finalNodes[i], 7000));
 		}
 
 		// Run 4 robots in parallel.
@@ -77,6 +77,7 @@ public class DanceDanceDance {
 
 		// Make windows for showing an activity diagram and status of hakoniwa.
 		final DisposeOnCloseFrame graph = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
+		graph.setFrameSize(800, 600);
 		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
 			private static final long serialVersionUID = 1L;
 			@Override

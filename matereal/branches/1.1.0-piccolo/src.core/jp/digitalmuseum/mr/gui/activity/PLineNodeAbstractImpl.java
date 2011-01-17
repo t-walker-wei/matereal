@@ -36,7 +36,9 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
-public abstract class PLineNodeAbstractImpl extends PNodeAbstractImpl {
+import edu.umd.cs.piccolo.nodes.PPath;
+
+public abstract class PLineNodeAbstractImpl extends PPath {
 	private static final long serialVersionUID = -8586619092371481425L;
 	private PNodeAbstractImpl pSourceNode;
 	private PNodeAbstractImpl pDestinationNode;

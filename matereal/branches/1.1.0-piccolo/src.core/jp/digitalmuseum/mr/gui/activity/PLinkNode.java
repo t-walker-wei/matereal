@@ -36,20 +36,13 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
-import java.awt.Rectangle;
-
 import jp.digitalmuseum.mr.activity.Node;
 
 public class PLinkNode extends PNodeAbstractImpl {
 	private static final long serialVersionUID = 8045477318985209583L;
-	private Node node;
 
 	public PLinkNode(Node node) {
-		super(new Rectangle(0, 0, 200, 70));
-		this.node = node;
-	}
-
-	public Node getLinkedNode() {
-		return node;
+		super(node);
+		setPathToRectangle(0, 0, 200, 70);
 	}
 }

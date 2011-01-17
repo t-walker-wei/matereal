@@ -42,14 +42,17 @@ import jp.digitalmuseum.mr.activity.Node;
 
 public class PNodeFactory {
 
-	public static PNodeAbstractImpl newInstance(Node node, int depth) {
+	public static PNodeAbstractImpl newInstance(Node node) {
+		PNodeAbstractImpl pNodeAbstractImpl;
 		if (node instanceof Action) {
-			return new PActionNode((Action) node);
+			pNodeAbstractImpl = new PActionNode((Action) node);
 		} else if (node instanceof ControlNode) {
-			return new PControlNode((ControlNode) node);
+			pNodeAbstractImpl = new PControlNode((ControlNode) node);
+		} else {
+			pNodeAbstractImpl = null;
+			System.err.println("Invalid type node: " + node.getClass().getSimpleName());
 		}
-		System.err.println("Invalid type node: " + node.getClass().getSimpleName());
-		return null;
+		return pNodeAbstractImpl;
 	}
 
 }

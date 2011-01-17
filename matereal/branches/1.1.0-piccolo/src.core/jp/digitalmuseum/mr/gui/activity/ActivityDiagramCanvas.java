@@ -36,9 +36,13 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -54,7 +58,19 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
+import edu.umd.cs.piccolo.PNode;
 
+/**
+ * A canvas for rendering an activity diagram as a timeline-like directed
+ * acyclic graph.
+ *
+ * Since the diagram is usually used to represent a workflow of robots and
+ * their users, it is expected to form one timeline (thus, directed graph.)
+ * It can have cyclic subgraphs, but this canvas prevents making cycles by
+ * using a dummy node which links to the original node of its parent graph.
+ *
+ * @author Jun KATO
+ */
 public class ActivityDiagramCanvas extends PCanvas implements DisposableComponent {
 	private static final long serialVersionUID = -6783170737987111980L;
 	private ActivityDiagram ad;
@@ -75,6 +91,7 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 		}
 		getCamera().addLayer(pLineLayer);
 		getCamera().addLayer(pNodeLayer);
+		setBackground(new Color(230, 230, 230));
 	}
 
 	public void dispose() {
@@ -84,33 +101,40 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 	private void initialize() {
 		synchronized (ad) {
 
-			// Breadth first search
-			makePNodes();
+			// Clear graph.
+			nodeMap.clear();
+			pNodeLayer.removeAllChildren();
+			pLineLayer.removeAllChildren();
 
-			// Depth first search
-
+			Set<Join> pendingNodes = constructRootedTree();
+			connectPendingNodes(pendingNodes);
+			layoutNodes();
 		}
 	}
 
-	private void makePNodes() {
+	/**
+	 * Do breadth first search for constructing a <a href="http://en.wikipedia.org/wiki/Rooted_tree">rooted tree</a>.
+	 *
+	 * @return pending nodes which will be  of this rooted tree.
+	 */
+	private Set<Join> constructRootedTree() {
 		Map<Node, PNodeAbstractImpl> currentNodeMap = new HashMap<Node, PNodeAbstractImpl>();
 		Map<Node, PNodeAbstractImpl> nextNodeMap = new HashMap<Node, PNodeAbstractImpl>();
 		Set<Transition> transitions = new HashSet<Transition>();
 
-		int depth = 0;
-
 		Node initialNode = ad.getInitialNode();
-		PNodeAbstractImpl initialPNode = PNodeFactory.newInstance(initialNode, depth);
+		PNodeAbstractImpl initialPNode = PNodeFactory.newInstance(initialNode);
+		initialPNode.setOffset(5, 5);
 
-		nodeMap.clear();
+		nodeMap.put(initialNode, initialPNode);
 		currentNodeMap.put(initialNode, initialPNode);
 
 		Set<Node> visitedNodes = nodeMap.keySet();
 		Set<Join> pendingNodes = new HashSet<Join>();
 
-		pNodeLayer.removeAllChildren();
-		pLineLayer.removeAllChildren();
 		pNodeLayer.addChild(initialPNode);
+
+		int depth = 1;
 
 		while (!currentNodeMap.isEmpty()) {
 			nextNodeMap.clear();
@@ -126,7 +150,7 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 					if (visitedNodes.contains(n)) {
 						pNode = new PLinkNode(n);
 					} else {
-						pNode = PNodeFactory.newInstance(n, depth);
+						pNode = PNodeFactory.newInstance(n);
 						nextNodeMap.put(n, pNode);
 						nodeMap.put(n, pNode); // visitedNodes.add(n);
 					}
@@ -148,7 +172,7 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 							if (visitedNodes.contains(n)) {
 								pNode = new PLinkNode(n);
 							} else {
-								pNode = PNodeFactory.newInstance(n, depth);
+								pNode = PNodeFactory.newInstance(n);
 								nextNodeMap.put(n, pNode);
 								nodeMap.put(n, pNode); // visitedNodes.add(n);
 							}
@@ -164,20 +188,28 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 			nextNodeMap = tmp;
 			depth ++;
 		}
+		return pendingNodes;
+	}
 
+	/**
+	 * Connect pending nodes to make a completed <a href="http://en.wikipedia.org/wiki/Directed_acyclic_graph">acyclic graph</a>.
+	 *
+	 * @param pendingNodes
+	 */
+	private void connectPendingNodes(Set<Join> pendingNodes) {
 		Set<Edge> edges = new HashSet<Edge>();
 		for (Join joinNode : pendingNodes) {
 			edges.clear();
 
 			// Look for the deepest joining node.
-			depth = 0;
+			int depth = 0;
 			for (Edge edge : joinNode.getEdges()) {
 				Node source = edge.getSource();
 				if (nodeMap.containsKey(source)) {
 					PNodeAbstractImpl pNode = nodeMap.get(source);
 					int d = pNode.getDepth();
 					if (d > depth) {
-						d = depth;
+						depth = d;
 					}
 					edges.add(edge);
 				} else {
@@ -200,20 +232,44 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,	pJoinNode));
 				} else if (depthDiff == 2) {
 					// One dummy node required.
-					PNodeAbstractImpl pDummyNode = new PDummyNode();
+					PNodeAbstractImpl pDummyNode = new PDummyNode(source);
 					pJoiningNode.addChild(pDummyNode);
 					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,	pDummyNode));
 					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,		pJoinNode));
 				} else {
 					// Two dummy node required.
-					PNodeAbstractImpl pDummyNode = new PDummyNode();
-					PNodeAbstractImpl pDummyNode2 = new PDummyNode();
+					PNodeAbstractImpl pDummyNode = new PDummyNode(source);
+					PNodeAbstractImpl pDummyNode2 = new PDummyNode(source);
 					pJoiningNode.addChild(pDummyNode);
 					pJoiningNode.addChild(pDummyNode2);
 					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,	pDummyNode));
 					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,		pDummyNode2));
 					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode2,	pJoinNode));
 				}
+			}
+		}
+	}
+
+	/**
+	 * Do depth first serach for layouting nodes.
+	 */
+	private void layoutNodes() {
+		PNodeAbstractImpl initialPNode = nodeMap.get(ad.getInitialNode());
+		layoutChildrenNodes(initialPNode);
+	}
+
+	private void layoutChildrenNodes(PNodeAbstractImpl parent) {
+		int depth = parent.getDepth();
+		@SuppressWarnings("unchecked")
+		List<PNode> children = (List<PNode>) parent.getChildrenReference();
+		double y = 0;
+		for (PNode pNode : children) {
+			if (pNode instanceof PNodeAbstractImpl) {
+				PNodeAbstractImpl pNodeAbstractImpl = (PNodeAbstractImpl) pNode;
+				pNodeAbstractImpl.setOffset((pNodeAbstractImpl.getDepth() - depth) * 240, y);
+				layoutChildrenNodes(pNodeAbstractImpl);
+				double height = pNodeAbstractImpl.getHeight();
+				y += height + 5;
 			}
 		}
 	}

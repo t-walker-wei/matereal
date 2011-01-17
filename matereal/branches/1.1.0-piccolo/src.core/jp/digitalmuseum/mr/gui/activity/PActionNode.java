@@ -47,12 +47,12 @@ import edu.umd.cs.piccolo.nodes.PText;
 
 public class PActionNode extends PNodeAbstractImpl {
 	private static final long serialVersionUID = 2317496617529842863L;
-	private Action action;
 
 	public PActionNode(Action action) {
-		super(new Rectangle(0, 0, 200, 70));
-		this.action = action;
+		super(action);
 		Robot robot = action.getRobot();
+
+		setPathTo(new Rectangle(0, 0, 200, 70));
 
 		PPath pBorder = new PPath(new Line2D.Float(70, 0, 70, 70));
 		addChild(pBorder);
@@ -69,6 +69,15 @@ public class PActionNode extends PNodeAbstractImpl {
 		pText.setHeight(20);
 		addChild(pText);
 
+		PText pTaskText = new PText();
+		pTaskText.translate(75, 30);
+		pTaskText.setConstrainWidthToTextWidth(false);
+		pTaskText.setConstrainHeightToTextHeight(false);
+		pTaskText.setText(action.getTask().toString());
+		pTaskText.setWidth(120);
+		pTaskText.setHeight(35);
+		addChild(pTaskText);
+
 		PPath pRobotPath = new PPath(robot.getShape());
 		addChild(pRobotPath);
 		pRobotPath.translate(35, 35);
@@ -76,7 +85,7 @@ public class PActionNode extends PNodeAbstractImpl {
 		pRobotPath.scale(w > 0 && h > 0 ? (w < h ? 60 / h : 60 / w) : 1);
 	}
 
-	public Action getAction() {
-		return action;
+	public Action getNode() {
+		return (Action) super.getNode();
 	}
 }

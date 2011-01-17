@@ -36,20 +36,20 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
-import java.awt.Shape;
+import java.awt.Color;
+
+import jp.digitalmuseum.mr.activity.Node;
 
 import edu.umd.cs.piccolo.nodes.PPath;
 
 public abstract class PNodeAbstractImpl extends PPath {
 	private static final long serialVersionUID = 3592199380497357141L;
 	private int depth = 0;
+	private Node node;
 
-	public PNodeAbstractImpl() {
-		super();
-	}
-
-	public PNodeAbstractImpl(Shape shape) {
-		super(shape);
+	public PNodeAbstractImpl(Node node) {
+		this.node = node;
+		setPaint(Color.white);
 	}
 
 	void setDepth(int depth) {
@@ -58,5 +58,9 @@ public abstract class PNodeAbstractImpl extends PPath {
 
 	public int getDepth() {
 		return depth;
+	}
+
+	public Node getNode() {
+		return node;
 	}
 }
