@@ -36,12 +36,23 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import edu.umd.cs.piccolo.nodes.PText;
 import jp.digitalmuseum.mr.activity.ControlNode;
 
 public class PControlNode extends PNodeAbstractImpl {
-	private ControlNode controlNode;
+	private static final long serialVersionUID = -3824502669188344253L;
 
 	public PControlNode(ControlNode controlNode) {
-		this.controlNode = controlNode;
+		super(controlNode);
+		setPathToRectangle(0, 0, 200, 70);
+
+		PText pText = new PText();
+		pText.translate(15, 15);
+		pText.setConstrainWidthToTextWidth(true);
+		pText.setConstrainHeightToTextHeight(true);
+		pText.setText(controlNode.getClass().getSimpleName());
+		pText.setWidth(170);
+		pText.setHeight(40);
+		addChild(pText);
 	}
 }

@@ -36,7 +36,12 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
-public class PDummyNode extends PNodeAbstractImpl {
-	private static final long serialVersionUID = -4920072005773857750L;
+import jp.digitalmuseum.mr.activity.Node;
 
+public class PDummyNode extends PNodeAbstractImpl {
+	private static final long serialVersionUID = -3443925646196477539L;
+
+	public PDummyNode(Node node) {
+		super(node);
+	}
 }
