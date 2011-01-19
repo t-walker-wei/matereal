@@ -36,16 +36,20 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.Color;
+
 import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.activity.Transition;
 
 public class PTransitionLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 5091941901786318920L;
 	private Transition transition;
+	private static Color color = new Color(100, 100, 100);
 
 	public PTransitionLineNode(Transition transition, PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
 		super(pSourceNode, pDestinationNode);
 		this.transition = transition;
+		setStrokePaint(color);
 	}
 
 	public Node getSource() {

@@ -37,10 +37,10 @@
 package jp.digitalmuseum.mr.gui.activity;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +55,17 @@ import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.gui.DisposableComponent;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
+import jp.digitalmuseum.mr.message.ActivityEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.activities.PTransformActivity;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
+import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * A canvas for rendering an activity diagram as a timeline-like directed
@@ -76,41 +82,91 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 	private static final long serialVersionUID = -6783170737987111980L;
 	private ActivityDiagram ad;
 	private ActivityDiagramEventListener adel;
+	private ActivityEventListener ael;
+
 	private HashMap<Node, PNodeAbstractImpl> nodeMap;
+	private PNodeAbstractImpl rootPNode;
+
 	private PLayer pNodeLayer;
 	private PLayer pLineLayer;
+	private PTransformActivity cameraActivity;
 
-	public ActivityDiagramCanvas(ActivityDiagram ad) {
+	public ActivityDiagramCanvas(final ActivityDiagram ad) {
 		this.ad = ad;
-		adel = new ActivityDiagramEventListener();
-		ad.addEventListener(adel);
-		nodeMap = new HashMap<Node, PNodeAbstractImpl>();
-		pNodeLayer = new PLayer();
-		pLineLayer = new PLayer();
-		if (ad.getInitialNode() != null) {
-			initialize();
+		synchronized (ad) {
+
+			adel = new ActivityDiagramEventListener();
+			ad.addEventListener(adel);
+
+			ael = new ActivityEventListener();
+			for (Node node : ad.getNodes()) {
+				node.addEventListener(ael);
+			}
+
+			nodeMap = new HashMap<Node, PNodeAbstractImpl>();
+			pLineLayer = new PLayer();
+			getCamera().addLayer(pLineLayer);
+			pNodeLayer = new PLayer();
+			getCamera().addLayer(pNodeLayer);
+			setBackground(new Color(240, 240, 240));
+
+			if (ad.getInitialNode() != null) {
+				initialize();
+			}
+			addInputEventListener(new PBasicInputEventHandler() {
+
+				@Override
+				public void mousePressed(PInputEvent event) {
+					if (cameraActivity != null) {
+						cameraActivity.terminate();
+					}
+				}
+
+				@Override
+				public void mouseClicked(PInputEvent event) {
+					if (!(event.getPickedNode() instanceof PCamera)) {
+						if (!event.isLeftMouseButton()) {
+							cameraActivity = getCamera().animateViewToCenterBounds(
+									event.getPickedNode().getGlobalBounds(),
+									false,
+									300);
+						}
+					} else if (event.getClickCount() == 2){
+						PBounds pBounds = rootPNode.getGlobalFullBounds();
+						pBounds.x -= 10;
+						pBounds.y -= 10;
+						pBounds.width += 20;
+						pBounds.height += 20;
+						cameraActivity = getCamera().animateViewToCenterBounds(
+								pBounds,
+								true,
+								500);
+					}
+				}
+			});
 		}
-		getCamera().addLayer(pLineLayer);
-		getCamera().addLayer(pNodeLayer);
-		setBackground(new Color(230, 230, 230));
 	}
 
 	public void dispose() {
-		ad.removeEventListener(adel);
+		synchronized (ad) {
+			ad.removeEventListener(adel);
+			for (Node node : ad.getNodes()) {
+				node.removeEventListener(ael);
+			}
+		}
 	}
 
 	private void initialize() {
-		synchronized (ad) {
 
-			// Clear graph.
-			nodeMap.clear();
-			pNodeLayer.removeAllChildren();
-			pLineLayer.removeAllChildren();
+		// Clear graph.
+		nodeMap.clear();
+		pNodeLayer.removeAllChildren();
+		pLineLayer.removeAllChildren();
 
-			Set<Join> pendingNodes = constructRootedTree();
-			connectPendingNodes(pendingNodes);
-			layoutNodes();
-		}
+		Set<Join> pendingNodes = constructRootedTree();
+		connectPendingNodes(pendingNodes);
+		layoutNodes();
+		layoutArrows();
 	}
 
 	/**
@@ -124,16 +180,17 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 		Set<Transition> transitions = new HashSet<Transition>();
 
 		Node initialNode = ad.getInitialNode();
-		PNodeAbstractImpl initialPNode = PNodeFactory.newInstance(initialNode);
-		initialPNode.setOffset(5, 5);
+		rootPNode = PNodeFactory.newInstance(initialNode);
+		rootPNode.setOffset(5, 5);
+		rootPNode.setAsInitialNode();
 
-		nodeMap.put(initialNode, initialPNode);
-		currentNodeMap.put(initialNode, initialPNode);
+		nodeMap.put(initialNode, rootPNode);
+		currentNodeMap.put(initialNode, rootPNode);
 
 		Set<Node> visitedNodes = nodeMap.keySet();
 		Set<Join> pendingNodes = new HashSet<Join>();
 
-		pNodeLayer.addChild(initialPNode);
+		pNodeLayer.addChild(rootPNode);
 
 		int depth = 1;
 
@@ -258,15 +315,14 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 	 * Do depth first serach for layouting nodes.
 	 */
 	private void layoutNodes() {
-		PNodeAbstractImpl initialPNode = nodeMap.get(ad.getInitialNode());
-		LinkedList<LayoutNode> stack = new LinkedList<LayoutNode>();
-		stack.push(new LayoutNode(initialPNode));
+		LinkedList<PNodeAbstractImpl> stack = new LinkedList<PNodeAbstractImpl>();
+		stack.push(rootPNode);
 		S : while (!stack.isEmpty()) {
-			LayoutNode node = stack.peek();
-			Deque<LayoutNode> children = node.getChildren();
+			PNodeAbstractImpl node = stack.peek();
+			Deque<PNodeAbstractImpl> children = node.getUnmanagedChildrenReference();
 			while (!children.isEmpty()) {
-				LayoutNode child = children.peek();
-				if (!child.getChildren().isEmpty()) {
+				PNodeAbstractImpl child = children.peek();
+				if (!child.getUnmanagedChildrenReference().isEmpty()) {
 					stack.push(child);
 					continue S;
 				}
@@ -274,63 +330,29 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 						(child.getDepth() - node.getDepth()) * 240,
 						node.y);
 				node.y += child.getHeight() + 5;
-				node.getChildren().poll();
+				node.getUnmanagedChildrenReference().poll();
 			}
 			stack.poll();
 		}
 	}
 
-	private static class LayoutNode {
-		private PNodeAbstractImpl node;
-		private Deque<LayoutNode> children;
-		public double y;
-
-		LayoutNode(PNodeAbstractImpl node) {
-			this.node = node;
-			y = 0;
-		}
-
-		public Deque<LayoutNode> getChildren() {
-			if (children == null) {
-				children = new LinkedList<LayoutNode>();
-				@SuppressWarnings("unchecked")
-				List<PNode> cs = (List<PNode>) node.getChildrenReference();
-				for (PNode child : cs) {
-					if (child instanceof PNodeAbstractImpl) {
-						children.add(new LayoutNode((PNodeAbstractImpl) child));
-					}
-				}
+	private void layoutArrows() {
+		@SuppressWarnings("unchecked")
+		List<PNode> nodes = pLineLayer.getChildrenReference();
+		Point2D s = new Point2D.Float();
+		Point2D e = new Point2D.Float();
+		for (PNode pNode : nodes) {
+			if (pNode instanceof PLineNodeAbstractImpl) {
+				PLineNodeAbstractImpl pLineNodeAbstractImpl = (PLineNodeAbstractImpl) pNode;
+				PNodeAbstractImpl sourcePNode = pLineNodeAbstractImpl.getSourcePNode();
+				s.setLocation(200, 35);
+				s = sourcePNode.localToGlobal(s);
+				PNodeAbstractImpl destinationPNode = pLineNodeAbstractImpl.getDestinationPNode();
+				e.setLocation(000, 35);
+				e = destinationPNode.localToGlobal(e);
+				pLineNodeAbstractImpl.setLine(s, e);
 			}
-			return children;
 		}
-
-		public void setOffset(double x, double y) {
-			node.setOffset(x, y);
-		}
-
-		public int getDepth() {
-			return node.getDepth();
-		}
-
-		public double getHeight() {
-			return node.getHeight();
-		}
-	}
-
-	private void addNode(Node node) {
-
-	}
-
-	private void removeNode(Node node) {
-
-	}
-
-	private void addTransition(Transition transition) {
-
-	}
-
-	private void removeTransition(Transition transition) {
-
 	}
 
 	private class ActivityDiagramEventListener implements EventListener {
@@ -339,16 +361,34 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 				ActivityDiagramEvent ade = (ActivityDiagramEvent) e;
 				switch(ade.getStatus()) {
 				case NODE_ADDED:
-					addNode(ade.getAffectedNode());
+					ade.getAffectedNode().addEventListener(ael);
 					break;
 				case NODE_REMOVED:
-					removeNode(ade.getAffectedNode());
+					ade.getAffectedNode().removeEventListener(ael);
 					break;
 				case TRANSITION_ADDED:
-					addTransition(ade.getAffectedTransition());
 					break;
 				case TRANSITION_REMOVED:
-					removeTransition(ade.getAffectedTransition());
+					break;
+				case INITIAL_NODE_SET:
+					initialize();
+					break;
+				}
+			}
+		}
+	}
+
+	private class ActivityEventListener implements EventListener {
+		public void eventOccurred(Event e) {
+			if (e instanceof ActivityEvent) {
+				ActivityEvent ae = (ActivityEvent) e;
+				PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(ae.getSource());
+				switch(ae.getStatus()) {
+				case ENTERED:
+					pNodeAbstractImpl.onEnter();
+					break;
+				case LEFT:
+					pNodeAbstractImpl.onLeave();
 					break;
 				}
 			}

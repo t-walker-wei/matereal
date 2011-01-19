@@ -52,7 +52,6 @@ public class ActivityDiagram extends Node {
 	private Array<Node> currentNodes;
 	private TransitionMonitor monitor;
 	private boolean started;
-	private boolean compiled;
 
 	public ActivityDiagram() {
 		nodes = new HashSet<Node>();
@@ -60,7 +59,6 @@ public class ActivityDiagram extends Node {
 		currentNodes = new Array<Node>();
 		monitor = new TransitionMonitor();
 		started = false;
-		compiled = false;
 	}
 
 	public synchronized void setInitialNode(Node node) {
@@ -81,7 +79,6 @@ public class ActivityDiagram extends Node {
 	public synchronized void add(Node node) {
 		nodes.add(node);
 		node.setActivityDiagram(this);
-		compiled = false;
 		distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_ADDED, node));
 	}
 
@@ -109,18 +106,25 @@ public class ActivityDiagram extends Node {
 			}
 			node.setActivityDiagram(null);
 			removeRelatedTransitions(node);
-			compiled = false;
 			distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_REMOVED, node));
 			return true;
 		}
 		return false;
 	}
 
+	public synchronized Set<Node> getNodes() {
+		return new HashSet<Node>(nodes);
+	}
+
+	public synchronized void getNodesOut(Set<Node> nodes) {
+		nodes.clear();
+		nodes.addAll(nodes);
+	}
+
 	public synchronized void addTransition(Transition transition) {
 		Node source = transition.getSource();
 		source.addTransition(transition);
 		transitions.add(transition);
-		compiled = false;
 		distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED, transition));
 	}
 
@@ -128,7 +132,6 @@ public class ActivityDiagram extends Node {
 		Node source = transition.getSource();
 		if (source.removeTransition(transition)) {
 			transitions.remove(transition);
-			compiled = false;
 			distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED, transition));
 			return true;
 		}
@@ -145,17 +148,13 @@ public class ActivityDiagram extends Node {
 		}
 	}
 
-	public Set<Transition> getTransitions() {
-		Set<Transition> transitions = new HashSet<Transition>();
-		getTransitionsOut(transitions);
-		return transitions;
+	public synchronized Set<Transition> getTransitions() {
+		return new HashSet<Transition>(transitions);
 	}
 
-	public void getTransitionsOut(Set<Transition> transitions) {
+	public synchronized void getTransitionsOut(Set<Transition> transitions) {
 		transitions.clear();
-		for (Node n : nodes) {
-			transitions.addAll(n.getTransitionsReference());
-		}
+		transitions.addAll(this.transitions);
 	}
 
 	/**
@@ -223,27 +222,29 @@ public class ActivityDiagram extends Node {
 	private class TransitionMonitor extends ServiceAbstractImpl {
 		public void run() {
 			boolean allIsDone = true;
-			for (Node node : currentNodes) {
-				Set<Transition> transitions = node.getTransitionsReference();
-				if (transitions.size() > 0) {
-					for (Transition transition : transitions) {
-						if (transition.guard()) {
-							ActivityDiagram.this.stop(node);
-							if (!currentNodes.contains(transition
-									.getDestination())) {
-								ActivityDiagram.this.start(
-										transition.getDestination());
+			synchronized (ActivityDiagram.this) {
+				for (Node node : currentNodes) {
+					Set<Transition> transitions = node.getTransitionsReference();
+					if (transitions.size() > 0) {
+						for (Transition transition : transitions) {
+							if (transition.guard()) {
+								ActivityDiagram.this.stop(node);
+								if (!currentNodes.contains(transition
+										.getDestination())) {
+									ActivityDiagram.this.start(
+											transition.getDestination());
+								}
+								break;
 							}
-							break;
 						}
+					} else if (node.isDone()) {
+						ActivityDiagram.this.stop(node);
 					}
-				} else if (node.isDone()) {
-					ActivityDiagram.this.stop(node);
+					allIsDone = allIsDone && node.isDone();
 				}
-				allIsDone = allIsDone && node.isDone();
-			}
-			if (allIsDone) {
-				ActivityDiagram.this.stop();
+				if (allIsDone) {
+					ActivityDiagram.this.stop();
+				}
 			}
 		}
 	}

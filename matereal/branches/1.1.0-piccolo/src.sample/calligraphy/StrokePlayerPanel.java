@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
+import javax.swing.SwingUtilities;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -154,24 +155,28 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 			ad.setInitialNode(fork);
 
 			// Show the activity diagram.
-			final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
-			frame.setTitle("Activity viewer");
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
+					frame.setTitle("Activity viewer");
 
-			// Set event listener to notice the completion of the tasks.
-			ad.addEventListener(new EventListener() {
+					// Set event listener to notice the completion of the tasks.
+					ad.addEventListener(new EventListener() {
 
-				public void eventOccurred(Event e) {
-					if (e instanceof ActivityEvent) {
-						if (e.getSource() == ad &&
-								((ActivityEvent) e).getStatus() == STATUS.LEFT) {
-							frame.setTitle("Activity viewer : all tasks were finished.");
+						public void eventOccurred(Event e) {
+							if (e instanceof ActivityEvent) {
+								if (e.getSource() == ad &&
+										((ActivityEvent) e).getStatus() == STATUS.LEFT) {
+									frame.setTitle("Activity viewer : all tasks were finished.");
+								}
+							}
 						}
-					}
+					});
+
+					// Start the activity diagram.
+					ad.start();
 				}
 			});
-
-			// Start the activity diagram.
-			ad.start();
 		}
 	}
 

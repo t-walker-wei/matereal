@@ -36,16 +36,20 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.Color;
+
 import jp.digitalmuseum.mr.activity.Edge;
 import jp.digitalmuseum.mr.activity.Node;
 
 public class PForkLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 6558976118238198984L;
 	private Edge edge;
+	private static Color color = new Color(200, 0, 0);
 
 	public PForkLineNode(Edge edge, PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
 		super(pSourceNode, pDestinationNode);
 		this.edge = edge;
+		setStrokePaint(color);
 	}
 
 	public Node getSource() {

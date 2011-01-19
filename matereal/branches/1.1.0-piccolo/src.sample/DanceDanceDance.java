@@ -1,3 +1,5 @@
+import javax.swing.SwingUtilities;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
@@ -10,10 +12,6 @@ import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.message.ActivityEvent;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
 import jp.digitalmuseum.mr.task.GoForward;
 import jp.digitalmuseum.mr.task.SpinLeft;
 import jp.digitalmuseum.mr.task.Stop;
@@ -52,11 +50,11 @@ public class DanceDanceDance {
 				Action a = new Action(robots[i], new GoForward());
 				Action b = new Action(robots[i], new SpinLeft());
 				ad.add(a, b);
-				ad.addTransition(new TimeoutTransition(a, b, 7000));
+				ad.addTransition(new TimeoutTransition(a, b, 3000));
 				if (loop == 0) {
 					initialNodes[i] = a;
 				} else {
-					ad.addTransition(new TimeoutTransition(tail, a, 7000));
+					ad.addTransition(new TimeoutTransition(tail, a, 3000));
 				}
 				tail = b;
 			}
@@ -64,7 +62,7 @@ public class DanceDanceDance {
 			// Stop at last.
 			finalNodes[i] = new Action(robots[i], new Stop());
 			ad.add(finalNodes[i]);
-			ad.addTransition(new TimeoutTransition(tail, finalNodes[i], 7000));
+			ad.addTransition(new TimeoutTransition(tail, finalNodes[i], 3000));
 		}
 
 		// Run 4 robots in parallel.
@@ -74,35 +72,26 @@ public class DanceDanceDance {
 		ad.add(join);
 		ad.addTransition(new Transition(fork, join));
 		ad.setInitialNode(fork);
+		ad.start();
 
 		// Make windows for showing an activity diagram and status of hakoniwa.
-		final DisposeOnCloseFrame graph = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
-		graph.setFrameSize(800, 600);
-		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public void dispose() {
-				Matereal.getInstance().dispose();
-				graph.dispose();
-				super.dispose();
-			}
-		};
-		frame.setResizable(false);
-		frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
-		frame.setTitle("Dance dance dance.");
-
-		// Change title of the main window when all tasks were completed.
-		ad.addEventListener(new EventListener() {
-
-			public void eventOccurred(Event e) {
-				if (e instanceof ActivityEvent) {
-					if (e.getSource() == ad &&
-							((ActivityEvent) e).getStatus() == STATUS.LEFT) {
-						frame.setTitle("All tasks were completed.");
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				final DisposeOnCloseFrame graph = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
+				graph.setFrameSize(800, 600);
+				final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
+					private static final long serialVersionUID = 1L;
+					@Override
+					public void dispose() {
+						Matereal.getInstance().dispose();
+						graph.dispose();
+						super.dispose();
 					}
-				}
+				};
+				frame.setResizable(false);
+				frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
+				frame.setTitle("Dance dance dance.");
 			}
 		});
-		ad.start();
 	}
 }

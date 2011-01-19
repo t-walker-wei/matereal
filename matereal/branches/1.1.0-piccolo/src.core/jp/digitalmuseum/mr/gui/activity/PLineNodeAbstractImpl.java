@@ -36,16 +36,21 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.geom.Point2D;
+
 import edu.umd.cs.piccolo.nodes.PPath;
 
 public abstract class PLineNodeAbstractImpl extends PPath {
 	private static final long serialVersionUID = -8586619092371481425L;
 	private PNodeAbstractImpl pSourceNode;
 	private PNodeAbstractImpl pDestinationNode;
+	private Point2D[] points;
 
 	public PLineNodeAbstractImpl(PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
 		this.pSourceNode = pSourceNode;
 		this.pDestinationNode = pDestinationNode;
+		points = new Point2D[2];
+		setPickable(false);
 	}
 
 	PNodeAbstractImpl getSourcePNode() {
@@ -54,5 +59,11 @@ public abstract class PLineNodeAbstractImpl extends PPath {
 
 	PNodeAbstractImpl getDestinationPNode() {
 		return pDestinationNode;
+	}
+
+	void setLine(Point2D start, Point2D end) {
+		points[0] = (Point2D) start.clone();
+		points[1] = (Point2D) end.clone();
+		setPathToPolyline(points);
 	}
 }
