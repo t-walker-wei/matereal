@@ -162,21 +162,24 @@ public class ActivityDiagram extends Node {
 	 * @throws IllegalStateException
 	 */
 	public synchronized void start() {
-		if (currentNodes.size() > 0) {
+		if (started) {
 			throw new IllegalStateException(
 					"This activity diagram has been already started.");
 		}
-		if (!initialNode.isAllowedEntry()) {
+		if (!start(initialNode)) {
 			throw new IllegalStateException("Initial node was failed to start.");
 		}
-		currentNodes.push(initialNode);
-		initialNode.enter();
 		monitor.start();
 		enter();
 		started = true;
 	}
 
-	public synchronized boolean start(Node node) {
+	synchronized boolean start(Node node) {
+		if (!node.isAllowedEntry()) {
+			return false;
+		}
+		currentNodes.push(node);
+		node.enter();
 		return true;
 	}
 
