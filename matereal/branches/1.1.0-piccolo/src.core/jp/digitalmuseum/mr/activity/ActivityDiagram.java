@@ -39,7 +39,6 @@ package jp.digitalmuseum.mr.activity;
 import java.util.HashSet;
 import java.util.Set;
 
-import jp.digitalmuseum.mr.gui.activity.ActivityDiagramCanvas;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent.STATUS;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
@@ -232,10 +231,6 @@ public class ActivityDiagram extends Node {
 		if (currentNodes.remove(node)) {
 			node.leave();
 		}
-	}
-
-	public ActivityDiagramCanvas newActivityDiagramCanvas() {
-		return new ActivityDiagramCanvas(this);
 	}
 
 	private class TransitionMonitor extends ServiceAbstractImpl {

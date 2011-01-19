@@ -69,6 +69,16 @@ public abstract class PNodeAbstractImpl extends PPath {
 		this.depth = depth;
 	}
 
+	void setDepthOffset(int depthOffset) {
+		Deque<PNodeAbstractImpl> stack = new LinkedList<PNodeAbstractImpl>();
+		stack.push(this);
+		while (!stack.isEmpty()) {
+			PNodeAbstractImpl node = stack.poll();
+			node.setDepth(node.getDepth() + depthOffset);
+			stack.addAll(node.getUnmanagedChildrenReference());
+		}
+	}
+
 	public int getDepth() {
 		return depth;
 	}
