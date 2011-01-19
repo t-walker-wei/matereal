@@ -37,6 +37,7 @@
 package jp.digitalmuseum.mr.gui.activity;
 
 import java.awt.Color;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -234,14 +235,17 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 					// One dummy node required.
 					PNodeAbstractImpl pDummyNode = new PDummyNode(source);
 					pJoiningNode.addChild(pDummyNode);
+					pDummyNode.setDepth(d + 1);
 					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,	pDummyNode));
 					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,		pJoinNode));
 				} else {
 					// Two dummy node required.
 					PNodeAbstractImpl pDummyNode = new PDummyNode(source);
-					PNodeAbstractImpl pDummyNode2 = new PDummyNode(source);
 					pJoiningNode.addChild(pDummyNode);
-					pJoiningNode.addChild(pDummyNode2);
+					pDummyNode.setDepth(d + 1);
+					PNodeAbstractImpl pDummyNode2 = new PDummyNode(source);
+					pDummyNode.addChild(pDummyNode2);
+					pDummyNode2.setDepth(depth - 1);
 					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,	pDummyNode));
 					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,		pDummyNode2));
 					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode2,	pJoinNode));
@@ -255,91 +259,61 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 	 */
 	private void layoutNodes() {
 		PNodeAbstractImpl initialPNode = nodeMap.get(ad.getInitialNode());
-		// layoutChildrenNodes(initialPNode);
-		// return;
-
 		LinkedList<LayoutNode> stack = new LinkedList<LayoutNode>();
 		stack.push(new LayoutNode(initialPNode));
 		S : while (!stack.isEmpty()) {
-			LayoutNode n = stack.peek();
-			n.y = 0;
-			for (LayoutNode c : n.getChildren()) {
-				if (!c.isFinishedLayouting()) {
-					stack.push(c);
+			LayoutNode node = stack.peek();
+			Deque<LayoutNode> children = node.getChildren();
+			while (!children.isEmpty()) {
+				LayoutNode child = children.peek();
+				if (!child.getChildren().isEmpty()) {
+					stack.push(child);
 					continue S;
 				}
-				c.node.setOffset((c.node.getDepth() - n.node.getDepth()) * 240, n.y);
-				n.y += c.node.getHeight() + 5;
+				child.setOffset(
+						(child.getDepth() - node.getDepth()) * 240,
+						node.y);
+				node.y += child.getHeight() + 5;
+				node.getChildren().poll();
 			}
 			stack.poll();
 		}
 	}
 
-	/**
-	 * Do depth first serach for layouting nodes. (Old version using recursive method call.)
-	 */
-	private void layoutChildrenNodes(PNodeAbstractImpl parent) {
-		int depth = parent.getDepth();
-		@SuppressWarnings("unchecked")
-		List<PNode> children = (List<PNode>) parent.getChildrenReference();
-		double y = 0;
-		for (PNode pNode : children) {
-			if (pNode instanceof PNodeAbstractImpl) {
-				PNodeAbstractImpl pNodeAbstractImpl = (PNodeAbstractImpl) pNode;
-				layoutChildrenNodes(pNodeAbstractImpl);
-				pNodeAbstractImpl.setOffset((pNodeAbstractImpl.getDepth() - depth) * 240, y);
-				double height = pNodeAbstractImpl.getHeight();
-				y += height + 5;
-			}
-		}
-	}
-
 	private static class LayoutNode {
 		private PNodeAbstractImpl node;
-		private Iterator<LayoutNode> childrenIterator;
-		private List<LayoutNode> children;
-		private double y;
-		private boolean hasChildren;
+		private Deque<LayoutNode> children;
+		public double y;
 
 		LayoutNode(PNodeAbstractImpl node) {
 			this.node = node;
+			y = 0;
 		}
 
-		private void prepare() {
-			if (childrenIterator == null) {
-				hasChildren = false;
+		public Deque<LayoutNode> getChildren() {
+			if (children == null) {
 				children = new LinkedList<LayoutNode>();
 				@SuppressWarnings("unchecked")
 				List<PNode> cs = (List<PNode>) node.getChildrenReference();
 				for (PNode child : cs) {
 					if (child instanceof PNodeAbstractImpl) {
 						children.add(new LayoutNode((PNodeAbstractImpl) child));
-						hasChildren = true;
 					}
 				}
-				childrenIterator = children.iterator();
 			}
-		}
-
-		public boolean hasChildren() {
-			prepare();
-			return hasChildren;
-		}
-
-		public boolean isFinishedLayouting() {
-			return
-				hasChildren() ||
-				!getUncompletedChildrenIterator().hasNext();
-		}
-
-		public List<LayoutNode> getChildren() {
-			prepare();
 			return children;
 		}
 
-		public Iterator<LayoutNode> getUncompletedChildrenIterator() {
-			prepare();
-			return childrenIterator;
+		public void setOffset(double x, double y) {
+			node.setOffset(x, y);
+		}
+
+		public int getDepth() {
+			return node.getDepth();
+		}
+
+		public double getHeight() {
+			return node.getHeight();
 		}
 	}
 

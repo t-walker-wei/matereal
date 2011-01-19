@@ -37,19 +37,27 @@
 package jp.digitalmuseum.mr.gui.activity;
 
 import java.awt.Color;
+import java.util.Deque;
+import java.util.LinkedList;
 
 import jp.digitalmuseum.mr.activity.Node;
 
+import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 
 public abstract class PNodeAbstractImpl extends PPath {
 	private static final long serialVersionUID = 3592199380497357141L;
 	private int depth = 0;
 	private Node node;
+	/*
+	private Deque<PNodeAbstractImpl> children;
+	public double y;
+	*/
 
 	public PNodeAbstractImpl(Node node) {
 		this.node = node;
 		setPaint(Color.white);
+		// resetLayout();
 	}
 
 	void setDepth(int depth) {
@@ -63,4 +71,23 @@ public abstract class PNodeAbstractImpl extends PPath {
 	public Node getNode() {
 		return node;
 	}
+
+	/*
+	public Deque<PNodeAbstractImpl> getUnmanagedChildrenReference() {
+		return children;
+	}
+
+	@Override
+	public void addChild(int i, PNode pnode) {
+		super.addChild(i, pnode);
+		if (pnode instanceof PNodeAbstractImpl) {
+			children.add((PNodeAbstractImpl) pnode);
+		}
+	}
+
+	private void resetLayout() {
+		children = new LinkedList<PNodeAbstractImpl>();
+		y = 0;
+	}
+	*/
 }
