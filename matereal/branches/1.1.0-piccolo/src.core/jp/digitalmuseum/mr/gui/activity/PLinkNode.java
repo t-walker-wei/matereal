@@ -36,6 +36,9 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.BasicStroke;
+
+import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 import jp.digitalmuseum.mr.activity.Node;
 
 public class PLinkNode extends PNodeAbstractImpl {
@@ -44,5 +47,6 @@ public class PLinkNode extends PNodeAbstractImpl {
 	public PLinkNode(Node node) {
 		super(node);
 		setPathToRectangle(0, 0, 200, 70);
+		setStroke(new PFixedWidthStroke(1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f));
 	}
 }

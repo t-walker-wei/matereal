@@ -59,17 +59,24 @@ public abstract class ServiceAbstractImpl implements Service {
 	private Array<EventListener> listeners;
 	private long birthDate;
 	private long interval;
+	private boolean isStarted;
 	private boolean isPaused;
 
 	public ServiceAbstractImpl() {
 		listeners = new Array<EventListener>();
 		interval = DEFAULT_INTERVAL;
+		isStarted = false;
+		isPaused = false;
 	}
 
 	final public synchronized void setInterval(long interval) {
 		this.interval = interval;
 		if (isStarted()) {
-			restart();
+			if (serviceGroup != null) {
+				throw new IllegalStateException("Execution interval of a service which belongs to a service group can only be changed by calling setInterval method of the service group.");
+			}
+			stopRunning();
+			startRunning();
 		}
 		distributeEvent(new ServiceUpdateEvent(this, "interval", interval));
 	}
@@ -107,7 +114,7 @@ public abstract class ServiceAbstractImpl implements Service {
 
 		// Start this service.
 		if (serviceGroup == null) {
-			doStart();
+			startRunning();
 		} else {
 			serviceGroup.registerService(this);
 		}
@@ -122,23 +129,14 @@ public abstract class ServiceAbstractImpl implements Service {
 						ServiceAbstractImpl.this,
 						ServiceEvent.STATUS.STARTED));
 		onStart();
+		isStarted = true;
 	}
-
-	private void doStart() {
-		if (!Matereal.getInstance().isDisposing()) {
-			canceller = Matereal.getInstance().scheduleAtFixedRate(
-				ServiceAbstractImpl.this,
-				ServiceAbstractImpl.this.interval);
-		}
-	}
-
-	synchronized private void restart() {
-		start(serviceGroup);
-	}
-
 	public synchronized void pause() {
 		if (!isStarted()) {
 			return;
+		}
+		if (serviceGroup == null) {
+			stopRunning();
 		}
 		isPaused = true;
 
@@ -153,6 +151,9 @@ public abstract class ServiceAbstractImpl implements Service {
 	public synchronized void resume() {
 		if (!isStarted()) {
 			return;
+		}
+		if (serviceGroup == null) {
+			startRunning();
 		}
 		isPaused = false;
 
@@ -171,8 +172,7 @@ public abstract class ServiceAbstractImpl implements Service {
 
 		// Unregister this service.
 		if (serviceGroup == null) {
-			canceller.cancel();
-			canceller = null;
+			stopRunning();
 		} else {
 			serviceGroup.unregisterService(this);
 			serviceGroup = null;
@@ -190,10 +190,26 @@ public abstract class ServiceAbstractImpl implements Service {
 						ServiceAbstractImpl.this,
 						ServiceEvent.STATUS.STOPPED));
 		onStop();
+		isStarted = false;
+	}
+
+	private void startRunning() {
+		if (!Matereal.getInstance().isDisposing()) {
+			canceller = Matereal.getInstance().scheduleAtFixedRate(
+				ServiceAbstractImpl.this,
+				ServiceAbstractImpl.this.interval);
+		}
+	}
+
+	private void stopRunning() {
+		if (!Matereal.getInstance().isDisposing()) {
+			canceller.cancel();
+			canceller = null;
+		}
 	}
 
 	public synchronized boolean isStarted() {
-		return canceller != null || serviceGroup != null;
+		return isStarted;
 	}
 
 	public synchronized boolean isPaused() {

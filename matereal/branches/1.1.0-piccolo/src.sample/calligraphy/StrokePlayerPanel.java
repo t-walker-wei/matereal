@@ -30,10 +30,7 @@ import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.message.ActivityEvent;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
+import jp.digitalmuseum.mr.gui.activity.ActivityDiagramCanvas;
 import jp.digitalmuseum.mr.resource.WheelsController;
 import jp.digitalmuseum.mr.service.CoordProvider;
 import jp.digitalmuseum.mr.task.DrawPath;
@@ -153,28 +150,16 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 			Fork fork = new Fork(inits);
 			ad.add(fork);
 			ad.setInitialNode(fork);
+			ad.start();
 
 			// Show the activity diagram.
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
+					ActivityDiagramCanvas canvas = ad.newActivityDiagramCanvas();
+					DisposeOnCloseFrame frame = new DisposeOnCloseFrame(canvas);
+					frame.setFrameSize(640, 480);
 					frame.setTitle("Activity viewer");
-
-					// Set event listener to notice the completion of the tasks.
-					ad.addEventListener(new EventListener() {
-
-						public void eventOccurred(Event e) {
-							if (e instanceof ActivityEvent) {
-								if (e.getSource() == ad &&
-										((ActivityEvent) e).getStatus() == STATUS.LEFT) {
-									frame.setTitle("Activity viewer : all tasks were finished.");
-								}
-							}
-						}
-					});
-
-					// Start the activity diagram.
-					ad.start();
+					canvas.animateViewToCenterDiagram();
 				}
 			});
 		}
