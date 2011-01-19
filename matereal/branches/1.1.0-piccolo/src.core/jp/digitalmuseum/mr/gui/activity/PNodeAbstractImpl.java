@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -49,15 +50,19 @@ public abstract class PNodeAbstractImpl extends PPath {
 	private static final long serialVersionUID = 3592199380497357141L;
 	private int depth = 0;
 	private Node node;
-	/*
 	private Deque<PNodeAbstractImpl> children;
 	public double y;
-	*/
 
 	public PNodeAbstractImpl(Node node) {
 		this.node = node;
 		setPaint(Color.white);
-		// resetLayout();
+		setStrokePaint(Color.black);
+		children = new LinkedList<PNodeAbstractImpl>();
+		y = 0;
+	}
+
+	void setAsInitialNode() {
+		setStroke(new BasicStroke(2f));
 	}
 
 	void setDepth(int depth) {
@@ -72,22 +77,35 @@ public abstract class PNodeAbstractImpl extends PPath {
 		return node;
 	}
 
-	/*
-	public Deque<PNodeAbstractImpl> getUnmanagedChildrenReference() {
+	public void onEnter() {
+		setStrokePaint(Color.red);
+		repaint();
+	}
+
+	public void onLeave() {
+		setStrokePaint(Color.black);
+		repaint();
+	}
+
+	Deque<PNodeAbstractImpl> getUnmanagedChildrenReference() {
 		return children;
 	}
 
 	@Override
-	public void addChild(int i, PNode pnode) {
-		super.addChild(i, pnode);
-		if (pnode instanceof PNodeAbstractImpl) {
-			children.add((PNodeAbstractImpl) pnode);
+	public void addChild(int i, PNode pNode) {
+		super.addChild(i, pNode);
+		if (pNode instanceof PNodeAbstractImpl) {
+			children.add((PNodeAbstractImpl) pNode);
 		}
 	}
 
-	private void resetLayout() {
-		children = new LinkedList<PNodeAbstractImpl>();
-		y = 0;
+	@Override
+	public PNode removeChild(int i) {
+		PNode removedPNode = super.removeChild(i);
+		if (removedPNode != null &&
+				removedPNode instanceof PNodeAbstractImpl) {
+			children.remove(removedPNode);
+		}
+		return removedPNode;
 	}
-	*/
 }

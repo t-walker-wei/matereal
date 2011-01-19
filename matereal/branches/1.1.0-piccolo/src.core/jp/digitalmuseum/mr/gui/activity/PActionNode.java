@@ -41,6 +41,11 @@ import java.awt.geom.Line2D;
 
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.entity.Robot;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.EventListener;
+import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
+import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
@@ -51,13 +56,27 @@ public class PActionNode extends PNodeAbstractImpl {
 	public PActionNode(Action action) {
 		super(action);
 		Robot robot = action.getRobot();
+		action.getTask().addEventListener(new EventListener() {
+			public void eventOccurred(Event e) {
+				if (e instanceof ServiceEvent) {
+					ServiceEvent se = (ServiceEvent) e;
+					if (se.getStatus() == STATUS.DISPOSED) {
+						se.getSource().removeEventListener(this);
+					}
+				} else if (e instanceof ServiceUpdateEvent) {
+					PActionNode.this.repaint();
+				}
+			}
+		});
 
 		setPathTo(new Rectangle(0, 0, 200, 70));
 
 		PPath pBorder = new PPath(new Line2D.Float(70, 0, 70, 70));
+		pBorder.setPickable(false);
 		addChild(pBorder);
 
 		PPath pBorder2 = new PPath(new Line2D.Float(75, 25, 195, 25));
+		pBorder2.setPickable(false);
 		addChild(pBorder2);
 
 		PText pText = new PText();
@@ -67,6 +86,7 @@ public class PActionNode extends PNodeAbstractImpl {
 		pText.setText(robot.getName());
 		pText.setWidth(120);
 		pText.setHeight(20);
+		pText.setPickable(false);
 		addChild(pText);
 
 		PText pTaskText = new PText();
@@ -76,13 +96,15 @@ public class PActionNode extends PNodeAbstractImpl {
 		pTaskText.setText(action.getTask().toString());
 		pTaskText.setWidth(120);
 		pTaskText.setHeight(35);
+		pTaskText.setPickable(false);
 		addChild(pTaskText);
 
 		PPath pRobotPath = new PPath(robot.getShape());
-		addChild(pRobotPath);
 		pRobotPath.translate(35, 35);
 		double w = pRobotPath.getWidth(), h = pRobotPath.getHeight();
 		pRobotPath.scale(w > 0 && h > 0 ? (w < h ? 60 / h : 60 / w) : 1);
+		pRobotPath.setPickable(false);
+		addChild(pRobotPath);
 	}
 
 	public Action getNode() {

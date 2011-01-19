@@ -36,6 +36,8 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.Color;
+
 import jp.digitalmuseum.mr.activity.Edge;
 import jp.digitalmuseum.mr.activity.Join;
 import jp.digitalmuseum.mr.activity.Node;
@@ -44,6 +46,7 @@ public class PJoinLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 5862618628516003680L;
 	private Node source;
 	private Join join;
+	private static Color color = new Color(0, 0, 200);
 
 	public PJoinLineNode(
 			Edge edge,
@@ -52,6 +55,7 @@ public class PJoinLineNode extends PLineNodeAbstractImpl {
 		super(pSourceNode, pDestinationNode);
 		source = edge.getSource();
 		join = (Join) edge.getDestination();
+		setStrokePaint(color);
 	}
 
 	public Node getSource() {

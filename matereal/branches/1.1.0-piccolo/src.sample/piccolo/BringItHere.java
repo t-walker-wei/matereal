@@ -74,6 +74,7 @@ public class BringItHere {
 
 		// Show information of the robot in 200x70 rectangle.
 		PPath pRectangle = new PPath(new Rectangle(0, 0, 200, 70));
+		pRectangle.setOffset(5, 5);
 
 		PPath pBorder = new PPath(new Line2D.Float(70, 0, 70, 70));
 		pRectangle.addChild(pBorder);

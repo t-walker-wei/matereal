@@ -50,7 +50,11 @@ public class PNodeFactory {
 			pNodeAbstractImpl = new PControlNode((ControlNode) node);
 		} else {
 			pNodeAbstractImpl = null;
-			System.err.println("Invalid type node: " + node.getClass().getSimpleName());
+			if (node == null) {
+				System.err.println("No node provided.");
+			} else {
+				System.err.println("Invalid type node: " + node.getClass().getSimpleName());
+			}
 		}
 		return pNodeAbstractImpl;
 	}
