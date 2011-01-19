@@ -98,6 +98,11 @@ public class Rotate extends LocationBasedTaskAbstractImpl {
 		previousAngle = Double.MAX_VALUE;
 	}
 
+	@Override
+	protected void onPause() {
+		wheels.stopWheels();
+	}
+
 	public void run() {
 		final double deviationAngle = getCurrentDeviationAngle();
 		angle = Math.abs(deviationAngle);

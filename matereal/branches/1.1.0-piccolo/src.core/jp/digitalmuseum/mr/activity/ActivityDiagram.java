@@ -51,14 +51,16 @@ public class ActivityDiagram extends Node {
 	private Set<Transition> transitions;
 	private Array<Node> currentNodes;
 	private TransitionMonitor monitor;
-	private boolean started;
+	private boolean isStarted;
+	private boolean isPaused;
 
 	public ActivityDiagram() {
 		nodes = new HashSet<Node>();
 		transitions = new HashSet<Transition>();
 		currentNodes = new Array<Node>();
 		monitor = new TransitionMonitor();
-		started = false;
+		isStarted = false;
+		isPaused = false;
 	}
 
 	public synchronized void setInitialNode(Node node) {
@@ -161,7 +163,7 @@ public class ActivityDiagram extends Node {
 	 * @throws IllegalStateException
 	 */
 	public synchronized void start() {
-		if (started) {
+		if (isStarted) {
 			throw new IllegalStateException(
 					"This activity diagram has been already started.");
 		}
@@ -170,7 +172,7 @@ public class ActivityDiagram extends Node {
 		}
 		monitor.start();
 		enter();
-		started = true;
+		isStarted = true;
 	}
 
 	synchronized boolean start(Node node) {
@@ -183,29 +185,46 @@ public class ActivityDiagram extends Node {
 	}
 
 	public synchronized boolean isStarted() {
-		return started;
+		return isStarted;
+	}
+
+	public synchronized boolean isPaused() {
+		return isPaused;
 	}
 
 	public synchronized void pause() {
-		if (!isStarted()) {
+		if (!isStarted() || isPaused()) {
 			return;
 		}
-
+		monitor.pause();
+		for (Node node : currentNodes) {
+			if (node instanceof Action) {
+				((Action) node).getTask().pause();
+			}
+		}
+		isPaused = true;
 	}
 
 	public synchronized void resume() {
-
+		for (Node node : currentNodes) {
+			if (node instanceof Action) {
+				((Action) node).getTask().resume();
+			}
+		}
+		monitor.resume();
+		isPaused = false;
 	}
 
 	public synchronized void stop() {
-		if (started) {
+		if (isStarted) {
 			for (Node node : currentNodes) {
 				node.leave();
 			}
 			currentNodes.clear();
 			monitor.stop();
 			leave();
-			started = false;
+			isStarted = false;
+			isPaused = false;
 		}
 	}
 

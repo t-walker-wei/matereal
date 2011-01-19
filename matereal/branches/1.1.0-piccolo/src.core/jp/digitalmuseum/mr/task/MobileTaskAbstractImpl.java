@@ -61,6 +61,7 @@ public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements
 	}
 
 	@Override protected void onAssigned() { w = (WheelsController) getResourceMap().get(WheelsController.class); }
+	@Override protected void onPause() { getWheels().stopWheels(); }
 
 	protected WheelsController getWheels() { return w; }
 

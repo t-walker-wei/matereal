@@ -77,14 +77,14 @@ public class DanceDanceDance {
 		// Make windows for showing an activity diagram and status of hakoniwa.
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				final DisposeOnCloseFrame graph = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
-				graph.setFrameSize(800, 600);
+				final DisposeOnCloseFrame viewer = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
+				viewer.setFrameSize(800, 600);
 				final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void dispose() {
 						Matereal.getInstance().dispose();
-						graph.dispose();
+						viewer.dispose();
 						super.dispose();
 					}
 				};

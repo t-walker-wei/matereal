@@ -53,11 +53,20 @@ public class Node implements EventProvider {
 	private ActivityDiagram activityDiagram;
 	private Set<Transition> transitions;
 	private Array<EventListener> listeners;
-	private boolean done;
+	private boolean isEntered;
+	private boolean isDone;
 
 	public Node() {
 		listeners = new Array<EventListener>();
 		transitions = new HashSet<Transition>();
+	}
+
+	public final boolean isEntered() {
+		return isEntered;
+	}
+
+	public final boolean isDone() {
+		return isDone;
 	}
 
 	public final long getEntranceDate() {
@@ -100,10 +109,6 @@ public class Node implements EventProvider {
 
 	ActivityDiagram getActivityDiagram() {
 		return activityDiagram;
-	}
-
-	boolean isDone() {
-		return done;
 	}
 
 	Set<Transition> getTransitionsReference() {
@@ -153,18 +158,20 @@ public class Node implements EventProvider {
 
 	final void enter() {
 		entranceDate = Calendar.getInstance().getTimeInMillis();
-		done = false;
+		isEntered = true;
+		isDone = false;
 		distributeEvent(
 				new ActivityEvent(this, STATUS.ENTERED));
 		onEnter();
 	}
 
 	protected final void setDone() {
-		done = true;
+		isDone = true;
 		distributeEvent(new ActivityEvent(this, STATUS.DONE));
 	}
 
 	final void leave() {
+		isEntered = false;
 		distributeEvent(
 				new ActivityEvent(this, STATUS.LEFT));
 		onLeave();

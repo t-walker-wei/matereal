@@ -95,14 +95,6 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 		this.ad = ad;
 		synchronized (ad) {
 
-			adel = new ActivityDiagramEventListener();
-			ad.addEventListener(adel);
-
-			ael = new ActivityEventListener();
-			for (Node node : ad.getNodes()) {
-				node.addEventListener(ael);
-			}
-
 			nodeMap = new HashMap<Node, PNodeAbstractImpl>();
 			pLineLayer = new PLayer();
 			getCamera().addLayer(pLineLayer);
@@ -113,6 +105,21 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 			if (ad.getInitialNode() != null) {
 				initialize();
 			}
+
+			adel = new ActivityDiagramEventListener();
+			ad.addEventListener(adel);
+
+			ael = new ActivityEventListener();
+			for (Node node : ad.getNodes()) {
+				node.addEventListener(ael);
+				if (node.isEntered()) {
+					PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(node);
+					if (pNodeAbstractImpl != null) {
+						pNodeAbstractImpl.onEnter();
+					}
+				}
+			}
+
 			addInputEventListener(new PBasicInputEventHandler() {
 
 				@Override
@@ -132,19 +139,34 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 									300);
 						}
 					} else if (event.getClickCount() == 2){
-						PBounds pBounds = rootPNode.getGlobalFullBounds();
-						pBounds.x -= 10;
-						pBounds.y -= 10;
-						pBounds.width += 20;
-						pBounds.height += 20;
-						cameraActivity = getCamera().animateViewToCenterBounds(
-								pBounds,
-								true,
-								500);
+						if (event.isLeftMouseButton()) {
+							if (ad.isPaused()) {
+								ad.resume();
+							} else {
+								ad.pause();
+							}
+						} else {
+							animateViewToCenterDiagram();
+						}
 					}
 				}
 			});
 		}
+	}
+
+	public void animateViewToCenterDiagram() {
+		if (cameraActivity != null) {
+			cameraActivity.terminate();
+		}
+		PBounds pBounds = rootPNode.getGlobalFullBounds();
+		pBounds.x -= 10;
+		pBounds.y -= 10;
+		pBounds.width += 20;
+		pBounds.height += 20;
+		cameraActivity = getCamera().animateViewToCenterBounds(
+				pBounds,
+				true,
+				500);
 	}
 
 	public void dispose() {
