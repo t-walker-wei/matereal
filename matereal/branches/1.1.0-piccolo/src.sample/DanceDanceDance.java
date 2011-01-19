@@ -10,6 +10,7 @@ import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
+import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
 import jp.digitalmuseum.mr.task.GoForward;
@@ -77,7 +78,7 @@ public class DanceDanceDance {
 		// Make windows for showing an activity diagram and status of hakoniwa.
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				final DisposeOnCloseFrame viewer = new DisposeOnCloseFrame(ad.newActivityDiagramCanvas());
+				final DisposeOnCloseFrame viewer = new DisposeOnCloseFrame(new ActivityDiagramPane(ad));
 				viewer.setFrameSize(800, 600);
 				final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
 					private static final long serialVersionUID = 1L;

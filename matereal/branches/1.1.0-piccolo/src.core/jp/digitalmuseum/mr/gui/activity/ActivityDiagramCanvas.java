@@ -299,9 +299,9 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 
 			// Set depth of the join node.
 			PNodeAbstractImpl pJoinNode = nodeMap.get(joinNode);
-			pJoinNode.setDepth(depth + 1);
+			pJoinNode.setDepthOffset(depth + 1 - pJoinNode.getDepth());
 
-			// Add dummy nodes
+			// Add dummy nodes to parents of the join node.
 			for (Edge edge : edges) {
 				Node source = edge.getSource();
 				PNodeAbstractImpl pJoiningNode = nodeMap.get(source);

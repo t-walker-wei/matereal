@@ -31,6 +31,7 @@ import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
 import jp.digitalmuseum.mr.gui.activity.ActivityDiagramCanvas;
+import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
 import jp.digitalmuseum.mr.resource.WheelsController;
 import jp.digitalmuseum.mr.service.CoordProvider;
 import jp.digitalmuseum.mr.task.DrawPath;
@@ -155,8 +156,8 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 			// Show the activity diagram.
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					ActivityDiagramCanvas canvas = ad.newActivityDiagramCanvas();
-					DisposeOnCloseFrame frame = new DisposeOnCloseFrame(canvas);
+					ActivityDiagramCanvas canvas = new ActivityDiagramCanvas(ad);
+					DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ActivityDiagramPane(canvas));
 					frame.setFrameSize(640, 480);
 					frame.setTitle("Activity viewer");
 					canvas.animateViewToCenterDiagram();
