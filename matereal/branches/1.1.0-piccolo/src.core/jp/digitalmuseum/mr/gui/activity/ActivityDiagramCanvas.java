@@ -39,10 +39,10 @@ package jp.digitalmuseum.mr.gui.activity;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -255,9 +255,29 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 	 */
 	private void layoutNodes() {
 		PNodeAbstractImpl initialPNode = nodeMap.get(ad.getInitialNode());
-		layoutChildrenNodes(initialPNode);
+		// layoutChildrenNodes(initialPNode);
+		// return;
+
+		LinkedList<LayoutNode> stack = new LinkedList<LayoutNode>();
+		stack.push(new LayoutNode(initialPNode));
+		S : while (!stack.isEmpty()) {
+			LayoutNode n = stack.peek();
+			n.y = 0;
+			for (LayoutNode c : n.getChildren()) {
+				if (!c.isFinishedLayouting()) {
+					stack.push(c);
+					continue S;
+				}
+				c.node.setOffset((c.node.getDepth() - n.node.getDepth()) * 240, n.y);
+				n.y += c.node.getHeight() + 5;
+			}
+			stack.poll();
+		}
 	}
 
+	/**
+	 * Do depth first serach for layouting nodes. (Old version using recursive method call.)
+	 */
 	private void layoutChildrenNodes(PNodeAbstractImpl parent) {
 		int depth = parent.getDepth();
 		@SuppressWarnings("unchecked")
@@ -266,11 +286,60 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 		for (PNode pNode : children) {
 			if (pNode instanceof PNodeAbstractImpl) {
 				PNodeAbstractImpl pNodeAbstractImpl = (PNodeAbstractImpl) pNode;
-				pNodeAbstractImpl.setOffset((pNodeAbstractImpl.getDepth() - depth) * 240, y);
 				layoutChildrenNodes(pNodeAbstractImpl);
+				pNodeAbstractImpl.setOffset((pNodeAbstractImpl.getDepth() - depth) * 240, y);
 				double height = pNodeAbstractImpl.getHeight();
 				y += height + 5;
 			}
+		}
+	}
+
+	private static class LayoutNode {
+		private PNodeAbstractImpl node;
+		private Iterator<LayoutNode> childrenIterator;
+		private List<LayoutNode> children;
+		private double y;
+		private boolean hasChildren;
+
+		LayoutNode(PNodeAbstractImpl node) {
+			this.node = node;
+		}
+
+		private void prepare() {
+			if (childrenIterator == null) {
+				hasChildren = false;
+				children = new LinkedList<LayoutNode>();
+				@SuppressWarnings("unchecked")
+				List<PNode> cs = (List<PNode>) node.getChildrenReference();
+				for (PNode child : cs) {
+					if (child instanceof PNodeAbstractImpl) {
+						children.add(new LayoutNode((PNodeAbstractImpl) child));
+						hasChildren = true;
+					}
+				}
+				childrenIterator = children.iterator();
+			}
+		}
+
+		public boolean hasChildren() {
+			prepare();
+			return hasChildren;
+		}
+
+		public boolean isFinishedLayouting() {
+			return
+				hasChildren() ||
+				!getUncompletedChildrenIterator().hasNext();
+		}
+
+		public List<LayoutNode> getChildren() {
+			prepare();
+			return children;
+		}
+
+		public Iterator<LayoutNode> getUncompletedChildrenIterator() {
+			prepare();
+			return childrenIterator;
 		}
 	}
 
