@@ -1,7 +1,7 @@
 matereal
 Copyright (C) 2010 Jun KATO
 
-version 1.1.0
+version 1.0.3
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 "matereal" is a Java toolkit that allows to prototype
