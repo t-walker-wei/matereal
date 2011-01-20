@@ -53,11 +53,20 @@ public class Node implements EventProvider {
 	private ActivityDiagram activityDiagram;
 	private Set<Transition> transitions;
 	private Array<EventListener> listeners;
-	private boolean done;
+	private boolean isEntered;
+	private boolean isDone;
 
 	public Node() {
 		listeners = new Array<EventListener>();
 		transitions = new HashSet<Transition>();
+	}
+
+	public final boolean isEntered() {
+		return isEntered;
+	}
+
+	public final boolean isDone() {
+		return isDone;
 	}
 
 	public final long getEntranceDate() {
@@ -82,11 +91,6 @@ public class Node implements EventProvider {
 		}
 	}
 
-	protected final void setDone() {
-		done = true;
-		distributeEvent(new ActivityEvent(this, STATUS.DONE));
-	}
-
 	protected boolean isAllowedEntry() {
 		return true;
 	}
@@ -107,17 +111,24 @@ public class Node implements EventProvider {
 		return activityDiagram;
 	}
 
-	boolean isDone() {
-		return done;
+	Set<Transition> getTransitionsReference() {
+		return transitions;
 	}
 
-	Set<Transition> getTransitions() {
+	public Set<Transition> getTransitions() {
+		Set<Transition> transitions = new HashSet<Transition>();
+		getTransitionsOut(transitions);
 		return transitions;
+	}
+
+	public void getTransitionsOut(Set<Transition> transitions) {
+		transitions.clear();
+		transitions.addAll(this.transitions);
 	}
 
 	void clearTransitions() {
 		for (Transition t : transitions) {
-			activityDiagram.getGraph().removeEdge(t);
+			activityDiagram.removeTransition(t);
 		}
 		transitions.clear();
 	}
@@ -128,7 +139,7 @@ public class Node implements EventProvider {
 
 	boolean removeTransition(Transition transition) {
 		if (transitions.remove(transition)) {
-			activityDiagram.getGraph().removeEdge(transition);
+			activityDiagram.removeTransition(transition);
 			return true;
 		}
 		return false;
@@ -138,9 +149,8 @@ public class Node implements EventProvider {
 		Iterator<Transition> it;
 		for (it = transitions.iterator(); it.hasNext();) {
 			Transition t = it.next();
-			if (t.getSource() == node ||
-					t.getDestination() == node) {
-				activityDiagram.getGraph().removeEdge(t);
+			if (t.getDestination() == node) {
+				activityDiagram.removeTransition(t);
 				it.remove();
 			}
 		}
@@ -148,13 +158,20 @@ public class Node implements EventProvider {
 
 	final void enter() {
 		entranceDate = Calendar.getInstance().getTimeInMillis();
-		done = false;
+		isEntered = true;
+		isDone = false;
 		distributeEvent(
 				new ActivityEvent(this, STATUS.ENTERED));
 		onEnter();
 	}
 
+	protected final void setDone() {
+		isDone = true;
+		distributeEvent(new ActivityEvent(this, STATUS.DONE));
+	}
+
 	final void leave() {
+		isEntered = false;
 		distributeEvent(
 				new ActivityEvent(this, STATUS.LEFT));
 		onLeave();

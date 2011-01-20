@@ -37,16 +37,29 @@
 package jp.digitalmuseum.mr.message;
 
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
+import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.activity.Transition;
 
 public class ActivityDiagramEvent extends Event {
 	static public enum STATUS {
-		NODE_ADDED, NODE_REMOVED, TRANSITION_ADDED, TRANSITION_REMOVED
+		NODE_ADDED, NODE_REMOVED, TRANSITION_ADDED, TRANSITION_REMOVED,
+		INITIAL_NODE_SET
 	}
 	private STATUS status;
+	private Node node;
+	private Transition transition;
 
 	public ActivityDiagramEvent(ActivityDiagram source, STATUS status) {
 		super(source);
 		this.status = status;
+	}
+	public ActivityDiagramEvent(ActivityDiagram source, STATUS status, Node node) {
+		this(source, status);
+		this.node = node;
+	}
+	public ActivityDiagramEvent(ActivityDiagram source, STATUS status, Transition transition) {
+		this(source, status);
+		this.transition = transition;
 	}
 
 	@Override
@@ -56,6 +69,14 @@ public class ActivityDiagramEvent extends Event {
 
 	public STATUS getStatus() {
 		return status;
+	}
+
+	public Node getAffectedNode() {
+		return node;
+	}
+
+	public Transition getAffectedTransition() {
+		return transition;
 	}
 
 	public String toString() {

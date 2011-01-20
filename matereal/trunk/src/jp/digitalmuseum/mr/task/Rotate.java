@@ -59,8 +59,20 @@ public class Rotate extends LocationBasedTaskAbstractImpl {
 	private double angle;
 	private double previousAngle;
 
+	public Rotate(double destination) {
+		super();
+		this.destination = destination;
+		nameString = TASK_NAME_PREFIX + String.format("%.3f", destination);
+	}
+
+	public Rotate(Position destinationPosition) {
+		this.destinationPosition = destinationPosition;
+		nameString = TASK_NAME_PREFIX + "("+destinationPosition+")";
+	}
+
+	@Override
 	public String getName() {
-		return nameString + ", rest: "+String.format("%.3f", getCurrentDeviationAngle());
+		return nameString;
 	}
 
 	public void setAllowedDeviationAngle(double allowedDeviationAngle) {
@@ -79,22 +91,16 @@ public class Rotate extends LocationBasedTaskAbstractImpl {
 		return satisfactoryDeviationAngle;
 	}
 
-	public Rotate(double destination) {
-		super();
-		this.destination = destination;
-		nameString = TASK_NAME_PREFIX + String.format("%.3f", destination);
-	}
-
-	public Rotate(Position destinationPosition) {
-		this.destinationPosition = destinationPosition;
-		nameString = TASK_NAME_PREFIX + "("+destinationPosition+")";
-	}
-
 	@Override
 	protected void onStart() {
 		super.onStart();
 		wheels = (WheelsController) getResourceMap().get(WheelsController.class);
 		previousAngle = Double.MAX_VALUE;
+	}
+
+	@Override
+	protected void onPause() {
+		wheels.stopWheels();
 	}
 
 	public void run() {

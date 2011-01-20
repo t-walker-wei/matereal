@@ -79,11 +79,12 @@ public class Action extends Node implements EventListener {
 	}
 
 	public void eventOccurred(Event e) {
-		if (e.getSource() == task &&
-				e instanceof ServiceEvent) {
-			ServiceEvent se = ServiceEvent.class.cast(e);
-			if (se.getStatus() == STATUS.FINISHED) {
-				setDone();
+		if (e.getSource() == task) {
+			if (e instanceof ServiceEvent) {
+				ServiceEvent se = (ServiceEvent) e;
+				if (se.getStatus() == STATUS.FINISHED) {
+					setDone();
+				}
 			}
 		}
 	}

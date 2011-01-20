@@ -1,5 +1,7 @@
 package kettle;
 
+import javax.swing.SwingUtilities;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
@@ -10,6 +12,7 @@ import jp.digitalmuseum.mr.activity.TimeoutTransition;
 import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.*;
+import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
@@ -48,7 +51,7 @@ public class BringACupOfTea {
 		final Kettle kettle = new Kettle("Kettle");
 
 		// Entities and marker detector are already initialized.
-		ActivityDiagram ad = new ActivityDiagram();
+		final ActivityDiagram ad = new ActivityDiagram();
 		Action push = new Action(robot, new Push(mug, hakoniwa.getPosition(kettle)));
 		Action boil = new Action(kettle, new Boil());
 		Action pour = new Action(kettle, new Pour());
@@ -56,34 +59,42 @@ public class BringACupOfTea {
 		Fork fork = new Fork(push, boil);
 		Join join = new Join(push, boil);
 		ad.add(new Node[] {fork, push, boil, join, pour, stop});
+		ad.addTransition(new Transition(fork, join));
 		ad.addTransition(new Transition(join, pour));
 		ad.addTransition(new TimeoutTransition(pour, stop, 5000));
 		ad.setInitialNode(fork);
 		ad.start();
 		// Hot water will be poured into the mug for five seconds.
 
-		// Make a window for showing captured image.
-		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
-			private static final long serialVersionUID = 1L;
+		// Show an activity diagram.
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				ActivityDiagramPane pane = new ActivityDiagramPane(ad);
+				final DisposeOnCloseFrame viewer = new DisposeOnCloseFrame(pane);
+				viewer.setFrameSize(640, 480);
 
-			@Override public void dispose() {
-				super.dispose();
-				Matereal.getInstance().dispose();
-			}
-		};
-		frame.setResizable(false);
-		frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
+				// Make a window for showing captured image.
+				final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
+					private static final long serialVersionUID = 1L;
 
-		// Repaint the window every time the image is updated.
-		hakoniwa.addEventListener(new EventListener() {
-			public void eventOccurred(Event e) {
-				if (e instanceof ImageUpdateEvent) {
-					frame.repaint();
-				}
+					@Override public void dispose() {
+						super.dispose();
+						viewer.dispose();
+						Matereal.getInstance().dispose();
+					}
+				};
+				frame.setResizable(false);
+				frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
+
+				// Repaint the window every time the image is updated.
+				hakoniwa.addEventListener(new EventListener() {
+					public void eventOccurred(Event e) {
+						if (e instanceof ImageUpdateEvent) {
+							frame.repaint();
+						}
+					}
+				});
 			}
 		});
-
-		// Show an activity diagram.
-		new DisposeOnCloseFrame(ad.newActivityViewer());
 	}
 }
