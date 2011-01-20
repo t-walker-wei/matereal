@@ -84,8 +84,8 @@ public class DanceDanceDance {
 					private static final long serialVersionUID = 1L;
 					@Override
 					public void dispose() {
-						Matereal.getInstance().dispose();
 						viewer.dispose();
+						Matereal.getInstance().dispose();
 						super.dispose();
 					}
 				};

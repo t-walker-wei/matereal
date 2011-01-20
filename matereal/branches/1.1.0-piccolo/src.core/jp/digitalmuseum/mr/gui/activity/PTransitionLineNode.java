@@ -37,19 +37,38 @@
 package jp.digitalmuseum.mr.gui.activity;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
+
+import edu.umd.cs.piccolo.nodes.PText;
 
 import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.activity.TimeoutTransition;
 import jp.digitalmuseum.mr.activity.Transition;
 
 public class PTransitionLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 5091941901786318920L;
 	private Transition transition;
+	private PText text;
 	private static Color color = new Color(100, 100, 100);
 
 	public PTransitionLineNode(Transition transition, PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
 		super(pSourceNode, pDestinationNode);
 		this.transition = transition;
 		setStrokePaint(color);
+		if (transition instanceof TimeoutTransition) {
+			long timeout = ((TimeoutTransition) transition).getTimeout();
+			text = new PText(String.format("%.1fs", (float)timeout/1000));
+			text.setFont(text.getFont().deriveFont(10f));
+			text.setConstrainWidthToTextWidth(true);
+			text.setPaint(Color.white);
+			addChild(text);
+		} else {
+			text = null;
+		}
+	}
+
+	public Transition getTransition() {
+		return transition;
 	}
 
 	public Node getSource() {
@@ -58,5 +77,13 @@ public class PTransitionLineNode extends PLineNodeAbstractImpl {
 
 	public Node getDestination() {
 		return transition.getDestination();
+	}
+
+	@Override
+	protected void setLine(Point2D start, Point2D end) {
+		super.setLine(start, end);
+		if (text != null) {
+			text.setOffset((start.getX()+end.getX()-text.getWidth())/2, (start.getY()+end.getY())/2+5);
+		}
 	}
 }

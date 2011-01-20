@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 
@@ -79,23 +80,19 @@ public class PActionNode extends PNodeAbstractImpl {
 		pBorder2.setPickable(false);
 		addChild(pBorder2);
 
-		PText pText = new PText();
-		pText.translate(75, 5);
-		pText.setConstrainWidthToTextWidth(false);
-		pText.setConstrainHeightToTextHeight(false);
-		pText.setText(robot.getName());
-		pText.setWidth(120);
-		pText.setHeight(20);
-		pText.setPickable(false);
-		addChild(pText);
+		PText pRobotNameText = new PText();
+		pRobotNameText.translate(75, 5);
+		pRobotNameText.setConstrainWidthToTextWidth(false);
+		pRobotNameText.setText(robot.getName());
+		pRobotNameText.setWidth(120);
+		pRobotNameText.setPickable(false);
+		addChild(pRobotNameText);
 
 		PText pTaskText = new PText();
 		pTaskText.translate(75, 30);
 		pTaskText.setConstrainWidthToTextWidth(false);
-		pTaskText.setConstrainHeightToTextHeight(false);
 		pTaskText.setText(action.getTask().toString());
 		pTaskText.setWidth(120);
-		pTaskText.setHeight(35);
 		pTaskText.setPickable(false);
 		addChild(pTaskText);
 
@@ -104,7 +101,16 @@ public class PActionNode extends PNodeAbstractImpl {
 		double w = pRobotPath.getWidth(), h = pRobotPath.getHeight();
 		pRobotPath.scale(w > 0 && h > 0 ? (w < h ? 60 / h : 60 / w) : 1);
 		pRobotPath.setPickable(false);
+		pRobotPath.setStrokePaint(Color.lightGray);
 		addChild(pRobotPath);
+
+		PText pRobotTypeNameText = new PText();
+		pRobotTypeNameText.translate(5, 5);
+		pRobotTypeNameText.setConstrainWidthToTextWidth(false);
+		pRobotTypeNameText.setText(robot.getTypeName());
+		pRobotTypeNameText.setWidth(60);
+		pRobotTypeNameText.setPickable(false);
+		addChild(pRobotTypeNameText);
 	}
 
 	public Action getNode() {

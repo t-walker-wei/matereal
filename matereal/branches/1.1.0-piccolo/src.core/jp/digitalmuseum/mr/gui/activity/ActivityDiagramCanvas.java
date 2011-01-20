@@ -37,6 +37,8 @@
 package jp.digitalmuseum.mr.gui.activity;
 
 import java.awt.Color;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.Point2D;
 import java.util.Deque;
 import java.util.HashMap;
@@ -65,6 +67,8 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PTransformActivity;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.nodes.PPath;
+import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -89,6 +93,8 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 
 	private PLayer pNodeLayer;
 	private PLayer pLineLayer;
+	private PPath sticky;
+	private PText stickyText;
 	private PTransformActivity cameraActivity;
 
 	public ActivityDiagramCanvas(final ActivityDiagram ad) {
@@ -101,6 +107,17 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 			pNodeLayer = new PLayer();
 			getCamera().addLayer(pNodeLayer);
 			setBackground(new Color(240, 240, 240));
+
+			sticky = PPath.createRectangle(0, 0, 240, 25);
+			sticky.setPaint(Color.black);
+			sticky.setStroke(null);
+			stickyText = new PText("Testing activity diagram rendering");
+			stickyText.setWidth(230);
+			stickyText.setHeight(15);
+			stickyText.setOffset(5, 5);
+			stickyText.setTextPaint(Color.white);
+			sticky.addChild(stickyText);
+			getCamera().addChild(sticky);
 
 			if (ad.getInitialNode() != null) {
 				initialize();
@@ -151,6 +168,13 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 					}
 				}
 			});
+
+			addComponentListener(new ComponentAdapter() {
+				@Override
+				public void componentResized(ComponentEvent e) {
+					updateSticky();
+				}
+			});
 		}
 	}
 
@@ -176,6 +200,12 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 				node.removeEventListener(ael);
 			}
 		}
+	}
+
+	private void updateSticky() {
+		sticky.setOffset(
+				getWidth() - sticky.getWidth() - 5,
+				getHeight() - sticky.getHeight() - 5);
 	}
 
 	private void initialize() {
