@@ -1,3 +1,5 @@
+import javax.swing.SwingUtilities;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
@@ -8,12 +10,9 @@ import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
+import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.message.ActivityEvent;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
 import jp.digitalmuseum.mr.task.GoForward;
 import jp.digitalmuseum.mr.task.SpinLeft;
 import jp.digitalmuseum.mr.task.Stop;
@@ -74,34 +73,26 @@ public class DanceDanceDance {
 		ad.add(join);
 		ad.addTransition(new Transition(fork, join));
 		ad.setInitialNode(fork);
+		ad.start();
 
 		// Make windows for showing an activity diagram and status of hakoniwa.
-		final DisposeOnCloseFrame graph = new DisposeOnCloseFrame(ad.newActivityViewer());
-		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public void dispose() {
-				Matereal.getInstance().dispose();
-				graph.dispose();
-				super.dispose();
-			}
-		};
-		frame.setResizable(false);
-		frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
-		frame.setTitle("Dance dance dance.");
-
-		// Change title of the main window when all tasks were completed.
-		ad.addEventListener(new EventListener() {
-
-			public void eventOccurred(Event e) {
-				if (e instanceof ActivityEvent) {
-					if (e.getSource() == ad &&
-							((ActivityEvent) e).getStatus() == STATUS.LEFT) {
-						frame.setTitle("All tasks were completed.");
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				final DisposeOnCloseFrame viewer = new DisposeOnCloseFrame(new ActivityDiagramPane(ad));
+				viewer.setFrameSize(800, 600);
+				final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {
+					private static final long serialVersionUID = 1L;
+					@Override
+					public void dispose() {
+						viewer.dispose();
+						Matereal.getInstance().dispose();
+						super.dispose();
 					}
-				}
+				};
+				frame.setResizable(false);
+				frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
+				frame.setTitle("Dance dance dance.");
 			}
 		});
-		ad.start();
 	}
 }

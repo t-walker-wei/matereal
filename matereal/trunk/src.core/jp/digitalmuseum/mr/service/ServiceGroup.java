@@ -64,7 +64,9 @@ public class ServiceGroup extends ServiceAbstractImpl implements ServiceHolder {
 
 	public synchronized void run() {
 		for (Service service : services) {
-			service.run();
+			if (!service.isPaused()) {
+				service.run();
+			}
 		}
 	}
 

@@ -61,10 +61,9 @@ public class Fork extends ControlNode {
 	@Override
 	protected void onEnter() {
 		for (EdgeImpl edge : outs) {
-			getActivityDiagram().start(edge.getDestination(), false);
+			getActivityDiagram().start(edge.getDestination());
 		}
 		setDone();
-		getActivityDiagram().repaintViewers();
 	}
 
 	@Override

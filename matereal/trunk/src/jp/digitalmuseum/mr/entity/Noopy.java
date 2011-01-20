@@ -179,14 +179,14 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 
 		public void goBackward() {
 			if (status != STATUS.GO_BACKWARD) {
-				getConnector().write("i");
+				getConnector().write("b\n");
 				status = STATUS.GO_BACKWARD;
 			}
 		}
 
 		public void goForward() {
 			if (status != STATUS.GO_FORWARD) {
-				getConnector().write("d");
+				getConnector().write("f\n");
 				status = STATUS.GO_FORWARD;
 			}
 		}
@@ -194,12 +194,13 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 		public void spin(SPIN direction) {
 			if (direction.equals(SPIN.LEFT)) {
 				if (status != STATUS.SPIN_LEFT) {
-					getConnector().write("p");
+					// getConnector().write("l"); 90d
+					getConnector().write("j\n");
 					status = STATUS.SPIN_LEFT;
 				}
 			} else {
 				if (status != STATUS.SPIN_RIGHT) {
-					getConnector().write("w");
+					getConnector().write("y\n");
 					status = STATUS.SPIN_RIGHT;
 				}
 			}
@@ -207,21 +208,21 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 
 		public void spinLeft() {
 			if (status != STATUS.SPIN_LEFT) {
-				getConnector().write("p");
+				getConnector().write("j\n");
 				status = STATUS.SPIN_LEFT;
 			}
 		}
 
 		public void spinRight() {
 			if (status != STATUS.SPIN_RIGHT) {
-				getConnector().write("w");
+				getConnector().write("y\n");
 				status = STATUS.SPIN_RIGHT;
 			}
 		}
 
 		public void stopWheels() {
 			if (status != STATUS.STOP) {
-				getConnector().write("y");
+				getConnector().write("s\n");
 				status = STATUS.STOP;
 			}
 		}

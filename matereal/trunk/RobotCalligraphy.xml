@@ -8,7 +8,7 @@
 
 	<property name="app.name" value="calligraphy.RobotCalligraphy" />
 	<property name="app.classes" value="calligraphy/*.class" />
-	<property name="app.classpath" value="${matereal-jar.name} ${jung-list}" />
+	<property name="app.classpath" value="${matereal-jar.name} ${piccolo2d-list}" />
 
 	<!-- ****Targets**** -->
 
@@ -23,7 +23,7 @@
 	<!-- Runnable Jar -->
 	<target name="runnable-jar" depends="matereal-examples-compile">
 		<copy todir="${matereal-dist.dir}lib">
-			<fileset dir="lib/jung/" includes="${jung-list}" />
+			<fileset dir="lib/piccolo/" includes="${piccolo2d-list}" />
 		</copy>
 		<jar destfile="${matereal-dist.dir}${app.name}.jar">
 			<zipfileset src="lib/jar-in-jar-loader.zip" />
@@ -55,7 +55,7 @@
 				<attribute name="Main-Class" value="${app.name}" />
 			</manifest>
 		</jar>
-		<exec dir="${matereal-dist.dir}" executable="exewrap.exe">
+		<exec dir="${matereal-dist.dir}" executable="C:\Program Files (x86)\Java\jre6\bin\exewrap.exe">
 		  <arg line="-g ${app.name}_win.jar"/>
 		</exec>
 		<move file="${matereal-dist.dir}${app.name}_win.exe" tofile="${matereal-dist.dir}${app.name}.exe" />
