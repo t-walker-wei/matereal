@@ -17,6 +17,11 @@
 			<zipfileset dir="./lib/rxtx-2.1-7-bins-r2/"
 					includes="*.jar *.dll" />
 
+			<zipfileset dir="./lib/piccolo/"
+					includes="README.txt" fullpath="README_piccolo.txt" />
+			<zipfileset dir="./lib/piccolo/"
+					includes="*.jar" />
+
 			<zipfileset dir="./lib/matereal/connector/"
 					includes="README.txt" fullpath="README_connector.txt" />
 			<zipfileset dir="./lib/matereal/connector/"

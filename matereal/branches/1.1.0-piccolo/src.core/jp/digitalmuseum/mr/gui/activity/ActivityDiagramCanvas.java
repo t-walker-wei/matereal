@@ -111,7 +111,7 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 			sticky = PPath.createRectangle(0, 0, 240, 25);
 			sticky.setPaint(Color.black);
 			sticky.setStroke(null);
-			stickyText = new PText("Testing activity diagram rendering");
+			stickyText = new PText("Activity Diagram Viewer");
 			stickyText.setWidth(230);
 			stickyText.setHeight(15);
 			stickyText.setOffset(5, 5);
