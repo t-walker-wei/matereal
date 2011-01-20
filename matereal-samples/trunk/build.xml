@@ -42,6 +42,8 @@
 					includes="LICENSE.txt" fullpath="LICENSE_matereal.txt" />
 			<zipfileset dir="./lib/matereal/matereal/"
 					includes="*.jar" />
+			<zipfileset dir="./lib/matereal/matereal/"
+					includes="*-docs.zip" />
 
 			<zipfileset dir="./lib/matereal/napkit/"
 					includes="README.txt" fullpath="README_napkit.txt" />
