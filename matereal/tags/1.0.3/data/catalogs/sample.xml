@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<matereal>
+<catalog>
+	<entity class="MindstormNXT" name="Mindstorm NXT Tribot:1">
+
+		<!-- appended by Matereal -->
+		<img src="" />
+		<option name="Connector" value="btspp://" />
+
+		<!-- appended by CatalogHandler -->
+		<option name="marker" value="mindstorm.patt" />
+
+	</entity>
+	<service class="Camera" name="filter:0" />
+	<service class="MarkerDetector" name="">
+		<option name="ImageProvider" value="filter:0" />
+	</service>
+	<serviceGroup name="Service Thread:0">
+		<service class="TestService" />
+	</serviceGroup>
+	<entityHolder name="VirtualRobots">
+		<entity class="PairRobot" name="pair1">
+			<option name="first" value="MindstormNXT Tribot:1" />
+			<option name="second" value="MindstormNXT Tribot:2" />
+		</entity>
+	</entityHolder>
+</catalog>
+<!-- <catalog src="C:\commonCatalog.xml" /> -->
+<application name="SampleApplication">
+	<meta name="author" content="arc@dmz" />
+	<meta name="description" content="test" />
+	<link rel="official" href="http://mr.digitalmuseum.jp" />
+	<service class="MarkerDetector" name="">
+
+	</service>
+	<group name="Test" interval="1000">
+		<service class="TestService" />
+	</group>
+</application>
+</matereal>
