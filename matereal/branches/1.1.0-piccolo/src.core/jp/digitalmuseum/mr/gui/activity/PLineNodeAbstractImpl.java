@@ -61,7 +61,7 @@ public abstract class PLineNodeAbstractImpl extends PPath {
 		return pDestinationNode;
 	}
 
-	void setLine(Point2D start, Point2D end) {
+	protected void setLine(Point2D start, Point2D end) {
 		points[0] = (Point2D) start.clone();
 		points[1] = (Point2D) end.clone();
 		setPathToPolyline(points);

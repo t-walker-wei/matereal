@@ -25,8 +25,7 @@
 			docencoding="UTF-8"
 			locale="en"
 			classpath="${capture-classpath};${connector-classpath};${jbox2d};${jung};${p5};../napkit/${nyar-classes.dir}"
-			windowtitle="matereal Javadoc"
-			doctitle="matereal-${matereal.version}"
+			windowtitle="Matereal ${matereal.version} API"
 			stylesheetfile="${style}"
 			use="true"
 			bottom="${copyright}">

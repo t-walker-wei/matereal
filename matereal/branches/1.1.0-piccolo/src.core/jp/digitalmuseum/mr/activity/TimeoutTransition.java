@@ -51,4 +51,8 @@ public class TimeoutTransition extends Transition {
 	protected boolean guard() {
 		return getSource().getAliveTime() > timeout;
 	}
+
+	public long getTimeout() {
+		return timeout;
+	}
 }

@@ -160,7 +160,6 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 					DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ActivityDiagramPane(canvas));
 					frame.setFrameSize(640, 480);
 					frame.setTitle("Activity viewer");
-					canvas.animateViewToCenterDiagram();
 				}
 			});
 		}

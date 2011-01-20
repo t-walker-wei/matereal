@@ -1,5 +1,6 @@
 package matereal;
 
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;

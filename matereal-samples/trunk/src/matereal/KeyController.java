@@ -29,7 +29,7 @@ import jp.digitalmuseum.utils.Position;
 public class KeyController {
 	private enum KEY { UP, DOWN, LEFT, RIGHT, ESC, NONE }
 	private KEY key;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private final DrawableFrame drawableFrame;
 	private DisposeOnCloseFrame hakoniwaFrame;
 	private DifferentialWheelsController wheels;
@@ -48,7 +48,7 @@ public class KeyController {
 		if (DEBUG) {
 			robot = initHakoniwa();
 		} else {
-			robot = new MindstormsNXT("btspp://00165305b308");
+			robot = new MindstormsNXT("btspp://00165305B308");
 		}
 		wheels = robot.requestResource(DifferentialWheelsController.class, this);
 

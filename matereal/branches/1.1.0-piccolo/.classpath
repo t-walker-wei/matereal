@@ -15,14 +15,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="matereal/lib/jogl-1.1.1a"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jung/collections-generic-4.01.jar"/>
-	<classpathentry kind="lib" path="lib/jung/colt-1.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/jung/concurrent-1.3.4.jar"/>
-	<classpathentry kind="lib" path="lib/jung/jung-algorithms-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/jung/jung-api-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/jung/jung-graph-impl-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/jung/jung-visualization-2.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/jung/vecmath-1.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/p5/core.jar"/>
 	<classpathentry kind="lib" path="lib/piccolo/piccolo2d-core-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/piccolo/piccolo2d-extras-1.3.jar"/>

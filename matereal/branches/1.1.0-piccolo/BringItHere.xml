@@ -6,9 +6,9 @@
 
 	<!-- ****Properties**** -->
 
-	<property name="app.name" value="calligraphy.RobotCalligraphy" />
-	<property name="app.classes" value="calligraphy/*.class" />
-	<property name="app.classpath" value="${matereal-jar.name} ${piccolo2d-list}" />
+	<property name="app.name" value="BringItHere" />
+	<property name="app.classes" value="BringItHere*.class" />
+	<property name="app.classpath" value="${matereal-jar.name}" />
 
 	<!-- ****Targets**** -->
 
@@ -22,9 +22,6 @@
 
 	<!-- Runnable Jar -->
 	<target name="runnable-jar" depends="matereal-examples-compile">
-		<copy todir="${matereal-dist.dir}lib">
-			<fileset dir="lib/piccolo/" includes="${piccolo2d-list}" />
-		</copy>
 		<jar destfile="${matereal-dist.dir}${app.name}.jar">
 			<zipfileset src="lib/jar-in-jar-loader.zip" />
 			<fileset dir="${matereal-examples-classes.dir}" includes="${app.classes}" />
