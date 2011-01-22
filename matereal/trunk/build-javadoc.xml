@@ -24,7 +24,7 @@
 			encoding="UTF-8"
 			docencoding="UTF-8"
 			locale="en"
-			classpath="${capture-classpath};${connector-classpath};${jbox2d};${jung};${p5};../napkit/${nyar-classes.dir}"
+			classpath="${capture-classpath};${connector-classpath};${jbox2d};${piccolo2d}};${p5};../napkit/${nyar-classes.dir}"
 			windowtitle="Matereal ${matereal.version} API"
 			stylesheetfile="${style}"
 			use="true"

@@ -1,4 +1,4 @@
-This directory contains deliverables of Java Universal Network/Graph Framework (JUNG) project distributed under BSD license.
+This directory contains deliverables of Piccolo2D project distributed under BSD license.
 To see details, visit http://www.piccolo2d.org/
 
 ---

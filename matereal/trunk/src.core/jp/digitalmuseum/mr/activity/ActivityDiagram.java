@@ -41,8 +41,6 @@ import java.util.Set;
 
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent.STATUS;
-import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
-import jp.digitalmuseum.mr.message.ActivityDiagramEvent.STATUS;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 import jp.digitalmuseum.utils.Array;
 
