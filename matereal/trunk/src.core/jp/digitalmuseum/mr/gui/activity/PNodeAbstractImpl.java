@@ -50,14 +50,14 @@ public abstract class PNodeAbstractImpl extends PPath {
 	private static final long serialVersionUID = 3592199380497357141L;
 	private int depth = 0;
 	private Node node;
-	private Deque<PNodeAbstractImpl> children;
+	private Deque<PNodeAbstractImpl> unmanagedChildren;
 	public double y;
 
 	public PNodeAbstractImpl(Node node) {
 		this.node = node;
 		setPaint(Color.white);
 		setStrokePaint(Color.black);
-		children = new LinkedList<PNodeAbstractImpl>();
+		unmanagedChildren = new LinkedList<PNodeAbstractImpl>();
 		y = 0;
 	}
 
@@ -69,6 +69,11 @@ public abstract class PNodeAbstractImpl extends PPath {
 		this.depth = depth;
 	}
 
+	/**
+	 * Add provided offset to depth of the node and its all descendants.
+	 *
+	 * @param depthOffset
+	 */
 	void setDepthOffset(int depthOffset) {
 		Deque<PNodeAbstractImpl> stack = new LinkedList<PNodeAbstractImpl>();
 		stack.push(this);
@@ -98,14 +103,14 @@ public abstract class PNodeAbstractImpl extends PPath {
 	}
 
 	Deque<PNodeAbstractImpl> getUnmanagedChildrenReference() {
-		return children;
+		return unmanagedChildren;
 	}
 
 	@Override
 	public void addChild(int i, PNode pNode) {
 		super.addChild(i, pNode);
 		if (pNode instanceof PNodeAbstractImpl) {
-			children.add((PNodeAbstractImpl) pNode);
+			unmanagedChildren.add((PNodeAbstractImpl) pNode);
 		}
 	}
 
@@ -114,7 +119,7 @@ public abstract class PNodeAbstractImpl extends PPath {
 		PNode removedPNode = super.removeChild(i);
 		if (removedPNode != null &&
 				removedPNode instanceof PNodeAbstractImpl) {
-			children.remove(removedPNode);
+			unmanagedChildren.remove(removedPNode);
 		}
 		return removedPNode;
 	}
