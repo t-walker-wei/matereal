@@ -45,9 +45,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.activity.ControlNode;
@@ -75,14 +73,15 @@ import edu.umd.cs.piccolo.util.PBounds;
  * A canvas for rendering an activity diagram as a timeline-like directed
  * acyclic graph.
  *
- * Since the diagram is usually used to represent a workflow of robots and
- * their users, it is expected to form one timeline (thus, directed graph.)
- * It can have cyclic subgraphs, but this canvas prevents making cycles by
- * using a dummy node which links to the original node of its parent graph.
+ * Since the diagram is usually used to represent a workflow of robots and their
+ * users, it is expected to form one timeline (thus, directed graph.) It can
+ * have cyclic subgraphs, but this canvas prevents making cycles by using a
+ * dummy node which links to the original node of its parent graph.
  *
  * @author Jun KATO
  */
-public class ActivityDiagramCanvas extends PCanvas implements DisposableComponent {
+public class ActivityDiagramCanvas extends PCanvas implements
+		DisposableComponent {
 	private static final long serialVersionUID = -6783170737987111980L;
 	private ActivityDiagram ad;
 	private ActivityDiagramEventListener adel;
@@ -96,6 +95,9 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 	private PPath sticky;
 	private PText stickyText;
 	private PTransformActivity cameraActivity;
+
+	private Point2D s;
+	private Point2D e;
 
 	public ActivityDiagramCanvas(final ActivityDiagram ad) {
 		this.ad = ad;
@@ -118,6 +120,9 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 			stickyText.setTextPaint(Color.white);
 			sticky.addChild(stickyText);
 			getCamera().addChild(sticky);
+
+			s = new Point2D.Float();
+			e = new Point2D.Float();
 
 			if (ad.getInitialNode() != null) {
 				initialize();
@@ -150,12 +155,13 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 				public void mouseClicked(PInputEvent event) {
 					if (!(event.getPickedNode() instanceof PCamera)) {
 						if (!event.isLeftMouseButton()) {
-							cameraActivity = getCamera().animateViewToCenterBounds(
-									event.getPickedNode().getGlobalBounds(),
-									false,
-									300);
+							cameraActivity = getCamera()
+									.animateViewToCenterBounds(
+											event.getPickedNode()
+													.getGlobalBounds(), false,
+											300);
 						}
-					} else if (event.getClickCount() == 2){
+					} else if (event.getClickCount() == 2) {
 						if (event.isLeftMouseButton()) {
 							if (ad.isPaused()) {
 								ad.resume();
@@ -187,9 +193,7 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 		pBounds.y -= 10;
 		pBounds.width += 20;
 		pBounds.height += 20;
-		cameraActivity = getCamera().animateViewToCenterBounds(
-				pBounds,
-				true,
+		cameraActivity = getCamera().animateViewToCenterBounds(pBounds, true,
 				500);
 	}
 
@@ -203,106 +207,141 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 	}
 
 	private void updateSticky() {
-		sticky.setOffset(
-				getWidth() - sticky.getWidth() - 5,
-				getHeight() - sticky.getHeight() - 5);
+		sticky.setOffset(getWidth() - sticky.getWidth() - 5, getHeight()
+				- sticky.getHeight() - 5);
 	}
 
 	private void initialize() {
 
-		// Clear graph.
+		// Clear the graph.
 		nodeMap.clear();
 		pNodeLayer.removeAllChildren();
 		pLineLayer.removeAllChildren();
 
-		Set<Join> pendingNodes = constructRootedTree();
-		connectPendingNodes(pendingNodes);
-		layoutNodes();
-		layoutArrows();
+		// Construct a new graph.
+		rootPNode = constructAcyclicGraph(ad.getInitialNode(), 0);
+		rootPNode.setAsInitialNode();
+		layoutNodes(rootPNode);
+		layoutEdges();
 	}
 
 	/**
-	 * Do breadth first search for constructing a <a href="http://en.wikipedia.org/wiki/Rooted_tree">rooted tree</a>.
+	 * Construct an acyclic graph with the provided root node.
 	 *
-	 * @return pending nodes which will be  of this rooted tree.
+	 * @param rootNode
+	 * @return PNodeAbstractImpl instance corresponding to the provided root
+	 *         node.
 	 */
-	private Set<Join> constructRootedTree() {
-		Map<Node, PNodeAbstractImpl> currentNodeMap = new HashMap<Node, PNodeAbstractImpl>();
-		Map<Node, PNodeAbstractImpl> nextNodeMap = new HashMap<Node, PNodeAbstractImpl>();
+	private PNodeAbstractImpl constructAcyclicGraph(Node rootNode, int depth) {
+		Set<Join> pendingNodes = constructRootedTree(rootNode, depth);
+		connectPendingNodes(pendingNodes);
+		return nodeMap.get(rootNode);
+	}
+
+	/**
+	 * Do breadth first search and construct a <a
+	 * href="http://en.wikipedia.org/wiki/Rooted_tree">rooted tree</a>.
+	 *
+	 * @return pending nodes which will be part of this rooted tree.
+	 */
+	private Set<Join> constructRootedTree(Node initialNode, int depth) {
+		Set<Node> currentNodes = new HashSet<Node>();
+		Set<Node> nextNodes = new HashSet<Node>();
 		Set<Transition> transitions = new HashSet<Transition>();
-
-		Node initialNode = ad.getInitialNode();
-		rootPNode = PNodeFactory.newInstance(initialNode);
-		rootPNode.setOffset(5, 5);
-		rootPNode.setAsInitialNode();
-
-		nodeMap.put(initialNode, rootPNode);
-		currentNodeMap.put(initialNode, rootPNode);
-
-		Set<Node> visitedNodes = nodeMap.keySet();
 		Set<Join> pendingNodes = new HashSet<Join>();
 
-		pNodeLayer.addChild(rootPNode);
+		PNodeAbstractImpl initialPNode = PNodeFactory
+				.newNodeInstance(initialNode);
+		initialPNode.setDepth(depth);
+		initialPNode.setOffset(5, 5);
 
-		int depth = 1;
+		nodeMap.put(initialNode, initialPNode);
+		pNodeLayer.addChild(initialPNode);
+		depth++;
 
-		while (!currentNodeMap.isEmpty()) {
-			nextNodeMap.clear();
-			for (Entry<Node, PNodeAbstractImpl> entry : currentNodeMap.entrySet()) {
-				Node node = entry.getKey();
-				PNodeAbstractImpl parentPNode = entry.getValue();
-				node.getTransitionsOut(transitions);
-				for (Transition transition : transitions) {
+		currentNodes.add(initialNode);
+		while (!currentNodes.isEmpty()) {
+			nextNodes.clear();
+			for (Node parentNode : currentNodes) {
+				PNodeAbstractImpl parentPNode = nodeMap.get(parentNode);
 
-					// New node
-					Node n = transition.getDestination();
-					PNodeAbstractImpl pNode;
-					if (visitedNodes.contains(n)) {
-						pNode = new PLinkNode(n);
+				parentNode.getTransitionsOut(transitions);
+				constructLeaves(transitions, parentPNode, nextNodes);
+
+				if (parentNode instanceof ControlNode) {
+					if (parentNode instanceof Join) {
+						pendingNodes.add((Join) parentNode);
 					} else {
-						pNode = PNodeFactory.newInstance(n);
-						nextNodeMap.put(n, pNode);
-						nodeMap.put(n, pNode); // visitedNodes.add(n);
-					}
-					parentPNode.addChild(pNode);
-					pNode.setDepth(depth);
-					pLineLayer.addChild(new PTransitionLineNode(transition, parentPNode, pNode));
-				}
-
-				if (node instanceof ControlNode) {
-					boolean join = node instanceof Join;
-					if (join) {
-						pendingNodes.add((Join) node);
-					} else {
-						for (Edge edge : ((ControlNode)node).getEdges()) {
-
-							// New node
-							Node n = edge.getDestination();
-							PNodeAbstractImpl pNode;
-							if (visitedNodes.contains(n)) {
-								pNode = new PLinkNode(n);
-							} else {
-								pNode = PNodeFactory.newInstance(n);
-								nextNodeMap.put(n, pNode);
-								nodeMap.put(n, pNode); // visitedNodes.add(n);
-							}
-							parentPNode.addChild(pNode);
-							pNode.setDepth(depth);
-							pLineLayer.addChild(new PForkLineNode(edge, parentPNode, pNode));
-						}
+						Edge[] edges = ((ControlNode) parentNode).getEdges();
+						constructLeaves(edges, parentPNode, nextNodes);
 					}
 				}
 			}
-			Map<Node, PNodeAbstractImpl> tmp = currentNodeMap;
-			currentNodeMap = nextNodeMap;
-			nextNodeMap = tmp;
-			depth ++;
+			Set<Node> tmp = currentNodes;
+			currentNodes = nextNodes;
+			nextNodes = tmp;
+			depth++;
 		}
 		return pendingNodes;
 	}
 
+	private void constructLeaves(Set<Transition> edges,
+			PNodeAbstractImpl parentPNode, Set<Node> nextNodes) {
+		for (Edge edge : edges) {
+			constructLeaf(edge, parentPNode, nextNodes);
+		}
+	}
+
+	private void constructLeaves(Edge[] edges,
+			PNodeAbstractImpl parentPNode, Set<Node> nextNodes) {
+		for (Edge edge : edges) {
+			constructLeaf(edge, parentPNode, nextNodes);
+		}
+	}
+
+	private void constructLeaf(Edge edge,
+			PNodeAbstractImpl parentPNode, Set<Node> nextNodes) {
+		Node node = edge.getDestination();
+		if (constructPNode(node, parentPNode, edge)) {
+			nextNodes.add(node);
+		}
+	}
+
 	/**
-	 * Connect pending nodes to make a completed <a href="http://en.wikipedia.org/wiki/Directed_acyclic_graph">acyclic graph</a>.
+	 * Construct PNode corresponding to the provided node. When it is not the
+	 * first time for the node, a PLinkNode is constructed.
+	 *
+	 * @param node
+	 * @param parentPNode
+	 * @param edge
+	 * @return Whether the provided node appears in the graph for the first time
+	 *         or not. (If no, a PLinkNode is constructed in this method.)
+	 */
+	private boolean constructPNode(Node node, PNodeAbstractImpl parentPNode,
+			Edge edge) {
+		PNodeAbstractImpl pNode = constructPNode(node);
+		parentPNode.addChild(pNode);
+		pNode.setDepth(parentPNode.getDepth() + 1);
+		pLineLayer.addChild(PNodeFactory.newEdgeInstance(edge, parentPNode,
+				pNode));
+		return !(pNode instanceof PLinkNode);
+	}
+
+	private PNodeAbstractImpl constructPNode(Node node) {
+		PNodeAbstractImpl pNode;
+		if (nodeMap.containsKey(node)) {
+			pNode = new PLinkNode(node);
+		} else {
+			pNode = PNodeFactory.newNodeInstance(node);
+			nodeMap.put(node, pNode);
+		}
+		return pNode;
+	}
+
+	/**
+	 * Connect pending nodes to make a complete <a
+	 * href="http://en.wikipedia.org/wiki/Directed_acyclic_graph">acyclic
+	 * graph</a>.
 	 *
 	 * @param pendingNodes
 	 */
@@ -339,14 +378,17 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 				int depthDiff = depth - d;
 				if (depthDiff <= 1) {
 					// No dummy nodes required.
-					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,	pJoinNode));
+					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,
+							pJoinNode));
 				} else if (depthDiff == 2) {
 					// One dummy node required.
 					PNodeAbstractImpl pDummyNode = new PDummyNode(source);
 					pJoiningNode.addChild(pDummyNode);
 					pDummyNode.setDepth(d + 1);
-					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,	pDummyNode));
-					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,		pJoinNode));
+					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,
+							pDummyNode));
+					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,
+							pJoinNode));
 				} else {
 					// Two dummy node required.
 					PNodeAbstractImpl pDummyNode = new PDummyNode(source);
@@ -355,31 +397,34 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 					PNodeAbstractImpl pDummyNode2 = new PDummyNode(source);
 					pDummyNode.addChild(pDummyNode2);
 					pDummyNode2.setDepth(depth - 1);
-					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,	pDummyNode));
-					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,		pDummyNode2));
-					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode2,	pJoinNode));
+					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,
+							pDummyNode));
+					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,
+							pDummyNode2));
+					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode2,
+							pJoinNode));
 				}
 			}
 		}
 	}
 
 	/**
-	 * Do depth first serach for layouting nodes.
+	 * Do depth first search for layouting nodes.
 	 */
-	private void layoutNodes() {
+	private void layoutNodes(PNodeAbstractImpl rootPNode) {
 		LinkedList<PNodeAbstractImpl> stack = new LinkedList<PNodeAbstractImpl>();
 		stack.push(rootPNode);
-		S : while (!stack.isEmpty()) {
+		S: while (!stack.isEmpty()) {
 			PNodeAbstractImpl node = stack.peek();
-			Deque<PNodeAbstractImpl> children = node.getUnmanagedChildrenReference();
+			Deque<PNodeAbstractImpl> children = node
+					.getUnmanagedChildrenReference();
 			while (!children.isEmpty()) {
 				PNodeAbstractImpl child = children.peek();
 				if (!child.getUnmanagedChildrenReference().isEmpty()) {
 					stack.push(child);
 					continue S;
 				}
-				child.setOffset(
-						(child.getDepth() - node.getDepth()) * 240,
+				child.setOffset((child.getDepth() - node.getDepth()) * 240,
 						node.y);
 				node.y += child.getHeight() + 5;
 				node.getUnmanagedChildrenReference().poll();
@@ -388,37 +433,85 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 		}
 	}
 
-	private void layoutArrows() {
+	private void layoutEdges() {
 		@SuppressWarnings("unchecked")
 		List<PNode> nodes = pLineLayer.getChildrenReference();
-		Point2D s = new Point2D.Float();
-		Point2D e = new Point2D.Float();
 		for (PNode pNode : nodes) {
 			if (pNode instanceof PLineNodeAbstractImpl) {
-				PLineNodeAbstractImpl pLineNodeAbstractImpl = (PLineNodeAbstractImpl) pNode;
-				PNodeAbstractImpl sourcePNode = pLineNodeAbstractImpl.getSourcePNode();
-				s.setLocation(200, 35);
-				s = sourcePNode.localToGlobal(s);
-				PNodeAbstractImpl destinationPNode = pLineNodeAbstractImpl.getDestinationPNode();
-				e.setLocation(000, 35);
-				e = destinationPNode.localToGlobal(e);
-				pLineNodeAbstractImpl.setLine(s, e);
+				updateEdgePosition((PLineNodeAbstractImpl) pNode);
 			}
 		}
+	}
+
+	private synchronized void updateEdgePosition(
+			PLineNodeAbstractImpl pLineNodeAbstractImpl) {
+		PNodeAbstractImpl sourcePNode = pLineNodeAbstractImpl.getSourcePNode();
+		s.setLocation(200, 35);
+		s = sourcePNode.localToGlobal(s);
+		PNodeAbstractImpl destinationPNode = pLineNodeAbstractImpl
+				.getDestinationPNode();
+		e.setLocation(000, 35);
+		e = destinationPNode.localToGlobal(e);
+		pLineNodeAbstractImpl.setLine(s, e);
+	}
+
+	private void onNodeRemoved(Node node) {
+		node.removeEventListener(ael);
+		PNodeAbstractImpl pNode = nodeMap.get(node);
+		if (pNode != null) {
+			disposePNode(pNode);
+		}
+	}
+
+	private void onNodeAdded(Node node) {
+		node.addEventListener(ael);
+	}
+
+	private void disposePNode(PNodeAbstractImpl pNode) {
+		PNode parentPNode = pNode.getParent();
+
+		@SuppressWarnings("unchecked")
+		List<PNode> nodeList = parentPNode.getChildrenReference();
+		int index = -1;
+		for (int i = 0; i < nodeList.size(); i++) {
+			if (nodeList.get(i) == pNode) {
+				index = i;
+				break;
+			}
+		}
+
+		double height = pNode.getHeight();
+		parentPNode.removeChild(pNode);
+		for (int i = index; i < nodeList.size(); i++) {
+			PNode shiftingPNode = nodeList.get(i);
+			Point2D offset = shiftingPNode.getOffset();
+			nodeList.get(i).setOffset(offset.getX(), offset.getY() - height);
+		}
+
+		layoutEdges();
+	}
+
+	private void onTransitionAdded(Transition transition) {
+		Node sourceNode = transition.getSource();
+		if (!nodeMap.containsKey(sourceNode)) {
+			return;
+		}
+
 	}
 
 	private class ActivityDiagramEventListener implements EventListener {
 		public void eventOccurred(Event e) {
 			if (e instanceof ActivityDiagramEvent) {
 				ActivityDiagramEvent ade = (ActivityDiagramEvent) e;
-				switch(ade.getStatus()) {
+				switch (ade.getStatus()) {
 				case NODE_ADDED:
-					ade.getAffectedNode().addEventListener(ael);
+					onNodeAdded(ade.getAffectedNode());
 					break;
 				case NODE_REMOVED:
-					ade.getAffectedNode().removeEventListener(ael);
+					onNodeRemoved(ade.getAffectedNode());
 					break;
 				case TRANSITION_ADDED:
+					onTransitionAdded(ade.getAffectedTransition());
 					break;
 				case TRANSITION_REMOVED:
 					break;
@@ -434,8 +527,9 @@ public class ActivityDiagramCanvas extends PCanvas implements DisposableComponen
 		public void eventOccurred(Event e) {
 			if (e instanceof ActivityEvent) {
 				ActivityEvent ae = (ActivityEvent) e;
-				PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(ae.getSource());
-				switch(ae.getStatus()) {
+				PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(ae
+						.getSource());
+				switch (ae.getStatus()) {
 				case ENTERED:
 					pNodeAbstractImpl.onEnter();
 					break;

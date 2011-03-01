@@ -129,7 +129,6 @@ public class ActivityDiagram extends Node {
 		source.addTransition(transition);
 		transitions.add(transition);
 		distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED, transition));
-		distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED));
 	}
 
 	public synchronized boolean removeTransition(Transition transition) {
@@ -137,7 +136,6 @@ public class ActivityDiagram extends Node {
 		if (source.removeTransition(transition)) {
 			transitions.remove(transition);
 			distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED, transition));
-			distributeEvent(new ActivityDiagramEvent(this, STATUS.TRANSITION_ADDED));
 			return true;
 		}
 		return false;
