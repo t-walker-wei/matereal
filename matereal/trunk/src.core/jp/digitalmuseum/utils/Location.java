@@ -159,6 +159,10 @@ public class Location {
 		return position.isNotFound();
 	}
 
+	public boolean isFound() {
+		return position.isFound();
+	}
+
 	public void setNotFound(boolean isNotFound) {
 		position.setNotFound(isNotFound);
 	}

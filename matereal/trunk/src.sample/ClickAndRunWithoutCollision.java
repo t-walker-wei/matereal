@@ -23,7 +23,7 @@ import jp.digitalmuseum.mr.resource.WheelsController;
 import jp.digitalmuseum.mr.task.Move;
 import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.mr.task.VectorFieldTask;
-import jp.digitalmuseum.mr.vectorfield.CollisionAvoidance;
+import jp.digitalmuseum.mr.vectorfield.CollisionAvoidanceField;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.ScreenPosition;
 
@@ -140,7 +140,7 @@ public class ClickAndRunWithoutCollision {
 				if (task != null) task.stop();
 
 				moveWithCollisionAvoidance = new Move(hakoniwa.screenToReal(goal));
-				moveWithCollisionAvoidance.add(new CollisionAvoidance(robot));
+				moveWithCollisionAvoidance.add(new CollisionAvoidanceField(robot));
 				if (moveWithCollisionAvoidance.assign(robot)) moveWithCollisionAvoidance.start();
 			}
 		});

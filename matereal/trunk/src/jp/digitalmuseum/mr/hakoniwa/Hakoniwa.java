@@ -547,7 +547,8 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 	}
 
 	public void getLocationOut(Entity e, Location location) {
-		if (e instanceof HakoniwaEntity) {
+		if (e instanceof HakoniwaEntity &&
+				((HakoniwaEntity) e).getHakoniwa() == this) {
 			final Body body = ((HakoniwaEntity) e).getBody();
 			final Vec2 position = body.getPosition();
 			location.setLocation(
@@ -556,7 +557,7 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 					(double) body.getAngle());
 			return;
 		}
-		location.setLocation(0, 0, 0);
+		location.setNotFound(true);
 	}
 
 	public Position getPosition(Entity e) {
@@ -566,7 +567,11 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 
 	public void getPositionOut(Entity e, Position position) {
 		getLocationOut(e, location);
-		position.set(location.getX(), location.getY());
+		if (!location.isNotFound()) {
+			position.set(location.getX(), location.getY());
+			return;
+		}
+		position.setNotFound(true);
 	}
 
 	public double getX(Entity e) {

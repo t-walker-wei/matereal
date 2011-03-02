@@ -128,12 +128,18 @@ public class ScreenPosition extends ScreenVector2D {
 	public boolean isNotFound() {
 		return isNotFound;
 	}
+
+	public boolean isFound() {
+		return !isNotFound;
+	}
+
 	public void setNotFound(boolean isNotFound) {
 		this.isNotFound = isNotFound;
 		if (isNotFound) {
 			x = 0; y = 0;
 		}
 	}
+
 	@Override
 	public String toString() {
 		return isNotFound ? "Not found" : x+", "+y;

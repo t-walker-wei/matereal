@@ -37,6 +37,7 @@
 package jp.digitalmuseum.mr.task;
 
 import jp.digitalmuseum.mr.task.VectorFieldTask;
+import jp.digitalmuseum.mr.vectorfield.MoveField;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
@@ -47,17 +48,15 @@ import jp.digitalmuseum.utils.Vector2D;
  * @author Jun KATO
  */
 public class Move extends VectorFieldTask {
-	private final static String TASK_NAME_PREFIX = "Move to ";
-	private final String nameString;
 	private double allowedDistance = 3.0;
 	private double previousDistance;
 	private double distance;
-
-	private final Position destination = new Position();
+	private final Position destination;
+	private final MoveField moveField;
 
 	public Move(double x, double y) {
-		destination.set(x, y);
-		nameString = TASK_NAME_PREFIX+String.format("(%.2f, %.2f)", x, y);
+		destination = new Position(x, y);
+		moveField = new MoveField(destination);
 	}
 
 	public Move(Position destination) {
@@ -66,15 +65,15 @@ public class Move extends VectorFieldTask {
 
 	@Override
 	public String getName() {
-		return nameString;
+		return moveField.getName();
 	}
 
 	public Position getDestination() {
-		return new Position(destination);
+		return moveField.getDestination();
 	}
 
 	public void getDestinationOut(Position position) {
-		position.set(destination);
+		moveField.getDestinationOut(position);
 	}
 
 	public void setAllowedDistance(double allowedNorm) {
@@ -88,6 +87,7 @@ public class Move extends VectorFieldTask {
 	@Override
 	protected synchronized void onStart() {
 		super.onStart();
+		moveField.setRobot(getAssignedRobot());
 		distance = Double.MAX_VALUE;
 		previousDistance = Double.MAX_VALUE;
 	}
@@ -104,11 +104,8 @@ public class Move extends VectorFieldTask {
 
 	@Override
 	public synchronized void getUniqueVectorOut(Position position, Vector2D vector) {
-		vector.set(
-				destination.getX()-position.getX(),
-				destination.getY()-position.getY());
-		distance = vector.getNorm();
+		moveField.getVectorOut(position, vector);
+		distance = moveField.getLastDistance();
 		vector.normalize();
-		vector.mul(getMinimalNorm());
 	}
 }

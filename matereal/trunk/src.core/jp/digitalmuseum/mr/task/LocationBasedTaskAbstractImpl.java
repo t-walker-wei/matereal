@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.mr.task;
 
+import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.service.LocationProvider;
 import jp.digitalmuseum.mr.service.LocationProviderAbstractImpl;
 import jp.digitalmuseum.utils.Location;
@@ -74,38 +75,66 @@ public abstract class LocationBasedTaskAbstractImpl extends MobileTaskAbstractIm
 	}
 
 	public double getX() {
-		checkLocationProvider();
-		return provider.getX(getAssignedRobot());
+		return getX(getAssignedRobot());
 	}
 
 	public double getY() {
-		checkLocationProvider();
-		return provider.getY(getAssignedRobot());
+		return getY(getAssignedRobot());
 	}
 
 	public double getRotation() {
-		checkLocationProvider();
-		return provider.getRotation(getAssignedRobot());
+		return getRotation(getAssignedRobot());
 	}
 
 	public Position getPosition() {
-		checkLocationProvider();
-		return provider.getPosition(getAssignedRobot());
+		return getPosition(getAssignedRobot());
 	}
 
 	public void getPositionOut(Position position) {
-		checkLocationProvider();
-		provider.getPositionOut(getAssignedRobot(), position);
+		getPositionOut(getAssignedRobot(), position);
 	}
 
 	public Location getLocation() {
-		checkLocationProvider();
-		return provider.getLocation(getAssignedRobot());
+		return getLocation(getAssignedRobot());
 	}
 
 	public void getLocationOut(Location location) {
+		getLocationOut(getAssignedRobot(), location);
+	}
+
+	public double getX(Entity entity) {
 		checkLocationProvider();
-		provider.getLocationOut(getAssignedRobot(), location);
+		return provider.getX(entity);
+	}
+
+	public double getY(Entity entity) {
+		checkLocationProvider();
+		return provider.getY(entity);
+	}
+
+	public double getRotation(Entity entity) {
+		checkLocationProvider();
+		return provider.getRotation(entity);
+	}
+
+	public Position getPosition(Entity entity) {
+		checkLocationProvider();
+		return provider.getPosition(entity);
+	}
+
+	public void getPositionOut(Entity entity, Position position) {
+		checkLocationProvider();
+		provider.getPositionOut(entity, position);
+	}
+
+	public Location getLocation(Entity entity) {
+		checkLocationProvider();
+		return provider.getLocation(entity);
+	}
+
+	public void getLocationOut(Entity entity, Location location) {
+		checkLocationProvider();
+		provider.getLocationOut(entity, location);
 	}
 
 	/**

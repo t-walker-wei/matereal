@@ -109,7 +109,7 @@ public class Push extends VectorFieldTask {
 	@Override
 	public void getUniqueVectorOut(Position position, Vector2D vector) {
 		computeDipoleVector(entityPosition, position, destination, vector);
-		vector.mul(getMinimalNorm()/vector.getNorm());
+		vector.normalize();
 	}
 
 	final private Vector2D robotToGoal = new Vector2D();

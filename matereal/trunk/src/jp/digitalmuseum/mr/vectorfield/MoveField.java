@@ -34,38 +34,75 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.hakoniwa;
+package jp.digitalmuseum.mr.vectorfield;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.EntityImpl;
+import jp.digitalmuseum.mr.entity.Robot;
+import jp.digitalmuseum.mr.service.LocationProvider;
+import jp.digitalmuseum.utils.Position;
+import jp.digitalmuseum.utils.Vector2D;
 
-/**
- * Abstract implementation of HakoniwaEntity.<br />
- * HakoniwaEntity implementation classes must extend this abstract class.
- *
- * @author Jun KATO
- */
-public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements HakoniwaEntity {
+public class MoveField extends VectorFieldAbstractImpl {
+	private final static String TASK_NAME_PREFIX = "Move to ";
+	private final String nameString;
+	private Robot robot;
+	private final Position destination;
+	private double distance;
 
-	/** Hakoniwa */
-	private Hakoniwa hakoniwa;
-
-	public HakoniwaEntityAbstractImpl() {
-		this(Matereal.getInstance().lookForService(Hakoniwa.class));
+	public MoveField(Robot robot, double x, double y) {
+		this.robot = robot;
+		destination = new Position();
+		destination.set(x, y);
+		nameString = TASK_NAME_PREFIX+String.format("(%.2f, %.2f)", x, y);
 	}
 
-	public HakoniwaEntityAbstractImpl(Hakoniwa hakoniwa) {
-		this.hakoniwa = hakoniwa;
-		// hakoniwa.registerEntity(this);
+	public MoveField(double x, double y) {
+		this(null, x, y);
+	}
+
+	public MoveField(Robot robot, Position destination) {
+		this(destination.getX(), destination.getY());
+	}
+
+	public MoveField(Position destination) {
+		this(null, destination);
+	}
+
+	public void setRobot(Robot robot) {
+		this.robot = robot;
+		updateLocationProvider();
+	}
+
+	public Robot getRobot() {
+		return robot;
+	}
+
+	public Position getDestination() {
+		return new Position(destination);
+	}
+
+	public void getDestinationOut(Position position) {
+		position.set(destination);
+	}
+
+	public synchronized void getVectorOut(Position position, Vector2D vector) {
+		vector.set(
+				destination.getX()-position.getX(),
+				destination.getY()-position.getY());
+		distance = vector.getNorm();
+		vector.normalize();
+	}
+
+	public synchronized double getLastDistance() {
+		return distance;
 	}
 
 	@Override
-	public void dispose() {
-		super.dispose();
-		hakoniwa.unregisterEntity(this);
+	protected boolean checkLocationProvider(LocationProvider locationProvider) {
+		return robot == null ? true : locationProvider.contains(robot);
 	}
 
-	public Hakoniwa getHakoniwa() {
-		return hakoniwa;
+	@Override
+	public String getName() {
+		return nameString;
 	}
 }

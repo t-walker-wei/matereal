@@ -26,6 +26,7 @@ import java.util.List;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.activity.Fork;
+import jp.digitalmuseum.mr.activity.Join;
 import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
@@ -110,6 +111,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 			// Construct an activity diagram.
 			final ActivityDiagram ad = new ActivityDiagram();
 			Action[] inits = new Action[forks];
+			Action[] tails = new Action[forks];
 			int offset = 0;
 			int base = paths.size() / forks;
 			int rest = paths.size() - forks * base;
@@ -146,10 +148,13 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 					ad.addTransition(new Transition(a, b));
 					tail = b;
 				}
+				tails[r] = tail;
 				offset += my;
 			}
 			Fork fork = new Fork(inits);
-			ad.add(fork);
+			Join join = new Join(tails);
+			ad.add(fork, join);
+			ad.addTransition(new Transition(fork, join));
 			ad.setInitialNode(fork);
 			ad.start();
 

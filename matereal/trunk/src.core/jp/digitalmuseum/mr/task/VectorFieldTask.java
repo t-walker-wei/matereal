@@ -51,7 +51,6 @@ import jp.digitalmuseum.utils.VectorField;
  * @author Jun KATO
  */
 public abstract class VectorFieldTask extends LocationBasedTaskAbstractImpl implements VectorField {
-	public final static double MINIMAL_NORM = 100.0;
 	private final Array<VectorField> optionalFields = new Array<VectorField>();
 	private final Vector2D vector = new Vector2D();
 	private final Position position = new Position();
@@ -116,11 +115,11 @@ public abstract class VectorFieldTask extends LocationBasedTaskAbstractImpl impl
 		return optionalFields.remove(field);
 	}
 
-	public Vector2D getCurrentVector() {
+	public Vector2D getLastVector() {
 		return new Vector2D(vector);
 	}
 
-	public void getCurrentVectorOut(Vector2D vector) {
+	public void getLastVectorOut(Vector2D vector) {
 		vector.set(this.vector);
 	}
 
@@ -146,12 +145,4 @@ public abstract class VectorFieldTask extends LocationBasedTaskAbstractImpl impl
 	}
 
 	public abstract void getUniqueVectorOut(Position position, Vector2D vector);
-
-	protected double getMinimalNorm() {
-		return MINIMAL_NORM;
-	}
-
-	protected double getMinimalNormSq() {
-		return MINIMAL_NORM * MINIMAL_NORM;
-	}
 }

@@ -232,7 +232,7 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		*/
 	}
 
-	protected Hakoniwa getHakoniwa() {
+	public Hakoniwa getHakoniwa() {
 		return hakoniwa;
 	}
 

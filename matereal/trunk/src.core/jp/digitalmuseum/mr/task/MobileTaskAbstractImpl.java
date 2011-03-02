@@ -47,11 +47,13 @@ import jp.digitalmuseum.mr.resource.WheelsController;
  *
  * @author Jun KATO
  */
-public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements MobileTask {
+public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements
+		MobileTask {
 	private WheelsController w;
 
 	/**
-	 * @return Returns a set of required interfaces (including Wheels) for this task.
+	 * @return Returns a set of required interfaces (including Wheels) for this
+	 *         task.
 	 */
 	@Override
 	public List<Class<? extends Resource>> getRequirements() {
@@ -60,49 +62,64 @@ public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements
 		return requirements;
 	}
 
-	@Override protected void onAssigned() { w = (WheelsController) getResourceMap().get(WheelsController.class); }
-	@Override protected void onPause() { getWheels().stopWheels(); }
+	@Override
+	protected void onAssigned() {
+		w = (WheelsController) getResourceMap().get(WheelsController.class);
+	}
 
-	protected WheelsController getWheels() { return w; }
+	@Override
+	protected void onPause() {
+		getWheels().stopWheels();
+	}
+
+	protected WheelsController getWheels() {
+		return w;
+	}
 
 	public int getRecommendedSpeed() {
 		if (getWheels() instanceof DifferentialWheelsController) {
-			return ((DifferentialWheelsController) getWheels()).getRecommendedSpeed();
+			return ((DifferentialWheelsController) getWheels())
+					.getRecommendedSpeed();
 		}
 		return -1;
 	}
 
 	public int getRecommendedRotationSpeed() {
 		if (getWheels() instanceof DifferentialWheelsController) {
-			return ((DifferentialWheelsController) getWheels()).getRecommendedRotationSpeed();
+			return ((DifferentialWheelsController) getWheels())
+					.getRecommendedRotationSpeed();
 		}
 		return -1;
 	}
 
 	public boolean setSpeed(int speed) {
 		if (getWheels() instanceof DifferentialWheelsController) {
-			return ((DifferentialWheelsController) getWheels()).setSpeed(speed);
+			return ((DifferentialWheelsController) getWheels())
+					.setSpeed(speed);
 		}
 		return false;
 	}
 
 	public int getSpeed() {
 		if (getWheels() instanceof DifferentialWheelsController) {
-			return ((DifferentialWheelsController) getWheels()).getSpeed();
+			return ((DifferentialWheelsController) getWheels())
+					.getSpeed();
 		}
 		return -1;
 	}
 
 	public boolean setRotationSpeed(int speed) {
 		if (getWheels() instanceof DifferentialWheelsController) {
-			return ((DifferentialWheelsController) getWheels()).setRotationSpeed(speed);
+			return ((DifferentialWheelsController) getWheels())
+					.setRotationSpeed(speed);
 		}
 		return false;
 	}
 
 	public int getRotationSpeed() {
 		if (getWheels() instanceof DifferentialWheelsController) {
-			return ((DifferentialWheelsController) getWheels()).getRotationSpeed();
+			return ((DifferentialWheelsController) getWheels())
+					.getRotationSpeed();
 		}
 		return -1;
 	}
