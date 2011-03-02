@@ -51,14 +51,23 @@ public class Move extends VectorFieldTask {
 	private double allowedDistance = 3.0;
 	private double previousDistance;
 	private double distance;
-	private final Position destination;
 	private final MoveField moveField;
 
+	/**
+	 * Move to the specified position.
+	 *
+	 * @param x
+	 * @param y
+	 */
 	public Move(double x, double y) {
-		destination = new Position(x, y);
-		moveField = new MoveField(destination);
+		moveField = new MoveField(new Position(x, y));
 	}
 
+	/**
+	 * Move to the specified position.
+	 *
+	 * @param destination
+	 */
 	public Move(Position destination) {
 		this(destination.getX(), destination.getY());
 	}
@@ -87,7 +96,6 @@ public class Move extends VectorFieldTask {
 	@Override
 	protected synchronized void onStart() {
 		super.onStart();
-		moveField.setRobot(getAssignedRobot());
 		distance = Double.MAX_VALUE;
 		previousDistance = Double.MAX_VALUE;
 	}
@@ -95,6 +103,7 @@ public class Move extends VectorFieldTask {
 	@Override
 	public synchronized void run() {
 		super.run();
+		distance = moveField.getLastDistance();
 		if (distance < allowedDistance &&
 				distance > previousDistance) {
 			finish();
@@ -105,7 +114,5 @@ public class Move extends VectorFieldTask {
 	@Override
 	public synchronized void getUniqueVectorOut(Position position, Vector2D vector) {
 		moveField.getVectorOut(position, vector);
-		distance = moveField.getLastDistance();
-		vector.normalize();
 	}
 }

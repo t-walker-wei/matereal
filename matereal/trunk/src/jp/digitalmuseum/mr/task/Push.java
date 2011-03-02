@@ -38,6 +38,7 @@ package jp.digitalmuseum.mr.task;
 
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.task.VectorFieldTask;
+import jp.digitalmuseum.mr.vectorfield.PushField;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
@@ -49,35 +50,43 @@ import jp.digitalmuseum.utils.Vector2D;
  * @author Jun KATO
  */
 public class Push extends VectorFieldTask {
-	private final String nameString;
 	private double allowedDistance = 5.0;
 	private double previousDistance;
 	private double distance;
+	private PushField pushField;
 
-	private final Entity entity;
-	private final Position destination = new Position();
-	private final Position entityPosition = new Position();
-
+	/**
+	 * Push the specified entity to the specified position.
+	 *
+	 * @param entity
+	 * @param x
+	 * @param y
+	 */
 	public Push(Entity entity, double x, double y) {
-		this.entity = entity;
-		destination.set(x, y);
-		nameString = "Push "+entity.getName()+" to "+String.format("(%.2f, %.2f)", x, y);;
+		pushField = new PushField(entity, x, y);
 	}
 
+	/**
+	 * Push the specified entity to the specified position.
+	 *
+	 * @param entity
+	 * @param destination
+	 */
 	public Push(Entity entity, Position destination) {
 		this(entity, destination.getX(), destination.getY());
 	}
 
+	@Override
 	public String getName() {
-		return nameString;
+		return pushField.getName();
 	}
 
 	public Position getDestination() {
-		return new Position(destination);
+		return pushField.getDestination();
 	}
 
 	public void getDestinationOut(Position position) {
-		position.set(destination);
+		pushField.getDestinationOut(position);
 	}
 
 	public void setAllowedDistance(double allowedNorm) {
@@ -92,78 +101,22 @@ public class Push extends VectorFieldTask {
 	protected void onStart() {
 		super.onStart();
 		distance = Double.MAX_VALUE;
+		previousDistance = Double.MAX_VALUE;
 	}
 
 	@Override
 	public void run() {
 		super.run();
-		getLocationProvider().getPositionOut(entity, entityPosition);
-		previousDistance = distance;
-		distance = destination.distance(entityPosition);
+		distance = pushField.getLastDistance();
 		if (distance < allowedDistance &&
 				distance > previousDistance) {
 			finish();
 		}
+		previousDistance = distance;
 	}
 
 	@Override
 	public void getUniqueVectorOut(Position position, Vector2D vector) {
-		computeDipoleVector(entityPosition, position, destination, vector);
-		vector.normalize();
-	}
-
-	final private Vector2D robotToGoal = new Vector2D();
-	final private Vector2D objectToGoal = new Vector2D();
-	final private Vector2D goalToObject = new Vector2D();
-	final private Vector2D objectToRobot = new Vector2D();
-	final private Vector2D robotToObject = new Vector2D();
-	final private Vector2D x = new Vector2D();
-	final private Vector2D y = new Vector2D();
-	public void computeDipoleVector(Position object, Position robot, Position goal, Vector2D vec) {
-
-		Vector2D.subOut(goal, robot, robotToGoal);
-		Vector2D.subOut(goal, object, objectToGoal);
-		Vector2D.subOut(robot, object, objectToRobot);
-		goalToObject.set(-objectToGoal.getX(), -objectToGoal.getY());
-		robotToObject.set(-objectToRobot.getX(), -objectToRobot.getY());
-
-		final double angle =
-				object.getRelativeDirection(robot)
-				-object.getRelativeDirection(goal);
-		x.set(objectToGoal); x.normalize();
-		y.set(-x.getY(), x.getX()); // y = rotate(x, pi/2);
-
-		// computing "a" (move cautiously when the object is near the goal)
-		final double
-				angleROG = object.getRelativeDirection(robot)
-							-object.getRelativeDirection(goal),
-				angleORG = robot.getRelativeDirection(object)
-							-robot.getRelativeDirection(goal);
-		double a;
-		if (angleORG == 0 || angleROG == 0) {
-			a = 1;
-		} else {
-			a = Math.abs(angleROG / angleORG);
-			if (a > 10) {
-				a = 10;
-			}
-		}
-
-		final double cos = Math.cos(angle);
-		final double sin = Math.sin(angle);
-		x.mul(cos*cos - a*sin*sin);	// x * cos(2 * angle)
-		y.mul(sin*cos + a*sin*cos);	// y * sin(2 * angle)
-		Vector2D.addOut(x, y, vec);
-
-		// orbit when the robot is in front of the object
-		objectToRobot.normalize();
-		if (Vector2D.dot(vec, objectToRobot) > 0) {
-			if (Vector2D.cross(vec, objectToRobot) == 0) {
-				vec.set(-vec.getY(), vec.getX()); // vec = rotate(vec, pi/2);
-			} else {
-				objectToRobot.mul(Vector2D.dot(vec, objectToRobot));
-				vec.sub(objectToRobot);
-			}
-		}
+		pushField.getVectorOut(position, vector);
 	}
 }

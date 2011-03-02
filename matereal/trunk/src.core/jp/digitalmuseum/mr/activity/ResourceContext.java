@@ -34,39 +34,28 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.activity;
 
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.task.VectorFieldTask;
-import jp.digitalmuseum.mr.vectorfield.FollowField;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.Vector2D;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * Task: Follow<br />
- * Follow another instance.
- *
- * @author Jun KATO
- */
-public class Follow extends VectorFieldTask {
-	private FollowField followField;
+import jp.digitalmuseum.mr.entity.Resource;
+import jp.digitalmuseum.mr.task.Task;
 
-	/**
-	 * Follow the specified entity.
-	 *
-	 * @param entity
-	 */
-	public Follow(Entity entity) {
-		followField = new FollowField(entity);
+public class ResourceContext {
+	private Task task;
+	private Set<Resource> resources;
+
+	public ResourceContext(Task task, Set<Resource> resources) {
+		this.task = task;
+		this.resources = new HashSet<Resource>();
 	}
 
-	@Override
-	public String getName() {
-		return followField.getName();
+	Task getTask() {
+		return task;
 	}
 
-	@Override
-	public void getUniqueVectorOut(Position position, Vector2D vector) {
-		followField.getVectorOut(position, vector);
+	Set<Resource> getResources() {
+		return resources;
 	}
 }

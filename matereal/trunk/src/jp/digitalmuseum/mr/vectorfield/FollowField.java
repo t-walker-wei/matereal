@@ -34,39 +34,55 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.vectorfield;
 
 import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.task.VectorFieldTask;
-import jp.digitalmuseum.mr.vectorfield.FollowField;
+import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
 /**
- * Task: Follow<br />
- * Follow another instance.
+ * Vector field: Push<br />
+ * Push an object to a certain position.
+ * (<a href="http://designinterface.jp/projects/push/">A Dipole Field for Object Delivery by Pushing on a Flat Surface</a>)
  *
  * @author Jun KATO
  */
-public class Follow extends VectorFieldTask {
-	private FollowField followField;
+public class FollowField extends VectorFieldAbstractImpl {
+	private final static String TASK_NAME_PREFIX = "Follow ";
+	private final String nameString;
+	private final Entity entity;
+	private final Location entityLocation;
+	private final Position destination;
+	private Position relativePosition;
 
-	/**
-	 * Follow the specified entity.
-	 *
-	 * @param entity
-	 */
-	public Follow(Entity entity) {
-		followField = new FollowField(entity);
+	public FollowField(Entity entity) {
+		this.entity = entity;
+		entityLocation = new Location();
+		destination = new Position();
+		relativePosition = new Position(0, -70);
+		nameString = TASK_NAME_PREFIX+entity.getName();
+	}
+
+	public void setDistance(double distance) {
+		relativePosition.setY(-Math.abs(distance));
+	}
+
+	public void getVectorOut(Position position, Vector2D vector) {
+		getLocationProvider().getLocationOut(entity, entityLocation);
+		if (entityLocation.isFound()) {
+			entityLocation.getRelativePositionOut(relativePosition, destination);
+			vector.set(
+					destination.getX()-position.getX(),
+					destination.getY()-position.getY());
+			vector.normalize();
+		} else {
+			vector.set(0, 0);
+		}
 	}
 
 	@Override
 	public String getName() {
-		return followField.getName();
-	}
-
-	@Override
-	public void getUniqueVectorOut(Position position, Vector2D vector) {
-		followField.getVectorOut(position, vector);
+		return nameString;
 	}
 }

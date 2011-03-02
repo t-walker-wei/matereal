@@ -36,6 +36,13 @@
  */
 package jp.digitalmuseum.mr.activity;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import jp.digitalmuseum.mr.entity.ExclusiveResource;
+import jp.digitalmuseum.mr.entity.Resource;
+import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -67,7 +74,21 @@ public class Action extends Node implements EventListener {
 
 	@Override
 	protected void onEnter() {
-		task.assign(robot);
+		synchronized (robot) {
+			ResourceContext resourceContext = getActivityDiagram().getResourceContext();
+			Set<Class<? extends Resource>> transferringResourceTypes = null;
+			if (resourceContext != null &&
+					resourceContext.getTask().getAssignedRobot() == robot) {
+				transferringResourceTypes = freeRequiredResources(task, resourceContext);
+			}
+			if (!task.assign(robot)) {
+				// In case of failure, rollback ownership of all resources.
+				if (transferringResourceTypes != null) {
+					robot.requestResources(transferringResourceTypes, resourceContext.getTask());
+				}
+				return;
+			}
+		}
 		task.addEventListener(this);
 		task.start();
 	}
@@ -76,6 +97,28 @@ public class Action extends Node implements EventListener {
 	protected void onLeave() {
 		task.removeEventListener(this);
 		task.stop();
+	}
+
+	private Set<Class<? extends Resource>> freeRequiredResources(Task task, ResourceContext resourceContext) {
+		List<Class<? extends Resource>> resourceTypes = task.getRequirements();
+		Set<Class<? extends Resource>> transferingResourceTypes = new HashSet<Class<? extends Resource>>();
+
+		// Look for the desired resources and free them.
+		for (Class<? extends Resource> resourceType : resourceTypes) {
+			for (Resource resource : resourceContext.getResources()) {
+				if (resourceType.isInstance(resource)) {
+					if (ExclusiveResource.class.isAssignableFrom(resourceType)) {
+						if (!(resource instanceof ResourceAbstractImpl) ||
+								!((ResourceAbstractImpl) resource).isWritable()) {
+							continue;
+						}
+					}
+					robot.freeResource(resource, resourceContext.getTask());
+					transferingResourceTypes.add(resourceType);
+				}
+			}
+		}
+		return transferingResourceTypes;
 	}
 
 	public void eventOccurred(Event e) {

@@ -36,44 +36,29 @@
  */
 package jp.digitalmuseum.mr.vectorfield;
 
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.service.LocationProvider;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
+/**
+ * Vector field: Move<br />
+ * Move to a certain position.
+ *
+ * @author Jun KATO
+ */
 public class MoveField extends VectorFieldAbstractImpl {
 	private final static String TASK_NAME_PREFIX = "Move to ";
 	private final String nameString;
-	private Robot robot;
 	private final Position destination;
 	private double distance;
 
-	public MoveField(Robot robot, double x, double y) {
-		this.robot = robot;
+	public MoveField(double x, double y) {
 		destination = new Position();
 		destination.set(x, y);
 		nameString = TASK_NAME_PREFIX+String.format("(%.2f, %.2f)", x, y);
 	}
 
-	public MoveField(double x, double y) {
-		this(null, x, y);
-	}
-
-	public MoveField(Robot robot, Position destination) {
-		this(destination.getX(), destination.getY());
-	}
-
 	public MoveField(Position destination) {
-		this(null, destination);
-	}
-
-	public void setRobot(Robot robot) {
-		this.robot = robot;
-		updateLocationProvider();
-	}
-
-	public Robot getRobot() {
-		return robot;
+		this(destination.getX(), destination.getY());
 	}
 
 	public Position getDestination() {
@@ -94,11 +79,6 @@ public class MoveField extends VectorFieldAbstractImpl {
 
 	public synchronized double getLastDistance() {
 		return distance;
-	}
-
-	@Override
-	protected boolean checkLocationProvider(LocationProvider locationProvider) {
-		return robot == null ? true : locationProvider.contains(robot);
 	}
 
 	@Override
