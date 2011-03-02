@@ -37,7 +37,7 @@
 package jp.digitalmuseum.mr.task;
 
 import jp.digitalmuseum.mr.task.VectorFieldTask;
-import jp.digitalmuseum.mr.vectorfield.CollisionAvoidance;
+import jp.digitalmuseum.mr.vectorfield.CollisionAvoidanceField;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 import jp.digitalmuseum.utils.VectorField;
@@ -63,7 +63,7 @@ public class AvoidCollision extends VectorFieldTask {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		vf = new CollisionAvoidance(getAssignedRobot());
+		vf = new CollisionAvoidanceField(getAssignedRobot());
 	}
 
 	@Override

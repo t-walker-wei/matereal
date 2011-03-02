@@ -36,62 +36,42 @@
  */
 package jp.digitalmuseum.mr.vectorfield;
 
-import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.service.LocationProvider;
-import jp.digitalmuseum.mr.task.VectorFieldTask;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
-import jp.digitalmuseum.utils.VectorField;
 
-public class CollisionAvoidance implements VectorField {
-	private LocationProvider locationProvider;
-	private Entity entity;
-
-	public CollisionAvoidance(Entity entity) {
-		this.entity = entity;
-	}
-
-	public Vector2D getVector(Position position) {
-		Vector2D vector = new Vector2D();
-		getVectorOut(position, vector);
-		return vector;
-	}
-
+public class CollisionAvoidanceField extends VectorFieldAbstractImpl {
 	private static final double MAX_DISTANCE = 100;
-	Position p = new Position();
-	public void getVectorOut(Position position, Vector2D vector) {
-		checkLocationProvider();
+	private Entity entity;
+	private Position p;
+
+	public CollisionAvoidanceField(Entity entity) {
+		this.entity = entity;
+		p = new Position();
+	}
+
+	public synchronized void getVectorOut(Position position, Vector2D vector) {
+		LocationProvider locationProvider = getLocationProvider();
 		vector.set(0, 0);
 		for (Entity e : locationProvider.getEntities()) {
-			if (e == entity) continue;
-			locationProvider.getPositionOut(e, p);
-			if (!p.isNotFound()) {
-				p.sub(position);
-				double distance = p.getNorm();
-				if (distance <= 0.0) {
-					// Collision detected. What to do...?
-				} else if (distance < MAX_DISTANCE) {
-					p.mul((distance - 2*MAX_DISTANCE) / MAX_DISTANCE *
-							VectorFieldTask.MINIMAL_NORM / MAX_DISTANCE);
-					vector.add(p);
+			if (e != entity) {
+				locationProvider.getPositionOut(e, p);
+				if (p.isFound()) {
+					p.sub(position);
+					double distance = p.getNorm();
+					if (distance <= 0.0) {
+						// Collision detected. What to do...?
+					} else if (distance < MAX_DISTANCE) {
+						p.mul((distance - 2*MAX_DISTANCE) / MAX_DISTANCE / MAX_DISTANCE);
+						vector.add(p);
+					}
 				}
 			}
 		}
 	}
 
-	private void checkLocationProvider() {
-		if (locationProvider == null) {
-			getLocationProvider();
-		}
-	}
-
-	private void getLocationProvider() {
-		for (LocationProvider locationProvider :
-				Matereal.getInstance().lookForServices(LocationProvider.class)) {
-			if (locationProvider.contains(entity)) {
-				this.locationProvider = locationProvider;
-			}
-		}
+	protected synchronized boolean checkLocationProvider(LocationProvider locationProvider) {
+		return locationProvider.contains(entity);
 	}
 }

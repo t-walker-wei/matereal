@@ -69,18 +69,15 @@ public class Follow extends VectorFieldTask {
 
 	@Override
 	public void getUniqueVectorOut(Position position, Vector2D vector) {
-		final Location parentLocation =
-			getLocationProvider().getLocation(parent);
-		if (parentLocation != null) {
+		final Location parentLocation = getLocation(parent);
+		if (parentLocation.isFound()) {
 			final Position destination = parentLocation.getRelativePosition(relativePosition);
 			vector.set(
 					destination.getX()-position.getX(),
 					destination.getY()-position.getY());
 			vector.normalize();
-			vector.mul(getMinimalNorm());
 		} else {
 			vector.set(0, 0);
 		}
 	}
-
 }

@@ -34,10 +34,42 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.utils;
+package jp.digitalmuseum.mr.vectorfield;
 
-public interface VectorField {
-	public String getName();
-	public Vector2D getVector(Position position);
-	public void getVectorOut(Position position, Vector2D vector);
+import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.service.LocationProvider;
+import jp.digitalmuseum.utils.Position;
+import jp.digitalmuseum.utils.Vector2D;
+import jp.digitalmuseum.utils.VectorField;
+
+public abstract class VectorFieldAbstractImpl implements VectorField {
+	private LocationProvider locationProvider;
+
+	protected void updateLocationProvider() {
+		for (LocationProvider locationProvider :
+				Matereal.getInstance().lookForServices(LocationProvider.class)) {
+			if (checkLocationProvider(locationProvider)) {
+				this.locationProvider = locationProvider;
+			}
+		}
+	}
+
+	protected LocationProvider getLocationProvider() {
+		if (locationProvider == null) {
+			updateLocationProvider();
+		}
+		return locationProvider;
+	}
+
+	public Vector2D getVector(Position position) {
+		Vector2D vector = new Vector2D();
+		getVectorOut(position, vector);
+		return vector;
+	}
+
+	protected abstract boolean checkLocationProvider(LocationProvider locationProvider);
+
+	public String getName() {
+		return this.getClass().getSimpleName();
+	}
 }
