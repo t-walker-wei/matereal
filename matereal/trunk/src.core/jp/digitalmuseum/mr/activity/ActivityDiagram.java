@@ -52,14 +52,28 @@ public class ActivityDiagram extends Node {
 	private TransitionMonitor monitor;
 	private boolean isStarted;
 	private boolean isPaused;
+	private ResourceContext resourceContext;
 
 	public ActivityDiagram() {
+		this(null);
+	}
+
+	public ActivityDiagram(ResourceContext resourceContext) {
 		nodes = new HashSet<Node>();
 		transitions = new HashSet<Transition>();
 		currentNodes = new Array<Node>();
 		monitor = new TransitionMonitor();
 		isStarted = false;
 		isPaused = false;
+		if (resourceContext == null) {
+			this.resourceContext = null;
+		} else {
+			this.resourceContext = resourceContext;
+		}
+	}
+
+	synchronized ResourceContext getResourceContext() {
+		return resourceContext;
 	}
 
 	public synchronized void setInitialNode(Node node) {

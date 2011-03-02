@@ -67,7 +67,9 @@ public abstract class VectorFieldAbstractImpl implements VectorField {
 		return vector;
 	}
 
-	protected abstract boolean checkLocationProvider(LocationProvider locationProvider);
+	protected boolean checkLocationProvider(LocationProvider locationProvider) {
+		return true;
+	}
 
 	public String getName() {
 		return this.getClass().getSimpleName();
