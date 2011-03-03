@@ -95,7 +95,6 @@ public class ActivityDiagram extends Node {
 		nodes.add(node);
 		node.setActivityDiagram(this);
 		distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_ADDED, node));
-		distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_ADDED));
 	}
 
 	public synchronized void add(Node... nodes) {
@@ -123,7 +122,6 @@ public class ActivityDiagram extends Node {
 			node.setActivityDiagram(null);
 			removeRelatedTransitions(node);
 			distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_REMOVED, node));
-			distributeEvent(new ActivityDiagramEvent(this, STATUS.NODE_REMOVED));
 			return true;
 		}
 		return false;

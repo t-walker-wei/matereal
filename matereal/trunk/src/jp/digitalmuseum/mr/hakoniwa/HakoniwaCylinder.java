@@ -94,13 +94,14 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 		bd.position.y = y/100;
 		bd.angle = angle;
 
-		final World world = getHakoniwa().getWorld();
-		synchronized (world) {
+		final Hakoniwa hakoniwa = getHakoniwa();
+		synchronized (hakoniwa) {
+			final World world = getHakoniwa().getWorld();
 			body = world.createBody(bd);
 			body.createShape(sd);
 			body.setMassFromShapes();
+			body.m_userData = this;
 		}
-		body.m_userData = this;
 
 		shape = new Ellipse2D.Double(-radius, -radius, radius*2, radius*2);
 		getHakoniwa().registerEntity(this);

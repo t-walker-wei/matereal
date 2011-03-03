@@ -121,7 +121,7 @@ public final class Matereal implements ServiceHolder {
 		return THREAD_NAME;
 	}
 
-	public boolean isDisposing() {
+	public synchronized boolean isDisposing() {
 		return isDisposing;
 	}
 

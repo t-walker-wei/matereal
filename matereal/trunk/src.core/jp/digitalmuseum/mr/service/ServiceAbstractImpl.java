@@ -221,7 +221,7 @@ public abstract class ServiceAbstractImpl implements Service {
 	}
 
 	public String getName() {
-		return "";
+		return getClass().getSimpleName();
 	}
 
 	public synchronized long getAliveTime() {

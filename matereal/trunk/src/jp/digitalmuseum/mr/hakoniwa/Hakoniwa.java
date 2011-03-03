@@ -175,30 +175,24 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 		listeners = new Array<ImageListener>();
 	}
 
-	public void run() {
+	public synchronized void run() {
 		final boolean isDamping =
 				linearDamping != 0f ||
 				angularDamping != 0f;
-		synchronized (entities) {
-			for (HakoniwaEntity entity : entities) {
-				entity.preStep();
-				if (isDamping) {
-					final Body body = entity.getBody();
-					body.setLinearDamping(linearDamping);
-					body.setAngularDamping(angularDamping);
-				}
+		for (HakoniwaEntity entity : entities) {
+			entity.preStep();
+			if (isDamping) {
+				final Body body = entity.getBody();
+				body.setLinearDamping(linearDamping);
+				body.setAngularDamping(angularDamping);
 			}
 		}
-		synchronized (world) {
-			world.step((float)getInterval()/1000, 7);
-		}
+		world.step((float)getInterval()/1000, 7);
 		distributeEvent(new LocationUpdateEvent(this));
 		distributeEvent(new ImageUpdateEvent(this));
-		synchronized (listeners) {
-			if (listeners.size() > 0) {
-				for (ImageListener listener : listeners) {
-					listener.imageUpdated(getImage());
-				}
+		if (listeners.size() > 0) {
+			for (ImageListener listener : listeners) {
+				listener.imageUpdated(getImage());
 			}
 		}
 		updated = true;
@@ -213,16 +207,12 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 		return null;
 	}
 
-	void registerEntity(HakoniwaEntity e) {
-		synchronized (entities) {
-			entities.add(e);
-		}
+	synchronized void registerEntity(HakoniwaEntity e) {
+		entities.add(e);
 	}
 
-	boolean unregisterEntity(HakoniwaEntity e) {
-		synchronized (entities) {
-			return entities.remove(e);
-		}
+	synchronized boolean unregisterEntity(HakoniwaEntity e) {
+		return entities.remove(e);
 	}
 
 	public float getLinearDamping() {
@@ -241,45 +231,40 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 		this.angularDamping = angularDamping;
 	}
 
-	public void updateMouseJoint(Position p, HakoniwaEntity e) {
-		synchronized (world) {
-			if (mouseJoint != null && !mouseJointedEntity.equals(e)) {
-				destroyMouseJoint();
-			}
-			mouseJointPosition.x = (float) p.getX()/100;
-			mouseJointPosition.y = (float) p.getY()/100;
-			if (mouseJoint == null) {
-				final Body body = e.getBody();
-				MouseJointDef md = new MouseJointDef();
-				md.body1 = world.getGroundBody();
-				md.body2 = body;
-				md.target.set(mouseJointPosition);
-				md.maxForce = 50f*body.m_mass;
-				md.frequencyHz = 1000f/getInterval();
-				md.dampingRatio = 0.9f;
-				mouseJoint = (MouseJoint) world.createJoint(md);
-				mouseJointedEntity = e;
-			}
-			mouseJoint.setTarget(mouseJointPosition);
+	public synchronized void updateMouseJoint(Position p, HakoniwaEntity e) {
+		if (mouseJoint != null && !mouseJointedEntity.equals(e)) {
+			destroyMouseJoint();
+		}
+		mouseJointPosition.x = (float) p.getX()/100;
+		mouseJointPosition.y = (float) p.getY()/100;
+		if (mouseJoint == null) {
+			final Body body = e.getBody();
+			MouseJointDef md = new MouseJointDef();
+			md.body1 = world.getGroundBody();
+			md.body2 = body;
+			md.target.set(mouseJointPosition);
+			md.maxForce = 50f*body.m_mass;
+			md.frequencyHz = 1000f/getInterval();
+			md.dampingRatio = 0.9f;
+			mouseJoint = (MouseJoint) world.createJoint(md);
+			mouseJointedEntity = e;
+		}
+		mouseJoint.setTarget(mouseJointPosition);
+	}
+
+	public synchronized void destroyMouseJoint() {
+		if (mouseJoint != null) {
+			world.destroyJoint(mouseJoint);
+			mouseJoint = null;
+			mouseJointedEntity = null;
 		}
 	}
 
-	public void destroyMouseJoint() {
-		synchronized (world) {
-			if (mouseJoint != null) {
-				world.destroyJoint(mouseJoint);
-				mouseJoint = null;
-				mouseJointedEntity = null;
-			}
-			return;
-		}
-	}
-
-	public boolean hasMouseJoint() {
+	public synchronized boolean hasMouseJoint() {
 		return mouseJoint != null;
 	}
 
-	public HakoniwaEntity getMouseJointedEntity() {
+	public synchronized HakoniwaEntity getMouseJointedEntity() {
 		return mouseJointedEntity;
 	}
 
@@ -291,11 +276,11 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 		this.backgroundTransparent = backgroundTransparent;
 	}
 
-	public boolean isAntialiased() {
+	public synchronized boolean isAntialiased() {
 		return isAntialiased;
 	}
 
-	public void setAntialiased(boolean isAntialiased) {
+	public synchronized void setAntialiased(boolean isAntialiased) {
 		this.isAntialiased = isAntialiased;
 		if (g != null) {
 			g.setRenderingHint(
@@ -467,16 +452,12 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 		}
 	}
 
-	public void addImageListener(ImageListener listener) {
-		synchronized (listeners) {
-			listeners.push(listener);
-		}
+	public synchronized void addImageListener(ImageListener listener) {
+		listeners.push(listener);
 	}
 
-	public boolean removeImageListener(ImageListener listener) {
-		synchronized (listeners) {
-			return listeners.remove(listener);
-		}
+	public synchronized boolean removeImageListener(ImageListener listener) {
+		return listeners.remove(listener);
 	}
 
 	private void updateImage() {
@@ -527,11 +508,11 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 
 	// EntityInformationProvider
 
-	public Set<Entity> getEntities() {
+	public synchronized Set<Entity> getEntities() {
 		return new HashSet<Entity>(entities);
 	}
 
-	public boolean contains(Entity entity) {
+	public synchronized boolean contains(Entity entity) {
 		return entities.contains(entity);
 	}
 

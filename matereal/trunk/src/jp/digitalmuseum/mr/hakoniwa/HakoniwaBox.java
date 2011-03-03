@@ -97,13 +97,14 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 		bd.position.y = y/100;
 		bd.angle = angle;
 
-		final World world = getHakoniwa().getWorld();
-		synchronized (world) {
+		final Hakoniwa hakoniwa = getHakoniwa();
+		synchronized (hakoniwa) {
+			final World world = getHakoniwa().getWorld();
 			body = world.createBody(bd);
 			body.createShape(sd);
 			body.setMassFromShapes();
+			body.m_userData = this;
 		}
-		body.m_userData = this;
 
 		shape = new Rectangle2D.Double(-width/2, -height/2, width, height);
 		getHakoniwa().registerEntity(this);

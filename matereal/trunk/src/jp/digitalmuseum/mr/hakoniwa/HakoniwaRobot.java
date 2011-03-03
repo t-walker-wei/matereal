@@ -150,13 +150,13 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		bd.position.y = (float) y/100;
 		bd.angle = (float) rotation;
 
-		final World world = hakoniwa.getWorld();
-		synchronized (world) {
+		synchronized (hakoniwa) {
+			final World world = hakoniwa.getWorld();
 			body = world.createBody(bd);
 			body.createShape(sd);
 			body.setMassFromShapes();
+			body.m_userData = this;
 		}
-		body.m_userData = this;
 
 		wheels = new HakoniwaRobotWheels(this);
 	}
