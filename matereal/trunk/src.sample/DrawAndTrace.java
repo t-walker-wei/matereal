@@ -7,6 +7,7 @@ import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +16,7 @@ import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.*;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
+import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithCleanerBrush;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
@@ -27,14 +28,23 @@ import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
- * Draw path to navigate a robot along the path.
+ * Draw path to navigate a robot along the path.<br/>
+ * 描かれた線をなぞるように動く
  *
  * @author Jun KATO
  */
 public class DrawAndTrace {
 	private Hakoniwa hakoniwa;
-	private TracePathLoosely tracePath = null;
 	private List<ScreenPosition> screenPath = new ArrayList<ScreenPosition>();
+	private Path2D path2D;
+	protected Robot robot;
+
+	private transient final Stroke stroke =
+		new BasicStroke(2);
+	private transient final AlphaComposite alphaComp =
+		AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .7f);
+
+	private TracePathLoosely tracePath = null;
 
 	public static void main(String[] args) {
 		new DrawAndTrace();
@@ -46,7 +56,7 @@ public class DrawAndTrace {
 		hakoniwa = new Hakoniwa();
 		hakoniwa.start();
 
-		final Robot robot = new HakoniwaRobotWithPen(
+		robot = new HakoniwaRobotWithCleanerBrush(
 				"My robot",
 				new Location(
 						hakoniwa.getRealWidth()/2 - 30,
@@ -56,10 +66,6 @@ public class DrawAndTrace {
 		// Make a window for showing captured image.
 		final DrawableFrame frame = new DrawableFrame() {
 			private static final long serialVersionUID = 1L;
-			private transient final Stroke stroke =
-				new BasicStroke(2);
-			private transient final AlphaComposite alphaComp =
-				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .7f);
 
 			@Override public void dispose() {
 				super.dispose();
@@ -68,18 +74,21 @@ public class DrawAndTrace {
 
 			@Override
 			public void paint2D(Graphics2D g) {
-				final Task task = robot.getAssignedTask(WheelsController.class);
+				Task task = robot.getAssignedTask(WheelsController.class);
 				g.setColor(Color.white);
 				g.fillRect(0, 0, getFrameWidth(), getFrameHeight());
-				final Composite comp = g.getComposite();
 
-				// Draw vectors.
-				g.setComposite(alphaComp);
-				g.setColor(Color.black);
-				g.fillRect(0, 0, getFrameWidth(), 35);
+				// Draw hakoniwa.
+				hakoniwa.drawImage(g);
+
+				// Draw frame.
+				Composite comp = g.getComposite();
+					g.setComposite(alphaComp);
+					g.setColor(Color.black);
+					g.fillRect(0, 0, getFrameWidth(), 35);
+				g.setComposite(comp);
 
 				// Draw status.
-				g.setComposite(comp);
 				g.drawLine(0, 35, getFrameWidth(), 35);
 				g.setColor(Color.white);
 				if (screenPath.isEmpty()) {
@@ -90,22 +99,10 @@ public class DrawAndTrace {
 					} else {
 						g.drawString("Status: Stopped", 10, 30);
 					}
-					if (!screenPath.isEmpty()) {
-						Stroke s = g.getStroke();
-						g.setStroke(stroke);
-						g.setColor(Color.black);
-						final Iterator<ScreenPosition> it = screenPath.iterator();
-						ScreenPosition currentPosition = it.next(), nextPosition = null;
-						while(it.hasNext()) {
-							nextPosition = it.next();
-							g.drawLine(currentPosition.getX(), currentPosition.getY(),
-									nextPosition.getX(), nextPosition.getY());
-							currentPosition = nextPosition;
-						}
-						g.setStroke(s);
+					if (path2D != null) {
+						drawPath(g, path2D);
 					}
 				}
-				hakoniwa.drawImage(g);
 			}
 		};
 		frame.setResizable(false);
@@ -114,8 +111,11 @@ public class DrawAndTrace {
 		// Bring the clicked object to the location in front of the user.
 		frame.getPanel().addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
+				int x = e.getX(), y = e.getY();
 				screenPath.clear();
-				screenPath.add(new ScreenPosition(e.getX(), e.getY()));
+				screenPath.add(new ScreenPosition(x, y));
+				path2D = new Path2D.Float();
+				path2D.moveTo(x, y);
 			}
 			public void mouseReleased(MouseEvent e) {
 				screenPath.add(new ScreenPosition(e.getX(), e.getY()));
@@ -123,27 +123,27 @@ public class DrawAndTrace {
 				synchronized (robot) {
 					resample(20);
 					List<Position> path = new ArrayList<Position>();
+					path2D.reset();
+					boolean isFirst = true;
 					for (ScreenPosition sp : screenPath) {
 						path.add(hakoniwa.screenToReal(sp));
-					}
-					if (tracePath != null &&
-							tracePath.isStarted()) {
-						tracePath.updatePath(path);
-					} else {
-						tracePath = new TracePathLoosely(path);
-						if (tracePath.assign(robot)) {
-							tracePath.start();
+						if (isFirst) {
+							path2D.moveTo(sp.getX(), sp.getY());
+							isFirst = false;
 						} else {
-							tracePath = null;
+							path2D.lineTo(sp.getX(), sp.getY());
 						}
 					}
+					onPathSpecified(path);
 				}
 			}
 		});
 		frame.getPanel().addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				screenPath.add(new ScreenPosition(e.getX(), e.getY()));
+				int x = e.getX(), y = e.getY();
+				screenPath.add(new ScreenPosition(x, y));
+				path2D.lineTo(x, y);
 			}
 		});
 
@@ -157,6 +157,12 @@ public class DrawAndTrace {
 		});
 	}
 
+	/**
+	 * Resample the drawn path according to the specified unit length.<br/>
+	 * 描かれた線を指定された長さごとに区切ってリサンプルする
+	 *
+	 * @param unitLength
+	 */
 	private void resample(double unitLength) {
 		if (screenPath.isEmpty()) {
 			return;
@@ -182,5 +188,45 @@ public class DrawAndTrace {
 			newPath.add(nextPosition);
 			screenPath = newPath;
 		}
+	}
+
+	/**
+	 * When path is drawn by the user, start navigating the robot.<br/>
+	 * ユーザがパスを描き終えたら、それをなぞるようにロボットを動かす
+	 *
+	 * @param path
+	 */
+	protected void onPathSpecified(List<Position> path) {
+
+		// If a task instance already exists, update it.
+		if (tracePath != null &&
+				tracePath.isStarted()) {
+			tracePath.updatePath(path);
+		}
+
+		// Otherwise instantiate task and assign it to the robot.
+		else {
+			tracePath = new TracePathLoosely(path);
+			if (tracePath.assign(robot)) {
+				tracePath.start();
+			} else {
+				tracePath = null;
+			}
+		}
+	}
+
+	/**
+	 * Draw the specified path.<br/>
+	 * 指定されたパスを画面上に描く
+	 *
+	 * @param g
+	 * @param path2D
+	 */
+	protected void drawPath(Graphics2D g, Path2D path2D) {
+		Stroke s = g.getStroke();
+			g.setStroke(stroke);
+			g.setColor(Color.black);
+			g.draw(path2D);
+		g.setStroke(s);
 	}
 }
