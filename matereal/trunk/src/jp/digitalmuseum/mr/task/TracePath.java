@@ -52,8 +52,8 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 	private double allowedDeviationAngle;
 	private double allowedDistance;
 	private double allowedInterimDistance;
-	private List<Position> path;
 	private boolean isUpdatingPath;
+	protected List<Position> path;
 	protected Action[] actions;
 
 	public TracePath(List<Position> path) {

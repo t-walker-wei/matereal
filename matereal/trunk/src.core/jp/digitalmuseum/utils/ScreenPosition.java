@@ -41,6 +41,8 @@
  */
 package jp.digitalmuseum.utils;
 
+import java.awt.Point;
+
 /**
  * Position information. (X, Y) [px] in a screen coordinate.
  *
@@ -52,12 +54,18 @@ public class ScreenPosition extends ScreenVector2D {
 	public ScreenPosition() {
 		isNotFound = true;
 	}
+
 	public ScreenPosition(int x, int y) {
 		set(x, y);
 	}
+
+	public ScreenPosition(Point p) {
+		this(p.x, p.y);
+	}
+
 	public ScreenPosition(ScreenVector2D position) {
-		if (position instanceof ScreenPosition &&
-				((ScreenPosition) position).isNotFound) {
+		if (position instanceof ScreenPosition
+				&& ((ScreenPosition) position).isNotFound) {
 			isNotFound = true;
 		} else {
 			set(position.x, position.y);
