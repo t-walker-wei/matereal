@@ -48,11 +48,18 @@ import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
 import jp.digitalmuseum.utils.Position;
 
-public class TracePath extends MobileTaskAbstractImpl {
+public class TracePath extends LocationBasedTaskAbstractImpl {
+	private double allowedDeviationAngle;
+	private double allowedDistance;
+	private double allowedInterimDistance;
 	private List<Position> path;
 	private boolean isUpdatingPath;
+	protected Action[] actions;
 
 	public TracePath(List<Position> path) {
+		allowedDeviationAngle = VectorFieldTask.defaultAllowedDeviationAngle;
+		allowedDistance = Move.defaultAllowedDistance;
+		allowedInterimDistance = Move.defaultAllowedDistance*2;
 		updatePath(path);
 	}
 
@@ -65,7 +72,47 @@ public class TracePath extends MobileTaskAbstractImpl {
 		// Do nothing.
 	}
 
-	public void updatePath(List<Position> path) {
+	public synchronized void setAllowedDeviationAngle(double allowedDeviationAngle) {
+		this.allowedDeviationAngle = allowedDeviationAngle;
+		if (isStarted()) {
+			for (Action action : actions) {
+				((Move) action.getTask())
+						.setAllowedDistance(allowedDeviationAngle);
+			}
+		}
+	}
+
+	public synchronized double getAllowedDeviationAngle() {
+		return allowedDeviationAngle;
+	}
+
+	public synchronized void setAllowedDistance(double allowedDistance) {
+		this.allowedDistance = allowedDistance;
+		if (isStarted()) {
+			((Move) actions[actions.length - 1].getTask())
+					.setAllowedDistance(allowedDistance);
+		}
+	}
+
+	public synchronized double getAllowedDistance() {
+		return allowedDistance;
+	}
+
+	public synchronized void setAllowedInterimDistance(double allowedInterimDistance) {
+		this.allowedInterimDistance = allowedInterimDistance;
+		if (isStarted()) {
+			for (int i = 0; i < actions.length - 1; i ++) {
+				((Move) actions[i].getTask())
+						.setAllowedDistance(allowedInterimDistance);
+			}
+		}
+	}
+
+	public synchronized double getAllowedInterimDistance() {
+		return allowedInterimDistance;
+	}
+
+	public synchronized void updatePath(List<Position> path) {
 		this.path = new ArrayList<Position>(path);
 		if (isStarted()) {
 			isUpdatingPath = true;
@@ -76,16 +123,20 @@ public class TracePath extends MobileTaskAbstractImpl {
 		}
 	}
 
-	private void updateSubDiagram() {
+	protected void updateSubDiagram() {
 		ActivityDiagram subDiagram = new ActivityDiagram(
 				new ResourceContext(this, getResourceMap()));
-		Action[] nodes = new Action[path.size()];
+		actions = new Action[path.size()];
 		int i = 0;
 		for (Position position : path) {
-			nodes[i ++] = new Action(getAssignedRobot(), new Move(position));
+			Move move = new Move(position);
+			move.setAllowedDeviationAngle(allowedDeviationAngle);
+			move.setAllowedDistance(i == actions.length-1 ?
+					allowedDistance : allowedInterimDistance);
+			actions[i ++] = new Action(getAssignedRobot(), move);
 		}
-		subDiagram.addInSerial(nodes);
-		subDiagram.setInitialNode(nodes[0]);
+		subDiagram.addInSerial(actions);
+		subDiagram.setInitialNode(actions[0]);
 		subDiagram.addEventListener(new EventListener() {
 			public void eventOccurred(Event e) {
 				if (e instanceof ActivityEvent &&

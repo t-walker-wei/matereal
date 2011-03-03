@@ -51,10 +51,18 @@ import jp.digitalmuseum.utils.VectorField;
  * @author Jun KATO
  */
 public abstract class VectorFieldTask extends LocationBasedTaskAbstractImpl implements VectorField {
-	private final Array<VectorField> optionalFields = new Array<VectorField>();
-	private final Vector2D vector = new Vector2D();
-	private final Position position = new Position();
-	private double allowedDeviationAngle = 0.2; // 17degrees+
+	public static double defaultAllowedDeviationAngle = 0.2; // 17 degrees+
+	private final Array<VectorField> optionalFields;
+	private final Vector2D vector;
+	private final Position position;
+	private double allowedDeviationAngle;
+
+	public VectorFieldTask() {
+		optionalFields = new Array<VectorField>();
+		vector = new Vector2D();
+		position = new Position();
+		allowedDeviationAngle = defaultAllowedDeviationAngle;
+	}
 
 	public void setAllowedDeviationAngle(double allowedDeviationAngle) {
 		this.allowedDeviationAngle = allowedDeviationAngle;
