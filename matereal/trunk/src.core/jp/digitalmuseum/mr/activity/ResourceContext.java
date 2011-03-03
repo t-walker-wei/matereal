@@ -36,26 +36,23 @@
  */
 package jp.digitalmuseum.mr.activity;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import jp.digitalmuseum.mr.entity.Resource;
+import jp.digitalmuseum.mr.entity.ResourceMap;
 import jp.digitalmuseum.mr.task.Task;
 
 public class ResourceContext {
 	private Task task;
-	private Set<Resource> resources;
+	private ResourceMap resourceMap;
 
-	public ResourceContext(Task task, Set<Resource> resources) {
+	public ResourceContext(Task task, ResourceMap resourceMap) {
 		this.task = task;
-		this.resources = new HashSet<Resource>();
+		this.resourceMap = resourceMap;
 	}
 
 	Task getTask() {
 		return task;
 	}
 
-	Set<Resource> getResources() {
-		return resources;
+	ResourceMap getResources() {
+		return resourceMap;
 	}
 }

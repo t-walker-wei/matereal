@@ -152,6 +152,7 @@ public abstract class ServiceAbstractImpl implements Service {
 		if (!isStarted()) {
 			return;
 		}
+		onResume();
 		if (serviceGroup == null) {
 			startRunning();
 		}
@@ -162,13 +163,13 @@ public abstract class ServiceAbstractImpl implements Service {
 				new ServiceEvent(
 						ServiceAbstractImpl.this,
 						ServiceEvent.STATUS.RESUMED));
-		onResume();
 	}
 
 	synchronized public void stop() {
 		if (!isStarted()) {
 			return;
 		}
+		onStop();
 
 		// Unregister this service.
 		if (serviceGroup == null) {
@@ -189,7 +190,6 @@ public abstract class ServiceAbstractImpl implements Service {
 				new ServiceEvent(
 						ServiceAbstractImpl.this,
 						ServiceEvent.STATUS.STOPPED));
-		onStop();
 		isStarted = false;
 	}
 

@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.entity.ResourceMap;
 import jp.digitalmuseum.mr.entity.Robot;
@@ -66,7 +67,8 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 	private Queue<RobotEvent> robotEventQueue;
 	private ResourceMap resourceMap;
 	private RobotEventListener robotEventListener;
-	private boolean isFinished;
+	private ActivityDiagram subDiagram;
+	private boolean isStopping;
 
 	@Override
 	public String getName() {
@@ -97,22 +99,20 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		return false;
 	}
 
-	public synchronized boolean isAssignable(Robot robot) {
-		return requirementsSuppliable(
-				getRequirements(),
-				robot.getAvailableExclusiveResourceTypes());
+	public boolean isAssignable(Robot robot) {
+		synchronized (robot) {
+			return requirementsSuppliable(
+					getRequirements(),
+					robot.getAvailableExclusiveResourceTypes());
+		}
 	}
 
 	public synchronized boolean isAssigned() {
 		return robot != null;
 	}
 
-	public synchronized Robot getAssignedRobot() {
+	public Robot getAssignedRobot() {
 		return robot;
-	}
-
-	public synchronized boolean isFinished() {
-		return isFinished;
 	}
 
 	@Override
@@ -125,8 +125,10 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		if (robot == null) {
 			throw new IllegalStateException("This task ("+getName()+") is not assigned to a robot.");
 		}
-		isFinished = false;
 		super.start(serviceGroup);
+		if (hasSubDiagram()) {
+			getSubDiagram().start();
+		}
 	}
 
 	/**
@@ -137,17 +139,37 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		if (!isStarted()) {
 			return;
 		}
-		receiveRobotEvent(false);
-		robot.freeResources(resourceMap.resources(), this);
+		isStopping = true;
+		if (hasSubDiagram()) {
+			getSubDiagram().stop();
+		}
+		synchronized (robot) {
+			receiveRobotEvent(false);
+			robot.freeResources(resourceMap.resources(), this);
+		}
 		robot = null;
 		resourceMap = null;
 		super.stop();
+		isStopping = false;
+	}
+
+
+	protected void setSubDiagram(ActivityDiagram subDiagram) {
+		this.subDiagram = subDiagram;
+	}
+
+	public ActivityDiagram getSubDiagram() {
+		return subDiagram;
+	}
+
+	public boolean hasSubDiagram() {
+		return subDiagram != null;
 	}
 
 	/**
 	 * @return Returns the current resource map.
 	 */
-	protected synchronized ResourceMap getResourceMap() {
+	protected ResourceMap getResourceMap() {
 		return resourceMap;
 	}
 
@@ -160,9 +182,10 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 	}
 
 	protected synchronized void finish() {
-		stop();
+		if (!isStopping) {
+			stop();
+		}
 		distributeEvent(new ServiceEvent(this, STATUS.FINISHED));
-		isFinished = true;
 	}
 
 	/**
