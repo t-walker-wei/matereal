@@ -1,225 +1,64 @@
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.awt.Stroke;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithCleanerBrush;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.resource.WheelsController;
 import jp.digitalmuseum.mr.task.EndCleaning;
 import jp.digitalmuseum.mr.task.FillPath;
 import jp.digitalmuseum.mr.task.Move;
 import jp.digitalmuseum.mr.task.MobileCleaningTask;
-import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.mr.task.TracePathLoosely;
-import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
- * Lasso path to navigate a robot filling the path.
+ * Lasso path to navigate a robot filling the path with cleaning.<br />
+ * 囲んだ領域を舐めるように動いて掃除する
  *
  * @author Jun KATO
  */
-public class LassoAndClean {
-	private Hakoniwa hakoniwa;
+public class LassoAndClean extends LassoAndFill {
 	private ActivityDiagram ad = null;
-	private List<ScreenPosition> screenPath = new ArrayList<ScreenPosition>();
-	private Path2D path2D;
 
 	public static void main(String[] args) {
 		new LassoAndClean();
 	}
 
-	public LassoAndClean() {
+	@Override
+	protected synchronized void onPathSpecified(List<Position> path) {
 
-		// Run hakoniwa.
-		hakoniwa = new Hakoniwa();
-		hakoniwa.start();
+		// Stop the activity diagram if running.
+		if (ad != null && ad.isStarted()) {
+			ad.stop();
+		}
 
-		final Robot robot = new HakoniwaRobotWithCleanerBrush(
-				"My robot",
-				new Location(
-						hakoniwa.getRealWidth()/2 - 30,
-						hakoniwa.getRealHeight()/2,
-						-Math.PI*3/4));
+		// Construct an activity diagram.
+		ad = new ActivityDiagram();
 
-		// Make a window for showing captured image.
-		final DrawableFrame frame = new DrawableFrame() {
-			private static final long serialVersionUID = 1L;
-			private transient final Stroke stroke =
-				new BasicStroke(2);
-			private transient final AlphaComposite alphaComp =
-				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .1f);
-			private transient final AlphaComposite alphaComp2 =
-				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .7f);
+		List<Position> cleaningPath = FillPath.getCleaningPath(path, robot
+				.getShape().getBounds().getWidth());
+		Position firstCleaningPoint = cleaningPath.remove(0);
 
-			@Override public void dispose() {
-				super.dispose();
-				Matereal.getInstance().dispose();
-			}
+		Position firstPoint = path.remove(0);
+		path.add(firstPoint);
 
-			@Override
-			public void paint2D(Graphics2D g) {
-				final Task task = robot.getAssignedTask(WheelsController.class);
-				g.setColor(Color.white);
-				g.fillRect(0, 0, getFrameWidth(), getFrameHeight());
-				final Composite comp = g.getComposite();
+		Action[] actions = new Action[] {
 
-				hakoniwa.drawImage(g);
+			// Ensure that the brush is stopped.
+			new Action(robot, new EndCleaning()),
 
-				// Draw path.
-				if (path2D != null) {
-					Stroke s = g.getStroke();
-					g.setStroke(stroke);
-					g.setColor(Color.black);
-					g.draw(path2D);
-					g.setStroke(s);
-					g.setComposite(alphaComp);
-					g.fill(path2D);
-					g.setComposite(comp);
-				}
+			// Move to the starting point of the track.
+			new Action(robot, new Move(firstPoint)),
 
-				// Draw frame.
-				g.setComposite(alphaComp2);
-				g.setColor(Color.black);
-				g.fillRect(0, 0, getFrameWidth(), 35);
+			// Go along the track to clean around the cleaning area.
+			new Action(robot, new MobileCleaningTask(new TracePathLoosely(path))),
 
-				// Draw status.
-				g.setComposite(comp);
-				g.drawLine(0, 35, getFrameWidth(), 35);
-				g.setColor(Color.white);
-				if (screenPath.isEmpty()) {
-					g.drawString("Draw path.", 10, 30);
-				} else {
-					if (task != null) {
-						g.drawString("Status: "+task, 10, 30);
-					} else {
-						g.drawString("Status: Stopped", 10, 30);
-					}
-				}
-			}
+			// Move to the starting point of the cleaning path.
+			new Action(robot, new Move(firstCleaningPoint)),
+
+			// Go along the cleaning path to clean inside the cleaning area.
+			new Action(robot, new MobileCleaningTask(new TracePathLoosely(cleaningPath)))
 		};
-		frame.setResizable(false);
-		frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
-
-		// Bring the clicked object to the location in front of the user.
-		frame.getPanel().addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				int x = e.getX(), y = e.getY();
-				screenPath.clear();
-				screenPath.add(new ScreenPosition(x, y));
-				path2D = new Path2D.Float();
-				path2D.moveTo(x, y);
-			}
-			public void mouseReleased(MouseEvent e) {
-				screenPath.add(new ScreenPosition(e.getX(), e.getY()));
-
-				synchronized (robot) {
-
-					resample(20);
-
-					List<Position> path = new ArrayList<Position>();
-					path2D.reset();
-					boolean isFirst = true;
-					for (ScreenPosition sp : screenPath) {
-						path.add(hakoniwa.screenToReal(sp));
-						if (isFirst) {
-							path2D.moveTo(sp.getX(), sp.getY());
-							isFirst = false;
-						} else {
-							path2D.lineTo(sp.getX(), sp.getY());
-						}
-					}
-					path2D.closePath();
-
-					if (ad != null &&
-							ad.isStarted()) {
-						ad.stop();
-					}
-
-					ad = new ActivityDiagram();
-					List<Position> cleaningPath = FillPath.getCleaningPath(
-							path,
-							robot.getShape().getBounds().getWidth());
-					Position firstPoint = path.remove(0);
-					Position firstCleaningPoint = cleaningPath.remove(0);
-					path.add(firstPoint);
-
-					Action[] actions = new Action[] {
-						new Action(robot, new EndCleaning()),
-						new Action(robot, new Move(firstPoint)),
-						new Action(robot, new MobileCleaningTask(new TracePathLoosely(path))),
-						new Action(robot, new Move(firstCleaningPoint)),
-						new Action(robot, new MobileCleaningTask(new TracePathLoosely(cleaningPath)))
-					};
-					ad.addInSerial(actions);
-					ad.setInitialNode(actions[0]);
-
-					ad.start();
-				}
-			}
-		});
-		frame.getPanel().addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				int x = e.getX(), y = e.getY();
-				screenPath.add(new ScreenPosition(x, y));
-				path2D.lineTo(x, y);
-			}
-		});
-
-		// Repaint the window every time the image is updated.
-		hakoniwa.addEventListener(new EventListener() {
-			public void eventOccurred(Event e) {
-				if (e instanceof ImageUpdateEvent) {
-					frame.repaint();
-				}
-			}
-		});
-	}
-
-	private void resample(double unitLength) {
-		if (screenPath.isEmpty()) {
-			return;
-		}
-
-		List<ScreenPosition> newPath = new ArrayList<ScreenPosition>();
-		final Iterator<ScreenPosition> it = screenPath.iterator();
-		ScreenPosition currentPosition = it.next(), nextPosition = null;
-		while(it.hasNext()) {
-			nextPosition = it.next();
-			double distance;
-			while ((distance = currentPosition.distance(nextPosition)) > unitLength) {
-				newPath.add(currentPosition);
-				currentPosition = new ScreenPosition(
-						(int)((nextPosition.getX()*unitLength +
-								currentPosition.getX()*(distance-unitLength))/distance),
-						(int)((nextPosition.getY()*unitLength +
-								currentPosition.getY()*(distance-unitLength))/distance));
-			}
-		}
-
-		if (nextPosition != null) {
-			newPath.add(nextPosition);
-			screenPath = newPath;
-		}
+		ad.addInSerial(actions);
+		ad.setInitialNode(actions[0]);
+		ad.start();
 	}
 }
