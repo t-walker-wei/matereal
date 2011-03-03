@@ -42,17 +42,12 @@ import java.util.List;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.activity.ResourceContext;
-import jp.digitalmuseum.mr.message.ActivityEvent;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
 import jp.digitalmuseum.utils.Position;
 
 public class TracePath extends LocationBasedTaskAbstractImpl {
 	private double allowedDeviationAngle;
 	private double allowedDistance;
 	private double allowedInterimDistance;
-	private boolean isUpdatingPath;
 	protected List<Position> path;
 	protected Action[] actions;
 
@@ -69,7 +64,9 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 	}
 
 	public void run() {
-		// Do nothing.
+		if (getSubDiagram().isDone()) {
+			finish();
+		}
 	}
 
 	public synchronized void setAllowedDeviationAngle(double allowedDeviationAngle) {
@@ -115,12 +112,14 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 	public synchronized void updatePath(List<Position> path) {
 		this.path = new ArrayList<Position>(path);
 		if (isStarted()) {
-			isUpdatingPath = true;
 			getSubDiagram().stop();
 			updateSubDiagram();
 			getSubDiagram().start();
-			isUpdatingPath = false;
 		}
+	}
+
+	public synchronized List<Position> getPath() {
+		return new ArrayList<Position>(path);
 	}
 
 	protected void updateSubDiagram() {
@@ -137,15 +136,6 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 		}
 		subDiagram.addInSerial(actions);
 		subDiagram.setInitialNode(actions[0]);
-		subDiagram.addEventListener(new EventListener() {
-			public void eventOccurred(Event e) {
-				if (e instanceof ActivityEvent &&
-						((ActivityEvent)e).getStatus() == STATUS.LEFT &&
-						!isUpdatingPath) {
-					finish();
-				}
-			}
-		});
 		setSubDiagram(subDiagram);
 	}
 }

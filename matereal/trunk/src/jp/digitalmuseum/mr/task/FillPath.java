@@ -42,7 +42,7 @@ import java.util.List;
 import jp.digitalmuseum.utils.Position;
 
 /**
- * 
+ *
  *
  * @author shigeo
  */
@@ -74,7 +74,6 @@ public class FillPath extends TracePath {
 
 		//ラインの本数
 		int div=(int) (((xPoints[maxIndex]-xPoints[minIndex])/(robotSize))-1);
-
 
 		//一周したあとに一番最初に通る点->xが最小である点
 		cleaningPath.add(new Position(cleanArea.get(minIndex)));

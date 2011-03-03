@@ -237,9 +237,9 @@ public class ActivityDiagram extends Node {
 			}
 			currentNodes.clear();
 			monitor.stop();
-			leave();
 			isStarted = false;
 			isPaused = false;
+			setDone();
 		}
 	}
 
