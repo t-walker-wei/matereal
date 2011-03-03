@@ -13,22 +13,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.*;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithCleanerBrush;
+import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.task.EndCleaning;
-import jp.digitalmuseum.mr.task.FillPath;
-import jp.digitalmuseum.mr.task.Move;
-import jp.digitalmuseum.mr.task.MobileCleaningTask;
+import jp.digitalmuseum.mr.task.FillPathLoosely;
 import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.TracePathLoosely;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
@@ -38,23 +32,23 @@ import jp.digitalmuseum.utils.ScreenPosition;
  *
  * @author Jun KATO
  */
-public class LassoAndClean {
+public class LassoAndFill {
 	private Hakoniwa hakoniwa;
-	private ActivityDiagram ad = null;
+	private FillPathLoosely fillPath = null;
 	private List<ScreenPosition> screenPath = new ArrayList<ScreenPosition>();
 	private Path2D path2D;
 
 	public static void main(String[] args) {
-		new LassoAndClean();
+		new LassoAndFill();
 	}
 
-	public LassoAndClean() {
+	public LassoAndFill() {
 
 		// Run hakoniwa.
 		hakoniwa = new Hakoniwa();
 		hakoniwa.start();
 
-		final Robot robot = new HakoniwaRobotWithCleanerBrush(
+		final Robot robot = new HakoniwaRobotWithPen(
 				"My robot",
 				new Location(
 						hakoniwa.getRealWidth()/2 - 30,
@@ -83,21 +77,7 @@ public class LassoAndClean {
 				g.fillRect(0, 0, getFrameWidth(), getFrameHeight());
 				final Composite comp = g.getComposite();
 
-				hakoniwa.drawImage(g);
-
-				// Draw path.
-				if (path2D != null) {
-					Stroke s = g.getStroke();
-					g.setStroke(stroke);
-					g.setColor(Color.black);
-					g.draw(path2D);
-					g.setStroke(s);
-					g.setComposite(alphaComp);
-					g.fill(path2D);
-					g.setComposite(comp);
-				}
-
-				// Draw frame.
+				// Draw vectors.
 				g.setComposite(alphaComp2);
 				g.setColor(Color.black);
 				g.fillRect(0, 0, getFrameWidth(), 35);
@@ -114,7 +94,18 @@ public class LassoAndClean {
 					} else {
 						g.drawString("Status: Stopped", 10, 30);
 					}
+					if (path2D != null) {
+						Stroke s = g.getStroke();
+						g.setStroke(stroke);
+						g.setColor(Color.black);
+						g.draw(path2D);
+						g.setStroke(s);
+						g.setComposite(alphaComp);
+						g.fill(path2D);
+						g.setComposite(comp);
+					}
 				}
+				hakoniwa.drawImage(g);
 			}
 		};
 		frame.setResizable(false);
@@ -133,9 +124,7 @@ public class LassoAndClean {
 				screenPath.add(new ScreenPosition(e.getX(), e.getY()));
 
 				synchronized (robot) {
-
 					resample(20);
-
 					List<Position> path = new ArrayList<Position>();
 					path2D.reset();
 					boolean isFirst = true;
@@ -149,31 +138,17 @@ public class LassoAndClean {
 						}
 					}
 					path2D.closePath();
-
-					if (ad != null &&
-							ad.isStarted()) {
-						ad.stop();
+					if (fillPath != null &&
+							fillPath.isStarted()) {
+						fillPath.updatePath(path);
+					} else {
+						fillPath = new FillPathLoosely(path);
+						if (fillPath.assign(robot)) {
+							fillPath.start();
+						} else {
+							fillPath = null;
+						}
 					}
-
-					ad = new ActivityDiagram();
-					List<Position> cleaningPath = FillPath.getCleaningPath(
-							path,
-							robot.getShape().getBounds().getWidth());
-					Position firstPoint = path.remove(0);
-					Position firstCleaningPoint = cleaningPath.remove(0);
-					path.add(firstPoint);
-
-					Action[] actions = new Action[] {
-						new Action(robot, new EndCleaning()),
-						new Action(robot, new Move(firstPoint)),
-						new Action(robot, new MobileCleaningTask(new TracePathLoosely(path))),
-						new Action(robot, new Move(firstCleaningPoint)),
-						new Action(robot, new MobileCleaningTask(new TracePathLoosely(cleaningPath)))
-					};
-					ad.addInSerial(actions);
-					ad.setInitialNode(actions[0]);
-
-					ad.start();
 				}
 			}
 		});

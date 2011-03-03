@@ -61,11 +61,11 @@ public class Node implements EventProvider {
 		transitions = new HashSet<Transition>();
 	}
 
-	public final boolean isEntered() {
+	public synchronized final boolean isEntered() {
 		return isEntered;
 	}
 
-	public final boolean isDone() {
+	public synchronized final boolean isDone() {
 		return isDone;
 	}
 
@@ -156,7 +156,7 @@ public class Node implements EventProvider {
 		}
 	}
 
-	final void enter() {
+	synchronized final void enter() {
 		entranceDate = Calendar.getInstance().getTimeInMillis();
 		isEntered = true;
 		isDone = false;
@@ -165,12 +165,12 @@ public class Node implements EventProvider {
 		onEnter();
 	}
 
-	protected final void setDone() {
+	protected synchronized final void setDone() {
 		isDone = true;
 		distributeEvent(new ActivityEvent(this, STATUS.DONE));
 	}
 
-	final void leave() {
+	synchronized final void leave() {
 		isEntered = false;
 		distributeEvent(
 				new ActivityEvent(this, STATUS.LEFT));

@@ -140,7 +140,7 @@ public class Action extends Node implements EventListener {
 		if (e.getSource() == task) {
 			if (e instanceof ServiceEvent) {
 				ServiceEvent se = (ServiceEvent) e;
-				if (se.getStatus() == STATUS.FINISHED) {
+				if (se.getStatus() == STATUS.STOPPED) {
 					setDone();
 				}
 			}
