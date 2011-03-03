@@ -39,10 +39,9 @@ package jp.digitalmuseum.mr.activity;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
-import jp.digitalmuseum.mr.entity.ExclusiveResource;
 import jp.digitalmuseum.mr.entity.Resource;
-import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -53,10 +52,12 @@ import jp.digitalmuseum.mr.task.Task;
 public class Action extends Node implements EventListener {
 	private Robot robot;
 	private Task task;
+	private Set<Class<? extends Resource>> transferringResourceTypes;
 
 	public Action(Robot robot, Task task) {
 		this.robot = robot;
 		this.task = task;
+		transferringResourceTypes = new HashSet<Class<? extends Resource>>();
 	}
 
 	public Robot getRobot() {
@@ -69,56 +70,70 @@ public class Action extends Node implements EventListener {
 
 	@Override
 	protected boolean isAllowedEntry() {
-		return task.isAssignable(robot);
+		synchronized (robot) {
+			boolean isAllowedEntry;
+			ResourceContext resourceContext = getActivityDiagram().getResourceContext();
+			if (resourceContext != null &&
+					resourceContext.getTask().getAssignedRobot() == robot) {
+				freeRequiredResources();
+				isAllowedEntry = task.isAssignable(robot);
+				rollbackRequiredResources();
+			} else {
+				isAllowedEntry = task.isAssignable(robot);
+			}
+			return isAllowedEntry;
+		}
 	}
 
 	@Override
 	protected void onEnter() {
 		synchronized (robot) {
 			ResourceContext resourceContext = getActivityDiagram().getResourceContext();
-			Set<Class<? extends Resource>> transferringResourceTypes = null;
 			if (resourceContext != null &&
 					resourceContext.getTask().getAssignedRobot() == robot) {
-				transferringResourceTypes = freeRequiredResources(task, resourceContext);
+				freeRequiredResources();
 			}
-			if (!task.assign(robot)) {
-				// In case of failure, rollback ownership of all resources.
-				if (transferringResourceTypes != null) {
-					robot.requestResources(transferringResourceTypes, resourceContext.getTask());
-				}
-				return;
+			if (task.assign(robot)) {
+				task.addEventListener(this);
+				task.start();
+			} else {
+				rollbackRequiredResources();
 			}
 		}
-		task.addEventListener(this);
-		task.start();
 	}
 
 	@Override
 	protected void onLeave() {
-		task.removeEventListener(this);
-		task.stop();
+		synchronized (robot) {
+			task.removeEventListener(this);
+			task.stop();
+			rollbackRequiredResources();
+		}
 	}
 
-	private Set<Class<? extends Resource>> freeRequiredResources(Task task, ResourceContext resourceContext) {
-		List<Class<? extends Resource>> resourceTypes = task.getRequirements();
-		Set<Class<? extends Resource>> transferingResourceTypes = new HashSet<Class<? extends Resource>>();
+	private void freeRequiredResources() {
+		ResourceContext resourceContext = getActivityDiagram().getResourceContext();
+		List<Class<? extends Resource>> requiredResourceTypes = task.getRequirements();
 
 		// Look for the desired resources and free them.
-		for (Class<? extends Resource> resourceType : resourceTypes) {
-			for (Resource resource : resourceContext.getResources()) {
-				if (resourceType.isInstance(resource)) {
-					if (ExclusiveResource.class.isAssignableFrom(resourceType)) {
-						if (!(resource instanceof ResourceAbstractImpl) ||
-								!((ResourceAbstractImpl) resource).isWritable()) {
-							continue;
-						}
-					}
-					robot.freeResource(resource, resourceContext.getTask());
-					transferingResourceTypes.add(resourceType);
+		for (Class<? extends Resource> requiredResourceType : requiredResourceTypes) {
+			for (Entry<Class<? extends Resource>, Resource> entry : resourceContext.getResources()) {
+				Class<? extends Resource> resourceType = entry.getKey();
+				if (requiredResourceType.isAssignableFrom(resourceType)) {
+					robot.freeResource(entry.getValue(), resourceContext.getTask());
+					transferringResourceTypes.add(resourceType);
 				}
 			}
 		}
-		return transferingResourceTypes;
+	}
+
+	private void rollbackRequiredResources() {
+		ResourceContext resourceContext = getActivityDiagram().getResourceContext();
+		if (resourceContext != null &&
+				!transferringResourceTypes.isEmpty()) {
+			robot.requestResources(transferringResourceTypes, resourceContext.getTask());
+			transferringResourceTypes.clear();
+		}
 	}
 
 	public void eventOccurred(Event e) {

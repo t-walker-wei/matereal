@@ -47,7 +47,7 @@ import jp.digitalmuseum.mr.activity.Transition;
 
 public class PTransitionLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 5091941901786318920L;
-	private Transition transition;
+	private transient Transition transition;
 	private PText text;
 	private static Color color = new Color(100, 100, 100);
 

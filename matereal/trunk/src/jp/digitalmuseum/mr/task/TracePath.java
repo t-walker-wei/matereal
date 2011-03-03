@@ -34,29 +34,67 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.activity;
+package jp.digitalmuseum.mr.task;
 
-import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
-import jp.digitalmuseum.mr.activity.Edge;
-import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.activity.Action;
+import jp.digitalmuseum.mr.activity.ActivityDiagram;
+import jp.digitalmuseum.mr.activity.ResourceContext;
+import jp.digitalmuseum.mr.message.ActivityEvent;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.EventListener;
+import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
+import jp.digitalmuseum.utils.Position;
 
-public class PForkLineNode extends PLineNodeAbstractImpl {
-	private static final long serialVersionUID = 6558976118238198984L;
-	private transient Edge edge;
-	private static Color color = new Color(200, 0, 0);
+public class TracePath extends MobileTaskAbstractImpl {
+	private List<Position> path;
+	private boolean isUpdatingPath;
 
-	public PForkLineNode(Edge edge, PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
-		super(pSourceNode, pDestinationNode);
-		this.edge = edge;
-		setStrokePaint(color);
+	public TracePath(List<Position> path) {
+		updatePath(path);
 	}
 
-	public Node getSource() {
-		return edge.getSource();
+	@Override
+	protected void onAssigned() {
+		updateSubDiagram();
 	}
 
-	public Node getDestination() {
-		return edge.getDestination();
+	public void run() {
+		// Do nothing.
+	}
+
+	public void updatePath(List<Position> path) {
+		this.path = new ArrayList<Position>(path);
+		if (isStarted()) {
+			isUpdatingPath = true;
+			getSubDiagram().stop();
+			updateSubDiagram();
+			getSubDiagram().start();
+			isUpdatingPath = false;
+		}
+	}
+
+	private void updateSubDiagram() {
+		ActivityDiagram subDiagram = new ActivityDiagram(
+				new ResourceContext(this, getResourceMap()));
+		Action[] nodes = new Action[path.size()];
+		int i = 0;
+		for (Position position : path) {
+			nodes[i ++] = new Action(getAssignedRobot(), new Move(position));
+		}
+		subDiagram.addInSerial(nodes);
+		subDiagram.setInitialNode(nodes[0]);
+		subDiagram.addEventListener(new EventListener() {
+			public void eventOccurred(Event e) {
+				if (e instanceof ActivityEvent &&
+						((ActivityEvent)e).getStatus() == STATUS.LEFT &&
+						!isUpdatingPath) {
+					finish();
+				}
+			}
+		});
+		setSubDiagram(subDiagram);
 	}
 }

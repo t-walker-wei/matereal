@@ -44,8 +44,8 @@ import jp.digitalmuseum.mr.activity.Node;
 
 public class PJoinLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 5862618628516003680L;
-	private Node source;
-	private Join join;
+	private transient Node source;
+	private transient Join join;
 	private static Color color = new Color(0, 0, 200);
 
 	public PJoinLineNode(

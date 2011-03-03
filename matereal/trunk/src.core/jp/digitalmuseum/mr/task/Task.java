@@ -38,6 +38,7 @@ package jp.digitalmuseum.mr.task;
 
 import java.util.List;
 
+import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.service.Service;
@@ -77,4 +78,14 @@ public interface Task extends Service {
 	 * @return Returns the assigned robot.
 	 */
 	public Robot getAssignedRobot();
+
+	/**
+	 * @return Returns if this task is running an activity diagram inside.
+	 */
+	public boolean hasSubDiagram();
+
+	/**
+	 * @return Returns an activity diagram running inside this task.
+	 */
+	public ActivityDiagram getSubDiagram();
 }
