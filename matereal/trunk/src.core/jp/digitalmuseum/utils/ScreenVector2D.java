@@ -41,6 +41,8 @@
  */
 package jp.digitalmuseum.utils;
 
+import java.awt.Point;
+
 /**
  * 2D vector in a screen coordinate.
  *
@@ -50,9 +52,21 @@ public class ScreenVector2D {
 	protected int x;
 	protected int y;
 
-	public ScreenVector2D() { }
-	public ScreenVector2D(int x, int y) { set(x, y); }
-	public ScreenVector2D(ScreenVector2D v) { set(v); }
+	public ScreenVector2D() {
+		// Do nothing.
+	}
+
+	public ScreenVector2D(int x, int y) {
+		set(x, y);
+	}
+
+	public ScreenVector2D(Point p) {
+		set(p.x, p.y);
+	}
+
+	public ScreenVector2D(ScreenVector2D v) {
+		set(v);
+	}
 
 	public void set(int x, int y) {
 		this.x = x;
