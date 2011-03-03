@@ -21,7 +21,7 @@ import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.resource.WheelsController;
 import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.TracePath;
+import jp.digitalmuseum.mr.task.TracePathLoosely;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
@@ -33,7 +33,7 @@ import jp.digitalmuseum.utils.ScreenPosition;
  */
 public class DrawAndTrace {
 	private Hakoniwa hakoniwa;
-	private TracePath tracePath = null;
+	private TracePathLoosely tracePath = null;
 	private List<ScreenPosition> screenPath = new ArrayList<ScreenPosition>();
 
 	public static void main(String[] args) {
@@ -130,7 +130,7 @@ public class DrawAndTrace {
 							tracePath.isStarted()) {
 						tracePath.updatePath(path);
 					} else {
-						tracePath = new TracePath(path);
+						tracePath = new TracePathLoosely(path);
 						if (tracePath.assign(robot)) {
 							tracePath.start();
 						} else {

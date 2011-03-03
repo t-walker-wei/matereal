@@ -36,85 +36,35 @@
  */
 package jp.digitalmuseum.mr.task;
 
-import jp.digitalmuseum.mr.task.VectorFieldTask;
-import jp.digitalmuseum.mr.vectorfield.MoveField;
+import java.util.List;
+
+import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
-/**
- * Task: Move<br />
- * Move to a certain position.
- *
- * @author Jun KATO
- */
-public class Move extends VectorFieldTask {
-	public static double defaultAllowedDistance = 3.0;
-	private double allowedDistance;
-	private double previousDistance;
-	private double distance;
-	private final MoveField moveField;
+public class TracePathLoosely extends TracePath {
 
-	/**
-	 * Move to the specified position.
-	 *
-	 * @param x
-	 * @param y
-	 */
-	public Move(double x, double y) {
-		moveField = new MoveField(new Position(x, y));
-		allowedDistance = defaultAllowedDistance;
+	public TracePathLoosely(List<Position> path) {
+		super(path);
 	}
 
-	/**
-	 * Move to the specified position.
-	 *
-	 * @param destination
-	 */
-	public Move(Position destination) {
-		this(destination.getX(), destination.getY());
-	}
+	protected void updateSubDiagram() {
+		super.updateSubDiagram();
+		for (int i = 0; i < actions.length - 1; i ++) {
+			final Position goal = ((Move) actions[i].getTask()).getDestination();
+			getSubDiagram().addTransition(
+					new Transition(actions[i], actions[i+1]) {
+				private Vector2D initialVector;
 
-	@Override
-	public String getName() {
-		return moveField.getName();
-	}
-
-	public Position getDestination() {
-		return moveField.getDestination();
-	}
-
-	public void getDestinationOut(Position position) {
-		moveField.getDestinationOut(position);
-	}
-
-	public void setAllowedDistance(double allowedNorm) {
-		this.allowedDistance = allowedNorm;
-	}
-
-	public double getAllowedDistance() {
-		return allowedDistance;
-	}
-
-	@Override
-	protected synchronized void onStart() {
-		super.onStart();
-		distance = Double.MAX_VALUE;
-		previousDistance = Double.MAX_VALUE;
-	}
-
-	@Override
-	public synchronized void run() {
-		super.run();
-		distance = moveField.getLastDistance();
-		if (distance < allowedDistance &&
-				distance > previousDistance) {
-			finish();
+				@Override
+				protected boolean guard() {
+					if (initialVector == null) {
+						initialVector = Vector2D.sub(goal, getPosition());
+						return false;
+					}
+					return Vector2D.sub(goal, getPosition()).dot(initialVector) < 0;
+				}
+			});
 		}
-		previousDistance = distance;
-	}
-
-	@Override
-	public synchronized void getUniqueVectorOut(Position position, Vector2D vector) {
-		moveField.getVectorOut(position, vector);
 	}
 }
