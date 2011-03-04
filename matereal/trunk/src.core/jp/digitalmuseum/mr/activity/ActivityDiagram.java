@@ -241,7 +241,7 @@ public class ActivityDiagram extends Node {
 		}
 	}
 
-	synchronized void stop(Node node) {
+	void stop(Node node) {
 		if (currentNodes.remove(node)) {
 			node.leave();
 		}
