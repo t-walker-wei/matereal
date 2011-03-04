@@ -143,10 +143,8 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		if (hasSubDiagram()) {
 			getSubDiagram().stop();
 		}
-		synchronized (robot) {
-			receiveRobotEvent(false);
-			robot.freeResources(resourceMap.resources(), this);
-		}
+		receiveRobotEvent(false);
+		robot.freeResources(resourceMap.resources(), this);
 		robot = null;
 		resourceMap = null;
 		super.stop();

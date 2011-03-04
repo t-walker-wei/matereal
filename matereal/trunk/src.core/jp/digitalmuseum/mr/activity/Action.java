@@ -87,28 +87,24 @@ public class Action extends Node implements EventListener {
 
 	@Override
 	protected void onEnter() {
-		synchronized (robot) {
-			ResourceContext resourceContext = getActivityDiagram().getResourceContext();
-			if (resourceContext != null &&
-					resourceContext.getTask().getAssignedRobot() == robot) {
-				freeRequiredResources();
-			}
-			if (task.assign(robot)) {
-				task.addEventListener(this);
-				task.start();
-			} else {
-				rollbackRequiredResources();
-			}
+		ResourceContext resourceContext = getActivityDiagram().getResourceContext();
+		if (resourceContext != null &&
+				resourceContext.getTask().getAssignedRobot() == robot) {
+			freeRequiredResources();
+		}
+		if (task.assign(robot)) {
+			task.addEventListener(this);
+			task.start();
+		} else {
+			rollbackRequiredResources();
 		}
 	}
 
 	@Override
 	protected void onLeave() {
-		synchronized (robot) {
-			task.removeEventListener(this);
-			task.stop();
-			rollbackRequiredResources();
-		}
+		task.removeEventListener(this);
+		task.stop();
+		rollbackRequiredResources();
 	}
 
 	private void freeRequiredResources() {

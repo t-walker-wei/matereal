@@ -88,6 +88,11 @@ public class DrawAndTrace {
 					g.fillRect(0, 0, getFrameWidth(), 35);
 				g.setComposite(comp);
 
+				// Draw path.
+				if (path2D != null) {
+					drawPath(g, path2D);
+				}
+
 				// Draw status.
 				g.drawLine(0, 35, getFrameWidth(), 35);
 				g.setColor(Color.white);
@@ -98,9 +103,6 @@ public class DrawAndTrace {
 						g.drawString("Status: "+task, 10, 30);
 					} else {
 						g.drawString("Status: Stopped", 10, 30);
-					}
-					if (path2D != null) {
-						drawPath(g, path2D);
 					}
 				}
 			}
