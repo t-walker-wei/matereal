@@ -594,7 +594,7 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		}
 
 		protected boolean doDrive(int leftPower, int rightPower) {
-			driveDirect(getVelocity(rightPower), getVelocity(leftPower));
+			driveDirect(getVelocity(leftPower), getVelocity(rightPower));
 			return true;
 		}
 
