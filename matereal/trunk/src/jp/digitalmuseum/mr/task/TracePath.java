@@ -64,7 +64,7 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 	}
 
 	public void run() {
-		if (getSubDiagram().isDone()) {
+		if (!getSubDiagram().isStarted()) {
 			finish();
 		}
 	}

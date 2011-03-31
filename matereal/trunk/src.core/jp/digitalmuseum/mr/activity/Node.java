@@ -48,13 +48,11 @@ import jp.digitalmuseum.mr.message.EventProvider;
 import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
 import jp.digitalmuseum.utils.Array;
 
-public class Node implements EventProvider {
+public abstract class Node implements EventProvider {
 	private long entranceDate;
 	private ActivityDiagram activityDiagram;
 	private Set<Transition> transitions;
 	private Array<EventListener> listeners;
-	private boolean isEntered;
-	private boolean isDone;
 
 	public Node() {
 		listeners = new Array<EventListener>();
@@ -62,11 +60,7 @@ public class Node implements EventProvider {
 	}
 
 	public final boolean isEntered() {
-		return isEntered;
-	}
-
-	public final boolean isDone() {
-		return isDone;
+		return activityDiagram.isEntered(this);
 	}
 
 	public final long getEntranceDate() {
@@ -98,6 +92,8 @@ public class Node implements EventProvider {
 	protected void onEnter() {
 		//
 	}
+
+	protected abstract boolean isDone();
 
 	protected void onLeave() {
 		//
@@ -158,22 +154,14 @@ public class Node implements EventProvider {
 
 	final void enter() {
 		entranceDate = Calendar.getInstance().getTimeInMillis();
-		isEntered = true;
-		isDone = false;
 		distributeEvent(
 				new ActivityEvent(this, STATUS.ENTERED));
 		onEnter();
 	}
 
 	final void leave() {
-		isEntered = false;
 		distributeEvent(
 				new ActivityEvent(this, STATUS.LEFT));
 		onLeave();
-	}
-
-	protected final void setDone() {
-		isDone = true;
-		distributeEvent(new ActivityEvent(this, STATUS.DONE));
 	}
 }

@@ -51,6 +51,7 @@ public class ActivityDiagram extends Node {
 	private Array<Node> currentNodes;
 	private TransitionMonitor monitor;
 	private boolean isStarted;
+	private boolean isDone;
 	private boolean isPaused;
 	private ResourceContext resourceContext;
 
@@ -65,6 +66,7 @@ public class ActivityDiagram extends Node {
 		monitor = new TransitionMonitor();
 		isStarted = false;
 		isPaused = false;
+		isDone = false;
 		if (resourceContext == null) {
 			this.resourceContext = null;
 		} else {
@@ -189,7 +191,8 @@ public class ActivityDiagram extends Node {
 	}
 
 	synchronized boolean start(Node node) {
-		if (!node.isAllowedEntry()) {
+		if (!node.isAllowedEntry() ||
+				currentNodes.contains(node)) {
 			return false;
 		}
 		currentNodes.push(node);
@@ -199,6 +202,10 @@ public class ActivityDiagram extends Node {
 
 	public synchronized boolean isStarted() {
 		return isStarted;
+	}
+
+	protected synchronized boolean isDone() {
+		return isDone;
 	}
 
 	public synchronized boolean isPaused() {
@@ -237,7 +244,6 @@ public class ActivityDiagram extends Node {
 			monitor.stop();
 			isStarted = false;
 			isPaused = false;
-			setDone();
 		}
 	}
 
@@ -249,8 +255,8 @@ public class ActivityDiagram extends Node {
 
 	private class TransitionMonitor extends ServiceAbstractImpl {
 		public void run() {
-			boolean allIsDone = true;
 			synchronized (ActivityDiagram.this) {
+				isDone = true;
 				for (Node node : currentNodes) {
 					Set<Transition> transitions = node.getTransitionsReference();
 					if (transitions.size() > 0) {
@@ -268,12 +274,16 @@ public class ActivityDiagram extends Node {
 					} else if (node.isDone()) {
 						ActivityDiagram.this.stop(node);
 					}
-					allIsDone = allIsDone && node.isDone();
+					isDone = isDone && node.isDone();
 				}
-				if (allIsDone) {
+				if (isDone) {
 					ActivityDiagram.this.stop();
 				}
 			}
 		}
+	}
+
+	boolean isEntered(Node node) {
+		return currentNodes.contains(node);
 	}
 }

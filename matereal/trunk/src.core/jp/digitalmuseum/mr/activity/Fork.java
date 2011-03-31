@@ -36,38 +36,60 @@
  */
 package jp.digitalmuseum.mr.activity;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 public class Fork extends ControlNode {
-	private EdgeImpl[] outs;
+	private Set<EdgeImpl> edges;
+	private Set<Node> nodesToGo;
 
 	public Fork(Node... outs) {
-		this.outs = new EdgeImpl[outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			this.outs[i] = new EdgeImpl(this, outs[i]);
+		edges = new HashSet<EdgeImpl>();
+		nodesToGo = new HashSet<Node>();
+		for (Node out : outs) {
+			edges.add(new EdgeImpl(this, out));
 		}
 	}
 
 	public EdgeImpl[] getEdges() {
-		return outs.clone();
+		EdgeImpl[] edgesArray = new EdgeImpl[0];
+		edgesArray = edges.toArray(edgesArray);
+		return edgesArray;
 	}
 
-	public Node[] getOutput() {
-		Node[] outs = new Node[this.outs.length];
-		for (int i = 0; i < outs.length; i ++) {
-			outs[i] = this.outs[i].getDestination();
+	public Node[] getOutputs() {
+		Node[] outs = new Node[edges.size()];
+		int i = 0;
+		for (EdgeImpl edge : edges) {
+			outs[i ++] = edge.getDestination();
 		}
 		return outs;
 	}
 
 	@Override
 	protected void onEnter() {
-		for (EdgeImpl edge : outs) {
-			getActivityDiagram().start(edge.getDestination());
+		for (EdgeImpl edge : edges) {
+			nodesToGo.add(edge.getDestination());
 		}
-		setDone();
+		isDone();
+	}
+
+	@Override
+	protected synchronized boolean isDone() {
+		Iterator<Node> nodeIterator = nodesToGo.iterator();
+		Node node;
+		while (nodeIterator.hasNext()) {
+			node = nodeIterator.next();
+			if (getActivityDiagram().start(node)) {
+				nodeIterator.remove();
+			}
+		}
+		return nodesToGo.isEmpty();
 	}
 
 	@Override
 	public String toString() {
-		return "Fork["+outs.length+"]";
+		return "Fork["+edges.size()+"]";
 	}
 }

@@ -36,53 +36,68 @@
  */
 package jp.digitalmuseum.mr.activity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import jp.digitalmuseum.mr.message.ActivityEvent;
+import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 
 public class Join extends ControlNode implements EventListener {
-	private EdgeImpl[] ins;
+	private Set<EdgeImpl> edges;
+	private Set<Node> nodesToWait;
 
 	public Join(Node... ins) {
-		this.ins = new EdgeImpl[ins.length];
-		for (int i = 0; i < ins.length; i ++) {
-			this.ins[i] = new EdgeImpl(ins[i], this);
+		edges = new HashSet<EdgeImpl>();
+		nodesToWait = new HashSet<Node>();
+		for (Node in : ins) {
+			edges.add(new EdgeImpl(in, this));
 		}
 	}
 
 	public EdgeImpl[] getEdges() {
-		return ins.clone();
+		EdgeImpl[] edgesArray = new EdgeImpl[0];
+		edgesArray = edges.toArray(edgesArray);
+		return edgesArray;
 	}
 
 	public Node[] getInputs() {
-		Node[] outs = new Node[this.ins.length];
-		for (int i = 0; i < outs.length; i ++) {
-			outs[i] = this.ins[i].getSource();
+		Node[] inputs = new Node[edges.size()];
+		int i = 0;
+		for (EdgeImpl edge : edges) {
+			inputs[i ++] = edge.getSource();
 		}
-		return outs;
+		return inputs;
 	}
 
 	@Override
 	protected void onEnter() {
-		for (EdgeImpl in : ins) {
-			in.getSource().addEventListener(this);
+		for (EdgeImpl edge : edges) {
+			Node node = edge.getSource();
+			nodesToWait.add(node);
+			node.addEventListener(this);
 		}
 	}
 
+	@Override
+	protected synchronized boolean isDone() {
+		return nodesToWait.isEmpty();
+	}
+
 	public void eventOccurred(Event e) {
-		boolean allAreDone = true;
-		for (EdgeImpl in : ins) {
-			allAreDone = allAreDone && in.getSource().isDone();
-		}
-		if (allAreDone) {
-			for (EdgeImpl in : ins) {
-				getActivityDiagram().stop(in.getSource());
+		if (e instanceof ActivityEvent) {
+			ActivityEvent ae = (ActivityEvent) e;
+			if (ae.getStatus() == STATUS.LEFT) {
+				Node node = ae.getSource();
+				nodesToWait.remove(node);
+				node.removeEventListener(this);
 			}
-			setDone();
 		}
 	}
 
 	@Override
 	public String toString() {
-		return "Join["+ins.length+"]";
+		return "Join["+edges.size()+"]";
 	}
 }
