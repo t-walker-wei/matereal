@@ -53,6 +53,7 @@ public class Action extends Node implements EventListener {
 	private Robot robot;
 	private Task task;
 	private Set<Class<? extends Resource>> transferringResourceTypes;
+	private boolean isDone;
 
 	public Action(Robot robot, Task task) {
 		this.robot = robot;
@@ -93,11 +94,20 @@ public class Action extends Node implements EventListener {
 			freeRequiredResources();
 		}
 		if (task.assign(robot)) {
+			isDone = false;
 			task.addEventListener(this);
 			task.start();
 		} else {
 			rollbackRequiredResources();
 		}
+	}
+
+	/**
+	 * @see #eventOccurred(Event)
+	 */
+	@Override
+	protected synchronized boolean isDone() {
+		return isDone;
 	}
 
 	@Override
@@ -137,7 +147,7 @@ public class Action extends Node implements EventListener {
 			if (e instanceof ServiceEvent) {
 				ServiceEvent se = (ServiceEvent) e;
 				if (se.getStatus() == STATUS.STOPPED) {
-					setDone();
+					isDone = true;
 				}
 			}
 		}

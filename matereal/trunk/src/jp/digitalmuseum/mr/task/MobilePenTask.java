@@ -75,7 +75,7 @@ public class MobilePenTask extends MobileTaskAbstractImpl {
 	}
 
 	public void run() {
-		if (getSubDiagram().isDone()) {
+		if (!getSubDiagram().isStarted()) {
 			finish();
 		}
 	}
