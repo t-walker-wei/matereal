@@ -45,11 +45,16 @@ import jp.nyatla.nyartoolkit.core.pickup.INyARColorPatt;
 import jp.nyatla.nyartoolkit.core.pickup.NyARColorPatt_Perspective_O2;
 import jp.nyatla.nyartoolkit.core.rasterfilter.rgb2bin.INyARRasterFilter_Rgb2Bin;
 import jp.nyatla.nyartoolkit.core.rasterfilter.rgb2bin.NyARRasterFilter_ARToolkitThreshold;
+import jp.nyatla.nyartoolkit.core.squaredetect.NyARCoord2Linear;
+import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquare;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquareContourDetector;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquareContourDetector_Rle;
+import jp.nyatla.nyartoolkit.core.transmat.INyARTransMat;
+import jp.nyatla.nyartoolkit.core.transmat.NyARTransMat;
 import jp.nyatla.nyartoolkit.core.types.NyARBufferType;
 import jp.nyatla.nyartoolkit.core.types.NyARIntPoint2d;
 import jp.nyatla.nyartoolkit.core.types.NyARIntSize;
+import jp.nyatla.nyartoolkit.core.types.NyARLinear;
 
 public class NapMarkerDetectorImpl implements NapMarkerDetector {
 	private NyARParam param;
@@ -71,11 +76,18 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 	// updated by setThreshold
 	private int threshold = THRESHOLD_DEFAULT;
 
+	// used for transformation matrix calculation
+	private boolean isTransMatEnabled;
+	private INyARTransMat transmat;
+	private NyARCoord2Linear coordline;
+	private double[] cameraProjectionMatrix;
+
 	public NapMarkerDetectorImpl() {
 		param = NapUtils.getInitialCameraParameter();
 		markers = new HashSet<NapMarker>();
 		detectorCallback = new DetectSquareCallback();
 		try {
+			transmat = new NyARTransMat(param);
 			binarizationFilter = new NyARRasterFilter_ARToolkitThreshold(THRESHOLD_DEFAULT, NyARBufferType.BYTE1D_B8G8R8_24);
 		} catch (NyARException e) {
 			// This won't occur.
@@ -223,6 +235,31 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		return binarizedImage.getImage();
 	}
 
+	public boolean isTransMatEnabled() {
+		return isTransMatEnabled;
+	}
+
+	public void setTransMatEnabled(boolean isTransMatEnabled) {
+		this.isTransMatEnabled = isTransMatEnabled;
+	}
+
+	public double[] getCameraProjectionMatrix(NapGLUtil util) {
+		double[] cameraProjectionMatrix = new double[16];
+		getCameraProjectionMatrixOut(util, cameraProjectionMatrix);
+		return cameraProjectionMatrix;
+	}
+
+	public void getCameraProjectionMatrixOut(NapGLUtil util, double[] cameraProjectionMatrix) {
+		if (this.cameraProjectionMatrix == null) {
+			this.cameraProjectionMatrix = new double[16];
+			util.toCameraFrustumRH(param, this.cameraProjectionMatrix);
+		}
+		System.arraycopy(
+				this.cameraProjectionMatrix, 0,
+				cameraProjectionMatrix, 0,
+				16);
+	}
+
 	/**
 	 * Update screen size and initialize camera parameter related fields.
 	 */
@@ -232,6 +269,8 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 			squareDetector = new NyARSquareContourDetector_Rle(size);
 			image = new NyARRgbRaster_BGR(size.w, size.h);
 			binarizedImage = new NyARBinRaster(size.w, size.h);
+			coordline = new NyARCoord2Linear(size, param.getDistortionFactor());
+			cameraProjectionMatrix = null; // @see #getCameraProjectionMatrixOut(NapGLUtil, double[])
 		} catch (NyARException e) {
 			e.printStackTrace();
 		}
@@ -305,8 +344,29 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 			}
 
 			// 最も一致したマーカ情報を、この矩形の情報として記録する。
-			final NapDetectionResult result = new NapDetectionResult(
-					marker, square, confidence, direction);
+			final NapDetectionResult result;
+			NyARSquare sq = null;
+			if (isTransMatEnabled) {
+				sq = new NyARSquare();
+				for (int i = 0; i < 4; i ++) {
+					int idx = (i+4-direction) % 4;
+					coordline.coord2Line(vertexIndex[idx], vertexIndex[(idx+1)%4], coordX, coordY, coordNum, sq.line[i]);
+				}
+				for (int i = 0; i < 4; i++) {
+					if(!NyARLinear.crossPos(sq.line[i],sq.line[(i + 3) % 4],sq.sqvertex[i])){
+						sq = null;
+						break;
+						// throw new NyARException();
+					}
+				}
+			}
+			if (sq == null) {
+				result = new NapDetectionResult(
+						marker, square, confidence, direction);
+			} else {
+				result = new NapDetectionResult(
+						marker, square, confidence, direction, transmat, sq);
+			}
 			results.push(result);
 		}
 	}

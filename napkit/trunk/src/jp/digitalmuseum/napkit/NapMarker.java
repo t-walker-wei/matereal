@@ -35,6 +35,7 @@ import java.io.StreamTokenizer;
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.NyARCode;
 import jp.nyatla.nyartoolkit.core.match.NyARMatchPatt_Color_WITHOUT_PCA;
+import jp.nyatla.nyartoolkit.core.transmat.NyARRectOffset;
 
 /**
  * Marker class. Immutable.
@@ -43,6 +44,7 @@ import jp.nyatla.nyartoolkit.core.match.NyARMatchPatt_Color_WITHOUT_PCA;
  */
 public class NapMarker {
 	private NyARCode code;
+	private NyARRectOffset offset;
 	private double size;
 	private NyARMatchPatt_Color_WITHOUT_PCA pattern;
 	private Image[] images;
@@ -53,6 +55,8 @@ public class NapMarker {
 	 */
 	public NapMarker(String fileName, double size) {
 		this.size = size;
+		offset = new NyARRectOffset();
+		offset.setSquare(size);
 		try {
 			code = new NyARCode(16, 16);
 			code.loadARPattFromFile(fileName);
@@ -97,6 +101,10 @@ public class NapMarker {
 	 */
 	public Image getImage(int direction) {
 		return images[direction];
+	}
+
+	NyARRectOffset getOffset() {
+		return offset;
 	}
 
 	/**
