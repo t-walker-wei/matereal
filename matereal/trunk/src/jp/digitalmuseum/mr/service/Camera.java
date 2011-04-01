@@ -244,7 +244,7 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 	 * @throws IllegalstateException
 	 */
 	@Override
-	public void start() {
+	public void start(ServiceGroup serviceGroup) {
 		try {
 			capture.start();
 			updateSize();
@@ -255,7 +255,7 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 		}
 		// As a result, this service cannot be started
 		// till the capture starts.
-		super.start();
+		super.start(serviceGroup);
 	}
 
 	@Override
