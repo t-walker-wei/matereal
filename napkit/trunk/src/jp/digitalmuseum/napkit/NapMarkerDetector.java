@@ -128,4 +128,12 @@ public interface NapMarkerDetector {
 	public abstract Array<NapDetectionResult> getLastMarkerDetectionResult();
 
 	public abstract Array<ScreenRectangle> getLastSquareDetectionResult();
+
+	public abstract boolean isTransMatEnabled();
+
+	public abstract void setTransMatEnabled(boolean isTransMatEnabled);
+
+	public abstract double[] getCameraProjectionMatrix(NapGLUtil util);
+
+	public abstract void getCameraProjectionMatrixOut(NapGLUtil util, double[] cameraProjectionMatrix);
 }

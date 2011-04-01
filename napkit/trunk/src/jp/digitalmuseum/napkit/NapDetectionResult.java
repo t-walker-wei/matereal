@@ -29,7 +29,10 @@ import jp.digitalmuseum.utils.ScreenLocation;
 import jp.digitalmuseum.utils.ScreenRectangle;
 import jp.digitalmuseum.utils.Array;
 import jp.digitalmuseum.utils.ScreenPosition;
-
+import jp.nyatla.nyartoolkit.NyARException;
+import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquare;
+import jp.nyatla.nyartoolkit.core.transmat.INyARTransMat;
+import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 
 /**
  * Detection result class. Immutable.
@@ -42,6 +45,9 @@ public class NapDetectionResult {
 	final private ScreenLocation screenLocation = new ScreenLocation();
 	private double confidence;
 	private NapMarker marker;
+
+	private INyARTransMat transmat;
+	private NyARSquare square;
 
 	public NapDetectionResult(
 			NapMarker marker, ScreenRectangle screenRectangle, double confidence, int direction) {
@@ -59,6 +65,17 @@ public class NapDetectionResult {
 				x/4,
 				y/4,
 				this.screenRectangle.getRotation());
+
+		//
+		transmat = null;
+	}
+
+	public NapDetectionResult(
+			NapMarker marker, ScreenRectangle screenRectangle, double confidence, int direction,
+			INyARTransMat transmat, NyARSquare square) {
+		this(marker, screenRectangle, confidence, direction);
+		this.transmat = transmat;
+		this.square = square;
 	}
 
 	/**
@@ -118,5 +135,21 @@ public class NapDetectionResult {
 	 */
 	public ScreenRectangle getSquare() {
 		return screenRectangle;
+	}
+
+	private NyARTransMatResult result = new NyARTransMatResult();
+	public boolean getTransformationMatrix(NapGLUtil util, double[] transformationMatrix) {
+		if (transmat == null) {
+			return false;
+		}
+		try {
+			synchronized (result) {
+				transmat.transMatContinue(square, marker.getOffset(), result);
+				util.toCameraViewRH(result, transformationMatrix);
+			}
+		} catch (NyARException e) {
+			return false;
+		}
+		return true;
 	}
 }
