@@ -16,6 +16,7 @@ import jp.digitalmuseum.mr.entity.EntityImpl;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.service.MarkerDetector;
 import jp.digitalmuseum.mr.service.Camera;
+import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.NapGLUtil;
@@ -46,6 +47,11 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 
 	public DetectMarkerWith3DCGOverlay() {
 
+		// Run two services as one service group.
+		ServiceGroup serviceGroup = new ServiceGroup();
+		serviceGroup.setInterval(1000/fps);
+		serviceGroup.start();
+
 		// Run a camera.
 		// Let users select a device to capture images.
 		final String identifier = (String) JOptionPane.showInputDialog(null,
@@ -58,8 +64,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 			camera = new Camera();
 		}
 		camera.setSize(800, 600);
-		camera.setInterval(1000/fps);
-		camera.start();
+		camera.start(serviceGroup);
 
 		// Run a marker detector.
 		detector = new MarkerDetector();
@@ -77,7 +82,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 		final NapMarker marker2 = new NapMarker("markers\\4x4_907.patt", 45);
 		detector.put(marker1, new EntityImpl("dummy1"));
 		detector.put(marker2, new EntityImpl("dummy2"));
-		detector.start();
+		detector.start(serviceGroup);
 
 		// Show detection results in real-time.
 		GLJPanel panel = new GLJPanel();
