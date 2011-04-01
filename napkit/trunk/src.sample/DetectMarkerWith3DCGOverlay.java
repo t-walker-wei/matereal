@@ -54,7 +54,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 
 		// Run a camera.
 		// Let users select a device to capture images.
-		final String identifier = (String) JOptionPane.showInputDialog(null,
+		String identifier = (String) JOptionPane.showInputDialog(null,
 				"Select a device to capture images.", "Device list",
 				JOptionPane.QUESTION_MESSAGE, null,
 				new VideoCaptureFactoryImpl().queryIdentifiers(), null);
@@ -78,10 +78,8 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 		configFrame.setSize(640, 480);
 
 		// Detect a marker.
-		final NapMarker marker1 = new NapMarker("markers\\4x4_78.patt", 45);
-		final NapMarker marker2 = new NapMarker("markers\\4x4_907.patt", 45);
-		detector.put(marker1, new EntityImpl("dummy1"));
-		detector.put(marker2, new EntityImpl("dummy2"));
+		detector.put(new NapMarker("markers\\4x4_78.patt", 45), new EntityImpl("dummy1"));
+		detector.put(new NapMarker("markers\\4x4_907.patt", 45), new EntityImpl("dummy2"));
 		detector.start(serviceGroup);
 
 		// Show detection results in real-time.

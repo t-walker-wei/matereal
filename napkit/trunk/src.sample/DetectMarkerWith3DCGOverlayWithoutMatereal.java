@@ -46,7 +46,7 @@ public class DetectMarkerWith3DCGOverlayWithoutMatereal implements GLEventListen
 		// Run a camera.
 		// Let users select a device to capture images.
 		VideoCaptureFactoryImpl factory = new VideoCaptureFactoryImpl();
-		final String identifier = (String) JOptionPane.showInputDialog(null,
+		String identifier = (String) JOptionPane.showInputDialog(null,
 				"Select a device to capture images.", "Device list",
 				JOptionPane.QUESTION_MESSAGE, null,
 				factory.queryIdentifiers(), null);
@@ -71,10 +71,8 @@ public class DetectMarkerWith3DCGOverlayWithoutMatereal implements GLEventListen
 		detector.setSize(capture.getWidth(), capture.getHeight());
 
 		// Detect a marker.
-		final NapMarker marker1 = new NapMarker("markers\\4x4_78.patt", 45);
-		final NapMarker marker2 = new NapMarker("markers\\4x4_907.patt", 45);
-		detector.addMarker(marker1);
-		detector.addMarker(marker2);
+		detector.addMarker(new NapMarker("markers\\4x4_78.patt", 45));
+		detector.addMarker(new NapMarker("markers\\4x4_907.patt", 45));
 
 		// Show detection results in real-time.
 		GLJPanel panel = new GLJPanel();
@@ -118,7 +116,7 @@ public class DetectMarkerWith3DCGOverlayWithoutMatereal implements GLEventListen
 
 	public void display(GLAutoDrawable drawable) {
 
-		//
+		// Grab an image frame and detect markers in the image.
 		byte[] data = capture.grabFrameData();
 		detector.detectMarker(data);
 
