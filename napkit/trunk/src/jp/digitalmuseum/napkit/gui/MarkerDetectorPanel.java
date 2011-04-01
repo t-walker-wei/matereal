@@ -74,7 +74,6 @@ import jp.digitalmuseum.utils.ScreenRectangle;
  */
 public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 	private MarkerDetector markerDetector;  //  @jve:decl-index=0:
-	private ImageProvider imageProvider;  //  @jve:decl-index=0:
 	private EventListener eventListener;
 	private BufferedImage image;
 	private boolean showBinarizedImage = true;
@@ -108,13 +107,12 @@ public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 	}
 
 	private void setImageProvider(ImageProvider imageProvider) {
-		if (this.imageProvider == imageProvider) {
+		if (markerDetector.getImageProvider() == imageProvider) {
 			return;
 		}
 		if (!imageProvider.equals(markerDetector.getImageProvider())) {
 			markerDetector.setImageProvider(imageProvider);
 		}
-		this.imageProvider = imageProvider;
 		jLabel.setText(imageProvider.getName() +
 				", (" + Messages.getString("MarkerDetectorPanel.width") + imageProvider.getWidth() +
 				", "  + Messages.getString("MarkerDetectorPanel.height") + imageProvider.getHeight() +
@@ -139,7 +137,7 @@ public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 		for (ImageProvider provider : providers) {
 			getJComboBox().addItem(provider);
 		}
-		getJComboBox().setSelectedItem(imageProvider);
+		getJComboBox().setSelectedItem(markerDetector.getImageProvider());
 	}
 
 	private void updateJSlider() {
@@ -191,15 +189,18 @@ public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 							MarkerDetectorPanel.this.
 									markerDetector.getBinarizedImage() :
 							MarkerDetectorPanel.this.
-									imageProvider.getImage();
+									markerDetector.getImageProvider().getImage();
 					getJPreviewPanel().repaint();
 				} else if (e instanceof ServiceEvent) {
 					if (((ServiceEvent) e).getStatus() == STATUS.DISPOSED) {
 						dispose();
 					}
 				} else if (e instanceof ServiceUpdateEvent) {
-					if (((ServiceUpdateEvent) e).getParameter() == "threshold") {
+					String paramName = ((ServiceUpdateEvent) e).getParameter();
+					if (paramName == "threshold") {
 						getJSlider().setValue(markerDetector.getThreshold());
+					} else if (paramName == "image provider" || paramName == "coord provider") {
+						updateJComboBox();
 					}
 				}
 			}

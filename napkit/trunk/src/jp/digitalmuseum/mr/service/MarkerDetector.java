@@ -212,13 +212,13 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 	}
 
 	@Override
-	public synchronized void start() {
+	public synchronized void start(ServiceGroup serviceGroup) {
 
 		// Find an ImageProvider automatically, if not specified.
 		if (imageProvider == null) {
 			findImageProvider();
 		}
-		super.start();
+		super.start(serviceGroup);
 	}
 
 	public void run() {
