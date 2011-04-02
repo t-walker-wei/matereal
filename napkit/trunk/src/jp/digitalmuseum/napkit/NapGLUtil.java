@@ -277,6 +277,7 @@ public class NapGLUtil {
 	}
 
 	private boolean preDisplay(NapDetectionResult result) {
+
 		// Projection transformation.
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glPushMatrix();
