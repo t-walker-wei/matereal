@@ -132,11 +132,11 @@ public class DetectMarkerWith3DCGOverlayWithoutMatereal implements GLEventListen
 		boolean first = true;
 		for (NapDetectionResult result : detector.getLastMarkerDetectionResult()) {
 			if (result.getConfidence() > 0.5) {
-				if (first) {
-					frame.setTitle("Marker detected at "+result.getPosition()+". (confidence:"+result.getConfidence()+")");
-					first = false;
-				}
 				if (util.preDisplay(detector, result)) {
+					if (first) {
+						frame.setTitle("Marker detected at "+result.getPosition()+". (confidence:"+result.getConfidence()+")");
+						first = false;
+					}
 					drawCube();
 					util.postDisplay();
 				}
@@ -156,7 +156,6 @@ public class DetectMarkerWith3DCGOverlayWithoutMatereal implements GLEventListen
 		}
 		gl.glPushMatrix();
 		gl.glTranslatef(0.0f, 0.0f, 0.5f);
-		gl.glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
 		gl.glDisable(GL.GL_LIGHTING);
 		gl.glCallList(polyList);
 		gl.glPopMatrix();
