@@ -171,7 +171,7 @@ public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListene
 		if (scene == null) {
 			try {
 				scene = new ObjImpScene(gl);
-				scene.load("model/ねんどろいどっぽいミク/mikuA.obj");
+				scene.load("model/miku_AB/mikuA.obj");
 			} catch (Exception e) {
 				e.printStackTrace();
 				scene = null;

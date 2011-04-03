@@ -133,7 +133,7 @@ public interface NapMarkerDetector {
 
 	public abstract void setTransMatEnabled(boolean isTransMatEnabled);
 
-	public abstract double[] getCameraProjectionMatrix(NapGLUtil util);
+	public abstract double[] getCameraProjectionMatrix();
 
-	public abstract void getCameraProjectionMatrixOut(NapGLUtil util, double[] cameraProjectionMatrix);
+	public abstract void getCameraProjectionMatrixOut(double[] cameraProjectionMatrix);
 }

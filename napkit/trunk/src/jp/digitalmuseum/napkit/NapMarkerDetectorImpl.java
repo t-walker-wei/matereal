@@ -38,6 +38,7 @@ import java.util.Set;
 import jp.digitalmuseum.utils.Array;
 import jp.digitalmuseum.utils.ScreenRectangle;
 import jp.nyatla.nyartoolkit.NyARException;
+import jp.nyatla.nyartoolkit.core.NyARMat;
 import jp.nyatla.nyartoolkit.core.match.NyARMatchPattDeviationColorData;
 import jp.nyatla.nyartoolkit.core.match.NyARMatchPattResult;
 import jp.nyatla.nyartoolkit.core.param.NyARParam;
@@ -49,8 +50,6 @@ import jp.nyatla.nyartoolkit.core.squaredetect.NyARCoord2Linear;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquare;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquareContourDetector;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquareContourDetector_Rle;
-import jp.nyatla.nyartoolkit.core.transmat.INyARTransMat;
-import jp.nyatla.nyartoolkit.core.transmat.NyARTransMat;
 import jp.nyatla.nyartoolkit.core.types.NyARBufferType;
 import jp.nyatla.nyartoolkit.core.types.NyARIntPoint2d;
 import jp.nyatla.nyartoolkit.core.types.NyARIntSize;
@@ -78,16 +77,18 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 
 	// used for transformation matrix calculation
 	private boolean isTransMatEnabled;
-	private INyARTransMat transmat;
+	private NapTransMat transmat;
 	private NyARCoord2Linear coordline;
 	private double[] cameraProjectionMatrix;
+	private double viewDistanceMin = 0.1;
+	private double viewDistanceMax = 100.0;
 
 	public NapMarkerDetectorImpl() {
 		param = NapUtils.getInitialCameraParameter();
 		markers = new HashSet<NapMarker>();
 		detectorCallback = new DetectSquareCallback();
 		try {
-			transmat = new NyARTransMat(param);
+			transmat = new NapTransMat(param);
 			binarizationFilter = new NyARRasterFilter_ARToolkitThreshold(THRESHOLD_DEFAULT, NyARBufferType.BYTE1D_B8G8R8_24);
 		} catch (NyARException e) {
 			// This won't occur.
@@ -243,16 +244,16 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		this.isTransMatEnabled = isTransMatEnabled;
 	}
 
-	public double[] getCameraProjectionMatrix(NapGLUtil util) {
+	public double[] getCameraProjectionMatrix() {
 		double[] cameraProjectionMatrix = new double[16];
-		getCameraProjectionMatrixOut(util, cameraProjectionMatrix);
+		getCameraProjectionMatrixOut(cameraProjectionMatrix);
 		return cameraProjectionMatrix;
 	}
 
-	public void getCameraProjectionMatrixOut(NapGLUtil util, double[] cameraProjectionMatrix) {
+	public void getCameraProjectionMatrixOut(double[] cameraProjectionMatrix) {
 		if (this.cameraProjectionMatrix == null) {
 			this.cameraProjectionMatrix = new double[16];
-			util.toCameraFrustumRH(param, this.cameraProjectionMatrix);
+			toCameraFrustumRH(param, this.cameraProjectionMatrix);
 		}
 		System.arraycopy(
 				this.cameraProjectionMatrix, 0,
@@ -270,7 +271,7 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 			image = new NyARRgbRaster_BGR(size.w, size.h);
 			binarizedImage = new NyARBinRaster(size.w, size.h);
 			coordline = new NyARCoord2Linear(size, param.getDistortionFactor());
-			cameraProjectionMatrix = null; // @see #getCameraProjectionMatrixOut(NapGLUtil, double[])
+			cameraProjectionMatrix = null; // @see #getCameraProjectionMatrixOut(double[])
 		} catch (NyARException e) {
 			e.printStackTrace();
 		}
@@ -285,6 +286,82 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		final int markerHeight = sampleMarker.getHeight();
 		squareImage = new NyARColorPatt_Perspective_O2(markerWidth, markerHeight, 4, 25);
 		deviationData = new NyARMatchPattDeviationColorData(markerWidth, markerHeight);
+	}
+
+	public void setViewDistanceMin(double i_new_value) {
+		this.viewDistanceMin = i_new_value;
+	}
+
+	public void setViewDistanceMax(double i_new_value) {
+		this.viewDistanceMax = i_new_value;
+	}
+
+	/**
+	 * void arglCameraFrustumRH(const ARParam *cparam, const double focalmin,
+	 * const double focalmax, GLdouble m_projection[16]) 関数の置き換え
+	 * NyARParamからOpenGLのProjectionを作成します。
+	 *
+	 * @param i_arparam
+	 * @param o_gl_projection
+	 *            double[16]を指定して下さい。
+	 */
+	private void toCameraFrustumRH(NyARParam i_arparam, double[] o_gl_projection) {
+		NyARMat trans_mat = new NyARMat(3, 4);
+		NyARMat icpara_mat = new NyARMat(3, 4);
+		double[][] p = new double[3][3], q = new double[4][4];
+		int i, j;
+
+		final NyARIntSize size = i_arparam.getScreenSize();
+		final int width = size.w;
+		final int height = size.h;
+
+		i_arparam.getPerspectiveProjectionMatrix().decompMat(icpara_mat,
+				trans_mat);
+
+		double[][] icpara = icpara_mat.getArray();
+		double[][] trans = trans_mat.getArray();
+		for (i = 0; i < 4; i++) {
+			icpara[1][i] = (height - 1) * (icpara[2][i]) - icpara[1][i];
+		}
+
+		for (i = 0; i < 3; i++) {
+			for (j = 0; j < 3; j++) {
+				p[i][j] = icpara[i][j] / icpara[2][2];
+			}
+		}
+		q[0][0] = (2.0 * p[0][0] / (width - 1));
+		q[0][1] = (2.0 * p[0][1] / (width - 1));
+		q[0][2] = -((2.0 * p[0][2] / (width - 1)) - 1.0);
+		q[0][3] = 0.0;
+
+		q[1][0] = 0.0;
+		q[1][1] = -(2.0 * p[1][1] / (height - 1));
+		q[1][2] = -((2.0 * p[1][2] / (height - 1)) - 1.0);
+		q[1][3] = 0.0;
+
+		q[2][0] = 0.0;
+		q[2][1] = 0.0;
+		q[2][2] = (viewDistanceMax + viewDistanceMin)
+				/ (viewDistanceMin - viewDistanceMax);
+		q[2][3] = 2.0 * viewDistanceMax * viewDistanceMin
+				/ (viewDistanceMin - viewDistanceMax);
+
+		q[3][0] = 0.0;
+		q[3][1] = 0.0;
+		q[3][2] = -1.0;
+		q[3][3] = 0.0;
+
+		for (i = 0; i < 4; i++) { // Row.
+			// First 3 columns of the current row.
+			for (j = 0; j < 3; j++) { // Column.
+				o_gl_projection[i + j * 4] = q[i][0] * trans[0][j] + q[i][1]
+						* trans[1][j] + q[i][2] * trans[2][j];
+			}
+			// Fourth column of the current row.
+			o_gl_projection[i + 3 * 4] = q[i][0] * trans[0][3] + q[i][1]
+					* trans[1][3] + q[i][2] * trans[2][3] + q[i][3];
+		}
+		return;
 	}
 
 	private class DetectSquareCallback implements

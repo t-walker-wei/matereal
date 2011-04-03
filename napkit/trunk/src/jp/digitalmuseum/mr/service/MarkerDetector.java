@@ -57,7 +57,6 @@ import jp.digitalmuseum.mr.service.ImageProvider;
 import jp.digitalmuseum.mr.service.LocationProvider;
 import jp.digitalmuseum.mr.service.ScreenLocationProviderAbstractImpl;
 import jp.digitalmuseum.napkit.NapDetectionResult;
-import jp.digitalmuseum.napkit.NapGLUtil;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.NapMarkerDetector;
 import jp.digitalmuseum.napkit.NapMarkerDetectorImpl;
@@ -396,12 +395,12 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		detector.setTransMatEnabled(isTransMatEnabled);
 	}
 
-	public double[] getCameraProjectionMatrix(NapGLUtil util) {
-		return detector.getCameraProjectionMatrix(util);
+	public double[] getCameraProjectionMatrix() {
+		return detector.getCameraProjectionMatrix();
 	}
 
-	public void getCameraProjectionMatrixOut(NapGLUtil util, double[] cameraProjectionMatrix) {
-		detector.getCameraProjectionMatrixOut(util, cameraProjectionMatrix);
+	public void getCameraProjectionMatrixOut(double[] cameraProjectionMatrix) {
+		detector.getCameraProjectionMatrixOut(cameraProjectionMatrix);
 	}
 
 	@Override

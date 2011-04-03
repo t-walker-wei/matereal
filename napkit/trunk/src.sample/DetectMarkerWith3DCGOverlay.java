@@ -150,7 +150,6 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 		}
 		gl.glPushMatrix();
 		gl.glTranslatef(0.0f, 0.0f, 0.5f);
-		gl.glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
 		gl.glDisable(GL.GL_LIGHTING);
 		gl.glCallList(polyList);
 		gl.glPopMatrix();
