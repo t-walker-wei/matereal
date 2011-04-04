@@ -54,7 +54,6 @@ public class JoglUtils {
 
 	public static boolean isExtensionSupported(GL gl, String targetExtension) {
 		String extensions = gl.glGetString(GL.GL_EXTENSIONS);
-		System.out.println(extensions);
 		int p;
 		while ((p = extensions.indexOf(targetExtension)) != -1) {
 			extensions = extensions.substring(p);
