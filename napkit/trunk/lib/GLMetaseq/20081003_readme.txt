@@ -1,0 +1,152 @@
+﻿Copyright (C)2008 kei
+
+これはMetaseqファイル（.MQO）ファイルをｊａｖａに読み込み＆描画するクラスです。
+
+☆改変・再配布自由です。
+
+
+☆文字コードはShift-Jisです。
+　NyARToolkitは（多分）UTF-8なので
+　両方Eclipseで読み込むときは、文字コードの設定をプロジェクト毎にしないと化けると思います。
+　（そのうちUTF-8にしちゃうかも…）
+
+
+java1.5で作ってます。
+開発環境はEclips　3.1.1です。
+ＯｐｅｎＧＬを使いますので
+jogl-1.1.1-pre-20080328-windows-i586.zip    （←Windowsの場合）
+https://jogl.dev.java.net/
+が必要です。
+☆JBulletをjava５＆Exlipseでコンパイルするときの注意点は「jbullet.txt」に書きました。
+
+2008/10/03修正
+・アンチエイリアスをかけるクラス作成(KGLAntiAlias)
+・今回からNyARToolKitのバージョン２でテストしています。
+
+2008/08/11修正
+・Metaseqモデルの読み込み時にネットワーク上からだとうまくいかない場合があった
+  ->KGLModelData.java
+BufferedInputStream bis = ???;
+byte[] b = new byte[???];
+{
+//	bis.read(b);   readは１バイト以上b.lengthまで読み込み。戻り値の読み込みサイズをチェックしないといけなかった。。。
+	int sz ;
+	for( sz = 0 ; sz != (b.length) ; sz += bis.read(b,sz,b.length-sz)) ;
+}
+
+2008/05/30修正
+・透明な物体の上に影をつけるときのGLSLのコード間違い修正
+・KGLModelDataクラスにモデルの最小値、最大値（ｘｙｚ座標の）をもたせた
+・KGLtgaクラスでデータを全部読めない場合があったので修正
+・KGLMetaseq、KGLModelDataでFile、URLどちらからでも読み込めるように変更
+　（A虎さんのcontentproviderクラスを使わせてもらっています）
+
+2008/05/20修正
+・面の表裏を間違えていたので修正
+　（メタセコは頂点が面の表からみて右回り
+　　OpenGL　は頂点が面の表からみて左回り（default））
+・影付けクラスをフレームバッファオブジェクトが実装されていない環境でも動くように変更
+　（ViewPortのサイズに依存するのでViewPortサイズが変更されるたびに
+　　KGLShadowMapping::init_tex_shadowmap()を呼ばないといけないです）
+・テストソースのJavaSimpleLite.javaをNyARToolkit 1.1.1-20080503.0版対応にしました。
+
+2008/05/04修正
+・影付けクラス（KGLShadowMapping）に最低透明度を設定するように変更
+　→透明な物体に影をつけようとしても透明になるので調整できるようにした。
+
+2008/05/02修正
+・影付けクラス追加（KGLShadowMapping、KGLLight.java）
+　☆ＧＬＳＬとフレームバッファオブジェクトを使用しているので
+　　OpenGL１．５＋拡張環境でないと動かないと思います。
+　使用している拡張機能
+　・GL_EXT_framebuffer_object
+　・GL_ARB_fragment_shader
+　・GL_ARB_vertex_shader
+　・GL_ARB_shader_objects
+　・GL_ARB_shading_language_100
+・このパッケージ用に例外クラス追加（KGLException）。。。パクリ^^;
+・テストソースのJavaSimpleLite.javaをNyARToolkit 1.0.0.20080428.0版対応にしました。
+
+2008/04/18修正
+・原点位置調整
+　モデルの原点は身体の中心にあることがおおいみたいだけど、ARToolKitではマーカ（原点）の上に表示
+　したいことが多いと思うので、データ読み込み時に原点位置調整をする機能追加
+　→座標系情報クラス追加(KGLCoordinates,KGLCoordinates_ARToolKit)
+　→KGLModelDataに上記変換をスルかどうかのフラグ(isUpperGround)と表示対象座標情報(coordinates)を初期化／保持
+　→KGLMetaseqで頂点読み込み時(objects::readVertex,objects::readBvertex)に座標系の変換をしてしまう
+　→KGLMetaseqで頂点読み込み時(objects::readVertex,objects::readBvertex)に高さ方向の最低位置を取り出す
+　→KGLMetaseqでMQOファイル内のオブジェクト毎の高さ方向の最低位置の中で一番低い位置を原点として頂点データ全体を補正する
+・上記のついでで…座標系も変換出来るようにしてます。
+　テストプログラム（JavaSimpleLite）で
+　初期化時に
+		  aaa = KGLModelData.createGLModel(gl,null,new File(filename),0.015f,
+				  new KGLCoordinates_ARToolKit(),true,　　　　　　　←←追加した引数
+				  KGLExtensionCheck.IsExtensionSupported(gl,"GL_ARB_vertex_buffer_object")) ;
+  としておけば
+　gl.glRotatef(90.0f,1.0f, 0.0f, 0.0f); //OpenGL座標→ARToolKit座標
+　この行が要らなくなります。
+　また、モデルデータの足（一番下）がマーカに付く形で表示されると思います。
+・NyARToolkit 0.7.20080408版で作っているのでNyARToolkit 0.8.20080412対応では☆☆ありませんm(__)m☆☆
+
+2008/04/08修正
+・テクスチャの読み込み修正
+　・データ並びが上下違う物に対応
+　・透明度ファイルの指定に対応
+　・TGAファイルの非圧縮モノクロがcom.sun.opengl.util.texture.*;で対応していないので読み込みクラス作成
+　　（ほとんど使わないと思うのですが…“某はちゅねみく”のほっぺの渦巻きが表示できないので作りました…）
+・描画メソッド(drow())からglEnable,glDisableを外に出しました
+　→KGLModelData.enables,KGLModelData.disables
+　（必要ない処理があったり、drow()でglDisableされたら困る場合の対策）
+・オブジェクト名・マテリアル名で表示のｏｎ／ｏｆｆの切り替え機能追加
+・テストソースのJavaSimpleLite.javaをNyARToolkit 0.7.20080406.0版対応にしました。
+
+わかっている問題点
+・gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+　だとうまく表示できないものがあることが確認出来ています。
+　gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
+　なら表示できるのですが…
+　MQOファイルのどのパラメータをどう扱えばうまく表示出来るのかサッパリわかっていません…
+
+ディレクトリとファイルの説明
+javaMQO
+ |
+ |-GLMetaseq	Eclipseプロジェクトがあります。
+    |
+    |-kGLModel		MQO読み込みクラス
+    |
+    |-test		テストソース（mainクラス入り）
+    |
+    |-doc		javaDoc
+ |
+ |-Data		テストプログラム用データ
+
+Eclipseプロジェクトの依存関係は配布データを読み込むと壊れているカモ
+再設定してください。
+kGLModel→joglに依存しています。
+
+
+・テストソースの説明
+test.java　：　ただMQOファイルを読み込んで表示するだけです。
+　　　　　　　 読み込むファイルもソースの中に書いちゃってます（filename）。
+
+JavaSimpleLite.java
+　　　　　 ：　NyARToolkitに付いてたサンプル。
+　　　　　　　 追加したところは「kei add」のコメントを付けています。
+　　　　　　　 コレを動かすにはNyARToolkitが必要です。
+TestJBullet.java
+　　　　　 ：　JBullet（物理演算）のテスト用ソース
+　　　　　　　 コレを動かすにはJBulletば必要です。
+　　　　　　　 javax.vecmath（Java3D?）も必要です。（JBulletをダウンロードするとついてきますが）
+　　JOGLGL.java
+　　　　　 ：　TestJBullet.java用に作成　暫定版
+　　KarUtil.java
+　　　　　 ：　TestJBullet.java用に作成　暫定版
+
+☆重要☆
+・NyARToolkitは…
+ARToolkit Java class library NyARToolkit.
+Copyright (C)2008 R.Iizuka
+http://nyatla.jp/nyartoolkit/wiki/index.php
+
+・物理演算ライブラリ　バレット　（ｊａｖａ版）
+http://jbullet.advel.cz/

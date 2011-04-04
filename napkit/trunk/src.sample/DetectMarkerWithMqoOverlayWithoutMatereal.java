@@ -1,20 +1,25 @@
 import java.awt.Dimension;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
 import javax.media.opengl.GLJPanel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
-import objimp.ObjImpScene;
 
 import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.FPSAnimator;
 
 import jp.digitalmuseum.capture.VideoCapture;
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
+import jp.digitalmuseum.jogl.JoglException;
+import jp.digitalmuseum.jogl.JoglModelBase;
+import jp.digitalmuseum.jogl.JoglModelMetasequoia;
 import jp.digitalmuseum.jogl.JoglUtils;
+import jp.digitalmuseum.jogl.JoglCoordinates_ARToolKit;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.NapMarkerDetector;
@@ -25,10 +30,10 @@ import jp.digitalmuseum.napkit.NapMarkerDetectorImpl;
  *
  * @author Jun KATO
  */
-public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListener {
+public class DetectMarkerWithMqoOverlayWithoutMatereal implements GLEventListener {
 
 	public static void main(String[] args) {
-		new DetectMarkerWithObjOverlayWithoutMatereal();
+		new DetectMarkerWithMqoOverlayWithoutMatereal();
 	}
 
 	private NapMarkerDetector detector;
@@ -41,7 +46,7 @@ public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListene
 
 	private int fps = 15;
 
-	public DetectMarkerWithObjOverlayWithoutMatereal() {
+	public DetectMarkerWithMqoOverlayWithoutMatereal() {
 
 		// Run a camera.
 		// Let users select a device to capture images.
@@ -85,7 +90,14 @@ public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListene
 			public void dispose() {
 				capture.stop();
 				super.dispose();
-				animator.stop();
+				if (data != null) {
+					data.clear();
+				}
+				try {
+					animator.stop();
+				} catch (GLException e) {
+					// Do nothing.
+				}
 			}
 		};
 		frame.add(panel);
@@ -126,22 +138,6 @@ public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListene
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		util.drawBackGround(data, capture.getWidth(), capture.getHeight(), 1.0);
 
-		// Set up lighting.
-		float x = 0, y = 15, z = 0, val = 1;
-		float[] light_ambient = { 0.0f, 0.0f, 0.0f, 1 };
-		float[] light_diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float[] light_specular = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float[] light_position = { x, y, z, val };
-
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, light_ambient, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, light_diffuse, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, light_specular, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, light_position, 0);
-		gl.glEnable(GL.GL_LIGHT1);
-		gl.glEnable(GL.GL_LIGHTING);
-
-		gl.glEnable(GL.GL_COLOR_MATERIAL);
-
 		// Draw a cube if markers are detected.
 		boolean first = true;
 		for (NapDetectionResult result : detector.getLastMarkerDetectionResult()) {
@@ -161,25 +157,40 @@ public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListene
 		}
 	}
 
-	ObjImpScene scene;
+	private final String mqoFileName = "model/JSS_miku/Jss_miku.mqo";
+	private final float scale = .1f;
+	// private final String mqoFileName = "./model/gradriel/gradriel_pose.mqo";
+	// private final float scale = .02f;
+	// private final String mqoFileName = "model/Lat式ミク/miltukumiku.mqo";
+	// private final float scale = .005f;
+	// private final String mqoFileName = "model/box.mqo";
+	// private final float scale = .01f;
+
+	private JoglModelBase data;
+	private float translate;
 	private void initModel() {
-		if (scene == null) {
+		if (data == null) {
 			try {
-				scene = new ObjImpScene(gl);
-				scene.load("model/miku_AB/mikuA.obj");
-			} catch (Exception e) {
+				data = new JoglModelMetasequoia(gl, null, new URL("file:"+mqoFileName),
+						scale, new JoglCoordinates_ARToolKit(), false, true);
+
+				// 髪の毛が足より下にあるので、地面に足をつけようとするとこうなる。
+				translate = -data.getMinPos().getZ() / 2;
+				// translate = -data.getMinPos().getZ();
+			} catch (MalformedURLException e) {
 				e.printStackTrace();
-				scene = null;
+			} catch (JoglException e) {
+				e.printStackTrace();
+				data = null;
 			}
 		}
 	}
 
 	private void drawModel() {
-		if (scene != null) {
+		if (data != null) {
 			gl.glPushMatrix();
-			gl.glRotatef(90, 1f, 0, 0);
-			gl.glScalef(.1f, .1f, .1f);
-			scene.draw(gl);
+			gl.glTranslatef(0, 0, translate);
+			data.draw();
 			gl.glPopMatrix();
 		}
 	}
