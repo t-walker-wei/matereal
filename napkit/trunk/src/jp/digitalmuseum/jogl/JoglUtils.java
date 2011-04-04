@@ -28,64 +28,80 @@
  *	<airmail(at)ebony.plala.or.jp> or <nyatla(at)nyatla.jp>
  *
  */
-package jp.digitalmuseum.napkit;
+package jp.digitalmuseum.jogl;
 
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
 import jp.digitalmuseum.mr.service.Camera;
 import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.nyatla.nyartoolkit.NyARException;
+import jp.digitalmuseum.napkit.NapDetectionResult;
+import jp.digitalmuseum.napkit.NapMarkerDetector;
 
-/**
- * NyARToolkit用のJOGL支援関数群
- */
-public class NapGLUtil {
+public class JoglUtils {
 	private GL gl;
 	private GLU glu;
+	private double[] cameraProjectionMatrix = new double[16];
+	private double[] modelViewMatrix = new double[16];
 
-	public NapGLUtil(GL gl) {
+	public JoglUtils(GL gl) {
 		this.gl = gl;
 		this.glu = new GLU();
 	}
 
-	/**
-	 * カメラ画像をバックグラウンドに書き出す。
-	 *
-	 * @param camera
-	 * @param zoom
-	 */
-	public void drawBackGround(Camera camera, double i_zoom)
-			throws NyARException {
-		drawBackGround(camera.getImageData(), camera.getWidth(), camera.getHeight(),i_zoom);
+	public static boolean isExtensionSupported(GL gl, String targetExtension) {
+		String extensions = gl.glGetString(GL.GL_EXTENSIONS);
+		System.out.println(extensions);
+		int p;
+		while ((p = extensions.indexOf(targetExtension)) != -1) {
+			extensions = extensions.substring(p);
+			String[] s = extensions.split(" ", 2);
+			if (s[0].trim().equals(targetExtension)) {
+				return true;
+			}
+			extensions = s[1];
+		}
+		return false;
 	}
 
 	/**
-	 * カメラ画像をバックグラウンドに書き出す。
+	 * Show background image captured from the given camera.
 	 *
 	 * @param camera
 	 * @param zoom
 	 */
-	public void drawBackGround(byte[] data, int width, int height, double zoom) throws NyARException {
-		IntBuffer texEnvModeSave = IntBuffer.allocate(1);
-		boolean lightingSave;
-		boolean depthTestSave;
+	public void drawBackGround(Camera camera, double zoom) {
+		drawBackGround(camera.getImageData(), camera.getWidth(), camera.getHeight(),zoom);
+	}
+
+	/**
+	 * Show background image.
+	 *
+	 * @param data image data
+	 * @param width
+	 * @param height
+	 * @param zoom
+	 */
+	public void drawBackGround(byte[] data, int width, int height, double zoom) {
 
 		// Prepare an orthographic projection, set camera position for 2D
 		// drawing, and save GL state.
+
+		IntBuffer texEnvModeSave = IntBuffer.allocate(1);
 		gl.glGetTexEnviv(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, texEnvModeSave);
 		if (texEnvModeSave.array()[0] != GL.GL_REPLACE) {
-			gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
-					GL.GL_REPLACE);
+			gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_REPLACE);
 		}
 
-		lightingSave = gl.glIsEnabled(GL.GL_LIGHTING);
+		boolean lightingSave = gl.glIsEnabled(GL.GL_LIGHTING);
 		if (lightingSave == true) {
 			gl.glDisable(GL.GL_LIGHTING);
 		}
 
-		depthTestSave = gl.glIsEnabled(GL.GL_DEPTH_TEST);
+		boolean depthTestSave = gl.glIsEnabled(GL.GL_DEPTH_TEST);
 		if (depthTestSave == true) {
 			gl.glDisable(GL.GL_DEPTH_TEST);
 		}
@@ -98,7 +114,25 @@ public class NapGLUtil {
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
-		arglDispImageStateful(data, width, height, zoom);
+
+		// Show background image.
+
+		gl.glDisable(GL.GL_TEXTURE_2D);
+
+		IntBuffer params = IntBuffer.allocate(4);
+		gl.glGetIntegerv(GL.GL_VIEWPORT, params);
+
+		float zoomf = (float) zoom;
+		gl.glPixelZoom(
+				zoomf * ((float) (params.get(2)) / (float) width),
+				-zoomf * ((float) (params.get(3)) / (float) height));
+		gl.glWindowPos2f(0.0f, (float) height);
+		gl.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
+
+		ByteBuffer buf = ByteBuffer.wrap(data);
+		gl.glDrawPixels(width, height, GL.GL_BGR, GL.GL_UNSIGNED_BYTE, buf);
+
+		// Restore settings.
 
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glPopMatrix();
@@ -118,33 +152,6 @@ public class NapGLUtil {
 		}
 		gl.glEnd();
 	}
-
-	/**
-	 * arglDispImageStateful関数モドキ
-	 *
-	 * @param camera
-	 * @param zoom
-	 */
-	private void arglDispImageStateful(byte[] data, int width, int height, double zoom)
-			throws NyARException {
-		javax.media.opengl.GL gl_ = this.gl;
-		float zoomf;
-		IntBuffer params = IntBuffer.allocate(4);
-		zoomf = (float) zoom;
-		gl_.glDisable(GL.GL_TEXTURE_2D);
-		gl_.glGetIntegerv(GL.GL_VIEWPORT, params);
-		gl_.glPixelZoom(
-				zoomf * ((float) (params.get(2)) / (float) width),
-				-zoomf * ((float) (params.get(3)) / (float) height));
-		gl_.glWindowPos2f(0.0f, (float) height);
-		gl_.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1);
-		ByteBuffer buf = ByteBuffer.wrap(data);
-		gl_.glDrawPixels(width, height, GL.GL_BGR,
-				GL.GL_UNSIGNED_BYTE, buf);
-	}
-
-	private double[] cameraProjectionMatrix = new double[16];
-	private double[] modelViewMatrix = new double[16];
 
 	public boolean preDisplay(MarkerDetector detector, NapDetectionResult result) {
 		detector.getCameraProjectionMatrixOut(cameraProjectionMatrix);
