@@ -63,24 +63,22 @@ public interface NapMarkerDetector {
 	 * Remove markers to detect.
 	 *
 	 * @param markers
-	 * @return Returns false if the given set is null or specified markers have mixed formats.
 	 */
-	public abstract boolean removeMarkers(Set<NapMarker> markers);
+	public abstract void removeMarkers(Set<NapMarker> markers);
 
 	/**
 	 * Remove a marker to detect.
 	 *
 	 * @param marker
-	 * @return Returns false if the specified marker has different formats from the existing markers.
 	 */
-	public abstract boolean removeMarker(NapMarker marker);
+	public abstract void removeMarker(NapMarker marker);
 
 	/**
 	 * Load a camera parameter from a file.
 	 *
 	 * @param fileName Name of a camera parameter file.
 	 */
-	public abstract void loadCameraParameter(String fileName);
+	public abstract boolean loadCameraParameter(String fileName);
 
 	/**
 	 * Load a camera parameter from a file,
@@ -90,7 +88,7 @@ public interface NapMarkerDetector {
 	 * @param width Width of the image captured by the camera.
 	 * @param height Height of the image captured by the camera.
 	 */
-	public abstract void loadCameraParameter(String fileName, int width, int height);
+	public abstract boolean loadCameraParameter(String fileName, int width, int height);
 
 	public abstract int getWidth();
 	public abstract int getHeight();

@@ -36,8 +36,6 @@ import java.nio.IntBuffer;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
-import jp.digitalmuseum.mr.service.Camera;
-import jp.digitalmuseum.mr.service.MarkerDetector;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarkerDetector;
 
@@ -64,16 +62,6 @@ public class JoglUtils {
 			extensions = s[1];
 		}
 		return false;
-	}
-
-	/**
-	 * Show background image captured from the given camera.
-	 *
-	 * @param camera
-	 * @param zoom
-	 */
-	public void drawBackGround(Camera camera, double zoom) {
-		drawBackGround(camera.getImageData(), camera.getWidth(), camera.getHeight(),zoom);
 	}
 
 	/**
@@ -152,11 +140,6 @@ public class JoglUtils {
 		gl.glEnd();
 	}
 
-	public boolean preDisplay(MarkerDetector detector, NapDetectionResult result) {
-		detector.getCameraProjectionMatrixOut(cameraProjectionMatrix);
-		return preDisplay(result);
-	}
-
 	public boolean preDisplay(NapMarkerDetector detector, NapDetectionResult result) {
 		detector.getCameraProjectionMatrixOut(cameraProjectionMatrix);
 		return preDisplay(result);
@@ -173,6 +156,7 @@ public class JoglUtils {
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
+
 		if (result.getTransformationMatrix(modelViewMatrix)) {
 			gl.glLoadMatrixd(modelViewMatrix, 0);
 			return true;

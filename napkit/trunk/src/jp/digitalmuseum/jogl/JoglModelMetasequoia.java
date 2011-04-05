@@ -1,4 +1,4 @@
-﻿package jp.digitalmuseum.jogl;
+package jp.digitalmuseum.jogl;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -12,107 +12,32 @@ import javax.media.opengl.GL;
 
 import jp.digitalmuseum.utils.MixedDataReader;
 
-/**
- * MQOファイルの読み込みと描画<br>
- * （描画は親クラスで実装済み）<br>
- * <br>
- * インスタンス化も親クラスのKGLModelData::createGLModelを使用する<br>
- * メタセコファイルフォーマットは<br>
- * <a href="http://www.metaseq.net/">http://www.metaseq.net/</a><br>
- * 参照。
- *
- * @author kei
- *
- */
 public class JoglModelMetasequoia extends JoglModelBase {
 	private URL url;
 
-	/**
-	 * 法線を求める
-	 *
-	 * @param V
-	 *            頂点配列
-	 * @param A
-	 *            頂点の位置
-	 * @param B
-	 *            頂点の位置
-	 * @param C
-	 *            頂点の位置
-	 * @return 法線ベクトル
-	 */
-	protected Point calcNormal(Point[] V, int A, int B, int C) {
-
-		// ベクトルB->A
-		Point AB = V[B].sub(V[A]);
-
-		// ベクトルB->C
-		Point BC = V[C].sub(V[B]);
-
-		// 法線の計算
-		Point ret = new Point(
-				AB.getY() * BC.getZ() - AB.getZ() * BC.getY(),
-				AB.getZ() * BC.getX() - AB.getX() * BC.getZ(),
-				AB.getX() * BC.getY() - AB.getY() * BC.getX());
-		ret.normalize();// 正規化
-		return ret;
-	}
-
-	/**
-	 * 頂点法線を求める
-	 *
-	 * @param mqoObj
-	 *            読み込んだMQOデータ
-	 * @return 頂点法線
-	 */
-	protected Point[] vNormal(MqoObject mqoObj) {
-		Point[] ret = null;
-		Point sn = null;
-
-		// 頂点に接している面の法線を頂点法線に足し込んでいく
-		ret = new Point[mqoObj.vertex.length];
-		for (int f = 0; f < mqoObj.face.length; f++) {
-			sn = calcNormal(mqoObj.vertex, mqoObj.face[f].V[0],
-					mqoObj.face[f].V[1], mqoObj.face[f].V[2]);
-			if (sn != null) {
-				for (int i = 0; i < 3; i++) {
-					if (ret[mqoObj.face[f].V[i]] == null) {
-						ret[mqoObj.face[f].V[i]] = new Point(0, 0, 0);
-					}
-					ret[mqoObj.face[f].V[i]].add(sn);
-				}
-			}
-		}
-
-		// 正規化（長さを求めて、ソレで割って０～１の値にする！）
-		for (int v = 0; v < ret.length; v++) {
-			if (ret[v] != null) {
-				ret[v].normalize();
-			}
-		}
-		return ret;
-	}
+	private static final Field[] materialFields = MqoMaterial.class.getDeclaredFields();
+	private static final Field[] objectFields = MqoObject.class.getDeclaredFields();
+	private static final Field[] faceFields = MqoFace.class.getDeclaredFields();
 
 	/**
 	 * 読み込み処理を実行する。
 	 *
-	 * @param in_gl
+	 * @param gl
 	 *            OpenGLコマンド群をカプセル化したクラス
-	 * @param in_texPool
+	 * @param textureManager
 	 *            テクスチャ管理クラス
 	 * @param mqoFile
 	 *            読み込みデータ
 	 * @param scale
 	 *            モデルの倍率
-	 * @param in_coordinates
+	 * @param coordinates
 	 *            表示座標情報クラス
-	 * @param in_isUpperGround
-	 *            モデルデータの高さ方向の最低値を原点に補正するかどうか
 	 * @param isUseVBO
 	 *            頂点配列バッファを使用するかどうか
 	 * @throws JoglException
 	 */
-	public JoglModelMetasequoia(GL in_gl, TextureManager in_texPool, URL url, float scale, JoglCoordinates in_coordinates, boolean in_isUpperGround, boolean isUseVBO) throws JoglException {
-		super(in_gl, in_texPool, in_coordinates, in_isUpperGround, isUseVBO);
+	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url, float scale, JoglCoordinates coordinates, boolean isUseVBO) throws JoglException {
+		super(gl, textureManager, coordinates, isUseVBO);
 
 		this.url = url;
 
@@ -414,9 +339,40 @@ public class JoglModelMetasequoia extends JoglModelBase {
 		return joglMaterial;
 	}
 
-	private static final Field[] materialFields = MqoMaterial.class.getDeclaredFields();
-	private static final Field[] objectFields = MqoObject.class.getDeclaredFields();
-	private static final Field[] faceFields = MqoFace.class.getDeclaredFields();
+	/**
+	 * 頂点法線を求める
+	 *
+	 * @param mqoObj
+	 *            読み込んだMQOデータ
+	 * @return 頂点法線
+	 */
+	private Point[] vNormal(MqoObject mqoObj) {
+		Point[] ret = null;
+		Point sn = null;
+
+		// 頂点に接している面の法線を頂点法線に足し込んでいく
+		ret = new Point[mqoObj.vertex.length];
+		for (int f = 0; f < mqoObj.face.length; f++) {
+			sn = calcNormal(mqoObj.vertex, mqoObj.face[f].V[0],
+					mqoObj.face[f].V[1], mqoObj.face[f].V[2]);
+			if (sn != null) {
+				for (int i = 0; i < 3; i++) {
+					if (ret[mqoObj.face[f].V[i]] == null) {
+						ret[mqoObj.face[f].V[i]] = new Point(0, 0, 0);
+					}
+					ret[mqoObj.face[f].V[i]].add(sn);
+				}
+			}
+		}
+
+		// 正規化
+		for (int v = 0; v < ret.length; v++) {
+			if (ret[v] != null) {
+				ret[v].normalize();
+			}
+		}
+		return ret;
+	}
 
 	private void parseMaterialChunk(MixedDataReader mdr, List<MqoMaterial> materials) throws IOException {
 		String line;
@@ -655,6 +611,49 @@ public class JoglModelMetasequoia extends JoglModelBase {
 	}
 
 	/**
+	 * Set fields of the given object to the given values.
+	 *
+	 * @param obj An object to set value.
+	 * @param field Field to set value.
+	 * @param value Value to be set.
+	 *
+	 * @throws IllegalAccessException
+	 */
+	private void setField(Object obj, Field field, String value) throws IllegalAccessException {
+		final Class<?> type = field.getType();
+		if (type == int.class) {
+			field.set(obj, Integer.parseInt(value));
+		} else if (type == long.class) {
+			field.set(obj, Long.valueOf(value));
+		} else if (type == String.class) {
+			field.set(obj, value);
+		} else if (type == float.class) {
+			field.set(obj, Float.parseFloat(value));
+		} else if (type == int[].class) {
+			String[] values = value.split(" ");
+			int[] integers = new int[values.length];
+			for (int i = 0; i < values.length; i++) {
+				integers[i] = Integer.parseInt(values[i]);
+			}
+			field.set(obj, integers);
+		} else if (type == long[].class) {
+			String[] values = value.split(" ");
+			long[] longs = new long[values.length];
+			for (int i = 0; i < values.length; i++) {
+				longs[i] = Long.parseLong(values[i]);
+			}
+			field.set(obj, longs);
+		} else if (type == float[].class) {
+			String[] values = value.split(" ");
+			float[] floats = new float[values.length];
+			for (int i = 0; i < values.length; i++) {
+				floats[i] = Float.parseFloat(values[i]);
+			}
+			field.set(obj, floats);
+		}
+	}
+
+	/**
 	 *
 	 * @param line
 	 * @param j
@@ -696,49 +695,6 @@ public class JoglModelMetasequoia extends JoglModelBase {
 			}
 		}
 		return j;
-	}
-
-	/**
-	 * Set fields of the given object to the given values.
-	 *
-	 * @param obj An object to set value.
-	 * @param field Field to set value.
-	 * @param value Value to be set.
-	 *
-	 * @throws IllegalAccessException
-	 */
-	private void setField(Object obj, Field field, String value) throws IllegalAccessException {
-		final Class<?> type = field.getType();
-		if (type == int.class) {
-			field.set(obj, Integer.parseInt(value));
-		} else if (type == long.class) {
-			field.set(obj, Long.valueOf(value));
-		} else if (type == String.class) {
-			field.set(obj, value);
-		} else if (type == float.class) {
-			field.set(obj, Float.parseFloat(value));
-		} else if (type == int[].class) {
-			String[] values = value.split(" ");
-			int[] integers = new int[values.length];
-			for (int i = 0; i < values.length; i++) {
-				integers[i] = Integer.parseInt(values[i]);
-			}
-			field.set(obj, integers);
-		} else if (type == long[].class) {
-			String[] values = value.split(" ");
-			long[] longs = new long[values.length];
-			for (int i = 0; i < values.length; i++) {
-				longs[i] = Long.parseLong(values[i]);
-			}
-			field.set(obj, longs);
-		} else if (type == float[].class) {
-			String[] values = value.split(" ");
-			float[] floats = new float[values.length];
-			for (int i = 0; i < values.length; i++) {
-				floats[i] = Float.parseFloat(values[i]);
-			}
-			field.set(obj, floats);
-		}
 	}
 
 	/**

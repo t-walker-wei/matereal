@@ -13,7 +13,6 @@ import com.sun.opengl.util.FPSAnimator;
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.jogl.JoglUtils;
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.EntityImpl;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.service.MarkerDetector;
 import jp.digitalmuseum.mr.service.Camera;
@@ -77,8 +76,8 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 		configFrame.setSize(640, 480);
 
 		// Detect a marker.
-		detector.put(new NapMarker("markers\\4x4_78.patt", 45), new EntityImpl("dummy1"));
-		detector.put(new NapMarker("markers\\4x4_907.patt", 45), new EntityImpl("dummy2"));
+		detector.addMarker(new NapMarker("markers\\4x4_78.patt", 45));
+		detector.addMarker(new NapMarker("markers\\4x4_907.patt", 45));
 		detector.start(serviceGroup);
 
 		// Show detection results in real-time.
@@ -122,7 +121,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 
 		// Clear the buffer and draw background.
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-		util.drawBackGround(camera, 1.0);
+		util.drawBackGround(camera.getImageData(), camera.getWidth(), camera.getHeight(), 1.0);
 
 		// Draw a cube if markers are detected.
 		final Set<NapDetectionResult> results = detector.getResults();

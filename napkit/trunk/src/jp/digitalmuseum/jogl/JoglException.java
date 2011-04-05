@@ -1,4 +1,4 @@
-﻿package jp.digitalmuseum.jogl;
+package jp.digitalmuseum.jogl;
 
 public class JoglException extends Exception {
 	private static final long serialVersionUID = -5977063783146465466L;

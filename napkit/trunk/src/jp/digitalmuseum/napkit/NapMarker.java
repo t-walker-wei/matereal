@@ -36,6 +36,7 @@ import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.NyARCode;
 import jp.nyatla.nyartoolkit.core.match.NyARMatchPatt_Color_WITHOUT_PCA;
 import jp.nyatla.nyartoolkit.core.transmat.NyARRectOffset;
+import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 
 /**
  * Marker class. Immutable.
@@ -48,6 +49,7 @@ public class NapMarker {
 	private double size;
 	private NyARMatchPatt_Color_WITHOUT_PCA pattern;
 	private Image[] images;
+	NyARTransMatResult transMatResult = new NyARTransMatResult();
 
 	/**
 	 * Constructor with a marker file name and real size in [mm] specified.

@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.JComponent;
@@ -75,7 +76,7 @@ import jp.digitalmuseum.utils.Array;
  * @author Jun KATO
  * @see NapMarker
  */
-public class MarkerDetector extends ScreenLocationProviderAbstractImpl implements LocationProvider {
+public class MarkerDetector extends ScreenLocationProviderAbstractImpl implements NapMarkerDetector, LocationProvider {
 	public final static String SERVICE_NAME = "Marker Detector";
 	public final static int THRESHOLD_MIN = NapMarkerDetector.THRESHOLD_MIN;
 	public final static int THRESHOLD_MAX = NapMarkerDetector.THRESHOLD_MAX;
@@ -83,6 +84,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 	private NapMarkerDetector detector;
 	private HashMap<NapMarker, Entity> markerEntityMap;
 	private HashMap<Entity, NapDetectionResult> entityResultMap;
+	private Array<NapDetectionResult> detectionResults;
 	private ImageProvider imageProvider;
 	private CoordProvider coordProvider;
 	final private Rectangle rectangle = new Rectangle();
@@ -99,28 +101,18 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		entityResultMap = new HashMap<Entity, NapDetectionResult>();
 	}
 
-	/**
-	 * @see NapMarkerDetector#loadCameraParameter(String)
-	 */
-	public boolean loadCameraParameter(String fileName) {
-		try {
-			detector.loadCameraParameter(fileName);
-		} catch (IllegalArgumentException e) {
-			return false;
+	public void setImageProvider(ImageProvider imageProvider) {
+		synchronized (detector) {
+			this.imageProvider = imageProvider;
+			detector.setSize(imageProvider.getWidth(), imageProvider.getHeight());
 		}
-		return true;
-	}
-
-	public synchronized void setImageProvider(ImageProvider imageProvider) {
-		this.imageProvider = imageProvider;
-		detector.setSize(imageProvider.getWidth(), imageProvider.getHeight());
 		if (imageProvider instanceof CoordProvider) {
 			setCoordsProvider((CoordProvider) imageProvider);
 		}
 		distributeEvent(new ServiceUpdateEvent(this, "image provider", imageProvider));
 	}
 
-	public synchronized ImageProvider getImageProvider() {
+	public ImageProvider getImageProvider() {
 		return imageProvider;
 	}
 
@@ -133,67 +125,104 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		return coordProvider;
 	}
 
-	/**
-	 * @see NapMarkerDetector#setThreshold(int)
-	 */
-	public void setThreshold(int threshold) {
-		detector.setThreshold(threshold);
-		distributeEvent(new ServiceUpdateEvent(this, "threshold", threshold));
+	public boolean addMarker(NapMarker marker) {
+		return addMarker(marker, null);
 	}
 
-	/**
-	 * @see NapMarkerDetector#getThreshold()
-	 */
-	public int getThreshold() {
-		return detector.getThreshold();
-	}
-
-	/**
-	 * @see NapMarkerDetector#addMarker(NapMarker)
-	 */
-	public synchronized void put(NapMarker marker, Entity e) {
-		if (e == null) {
-			throw new IllegalArgumentException("Entity parameter cannot be null.");
+	public boolean addMarker(NapMarker marker, Entity e) {
+		synchronized (detector) {
+			if (!detector.addMarker(marker)) {
+				return false;
+			}
+			markerEntityMap.put(marker, e);
 		}
-		markerEntityMap.put(marker, e);
-		detector.addMarker(marker);
 		distributeEvent(new ServiceUpdateEvent(this, "marker registration", marker));
+		return true;
 	}
 
-	/**
-	 * @see NapMarkerDetector#removeMarker(NapMarker)
-	 */
-	public synchronized void remove(NapMarker marker) {
-		markerEntityMap.remove(marker);
-		detector.removeMarker(marker);
+	@Deprecated
+	public boolean put(NapMarker marker, Entity e) {
+		return addMarker(marker, e);
+	}
+
+	public boolean addMarkers(Set<NapMarker> markers) {
+		boolean result = true;
+		for (NapMarker marker : markers) {
+			result &= addMarker(marker);
+			if (!result) {
+				break;
+			}
+		}
+		return result;
+	}
+
+	public boolean addMarkers(Map<NapMarker, Entity> markersMap) {
+		boolean result = true;
+		for (Entry<NapMarker, Entity> entry : markersMap.entrySet()) {
+			result &= addMarker(entry.getKey(), entry.getValue());
+			if (!result) {
+				break;
+			}
+		}
+		return result;
+	}
+
+	@Deprecated
+	public void remove(NapMarker marker) {
+		removeMarker(marker);
+	}
+
+	public void removeMarker(NapMarker marker) {
+		synchronized (detector) {
+			markerEntityMap.remove(marker);
+			detector.removeMarker(marker);
+		}
 		distributeEvent(new ServiceUpdateEvent(this, "marker unregistration", marker));
 	}
 
-	public synchronized Entity getEntity(NapMarker marker) {
-		return markerEntityMap.get(marker);
+	public void removeMarkers(Set<NapMarker> markers) {
+		for (NapMarker marker : markers) {
+			removeMarker(marker);
+		}
 	}
 
-	public synchronized NapDetectionResult getResult(Entity e) {
-		return entityResultMap.get(e);
+	public Entity getEntity(NapMarker marker) {
+		synchronized (detector) {
+			return markerEntityMap.get(marker);
+		}
 	}
 
-	public synchronized Map<Entity, NapDetectionResult> getResultMap() {
-		return new HashMap<Entity, NapDetectionResult>(entityResultMap);
+	public NapDetectionResult getResult(Entity e) {
+		synchronized (detector) {
+			return entityResultMap.get(e);
+		}
+	}
+
+	public NapDetectionResult getResult(NapMarker marker) {
+		synchronized (detector) {
+			for (NapDetectionResult result : detectionResults) {
+				if (result.getMarker() == marker) {
+					return result;
+				}
+			}
+		}
+		return null;
 	}
 
 	public synchronized Set<NapDetectionResult> getResults() {
-		return new HashSet<NapDetectionResult>(entityResultMap.values());
+		synchronized (detector) {
+			return new HashSet<NapDetectionResult>(entityResultMap.values());
+		}
+	}
+
+	public Map<Entity, NapDetectionResult> getResultMap() {
+		synchronized (detector) {
+			return new HashMap<Entity, NapDetectionResult>(entityResultMap);
+		}
 	}
 
 	public Array<ScreenRectangle> getSquares() {
 		return detector.getLastSquareDetectionResult();
-	}
-
-	/**
-	 * @return Returns a binarized image used for detection.
-	 */
-	public synchronized BufferedImage getBinarizedImage() {
-		return detector.getBinarizedImage();
 	}
 
 	private void findImageProvider() {
@@ -226,25 +255,29 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		if (imageProvider == null) {
 			return;
 		}
+
+		// Grab image data.
 		byte[] imageData = imageProvider.getImageData();
 		if (imageData == null) {
 			return;
 		}
 
-		// Detect markers.
-		final Array<NapDetectionResult> resultHolder
-				= detector.detectMarker(imageData);
+		synchronized (detector) {
 
-		// Manage results.
-		synchronized (this) {
+			// Detect markers.
+			detectMarker(imageData);
+
+			// Manage results.
 			entityResultMap.clear();
-			for (final NapDetectionResult result : resultHolder) {
+			for (final NapDetectionResult result : detectionResults) {
 				final Entity entity = markerEntityMap.get(result.getMarker());
 				final NapDetectionResult previousResult =
 						entityResultMap.get(entity);
+
+				// Ignore results with low confidence.
 				if (previousResult != null &&
 						previousResult.getConfidence() >
-							result.getConfidence()) {
+							result.getConfidence() * 2) {
 						continue;
 				}
 				entityResultMap.put(entity, result);
@@ -253,13 +286,19 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		distributeEvent(new LocationUpdateEvent(this));
 	}
 
+	public JComponent getConfigurationComponent() {
+		return new TypicalMDCPane(this);
+	}
+
 	/**
 	 * Draw markers in the specified graphics context.
 	 * @param g
 	 */
-	public synchronized void paint(Graphics2D g) {
-		for (NapDetectionResult result : entityResultMap.values()) {
-			paint(g, result);
+	public void paint(Graphics2D g) {
+		synchronized (detector) {
+			for (NapDetectionResult result : entityResultMap.values()) {
+				paint(g, result);
+			}
 		}
 	}
 
@@ -292,26 +331,33 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 
 	// EntityInformationProvider
 
-	public synchronized Set<Entity> getEntities() {
-		return new HashSet<Entity>(markerEntityMap.values());
+	public Set<Entity> getEntities() {
+		synchronized (detector) {
+			return new HashSet<Entity>(markerEntityMap.values());
+		}
 	}
 
-	public synchronized Set<NapMarker> getMarkers() {
-		return new HashSet<NapMarker>(markerEntityMap.keySet());
+	public Set<NapMarker> getMarkers() {
+		synchronized (detector) {
+			return new HashSet<NapMarker>(markerEntityMap.keySet());
+		}
 	}
 
-	public synchronized boolean contains(Entity entity) {
-		return markerEntityMap.values().contains(entity);
+	public boolean contains(Entity entity) {
+		synchronized (detector) {
+			return markerEntityMap.values().contains(entity);
+		}
 	}
 
 	// LocationProvider
 
-	public synchronized Location getLocation(Entity e) {
+	public Location getLocation(Entity e) {
+		Location location = new Location();
 		getLocationOut(e, location);
-		return new Location(location);
+		return location;
 	}
 
-	public synchronized void getLocationOut(Entity e, Location location) {
+	public void getLocationOut(Entity e, Location location) {
 		checkCoordProvider();
 		final NapDetectionResult detectionResult = getResult(e);
 		if (detectionResult == null) {
@@ -330,19 +376,19 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 				location.setLocation(
 						position,
 						rectangle.getRotation());
-				return;
 			} catch (IllegalArgumentException iae) {
 				// Do nothing.
 			}
 		}
 	}
 
-	public synchronized Position getPosition(Entity e) {
+	public Position getPosition(Entity e) {
+		Position position = new Position();
 		getPositionOut(e, position);
-		return new Position(position);
+		return position;
 	}
 
-	public synchronized void getPositionOut(Entity e, Position position) {
+	public void getPositionOut(Entity e, Position position) {
 		checkCoordProvider();
 		final NapDetectionResult detectionResult = getResult(e);
 		if (detectionResult == null) {
@@ -354,19 +400,25 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		}
 	}
 
-	public synchronized double getRotation(Entity e) {
-		getLocationOut(e, location);
-		return location.getRotation();
+	public double getRotation(Entity e) {
+		synchronized (location) {
+			getLocationOut(e, location);
+			return location.getRotation();
+		}
 	}
 
-	public synchronized double getX(Entity e) {
-		getPositionOut(e, position);
-		return position.getX();
+	public double getX(Entity e) {
+		synchronized (position) {
+			getPositionOut(e, position);
+			return position.getX();
+		}
 	}
 
-	public synchronized double getY(Entity e) {
-		getPositionOut(e, position);
-		return position.getY();
+	public double getY(Entity e) {
+		synchronized (position) {
+			getPositionOut(e, position);
+			return position.getY();
+		}
 	}
 
 	public boolean contains(Entity e, Position position) {
@@ -378,7 +430,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 
 	// ScreenLocationProvider
 
-	public synchronized void getScreenLocationOut(Entity e, ScreenLocation screenLocation) {
+	public void getScreenLocationOut(Entity e, ScreenLocation screenLocation) {
 		final NapDetectionResult detectionResult = getResult(e);
 		if (detectionResult == null) {
 			screenLocation.setNotFound(true);
@@ -387,12 +439,14 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		}
 	}
 
-	public boolean isTransMatEnabled() {
-		return detector.isTransMatEnabled();
+	// NapMarkerDetector
+
+	public boolean loadCameraParameter(String fileName) {
+		return detector.loadCameraParameter(fileName);
 	}
 
-	public void setTransMatEnabled(boolean isTransMatEnabled) {
-		detector.setTransMatEnabled(isTransMatEnabled);
+	public boolean loadCameraParameter(String fileName, int width, int height) {
+		return detector.loadCameraParameter(fileName, width, height);
 	}
 
 	public double[] getCameraProjectionMatrix() {
@@ -403,8 +457,49 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		detector.getCameraProjectionMatrixOut(cameraProjectionMatrix);
 	}
 
-	@Override
-	public JComponent getConfigurationComponent() {
-		return new TypicalMDCPane(this);
+	public void setThreshold(int threshold) {
+		detector.setThreshold(threshold);
+		distributeEvent(new ServiceUpdateEvent(this, "threshold", threshold));
+	}
+
+	public int getThreshold() {
+		return detector.getThreshold();
+	}
+
+	public BufferedImage getBinarizedImage() {
+		return detector.getBinarizedImage();
+	}
+
+	public boolean isTransMatEnabled() {
+		return detector.isTransMatEnabled();
+	}
+
+	public void setTransMatEnabled(boolean isTransMatEnabled) {
+		detector.setTransMatEnabled(isTransMatEnabled);
+	}
+
+	public int getWidth() {
+		return detector.getWidth();
+	}
+
+	public int getHeight() {
+		return detector.getHeight();
+	}
+
+	public void setSize(int width, int height) {
+		detector.setSize(width, height);
+	}
+
+	public Array<NapDetectionResult> detectMarker(byte[] imageData) {
+		detectionResults = detector.detectMarker(imageData);
+		return detectionResults;
+	}
+
+	public Array<NapDetectionResult> getLastMarkerDetectionResult() {
+		return detector.getLastMarkerDetectionResult();
+	}
+
+	public Array<ScreenRectangle> getLastSquareDetectionResult() {
+		return detector.getLastSquareDetectionResult();
 	}
 }

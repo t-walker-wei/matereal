@@ -60,11 +60,11 @@ public class DetectMarkerAndPaintEntity {
 		final JFrame configFrame = new DisposeOnCloseFrame(new TypicalMDCPane(detector));
 
 		// Detect a marker.
-		final NapMarker marker = new NapMarker("markers\\4x4_150.patt", 45);
+		final NapMarker marker = new NapMarker("markers\\4x4_78.patt", 45);
 		final Entity dummy = new EntityImpl("test") {
 			public Shape getShape() { return new Rectangle2D.Double(-10, -10, 20, 20); }
 		};
-		detector.put(marker, dummy);
+		detector.addMarker(marker, dummy);
 
 		// Initialize a painter
 		final EntityPainter painter = new EntityPainter();

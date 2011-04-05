@@ -136,11 +136,15 @@ public class NapDetectionResult {
 	}
 
 	public boolean getTransformationMatrix(double[] transformationMatrix) {
+		return getTransformationMatrix(transformationMatrix, true);
+	}
+
+	public boolean getTransformationMatrix(double[] transformationMatrix, boolean continuous) {
 		if (transmat == null) {
 			return false;
 		}
 		try {
-			transmat.transMatContinue(square, marker.getOffset(), transformationMatrix);
+			transmat.transMat(square, marker, transformationMatrix, continuous);
 		} catch (NyARException e) {
 			return false;
 		}

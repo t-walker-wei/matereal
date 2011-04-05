@@ -158,7 +158,7 @@ public class DetectMarkerWithMqoOverlayWithoutMatereal implements GLEventListene
 	}
 
 	private final String mqoFileName = "model/JSS_miku/Jss_miku.mqo";
-	private final float scale = .1f;
+	private final float scale = .05f;
 	// private final String mqoFileName = "./model/gradriel/gradriel_pose.mqo";
 	// private final float scale = .02f;
 	// private final String mqoFileName = "model/Lat式ミク/miltukumiku.mqo";
@@ -172,7 +172,7 @@ public class DetectMarkerWithMqoOverlayWithoutMatereal implements GLEventListene
 		if (data == null) {
 			try {
 				data = new JoglModelMetasequoia(gl, null, new URL("file:"+mqoFileName),
-						scale, new JoglCoordinates_ARToolKit(), false, true);
+						scale, new JoglCoordinates_ARToolKit(), true);
 
 				// 髪の毛が足より下にあるので、地面に足をつけようとするとこうなる。
 				translate = -data.getMinPos().getZ() / 2;
