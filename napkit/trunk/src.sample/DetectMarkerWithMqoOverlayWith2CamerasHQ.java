@@ -9,7 +9,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.media.opengl.GL;
@@ -42,10 +44,10 @@ import jp.digitalmuseum.napkit.NapUtils;
  *
  * @author Jun KATO
  */
-public class DetectMarkerWithMqoOverlayWith2Cameras implements GLEventListener {
+public class DetectMarkerWithMqoOverlayWith2CamerasHQ implements GLEventListener {
 
 	public static void main(String[] args) {
-		new DetectMarkerWithMqoOverlayWith2Cameras();
+		new DetectMarkerWithMqoOverlayWith2CamerasHQ();
 	}
 
 	private NapMarkerDetector detector;
@@ -61,10 +63,10 @@ public class DetectMarkerWithMqoOverlayWith2Cameras implements GLEventListener {
 	private VideoCapture capture;
 
 	private boolean calcCamRelation;
-	private NapCameraRelation cr;
+	private Map<NapMarker, NapCameraRelation> crMap = new HashMap<NapMarker, NapCameraRelation>();
 	private int camBaseIndex;
 
-	public DetectMarkerWithMqoOverlayWith2Cameras() {
+	public DetectMarkerWithMqoOverlayWith2CamerasHQ() {
 
 		// Run a camera.
 		// Let users select a device to capture images.
@@ -141,7 +143,7 @@ public class DetectMarkerWithMqoOverlayWith2Cameras implements GLEventListener {
 						}
 					}
 				};
-				panel.addGLEventListener(DetectMarkerWithMqoOverlayWith2Cameras.this);
+				panel.addGLEventListener(DetectMarkerWithMqoOverlayWith2CamerasHQ.this);
 				panel.addMouseListener(new MouseAdapter() {
 
 					@Override
@@ -260,24 +262,38 @@ public class DetectMarkerWithMqoOverlayWith2Cameras implements GLEventListener {
 
 			// Calculate relation of two cameras.
 			if (calcCamRelation) {
-				cr = NapCameraRelation.calcCameraRelation(resultSet, detector.getResults());
+				for (NapDetectionResult result1 : resultSet) {
+					NapMarker marker = result1.getMarker();
+					NapDetectionResult result2 = detector.getResult(marker);
+					if (result2 != null) {
+						NapCameraRelation cr =
+								NapCameraRelation.calcCameraRelation(
+										result1, result2);
+						if (cr != null) {
+							crMap.put(marker, cr);
+						}
+					}
+				}
 				camBaseIndex = cameraIndex;
 				calcCamRelation = false;
 			}
 
 			// Assume result from the secondary camera.
-			else if (cr != null) {
+			else {
 				for (NapMarker marker : retryingSet) {
-					NapDetectionResult result = detector.getResult(marker);
-					if (result != null) {
+					NapCameraRelation cr = crMap.get(marker);
+					if (cr != null) {
+						NapDetectionResult result = detector.getResult(marker);
+						if (result != null) {
 
-						// Draw characters if markers are detected.
-						double[] assumedModelViewMatrix = cr.assumeModelViewMatrix(result, camBaseIndex == cameraIndex);
-						if (assumedModelViewMatrix != null) {
-							NapUtils.convertMatrix4x4toGl(assumedModelViewMatrix);
-							util.preDisplay(detector, assumedModelViewMatrix);
-							drawModel();
-							util.postDisplay();
+							// Draw characters if markers are detected.
+							double[] assumedModelViewMatrix = cr.assumeModelViewMatrix(result, camBaseIndex == cameraIndex);
+							if (assumedModelViewMatrix != null) {
+								NapUtils.convertMatrix4x4toGl(assumedModelViewMatrix);
+								util.preDisplay(detector, assumedModelViewMatrix);
+								drawModel();
+								util.postDisplay();
+							}
 						}
 					}
 				}

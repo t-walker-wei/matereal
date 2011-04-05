@@ -57,6 +57,7 @@ import jp.digitalmuseum.mr.service.CoordProvider;
 import jp.digitalmuseum.mr.service.ImageProvider;
 import jp.digitalmuseum.mr.service.LocationProvider;
 import jp.digitalmuseum.mr.service.ScreenLocationProviderAbstractImpl;
+import jp.digitalmuseum.napkit.NapCameraRelation;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.NapMarkerDetector;
@@ -87,9 +88,11 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 	private Array<NapDetectionResult> detectionResults;
 	private ImageProvider imageProvider;
 	private CoordProvider coordProvider;
-	final private Rectangle rectangle = new Rectangle();
-	final private Location location = new Location();
-	final private Position position = new Position();
+	private ImageProvider subImageProvider;
+	private NapCameraRelation cameraRelation;
+	private final Rectangle rectangle = new Rectangle();
+	private final Location location = new Location();
+	private final Position position = new Position();
 
 	public String getName() {
 		return SERVICE_NAME;
@@ -116,6 +119,35 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		return imageProvider;
 	}
 
+	/**
+	 * Camera parameters of the primary camera and the secondary camera must be the same; typically, two cameras must be the same type.
+	 * @param subImageProvider
+	 * @return
+	 */
+	public boolean setSubCamera(ImageProvider subImageProvider) {
+		if (subImageProvider.getWidth() == imageProvider.getWidth()
+				&& subImageProvider.getHeight() == imageProvider.getHeight()) {
+			return false;
+		}
+		this.subImageProvider = subImageProvider;
+		distributeEvent(new ServiceUpdateEvent(this, "sub camera", subImageProvider));
+		return true;
+	}
+
+	public ImageProvider getSubCamera() {
+		return subImageProvider;
+	}
+
+	public boolean calcCameraRelation() {
+		if (subImageProvider == null) {
+			return false;
+		}
+		Array<NapDetectionResult> primaryResults = detectionResults;
+		Array<NapDetectionResult> secondaryResults = detectMarker(subImageProvider.getImageData());
+		cameraRelation = NapCameraRelation.calcCameraRelation(primaryResults, secondaryResults);
+		return cameraRelation != null;
+	}
+
 	public void setCoordsProvider(CoordProvider coordProvider) {
 		this.coordProvider = coordProvider;
 		distributeEvent(new ServiceUpdateEvent(this, "coord provider", coordProvider));
@@ -140,11 +172,6 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		return true;
 	}
 
-	@Deprecated
-	public boolean put(NapMarker marker, Entity e) {
-		return addMarker(marker, e);
-	}
-
 	public boolean addMarkers(Set<NapMarker> markers) {
 		boolean result = true;
 		for (NapMarker marker : markers) {
@@ -166,12 +193,6 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		}
 		return result;
 	}
-
-	@Deprecated
-	public void remove(NapMarker marker) {
-		removeMarker(marker);
-	}
-
 	public void removeMarker(NapMarker marker) {
 		synchronized (detector) {
 			markerEntityMap.remove(marker);
@@ -198,31 +219,10 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		}
 	}
 
-	public NapDetectionResult getResult(NapMarker marker) {
-		synchronized (detector) {
-			for (NapDetectionResult result : detectionResults) {
-				if (result.getMarker() == marker) {
-					return result;
-				}
-			}
-		}
-		return null;
-	}
-
-	public synchronized Set<NapDetectionResult> getResults() {
-		synchronized (detector) {
-			return new HashSet<NapDetectionResult>(entityResultMap.values());
-		}
-	}
-
 	public Map<Entity, NapDetectionResult> getResultMap() {
 		synchronized (detector) {
 			return new HashMap<Entity, NapDetectionResult>(entityResultMap);
 		}
-	}
-
-	public Array<ScreenRectangle> getSquares() {
-		return detector.getLastSquareDetectionResult();
 	}
 
 	private void findImageProvider() {
@@ -267,12 +267,16 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 			// Detect markers.
 			detectMarker(imageData);
 
+			Set<NapMarker> lostMarkers = new HashSet<NapMarker>();
+			if (subImageProvider != null) {
+				lostMarkers.addAll(markerEntityMap.keySet());
+			}
+
 			// Manage results.
 			entityResultMap.clear();
 			for (final NapDetectionResult result : detectionResults) {
 				final Entity entity = markerEntityMap.get(result.getMarker());
-				final NapDetectionResult previousResult =
-						entityResultMap.get(entity);
+				final NapDetectionResult previousResult = entityResultMap.get(entity);
 
 				// Ignore results with low confidence.
 				if (previousResult != null &&
@@ -281,6 +285,24 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 						continue;
 				}
 				entityResultMap.put(entity, result);
+
+				if (subImageProvider != null) {
+					lostMarkers.remove(result.getMarker());
+				}
+			}
+
+			// Try to find lost markers in the sub camera image.
+			if (subImageProvider != null
+					&& !lostMarkers.isEmpty()) {
+				for (NapDetectionResult result : detector.detectMarker(subImageProvider.getImageData())) {
+					NapMarker marker = result.getMarker();
+					if (lostMarkers.contains(marker)) {
+						NapDetectionResult assumedResult = cameraRelation.assumeDetectionResult(result);
+						if (assumedResult != null) {
+							entityResultMap.put(markerEntityMap.get(marker), assumedResult);
+						}
+					}
+				}
 			}
 		}
 		distributeEvent(new LocationUpdateEvent(this));
@@ -495,11 +517,41 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		return detectionResults;
 	}
 
-	public Array<NapDetectionResult> getLastMarkerDetectionResult() {
-		return detector.getLastMarkerDetectionResult();
+	public NapDetectionResult getResult(NapMarker marker) {
+		return detector.getResult(marker);
 	}
 
+	public Array<NapDetectionResult> getResults() {
+		return new Array<NapDetectionResult>(detectionResults);
+	}
+
+	public Array<ScreenRectangle> getSquares() {
+		return detector.getSquares();
+	}
+
+	/**
+	 * Use {@link #addMarker(NapMarker, Entity)} instead.
+	 */
+	@Deprecated
+	public boolean put(NapMarker marker, Entity e) {
+		return addMarker(marker, e);
+	}
+
+	/**
+	 * Use {@link #removeMarker(NapMarker)} instead.
+	 */
+	@Deprecated
+	public void remove(NapMarker marker) {
+		removeMarker(marker);
+	}
+
+	@Deprecated
+	public Array<NapDetectionResult> getLastMarkerDetectionResult() {
+		return getResults();
+	}
+
+	@Deprecated
 	public Array<ScreenRectangle> getLastSquareDetectionResult() {
-		return detector.getLastSquareDetectionResult();
+		return getSquares();
 	}
 }

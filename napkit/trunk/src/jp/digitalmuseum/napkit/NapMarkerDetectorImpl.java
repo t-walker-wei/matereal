@@ -165,13 +165,28 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		}
 	}
 
-	public Array<NapDetectionResult> getLastMarkerDetectionResult() {
+	public Set<NapMarker> getMarkers() {
+		return new HashSet<NapMarker>(markers);
+	}
+
+	public NapDetectionResult getResult(NapMarker marker) {
+		synchronized (squareDetector) {
+			for (NapDetectionResult result : results) {
+				if (result.getMarker() == marker) {
+					return result;
+				}
+			}
+		}
+		return null;
+	}
+
+	public Array<NapDetectionResult> getResults() {
 		synchronized (squareDetector) {
 			return new Array<NapDetectionResult>(results);
 		}
 	}
 
-	public Array<ScreenRectangle> getLastSquareDetectionResult() {
+	public Array<ScreenRectangle> getSquares() {
 		synchronized (squareDetector) {
 			return new Array<ScreenRectangle>(squares);
 		}
@@ -294,6 +309,16 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 
 	public void setMaximumViewDistance(double viewDistanceMax) {
 		this.maximumViewDistance = viewDistanceMax;
+	}
+
+	@Deprecated
+	public Array<NapDetectionResult> getLastMarkerDetectionResult() {
+		return getResults();
+	}
+
+	@Deprecated
+	public Array<ScreenRectangle> getLastSquareDetectionResult() {
+		return getSquares();
 	}
 
 	/**

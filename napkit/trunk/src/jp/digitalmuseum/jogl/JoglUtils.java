@@ -38,10 +38,11 @@ import javax.media.opengl.glu.GLU;
 
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarkerDetector;
+import jp.digitalmuseum.napkit.NapUtils;
 
 public class JoglUtils {
+	public GLU glu;
 	private GL gl;
-	private GLU glu;
 	private double[] cameraProjectionMatrix = new double[16];
 	private double[] modelViewMatrix = new double[16];
 
@@ -141,11 +142,17 @@ public class JoglUtils {
 	}
 
 	public boolean preDisplay(NapMarkerDetector detector, NapDetectionResult result) {
-		detector.getCameraProjectionMatrixOut(cameraProjectionMatrix);
-		return preDisplay(result);
+		if (result.getTransformationMatrix(modelViewMatrix)) {
+			NapUtils.convertMatrix4x4toGl(modelViewMatrix);
+			preDisplay(detector, modelViewMatrix);
+			return true;
+		}
+		return false;
 	}
 
-	private boolean preDisplay(NapDetectionResult result) {
+	public void preDisplay(NapMarkerDetector detector, double[] modelViewMatrix) {
+
+		detector.getCameraProjectionMatrixOut(cameraProjectionMatrix);
 
 		// Projection transformation.
 		gl.glMatrixMode(GL.GL_PROJECTION);
@@ -156,12 +163,7 @@ public class JoglUtils {
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
-
-		if (result.getTransformationMatrix(modelViewMatrix)) {
-			gl.glLoadMatrixd(modelViewMatrix, 0);
-			return true;
-		}
-		return false;
+		gl.glLoadMatrixd(modelViewMatrix, 0);
 	}
 
 	public void postDisplay() {
