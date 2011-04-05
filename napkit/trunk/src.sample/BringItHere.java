@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -30,6 +29,7 @@ import jp.digitalmuseum.mr.task.VectorFieldTask;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
+import jp.digitalmuseum.utils.Array;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
 
@@ -121,7 +121,7 @@ public class BringItHere {
 				entityPainter.paint(g2, robot);
 
 				// Get detected results.
-				final Set<NapDetectionResult> results = detector.getResults();
+				final Array<NapDetectionResult> results = detector.getResults();
 
 				// Draw each detected result.
 				for (final NapDetectionResult result : results) {

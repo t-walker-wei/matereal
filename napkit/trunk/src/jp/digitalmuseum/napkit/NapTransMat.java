@@ -26,26 +26,26 @@ public class NapTransMat {
 	/**
 	 * NyARTransMatResultをOpenGLの行列へ変換します。
 	 *
-	 * @param i_ny_result
-	 * @param o_gl_result
+	 * @param nyResult
+	 * @param glResult
 	 * @throws NyARException
 	 */
-	public void toCameraViewRH(NyARTransMatResult i_ny_result, double[] o_gl_result) throws NyARException {
-		o_gl_result[0 + 0 * 4] = i_ny_result.m00;
-		o_gl_result[0 + 1 * 4] = i_ny_result.m01;
-		o_gl_result[0 + 2 * 4] = i_ny_result.m02;
-		o_gl_result[0 + 3 * 4] = i_ny_result.m03 * 0.025;
-		o_gl_result[1 + 0 * 4] = -i_ny_result.m10;
-		o_gl_result[1 + 1 * 4] = -i_ny_result.m11;
-		o_gl_result[1 + 2 * 4] = -i_ny_result.m12;
-		o_gl_result[1 + 3 * 4] = -i_ny_result.m13 * 0.025;
-		o_gl_result[2 + 0 * 4] = -i_ny_result.m20;
-		o_gl_result[2 + 1 * 4] = -i_ny_result.m21;
-		o_gl_result[2 + 2 * 4] = -i_ny_result.m22;
-		o_gl_result[2 + 3 * 4] = -i_ny_result.m23 * 0.025;
-		o_gl_result[3 + 0 * 4] = 0.0;
-		o_gl_result[3 + 1 * 4] = 0.0;
-		o_gl_result[3 + 2 * 4] = 0.0;
-		o_gl_result[3 + 3 * 4] = 1.0;
+	public static void toCameraViewRH(NyARTransMatResult nyResult, double[] glResult) throws NyARException {
+		glResult[0 + 0 * 4] = nyResult.m00;
+		glResult[0 + 1 * 4] = nyResult.m01;
+		glResult[0 + 2 * 4] = nyResult.m02;
+		glResult[0 + 3 * 4] = nyResult.m03;
+		glResult[1 + 0 * 4] = nyResult.m10;
+		glResult[1 + 1 * 4] = nyResult.m11;
+		glResult[1 + 2 * 4] = nyResult.m12;
+		glResult[1 + 3 * 4] = nyResult.m13;
+		glResult[2 + 0 * 4] = nyResult.m20;
+		glResult[2 + 1 * 4] = nyResult.m21;
+		glResult[2 + 2 * 4] = nyResult.m22;
+		glResult[2 + 3 * 4] = nyResult.m23;
+		glResult[3 + 0 * 4] = 0.0;
+		glResult[3 + 1 * 4] = 0.0;
+		glResult[3 + 2 * 4] = 0.0;
+		glResult[3 + 3 * 4] = 1.0;
 	}
 }

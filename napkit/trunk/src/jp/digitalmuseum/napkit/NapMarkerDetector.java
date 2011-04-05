@@ -44,6 +44,13 @@ public interface NapMarkerDetector {
 	final public static int THRESHOLD_MAX = 255;
 
 	/**
+	 * Get markers to be detected.
+	 *
+	 * @return Set of markers to be detected.
+	 */
+	public abstract Set<NapMarker> getMarkers();
+
+	/**
 	 * Add markers to detect.
 	 *
 	 * @param markers
@@ -123,9 +130,11 @@ public interface NapMarkerDetector {
 	 */
 	public Array<NapDetectionResult> detectMarker(byte[] imageData);
 
-	public abstract Array<NapDetectionResult> getLastMarkerDetectionResult();
+	public abstract NapDetectionResult getResult(NapMarker marker);
 
-	public abstract Array<ScreenRectangle> getLastSquareDetectionResult();
+	public abstract Array<NapDetectionResult> getResults();
+
+	public abstract Array<ScreenRectangle> getSquares();
 
 	public abstract boolean isTransMatEnabled();
 
@@ -134,4 +143,16 @@ public interface NapMarkerDetector {
 	public abstract double[] getCameraProjectionMatrix();
 
 	public abstract void getCameraProjectionMatrixOut(double[] cameraProjectionMatrix);
+
+	/**
+	 * Use {@link #getResults()} instead.
+	 */
+	@Deprecated
+	public abstract Array<NapDetectionResult> getLastMarkerDetectionResult();
+
+	/**
+	 * Use {@link #getSquares()} instead.
+	 */
+	@Deprecated
+	public abstract Array<ScreenRectangle> getLastSquareDetectionResult();
 }

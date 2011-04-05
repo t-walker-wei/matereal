@@ -125,7 +125,7 @@ public class DetectMarkerWith3DCGOverlayWithoutMatereal implements GLEventListen
 
 		// Draw a cube if markers are detected.
 		boolean first = true;
-		for (NapDetectionResult result : detector.getLastMarkerDetectionResult()) {
+		for (NapDetectionResult result : detector.getResults()) {
 			if (result.getConfidence() > 0.5) {
 				if (util.preDisplay(detector, result)) {
 					if (first) {

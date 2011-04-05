@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
-import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -17,6 +16,7 @@ import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
 import jp.digitalmuseum.napkit.gui.MarkerEntityPanel;
+import jp.digitalmuseum.utils.Array;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
@@ -79,7 +79,7 @@ public class DetectMarker {
 						g2.translate(getOffsetX(), getOffsetY());
 
 						// Get detected results.
-						final Set<NapDetectionResult> results = detector.getResults();
+						final Array<NapDetectionResult> results = detector.getResults();
 
 						// Draw each detected result.
 						for (final NapDetectionResult result : results) {

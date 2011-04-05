@@ -1,5 +1,3 @@
-import java.util.Set;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -20,6 +18,7 @@ import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
+import jp.digitalmuseum.utils.Array;
 
 /**
  * Run marker detection and show its results.
@@ -124,7 +123,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 		util.drawBackGround(camera.getImageData(), camera.getWidth(), camera.getHeight(), 1.0);
 
 		// Draw a cube if markers are detected.
-		final Set<NapDetectionResult> results = detector.getResults();
+		final Array<NapDetectionResult> results = detector.getResults();
 		for (NapDetectionResult result : results) {
 			if (result.getConfidence() > 0.5) {
 				if (util.preDisplay(detector, result)) {

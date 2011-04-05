@@ -27,7 +27,6 @@ package jp.digitalmuseum.napkit;
 
 import jp.digitalmuseum.utils.ScreenLocation;
 import jp.digitalmuseum.utils.ScreenRectangle;
-import jp.digitalmuseum.utils.Array;
 import jp.digitalmuseum.utils.ScreenPosition;
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquare;
@@ -36,7 +35,6 @@ import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquare;
  * Detection result class. Immutable.
  *
  * @author Jun KATO
- * @see Array
  */
 public class NapDetectionResult {
 	final private ScreenRectangle screenRectangle = new ScreenRectangle();

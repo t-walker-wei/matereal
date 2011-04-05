@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
-import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -21,6 +20,7 @@ import jp.digitalmuseum.mr.service.Camera;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
+import jp.digitalmuseum.utils.Array;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
@@ -84,7 +84,7 @@ public class DetectMarkerAndPaintEntity {
 						g2.translate(getOffsetX(), getOffsetY());
 
 						// Get detected results.
-						final Set<NapDetectionResult> results = detector.getResults();
+						final Array<NapDetectionResult> results = detector.getResults();
 
 						// Draw each detected result.
 						for (final NapDetectionResult result : results) {
