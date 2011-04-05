@@ -15,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
@@ -179,7 +180,8 @@ public class MarkerEntityPanel extends JPanel {
 							jList, value, modelIndex, isSelected, cellHasFocus);
 					label.setIcon(MarkerEntityPanel.this.getIcon(value));
 					if (value instanceof NapMarker) {
-						label.setText(markerDetector.getEntity((NapMarker) value).getName());
+						Entity e = markerDetector.getEntity((NapMarker) value);
+						label.setText(e == null ? "" : e.getName());
 					}
 					return label;
 				}

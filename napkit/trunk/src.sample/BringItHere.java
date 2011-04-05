@@ -81,8 +81,8 @@ public class BringItHere {
 		// Initialize boxes.
 		final Entity[] entities = new Entity[1];
 		entities[0] = new PhysicalBox("Milk chocolate", 10, 8);
-		detector.put(new NapMarker("markers\\4x4_35.patt", 5.5), entities[0]);
-		detector.put(new NapMarker("markers\\4x4_907.patt", 5.5), robot);
+		detector.addMarker(new NapMarker("markers\\4x4_35.patt", 5.5), entities[0]);
+		detector.addMarker(new NapMarker("markers\\4x4_907.patt", 5.5), robot);
 
 		// Show detection results in real-time.
 		final ImageProviderPanel panel = new ImageProviderPanel(camera) {

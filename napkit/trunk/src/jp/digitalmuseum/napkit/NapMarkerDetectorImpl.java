@@ -80,8 +80,8 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 	private NapTransMat transmat;
 	private NyARCoord2Linear coordline;
 	private double[] cameraProjectionMatrix;
-	private double viewDistanceMin = 0.1;
-	private double viewDistanceMax = 100.0;
+	private double minimumViewDistance = 0.1;
+	private double maximumViewDistance = 100.0;
 
 	public NapMarkerDetectorImpl() {
 		param = NapUtils.getInitialCameraParameter();
@@ -140,16 +140,14 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		return true;
 	}
 
-	public boolean removeMarkers(Set<NapMarker> markers) {
-		boolean result = true;
+	public void removeMarkers(Set<NapMarker> markers) {
 		for (NapMarker marker : markers) {
-			result = markers.remove(marker) && result;
+			markers.remove(marker);
 		}
-		return result;
 	}
 
-	public boolean removeMarker(NapMarker marker) {
-		return markers.remove(marker);
+	public void removeMarker(NapMarker marker) {
+		markers.remove(marker);
 	}
 
 	public Array<NapDetectionResult> detectMarker(byte[] imageData) {
@@ -179,7 +177,7 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		}
 	}
 
-	public void loadCameraParameter(String fileName) {
+	public boolean loadCameraParameter(String fileName) {
 
 		// Back up the screen size.
 		final NyARIntSize size = param.getScreenSize();
@@ -189,22 +187,24 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		try {
 			param.loadARParamFromFile(fileName);
 		} catch (NyARException e) {
-			throw new IllegalArgumentException(e);
+			return false;
 		}
 
 		// Restore the screen size.
 		param.changeScreenSize(width, height);
 		updateScreenSize();
+		return true;
 	}
 
-	public void loadCameraParameter(String fileName, int width, int height) {
+	public boolean loadCameraParameter(String fileName, int width, int height) {
 		try {
 			param.loadARParamFromFile(fileName);
 		} catch (NyARException e) {
-			throw new IllegalArgumentException(e);
+			return false;
 		}
 		param.changeScreenSize(width, height);
 		updateScreenSize();
+		return true;
 	}
 
 	public int getWidth() {
@@ -288,12 +288,12 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		deviationData = new NyARMatchPattDeviationColorData(markerWidth, markerHeight);
 	}
 
-	public void setViewDistanceMin(double i_new_value) {
-		this.viewDistanceMin = i_new_value;
+	public void setMinimumViewDistance(double viewDistanceMin) {
+		this.minimumViewDistance = viewDistanceMin;
 	}
 
-	public void setViewDistanceMax(double i_new_value) {
-		this.viewDistanceMax = i_new_value;
+	public void setMaximumViewDistance(double viewDistanceMax) {
+		this.maximumViewDistance = viewDistanceMax;
 	}
 
 	/**
@@ -341,10 +341,10 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 
 		q[2][0] = 0.0;
 		q[2][1] = 0.0;
-		q[2][2] = (viewDistanceMax + viewDistanceMin)
-				/ (viewDistanceMin - viewDistanceMax);
-		q[2][3] = 2.0 * viewDistanceMax * viewDistanceMin
-				/ (viewDistanceMin - viewDistanceMax);
+		q[2][2] = (maximumViewDistance + minimumViewDistance)
+				/ (minimumViewDistance - maximumViewDistance);
+		q[2][3] = 2.0 * maximumViewDistance * minimumViewDistance
+				/ (minimumViewDistance - maximumViewDistance);
 
 		q[3][0] = 0.0;
 		q[3][1] = 0.0;

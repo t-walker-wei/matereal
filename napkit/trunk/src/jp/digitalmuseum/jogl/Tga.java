@@ -1,4 +1,4 @@
-﻿package jp.digitalmuseum.jogl;
+package jp.digitalmuseum.jogl;
 
 import java.io.*;
 import java.nio.*;

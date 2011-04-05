@@ -166,7 +166,7 @@ public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListene
 		if (scene == null) {
 			try {
 				scene = new ObjImpScene(gl);
-				scene.load("model/miku_AB/mikuA.obj");
+				scene.load("model/uurou/mikuA.obj");
 			} catch (Exception e) {
 				e.printStackTrace();
 				scene = null;
@@ -178,7 +178,7 @@ public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListene
 		if (scene != null) {
 			gl.glPushMatrix();
 			gl.glRotatef(90, 1f, 0, 0);
-			gl.glScalef(.1f, .1f, .1f);
+			gl.glScalef(.015f, .015f, .015f);
 			scene.draw(gl);
 			gl.glPopMatrix();
 		}

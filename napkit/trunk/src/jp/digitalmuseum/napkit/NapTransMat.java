@@ -3,22 +3,24 @@ package jp.digitalmuseum.napkit;
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.param.NyARParam;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquare;
-import jp.nyatla.nyartoolkit.core.transmat.NyARRectOffset;
 import jp.nyatla.nyartoolkit.core.transmat.NyARTransMat;
 import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 
-public class NapTransMat extends NyARTransMat {
-	private NyARTransMatResult result;
+public class NapTransMat {
+	private NyARTransMat transmat;
 
 	public NapTransMat(NyARParam param) throws NyARException {
-		super(param);
-		result = new NyARTransMatResult();
+		transmat = new NyARTransMat(param);
 	}
 
-	public void transMatContinue(NyARSquare square, NyARRectOffset offset,
-			double[] transformationMatrix) throws NyARException {
-		transMatContinue(square, offset, result);
-		toCameraViewRH(result, transformationMatrix);
+	public void transMat(NyARSquare square, NapMarker marker,
+			double[] transformationMatrix, boolean continuous) throws NyARException {
+		if (continuous) {
+			transmat.transMatContinue(square, marker.getOffset(), marker.transMatResult);
+		} else {
+			transmat.transMat(square, marker.getOffset(), marker.transMatResult);
+		}
+		toCameraViewRH(marker.transMatResult, transformationMatrix);
 	}
 
 	/**
@@ -28,7 +30,7 @@ public class NapTransMat extends NyARTransMat {
 	 * @param o_gl_result
 	 * @throws NyARException
 	 */
-	private void toCameraViewRH(NyARTransMatResult i_ny_result, double[] o_gl_result) throws NyARException {
+	public void toCameraViewRH(NyARTransMatResult i_ny_result, double[] o_gl_result) throws NyARException {
 		o_gl_result[0 + 0 * 4] = i_ny_result.m00;
 		o_gl_result[0 + 1 * 4] = i_ny_result.m01;
 		o_gl_result[0 + 2 * 4] = i_ny_result.m02;

@@ -61,7 +61,7 @@ public class ClickAndRun {
 
 		// Run a marker detector.
 		final MarkerDetector detector = new MarkerDetector();
-		detector.put(new NapMarker("markers\\4x4_907.patt", 5.5), robot);
+		detector.addMarker(new NapMarker("markers\\4x4_907.patt", 5.5), robot);
 		detector.start();
 
 		// Show a configuration window.

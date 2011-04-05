@@ -1,8 +1,6 @@
 import javax.swing.JFrame;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.entity.EntityImpl;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -36,16 +34,15 @@ public class DetectMarkerPosition {
 		detector.start();
 
 		// Detect a marker.
-		final Entity dummy = new EntityImpl("dummy");
-		NapMarker marker = new NapMarker("markers\\4x4_190.patt", 120);
-		detector.put(marker, dummy);
+		final NapMarker marker = new NapMarker("markers\\4x4_78.patt", 120);
+		detector.addMarker(marker);
 
 		// Print position of the marker.
 		detector.addEventListener(new EventListener() {
 
 			public void eventOccurred(Event e) {
 				if (e instanceof LocationUpdateEvent) {
-					NapDetectionResult result = detector.getResult(dummy);
+					NapDetectionResult result = detector.getResult(marker);
 					if (result != null) {
 						ScreenPosition p = result.getPosition();
 						System.out.println(String.format("%s (Confidence: %3g)",

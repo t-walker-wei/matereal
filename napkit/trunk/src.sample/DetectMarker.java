@@ -9,8 +9,6 @@ import javax.swing.JOptionPane;
 
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.entity.EntityImpl;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
 import jp.digitalmuseum.mr.service.MarkerDetector;
@@ -63,9 +61,8 @@ public class DetectMarker {
 		markerFrame.setSize(640, 480);
 
 		// Detect a marker.
-		final NapMarker marker = new NapMarker("markers\\4x4_190.patt", 120);
-		final Entity dummy = new EntityImpl("dummy");
-		detector.put(marker, dummy);
+		final NapMarker marker = new NapMarker("markers\\4x4_78.patt", 120);
+		detector.addMarker(marker);
 
 		// Show detection results in real-time.
 		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(

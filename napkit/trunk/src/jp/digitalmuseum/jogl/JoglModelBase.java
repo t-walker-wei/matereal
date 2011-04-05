@@ -1,4 +1,4 @@
-﻿package jp.digitalmuseum.jogl;
+package jp.digitalmuseum.jogl;
 
 import java.nio.ByteBuffer;
 
@@ -17,11 +17,6 @@ public class JoglModelBase {
 	 * テクスチャ管理クラスをこのクラスで作成したかどうか
 	 */
 	protected boolean hasOwnTextureManager = false;
-
-	/**
-	 * モデルデータの高さ方向の最低値を原点に補正するかどうか
-	 */
-	protected boolean isUpperGround = false;
 
 	/**
 	 * VBO（頂点配列バッファ）を使用するかどうか
@@ -53,21 +48,6 @@ public class JoglModelBase {
 	 */
 	protected JoglObject[] joglObjects;
 
-	public void clear() {
-		if (joglObjects == null)
-			return;
-		for (int o = 0; o < joglObjects.length; o++) {
-			if (joglObjects[o].vboIds != null)
-				gl.glDeleteBuffersARB(
-						joglObjects[o].vboIds.length, joglObjects[o].vboIds, 0);
-		}
-		joglObjects = null;
-		if (hasOwnTextureManager) {
-			textureManager.clear();
-			textureManager = null;
-		}
-	}
-
 	/**
 	 *
 	 * @param gl
@@ -78,12 +58,10 @@ public class JoglModelBase {
 	 *            モデルの倍率
 	 * @param coordinates
 	 *            表示座標情報クラス
-	 * @param isUpperGround
-	 *            モデルデータの高さ方向の最低値を原点に補正するかどうか
 	 * @param isUseVBO
 	 *            頂点配列バッファを使用するかどうか
 	 */
-	protected JoglModelBase(GL gl, TextureManager textureManager, JoglCoordinates coordinates, boolean isUpperGround, boolean isUseVBO) {
+	protected JoglModelBase(GL gl, TextureManager textureManager, JoglCoordinates coordinates, boolean isUseVBO) {
 
 		this.gl = gl;
 
@@ -100,16 +78,81 @@ public class JoglModelBase {
 			this.coordinates = coordinates;
 		}
 
-		this.isUpperGround = isUpperGround;
-
 		if (isUseVBO) {
 			this.isUseVBO = JoglUtils.isExtensionSupported(gl, "GL_ARB_vertex_buffer_object");
 		}
 
-		//OpenGLのデフォルト（表面からみた並びは左回り）
 		this.frontFace = GL.GL_CCW;
-
 		this.joglObjects = null;
+	}
+
+	/**
+	 * 描画有無を変更する<br>
+	 *
+	 * @param objectName
+	 *            オブジェクト名
+	 * @param isVisible
+	 *            描画有無
+	 */
+	public void objectVisible(String objectName, boolean isVisible) {
+		if (joglObjects == null)
+			return;
+		for (int o = 0; o < joglObjects.length; o++) {
+			if (objectName.equals(joglObjects[o].name)) {
+				joglObjects[o].isVisible = isVisible;
+				break;
+			}
+		}
+		updateMinMax();
+	}
+
+	/**
+	 * 描画有無を変更する<br>
+	 *
+	 * @param materialtName
+	 *            マテリアル名
+	 * @param isVisible
+	 *            描画有無
+	 */
+	public void materialVisible(String materialtName, boolean isVisible) {
+		if (joglObjects == null)
+			return;
+		for (int o = 0; o < joglObjects.length; o++) {
+			for (int m = 0; m < joglObjects[o].materials.length; m++) {
+				if (materialtName.equals(joglObjects[o].materials[m].name)) {
+					joglObjects[o].materials[m].isVisible = isVisible;
+					break;
+				}
+			}
+		}
+		updateMinMax();
+	}
+
+	/**
+	 * 描画有無を変更する<br>
+	 *
+	 * @param objectName
+	 *            オブジェクト名
+	 * @param materialtName
+	 *            マテリアル名
+	 * @param isVisible
+	 *            描画有無
+	 */
+	public void materialVisible(String objectName, String materialtName,
+			boolean isVisible) {
+		if (joglObjects == null)
+			return;
+		for (int o = 0; o < joglObjects.length; o++) {
+			if (!objectName.equals(joglObjects[o].name))
+				continue;
+			for (int m = 0; m < joglObjects[o].materials.length; m++) {
+				if (materialtName.equals(joglObjects[o].materials[m].name)) {
+					joglObjects[o].materials[m].isVisible = isVisible;
+					break;
+				}
+			}
+		}
+		updateMinMax();
 	}
 
 	private void updateMinMax() {
@@ -125,120 +168,11 @@ public class JoglModelBase {
 			}
 		}
 	}
-	/**
-	 * 描画有無を変更する<br>
-	 * @param objectName	オブジェクト名
-	 * @param isVisible	描画有無
-	 */
-	public void objectVisible(String objectName,boolean isVisible) {
-		if( joglObjects == null ) return ;
-		for( int o = 0 ; o < joglObjects.length ; o++ ) {
-			if( objectName.equals(joglObjects[o].name) ) {
-				joglObjects[o].isVisible = isVisible ;
-				break ;
-			}
-		}
-		updateMinMax() ;
-	}
-	/**
-	 * 描画有無を変更する<br>
-	 * @param materialtName	マテリアル名
-	 * @param isVisible	描画有無
-	 */
-	public void materialVisible(String materialtName,boolean isVisible) {
-		if( joglObjects == null ) return ;
-		for( int o = 0 ; o < joglObjects.length ; o++ ) {
-			for( int m = 0 ; m < joglObjects[o].materials.length ; m++ ) {
-				if( materialtName.equals(joglObjects[o].materials[m].name) ) {
-					joglObjects[o].materials[m].isVisible = isVisible ;
-					break ;
-				}
-			}
-		}
-		updateMinMax() ;
-	}
-	/**
-	 * 描画有無を変更する<br>
-	 * @param objectName	オブジェクト名
-	 * @param materialtName	マテリアル名
-	 * @param isVisible	描画有無
-	 */
-	public void materialVisible(String objectName,String materialtName,boolean isVisible) {
-		if( joglObjects == null ) return ;
-		for( int o = 0 ; o < joglObjects.length ; o++ ) {
-			if( ! objectName.equals(joglObjects[o].name) ) continue ;
-			for( int m = 0 ; m < joglObjects[o].materials.length ; m++ ) {
-				if( materialtName.equals(joglObjects[o].materials[m].name) ) {
-					joglObjects[o].materials[m].isVisible = isVisible ;
-					break ;
-				}
-			}
-		}
-		updateMinMax() ;
-	}
-	private boolean[] setEnables = null ;
-	private int[] setEnablesInteger = null ;
-	private boolean isChangeScale = false ;
-	private boolean isNormalize = false ;
-	/**
-	 * 描画に必要なglEnable処理を一括して行う。<br>
-	 * glEnableするものは<br>
-	 * GL_DEPTH_TEST<br>
-	 * GL_ALPHA_TEST<br>
-	 * GL_NORMALIZE（scaleが1.0以外の場合のみ）<br>
-	 * これらが必要ないことがわかっているときは手動で設定するほうがよいと思います<br>
-	 *@param scale 描画するサイズ（１倍以外はＯｐｅｎＧＬに余計な処理が入る）
-	 */
-	public void enables(float scale) {
-		setEnables = new boolean[2] ;
-		setEnablesInteger = new int[2] ;
-		setEnablesInteger[0] = GL.GL_DEPTH_TEST ;
-		setEnablesInteger[1] = GL.GL_ALPHA_TEST ;
-		for( int i = 0 ; i < setEnables.length ; i++ ) {
-			setEnables[i] = gl.glIsEnabled(setEnablesInteger[i]) ;//現在の状態を取得
-			if( ! setEnables[i] ) gl.glEnable(setEnablesInteger[i]) ;//現在、無効なら有効にする
-		}
 
-		if( scale != 1.0 ) {
-			isChangeScale = true ;
-			isNormalize = gl.glIsEnabled(GL.GL_NORMALIZE) ;
-			gl.glPushMatrix() ;//スケールの変更はマトリックスの保存で元に戻す
-			gl.glScalef(scale,scale,scale) ;
-			if( ! isNormalize ) gl.glEnable(GL.GL_NORMALIZE) ;//スケールを変えるときはOpenGLに法線の計算をしてもらわないといけない
-		}
-
-	}
-	/**
-	 * 描画で使ったフラグ（enables()で設定したもの）をおとす<br>
-	 * glDsableするものは<br>
-	 * GL_DEPTH_TEST<br>
-	 * GL_ALPHA_TEST<br>
-	 * GL_NORMALIZE<br>
-	 */
-	public void disables() {
-		if( setEnables != null && setEnablesInteger != null ) {
-			for( int i = 0 ; i < setEnables.length ; i++ ) {
-				if( ! setEnables[i] ) gl.glDisable(setEnablesInteger[i]) ;
-			}
-		}
-		if( isChangeScale ) {
-			gl.glPopMatrix() ;
-			if( ! isNormalize ) gl.glDisable(GL.GL_NORMALIZE) ;
-		}
-	}
-	/**
-	 * 描画<br>
-	 * 内部に持っているデータを描画する
-	 */
 	public void draw() {
 		draw(1.0f) ;
 	}
-	/**
-	 * 描画<br>
-	 * 内部に持っているデータを描画する
-	 *
-	 *@param alpha	描画する透明度（０～１）
-	 */
+
 	public void draw(float alpha) {
 		if (joglObjects == null) {
 			return;
@@ -350,11 +284,68 @@ public class JoglModelBase {
 	}
 
 	public Point getMaxPos() {
-		return maxPos;
+		Point p = new Point();
+		getMaxPosOut(p);
+		return p;
+	}
+
+	public void getMaxPosOut(Point p) {
+		p.set(maxPos.data);
 	}
 
 	public Point getMinPos() {
-		return minPos;
+		Point p = new Point();
+		getMinPosOut(p);
+		return p;
+	}
+
+	public void getMinPosOut(Point p) {
+		p.set(minPos.data);
+	}
+
+	public void clear() {
+		if (joglObjects == null)
+			return;
+		for (int o = 0; o < joglObjects.length; o++) {
+			if (joglObjects[o].vboIds != null)
+				gl.glDeleteBuffersARB(
+						joglObjects[o].vboIds.length, joglObjects[o].vboIds, 0);
+		}
+		joglObjects = null;
+		if (hasOwnTextureManager) {
+			textureManager.clear();
+			textureManager = null;
+		}
+	}
+
+	/**
+	 * 法線を求める
+	 *
+	 * @param V
+	 *            頂点配列
+	 * @param A
+	 *            頂点の位置
+	 * @param B
+	 *            頂点の位置
+	 * @param C
+	 *            頂点の位置
+	 * @return 法線ベクトル
+	 */
+	protected Point calcNormal(Point[] V, int A, int B, int C) {
+
+		// ベクトルB->A
+		Point AB = V[B].sub(V[A]);
+
+		// ベクトルB->C
+		Point BC = V[C].sub(V[B]);
+
+		// 法線の計算
+		Point ret = new Point(
+				AB.getY() * BC.getZ() - AB.getZ() * BC.getY(),
+				AB.getZ() * BC.getX() - AB.getX() * BC.getZ(),
+				AB.getX() * BC.getY() - AB.getY() * BC.getX());
+		ret.normalize();// 正規化
+		return ret;
 	}
 
 	protected static void append(StringBuilder sb, int[] array) {
