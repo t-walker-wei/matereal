@@ -64,4 +64,17 @@ public class ServiceUpdateEvent extends Event {
 	public Object getValue() {
 		return value;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Service updated: ");
+		sb.append(getSource().getName());
+		sb.append(" (");
+		sb.append(getParameter());
+		sb.append(" -> ");
+		sb.append(getValue());
+		sb.append(")");
+		return sb.toString();
+	}
 }

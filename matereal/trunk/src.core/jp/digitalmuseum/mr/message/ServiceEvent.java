@@ -65,6 +65,12 @@ public class ServiceEvent extends Event {
 	}
 
 	public String toString() {
-		return source+" ("+status+")";
+		StringBuilder sb = new StringBuilder();
+		sb.append("Service status changed: ");
+		sb.append(source);
+		sb.append(" (");
+		sb.append(status);
+		sb.append(")");
+		return sb.toString();
 	}
 }
