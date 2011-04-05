@@ -5,7 +5,7 @@
 	<import file="../connector/build.xml"/>
 
 	<!-- ****Properties**** -->
-	<property name="matereal.version" value="1.0.3" />
+	<property name="matereal.version" value="1.1.0" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture" value="../capture/${capture-jar.name}" />
@@ -15,8 +15,9 @@
 	<property name="jbox2d" value="../matereal/lib/jbox2d/JBox2D-2.0.1-b250-Library.jar" />
 	<property name="piccolo2d" value="../matereal/lib/piccolo/piccolo2d-core-1.3.jar;../matereal/lib/piccolo/piccolo2d-extras-1.3.jar" />
 	<property name="piccolo2d-list" value="piccolo2d-core-1.3.jar piccolo2d-extras-1.3.jar" />
+	<property name="jogl" value="../matereal/lib/jogl-1.1.1a/jogl.jar;../matereal/lib/jogl-1.1.1a/gluegen-rt.jar" />
 	<property name="p5" value="../matereal/lib/p5/core.jar" />
-	<property name="matereal-classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${piccolo2d};${p5}" />
+	<property name="matereal-classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${piccolo2d};${jogl};${p5}" />
 
 	<!-- Source directory -->
 	<property name="matereal-src.dir" value="src" />
