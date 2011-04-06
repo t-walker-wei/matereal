@@ -28,16 +28,17 @@ package jp.digitalmuseum.napkit;
 import jp.digitalmuseum.utils.ScreenRectangle;
 
 /**
- * <b>Under construction.</b>
  * Detection result class. Immutable.
  *
  * @author Jun KATO
  */
 public class NapAssumedDetectionResult extends NapDetectionResult {
+	private double[] transformationMatrix;
 
 	NapAssumedDetectionResult(
-			NapMarker marker, ScreenRectangle screenRectangle, double confidence, int direction) {
+			NapMarker marker, ScreenRectangle screenRectangle, double confidence, int direction, double[] transformationMatrix) {
 		super(marker, screenRectangle, confidence, direction);
+		this.transformationMatrix = transformationMatrix.clone();
 	}
 
 	@Override
@@ -47,6 +48,10 @@ public class NapAssumedDetectionResult extends NapDetectionResult {
 
 	@Override
 	public boolean getTransformationMatrix(double[] transformationMatrix, boolean continuous) {
-		return false;
+		System.arraycopy(
+				this.transformationMatrix, 0,
+				transformationMatrix, 0,
+				transformationMatrix.length);
+		return true;
 	}
 }
