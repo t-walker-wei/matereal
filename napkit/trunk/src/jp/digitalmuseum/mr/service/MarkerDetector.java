@@ -297,7 +297,8 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 				for (NapDetectionResult result : detector.detectMarker(subImageProvider.getImageData())) {
 					NapMarker marker = result.getMarker();
 					if (lostMarkers.contains(marker)) {
-						NapDetectionResult assumedResult = cameraRelation.assumeDetectionResult(result);
+						NapDetectionResult assumedResult =
+								cameraRelation.assumeDetectionResult(detector, result);
 						if (assumedResult != null) {
 							entityResultMap.put(markerEntityMap.get(marker), assumedResult);
 						}

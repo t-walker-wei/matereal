@@ -1,13 +1,23 @@
 package jp.digitalmuseum.napkit;
 
+import jp.digitalmuseum.utils.ScreenPosition;
+import jp.digitalmuseum.utils.ScreenRectangle;
+
 public class NapCameraRelation {
 	private static double[] matrix1 = new double[16];
 	private static double[] matrix2 = new double[16];
 	private double[] primaryToSecondary;
 	private double[] secondaryToPrimary;
+	private int[] viewport;
+	private double[] position;
+	private ScreenPosition screenPosition;
+	private ScreenRectangle screenRectangle;
 
 	private NapCameraRelation() {
-		// Do nothing.
+		viewport = new int[4];
+		position = new double[3];
+		screenPosition = new ScreenPosition();
+		screenRectangle = new ScreenRectangle();
 	}
 
 	public static NapCameraRelation calcCameraRelation(
@@ -56,15 +66,6 @@ public class NapCameraRelation {
 		return relation;
 	}
 
-	public NapAssumedDetectionResult assumeDetectionResult(NapDetectionResult result) {
-		return assumeDetectionResult(result, true);
-	}
-
-	public NapAssumedDetectionResult assumeDetectionResult(NapDetectionResult result, boolean primaryCamIsUnavailable) {
-		// TODO
-		return null;
-	}
-
 	public double[] assumeModelViewMatrix(NapDetectionResult result, boolean primaryCamIsUnavailable) {
 		double[] assumedModelViewMatrix = NapCameraRelation.matrix2;
 		if (assumeModelViewMatrixOut(result, primaryCamIsUnavailable, assumedModelViewMatrix)) {
@@ -95,16 +96,57 @@ public class NapCameraRelation {
 		return true;
 	}
 
-	// TODO
-	public void assumePositionOut() {
-		/*
-		int[] viewport = new int[] { 0, 0, capture.getWidth(), capture.getHeight() };
-		double[] winPos = new double[3];
+	public void assumePositionOut(double x, double y, double z,
+			double[] assumedModelViewMatrix,
+			double[] cameraProjectionMatrix,
+			int width, int height,
+			ScreenPosition p) {
+		viewport[2] = width;
+		viewport[3] = height;
 		NapUtils.calcProjection(0, 0, 0,
 				assumedModelViewMatrix,
-				detector.getCameraProjectionMatrix(),
+				cameraProjectionMatrix,
 				viewport,
-				winPos);
-		*/
+				position);
+		p.set((int) position[0], (int) position[1]);
 	}
+
+	public NapAssumedDetectionResult assumeDetectionResult
+			(NapMarkerDetector detector, NapDetectionResult result) {
+		return assumeDetectionResult(detector, result, true);
+	}
+
+	public NapAssumedDetectionResult assumeDetectionResult(
+			NapMarkerDetector detector, NapDetectionResult result, boolean primaryCamIsUnavailable) {
+
+		double[] assumedModelViewMatrix = NapCameraRelation.matrix2;
+		assumeModelViewMatrixOut(result, primaryCamIsUnavailable, assumedModelViewMatrix);
+
+		double[] cameraProjectionMatrix = NapCameraRelation.matrix1;
+		detector.getCameraProjectionMatrixOut(cameraProjectionMatrix);
+
+		NapMarker marker = result.getMarker();
+		double d = marker.getRealSize() / 2;
+
+		int width = detector.getWidth();
+		int height = detector.getHeight();
+
+		assumePositionOut(-d, -d, 0,
+				assumedModelViewMatrix, cameraProjectionMatrix, width, height, screenPosition);
+		screenRectangle.set(0, screenPosition);
+		assumePositionOut(-d,  d, 0,
+				assumedModelViewMatrix, cameraProjectionMatrix, width, height, screenPosition);
+		screenRectangle.set(1, screenPosition);
+		assumePositionOut( d,  d, 0,
+				assumedModelViewMatrix, cameraProjectionMatrix, width, height, screenPosition);
+		screenRectangle.set(2, screenPosition);
+		assumePositionOut( d, -d, 0,
+				assumedModelViewMatrix, cameraProjectionMatrix, width, height, screenPosition);
+		screenRectangle.set(3, screenPosition);
+
+		NapAssumedDetectionResult assumedResult = new NapAssumedDetectionResult(
+				marker, screenRectangle, result.getConfidence(), 0, assumedModelViewMatrix);
+		return assumedResult;
+	}
+
 }
