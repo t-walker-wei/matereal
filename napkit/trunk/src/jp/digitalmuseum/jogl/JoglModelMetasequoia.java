@@ -2,6 +2,7 @@ package jp.digitalmuseum.jogl;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -18,6 +19,34 @@ public class JoglModelMetasequoia extends JoglModelBase {
 	private static final Field[] materialFields = MqoMaterial.class.getDeclaredFields();
 	private static final Field[] objectFields = MqoObject.class.getDeclaredFields();
 	private static final Field[] faceFields = MqoFace.class.getDeclaredFields();
+
+	private static URL createURL(String url) {
+		try {
+			return new URL(url);
+		} catch (MalformedURLException e) {
+			return null;
+		}
+	}
+
+	public JoglModelMetasequoia(GL gl, String url) {
+		this(gl, null, createURL(url));
+	}
+
+	public JoglModelMetasequoia(GL gl, String url, float scale) {
+		this(gl, null, createURL(url), scale);
+	}
+
+	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url) {
+		this(gl, textureManager, url, 1.0f);
+	}
+
+	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url, float scale) {
+		this(gl, textureManager, url, scale, new JoglCoordinates_ARToolKit());
+	}
+
+	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url, float scale, JoglCoordinates coordinates) {
+		this(gl, textureManager, url, scale, coordinates, false);
+	}
 
 	/**
 	 * 読み込み処理を実行する。
@@ -36,7 +65,7 @@ public class JoglModelMetasequoia extends JoglModelBase {
 	 *            頂点配列バッファを使用するかどうか
 	 * @throws JoglException
 	 */
-	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url, float scale, JoglCoordinates coordinates, boolean isUseVBO) throws JoglException {
+	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url, float scale, JoglCoordinates coordinates, boolean isUseVBO) {
 		super(gl, textureManager, coordinates, isUseVBO);
 
 		this.url = url;

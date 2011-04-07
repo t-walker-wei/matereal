@@ -46,6 +46,7 @@ import jp.nyatla.nyartoolkit.core.pickup.INyARColorPatt;
 import jp.nyatla.nyartoolkit.core.pickup.NyARColorPatt_Perspective_O2;
 import jp.nyatla.nyartoolkit.core.rasterfilter.rgb2bin.INyARRasterFilter_Rgb2Bin;
 import jp.nyatla.nyartoolkit.core.rasterfilter.rgb2bin.NyARRasterFilter_ARToolkitThreshold;
+import jp.nyatla.nyartoolkit.core.rasterreader.INyARRgbPixelReader;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARCoord2Linear;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquare;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquareContourDetector;
@@ -66,7 +67,8 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 	// initialized at updateScreenSize
 	private NyARSquareContourDetector squareDetector;
 	private NyARBinRaster binarizedImage;
-	private NyARRgbRaster_BGR image;
+	private NyARRgbRaster image;
+	private Class<? extends INyARRgbPixelReader> pixelReaderClassObject;
 
 	// initialized at updateMarkerSize
 	private INyARColorPatt squareImage;
@@ -259,6 +261,30 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		this.isTransMatEnabled = isTransMatEnabled;
 	}
 
+	public boolean setPixelReader(String readerName) {
+		Class<?> classObject;
+		try {
+			classObject = Class.forName("jp.digitalmuseum.napkit.NyARRgbPixelReader_" + readerName);
+		} catch (ClassNotFoundException e) {
+			try {
+				classObject = Class.forName("jp.nyatla.nyartoolkit.core.rasterreader.NyARRgbPixelReader_" + readerName);
+			} catch (ClassNotFoundException e1) {
+				return false;
+			}
+		}
+		if (!INyARRgbPixelReader.class.isAssignableFrom(classObject)) {
+			return false;
+		}
+		@SuppressWarnings("unchecked")
+		Class<? extends INyARRgbPixelReader> pixelReaderClassObject = (Class<? extends INyARRgbPixelReader>) classObject;
+		setPixelReader(pixelReaderClassObject);
+		return true;
+	}
+
+	public void setPixelReader(Class<? extends INyARRgbPixelReader> pixelReaderClassObject) {
+		this.pixelReaderClassObject = pixelReaderClassObject;
+	}
+
 	public double[] getCameraProjectionMatrix() {
 		double[] cameraProjectionMatrix = new double[16];
 		getCameraProjectionMatrixOut(cameraProjectionMatrix);
@@ -283,7 +309,9 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		final NyARIntSize size = param.getScreenSize();
 		try {
 			squareDetector = new NyARSquareContourDetector_Rle(size);
-			image = new NyARRgbRaster_BGR(size.w, size.h);
+			image = pixelReaderClassObject == null ?
+					new NyARRgbRaster(size.w, size.h)
+					: new NyARRgbRaster(size.w, size.h, pixelReaderClassObject);
 			binarizedImage = new NyARBinRaster(size.w, size.h);
 			coordline = new NyARCoord2Linear(size, param.getDistortionFactor());
 			cameraProjectionMatrix = null; // @see #getCameraProjectionMatrixOut(double[])

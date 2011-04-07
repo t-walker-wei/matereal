@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +27,6 @@ import com.sun.opengl.util.FPSAnimator;
 import jp.digitalmuseum.capture.VideoCapture;
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.jogl.JoglCoordinates_ARToolKit;
-import jp.digitalmuseum.jogl.JoglException;
 import jp.digitalmuseum.jogl.JoglModelBase;
 import jp.digitalmuseum.jogl.JoglModelMetasequoia;
 import jp.digitalmuseum.jogl.JoglUtils;
@@ -104,8 +102,8 @@ public class DetectMarkerWithMqoOverlayWith2CamerasHQ implements GLEventListener
 		detector.setSize(capture.getWidth(), capture.getHeight());
 
 		// Detect two markers.
-		detector.addMarker(new NapMarker("markers\\4x4_78.patt", 45));
-		detector.addMarker(new NapMarker("markers\\4x4_907.patt", 45));
+		detector.addMarker(new NapMarker("markers\\4x4_71.patt", 45));
+		detector.addMarker(new NapMarker("markers\\4x4_112.patt", 45));
 
 		// Show detection results in real-time.
 		SwingUtilities.invokeLater(new Runnable() {
@@ -315,9 +313,7 @@ public class DetectMarkerWithMqoOverlayWith2CamerasHQ implements GLEventListener
 				// 髪の毛が足より下にあるので、地面に足をつけようとするとこうなる。
 				translate = -data.getMinPos().getZ() / 2;
 				// translate = -data.getMinPos().getZ();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (JoglException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				data = null;
 			}

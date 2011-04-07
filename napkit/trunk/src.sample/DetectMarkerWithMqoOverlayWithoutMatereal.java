@@ -1,5 +1,4 @@
 import java.awt.Dimension;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.media.opengl.GL;
@@ -15,7 +14,6 @@ import com.sun.opengl.util.FPSAnimator;
 
 import jp.digitalmuseum.capture.VideoCapture;
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
-import jp.digitalmuseum.jogl.JoglException;
 import jp.digitalmuseum.jogl.JoglModelBase;
 import jp.digitalmuseum.jogl.JoglModelMetasequoia;
 import jp.digitalmuseum.jogl.JoglUtils;
@@ -177,9 +175,7 @@ public class DetectMarkerWithMqoOverlayWithoutMatereal implements GLEventListene
 				// 髪の毛が足より下にあるので、地面に足をつけようとするとこうなる。
 				translate = -data.getMinPos().getZ() / 2;
 				// translate = -data.getMinPos().getZ();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (JoglException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				data = null;
 			}
