@@ -15,7 +15,7 @@ public class GettingStartedCaptureDS extends PApplet {
 	  size(640, 480);
 
 	  // If no device is specified, will just use the default.
-	  cam = new CaptureDS(this, 320, 240);
+	  cam = new CaptureDS(this, 640, 480);
 
 	  // To use another device (i.e. if the default device causes an error),
 	  // list all available capture devices to the console to find your camera.

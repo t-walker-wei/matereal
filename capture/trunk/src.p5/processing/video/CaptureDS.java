@@ -47,6 +47,7 @@ import java.lang.reflect.Method;
 import de.humatic.dsj.DSCapture;
 import de.humatic.dsj.DSFilterInfo;
 import de.humatic.dsj.DSFiltergraph;
+import de.humatic.dsj.DSJException;
 import de.humatic.dsj.DSMediaType;
 import de.humatic.dsj.DSFilterInfo.DSPinInfo;
 
@@ -100,19 +101,19 @@ public class CaptureDS extends PImage implements Runnable {
 
 	// DirectShowがらみのいろいろ
 	/** DirectShowキャプチャデバイス */
-	private DSCapture dsCapture;
+	private DSCapture capture;
 	/** DirectShowフィルタ */
-	private DSFilterInfo dsFilter;
+	private DSFilterInfo filter;
 
 	// コンストラクタ群
 	public CaptureDS(PApplet parent, int requestWidth, int requestHeight) {
 		this(parent, requestWidth, requestHeight, null, 30);
 	}
-	public CaptureDS(PApplet parent, int reqWidth, int reqHeight, int frameRate) {
-		this(parent, reqWidth, reqHeight, null, frameRate);
+	public CaptureDS(PApplet parent, int requestedWidth, int requestedHeight, int frameRate) {
+		this(parent, requestedWidth, requestedHeight, null, frameRate);
 	}
-	public CaptureDS(PApplet parent, int reqWidth, int reqHeight, Object input) {
-		this(parent, reqWidth, reqHeight, input, 30);
+	public CaptureDS(PApplet parent, int requestedWidth, int requestedHeight, Object input) {
+		this(parent, requestedWidth, requestedHeight, input, 30);
 	}
 	public CaptureDS(final PApplet parent, final int requestWidth,
 		final int requestHeight, final Object input, final int frameRate) {
@@ -122,26 +123,23 @@ public class CaptureDS extends PImage implements Runnable {
 	/**
 	 * キャプチャデバイスを初期化する
 	 * @param parent 親となるアプレット
-	 * @param requestWidth 幅
-	 * @param requestHeight 高さ
+	 * @param requestedWidth 幅
+	 * @param requestedHeight 高さ
 	 * @param input 入力デバイス(文字列かDSFilterInfoを指定する)
 	 * @param frameRate フレームレート
 	 */
-	public void init(PApplet parent, int requestWidth, int requestHeight,
+	public void init(PApplet parent, int requestedWidth, int requestedHeight,
 			Object input, int frameRate) {
 		this.parent = parent;
 		this.frameRate = frameRate;
 
-		DSFilterInfo[] filters = null;
-		DSPinInfo pin = null;
-		DSMediaType[] formats = null;
-
 		// 入力デバイスの指定
+		DSFilterInfo[] filters = null;
 		if (input != null) {
 
 			// フィルタの直接指定
 			if (DSFilterInfo.class == input.getClass()) {
-				dsFilter = (DSFilterInfo) input;
+				filter = (DSFilterInfo) input;
 
 			// 名前による指定
 			} else {
@@ -149,14 +147,14 @@ public class CaptureDS extends PImage implements Runnable {
 				filters = DSCapture.queryDevices()[0];
 				for (DSFilterInfo f : filters) {
 					if (name.equals(f.getName())) {
-						dsFilter = f;
+						filter = f;
 					}
 				}
 			}
 		}
 
 		// 入力デバイスが指定されていなかったら適当に取得
-		if (dsFilter == null) {
+		if (filter == null) {
 			if (filters == null) {
 				filters = DSCapture.queryDevices()[0];
 			}
@@ -164,59 +162,64 @@ public class CaptureDS extends PImage implements Runnable {
 				parent.die("No devices found.");
 				return;
 			}
-			dsFilter = filters[0];
+			filter = filters[0];
 		}
 
 		// キャプチャピンを取得
-		DSPinInfo[] pins = dsFilter.getPins();
+		DSPinInfo[] pins = filter.getPins();
 		if (pins == null) {
 			parent.die("No devices with available pins found.");
 			return;
 		}
-		pin = null;
-		float fps = frameRate;
-		float currentFps = Float.MAX_VALUE;
-		for (DSPinInfo p : pins) {
 
-			// Set the first pin as default.
-			if (pin == null) pin = p;
+		// Choose a downstream pin to capture images.
+		DSPinInfo pin = null;
+		float currentFrameRate = Float.MAX_VALUE;
+		try {
+			for (DSPinInfo p : filter.getDownstreamPins()) {
 
-			// Capture YUY2 and RGB none-compressed images by default.
-			formats = p.getFormats();
-			for (int i = 0; i < formats.length; i ++) {
-				final DSMediaType format = formats[i];
-				if (format.getWidth() == requestWidth
-						&& format.getHeight() == requestHeight
-						&& (format.getSubTypeString().contains("RGB")
-								|| format.getSubTypeString().contains("YUY2"))) {
-					if (Math.abs(fps - format.getFrameRate()) < Math.abs(fps - currentFps)) {
-						pin = p;
-						p.setPreferredFormat(i);
-						currentFps = format.getFrameRate();
+				// Capture YUY2 and RGB none-compressed images by default.
+				final DSMediaType[] formats = p.getFormats();
+				for (int i = 0; i < formats.length; i++) {
+					final DSMediaType format = formats[i];
+					if (format.getWidth() == requestedWidth
+							&& format.getHeight() == requestedHeight
+							&& (format.getSubTypeString().contains("RGB")
+									|| format.getSubTypeString().contains("YUY2"))) {
+						if (Math.abs(frameRate - format.getFrameRate()) <
+								Math.abs(frameRate - currentFrameRate)) {
+							pin = p;
+							p.setPreferredFormat(i);
+							currentFrameRate = format.getFrameRate();
+						}
 					}
+				}
+				if (pin != null && (int) currentFrameRate == (int) frameRate) {
 					break;
 				}
 			}
-			if (pin != null && (int) currentFps == (int) fps) {
-				break;
+			if (pin == null) {
+				// throw new IllegalStateException("No suitable pin to capture was found for filter:"+filter);
+				pin = filter.getDownstreamPins()[0];
 			}
-		}
-		if (pin == null) {
-			parent.die("No suitable pin to capture was found for filter:"+dsFilter);
+
+		} catch (DSJException e) {
+			// Can't retrieve pin list from the filter.
+			// (Do nothing.)
 		}
 
 		// キャプチャを始める
-		dsCapture = new DSCapture(
+		capture = new DSCapture(
 				DSFiltergraph.JAVA_POLL_RGB,
-				dsFilter, false, DSFilterInfo.doNotRender(), null);
-		dsCapture.play();
+				filter, false, DSFilterInfo.doNotRender(), null);
+		capture.play();
 
 		// 実際に画像を取れるようになるまで待つ
 		while (true) {
-			final int dataSize = dsCapture.getDataSize();
+			final int dataSize = capture.getDataSize();
 			if (dataSize > 0) {
-				dataWidth = requestWidth;
-				dataHeight = dataSize / requestWidth / 3;
+				dataWidth = requestedWidth;
+				dataHeight = dataSize / requestedWidth / 3;
 				break;
 			}
 			try { Thread.sleep(100); }
@@ -281,7 +284,7 @@ public class CaptureDS extends PImage implements Runnable {
 	public void read() {
 		loadPixels();
 		synchronized (pixels) {
-			data = dsCapture.getData();
+			data = capture.getData();
 
 			int index = 0;
 			if (crop) {
@@ -313,8 +316,8 @@ public class CaptureDS extends PImage implements Runnable {
 
 	/** (画像を読める状態になったことにする) */
 	public void run() {
-		while ((Thread.currentThread() == runner) && (dsCapture != null)) {
-			synchronized (dsCapture) {
+		while ((Thread.currentThread() == runner) && (capture != null)) {
+			synchronized (capture) {
 				available = true;
 
 				if (captureEventMethod != null) {
@@ -349,9 +352,9 @@ public class CaptureDS extends PImage implements Runnable {
 
 	/** キャプチャを止める */
 	public void stop() {
-		if (dsCapture != null) {
-			dsCapture.stop();
-			dsCapture = null;
+		if (capture != null) {
+			capture.stop();
+			capture = null;
 		}
 		runner = null;
 	}

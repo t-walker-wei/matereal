@@ -1,6 +1,6 @@
 ﻿CaptureDSライブラリ 仮ドキュメント
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 2010.11.15 版
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　arc@dmz (c) 2010
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 2011.04.06 版
+　　　　　　　　　　　　　　　　　　　　　　　　　 arc@dmz (c) 2010-2011
 ────────────────────────────────────
 
 
@@ -9,7 +9,7 @@
 1. DirectShow Java Wrapperの入手
 
  http://www.humatic.de/htools/dsj/download.htm から、
- 最新版のdsj(10/11/15時点で0_8_62)をダウンロード、
+ 最新版のdsj(11/04/06時点で0_8_62)をダウンロード、
  解凍して出てきたファイルのうち dsj.dll と dsj.jar を使います。
 
 2. DirectShow Java WrapperとCaptureDSの利用

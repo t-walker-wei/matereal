@@ -190,8 +190,6 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		} catch (DSJException e) {
 			// Can't retrieve pin list from the filter.
 			// (Do nothing.)
-		} catch (NoSuchMethodError nsme) {
-			// (NoSuchMethodError occurs instead of DSJException at p.getFormats() on Win7 x64 ... why?)
 		}
 
 		// Instantiate a capture object.
@@ -451,31 +449,14 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		// Query devices.
 		final DSFilterInfo[] filters = queryDevices();
 		final ArrayList<String> ids = new ArrayList<String>();
-		for (DSFilterInfo filter : filters) {
-			ids.add(IDENTIFIER_PREFIX+filter.getPath());
+		for (int i = 0; i < filters.length; i ++) {
+			if (!filterInUse[i]) {
+				DSFilterInfo filter = filters[i];
+				ids.add(IDENTIFIER_PREFIX+filter.getPath());
+			}
 		}
 
 		// Convert to a String array and returns it.
-		String[] idsArray = new String[ids.size()];
-		idsArray = ids.toArray(idsArray);
-		return idsArray;
+		return ids.toArray(new String[0]);
 	}
-
-	/*
-	public static class NyWin32Capture {
-		static {
-			System.loadLibrary("NyWin32Capture");
-		}
-
-		public static native String[] queryIdentifiers();
-		public static native int open();
-		public static native int open(String devicePath);
-		public static native boolean start(int id);
-		public static native boolean stop(int id);
-		public static native boolean setSize(int width, int height, int id);
-		public static native byte[] tryGrabFrameData(int id);
-		public static native String getFriendlyName(int id);
-		public static native String getDevicePath(int id);
-	}
-	*/
 }

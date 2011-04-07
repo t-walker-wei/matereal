@@ -1,6 +1,6 @@
 ﻿CaptureDS library howto guide
-                                                              2010.11.15
-                                                        arc@dmz (c) 2010
+                                                              2011.04.06
+                                                   arc@dmz (c) 2010-2011
 ────────────────────────────────────
 
 
@@ -8,7 +8,7 @@
 
 1. Get DirectShow Java Wrapper
 
- Download latest version of dsj (version 0_8_62 as of 11/15/10) from
+ Download latest version of dsj (version 0_8_62 as of 04/06/11) from
  http://www.humatic.de/htools/dsj/download.htm
  and unzip the archive.
 
