@@ -28,7 +28,7 @@
 
 	<!-- Javadoc destination -->
 	<property name="matereal-javadoc.dir" value="docs" />
-	<property name="style" value="style.css" />
+	<property name="style" value="../matereal/style.css" />
 	<property name="copyright" value="&lt;center&gt;Copyright by Jun KATO (arc@dmz) at &lt;a href=&quot;http://mr.digitalmuseum.jp/&quot;&gt;http://mr.digitalmuseum.jp/&lt;/a&gt;&lt;/center&gt;" />
 
 	<!-- Jar file name -->
