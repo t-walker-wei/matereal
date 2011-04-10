@@ -126,10 +126,33 @@ public interface NapMarkerDetector {
 	/**
 	 * Detect markers in the provided image.
 	 *
-	 * @param imageData 24bit image data in a byte array (BGRBGR...)
-	 * @return Detection results.
+	 * @param imageData Image data
+	 * @return Detection results
 	 */
-	public Array<NapDetectionResult> detectMarker(byte[] imageData);
+	public Array<NapDetectionResult> detectMarker(Object imageData);
+
+	/**
+	 * Set pixel reader by its name.<br>
+	 * Pixel reader is used for reading color of each pixel of the image data in {@link #detectMarker(Object)}.
+	 * <dl>
+	 *	<dt>BYTE1D_B8G8R8_24</dt>
+	 *		<dd>Image data is provided as a byte array in BGRBGR... order. (default)</dd>
+	 *	<dt>BYTE1D_R8G8B8_24</dt>
+	 *		<dd>Image data is provided as a byte array in RGBRGB... order.</dd>
+	 *	<dt>BYTE1D_B8G8R8X8_32</dt>
+	 *		<dd>Image data is provided as a byte array in BGRXBGRX... order where X means alpha value.</dd>
+	 *	<dt>BYTE1D_X8R8G8B8_32</dt>
+	 *		<dd>Image data is provided as a byte array in XRGBXRGB... order where X means alpha value.</dd>
+	 *	<dt>INT1D_GRAY_8</dt>
+	 *		<dd>Image data is provided as an integer array, each of whose element represents gray-scaled value.</dd>
+	 *	<dt>INT1D_X8R8G8B8_32</dt>
+	 *		<dd>Image data is provided as an integer array, each of whose element represents RGB color with alpha value.</dd>
+	 * </dl>
+	 *
+	 * @param readerName Name of a pixel reader.
+	 * @return Whether specified pixel reader is available or not.
+	 */
+	public boolean setPixelReader(String readerName);
 
 	public abstract NapDetectionResult getResult(NapMarker marker);
 

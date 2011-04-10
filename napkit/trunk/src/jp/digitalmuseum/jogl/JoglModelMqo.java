@@ -69,6 +69,18 @@ public class JoglModelMqo extends JoglModel {
 		this(gl, createURL(url), scale);
 	}
 
+	public JoglModelMqo(GL gl, String url, JoglTextureManager textureManager) {
+		this(gl, createURL(url), textureManager);
+	}
+
+	public JoglModelMqo(GL gl, String url, JoglTextureManager textureManager, float scale) {
+		this(gl, createURL(url), textureManager, scale);
+	}
+
+	public JoglModelMqo(GL gl, String url, JoglTextureManager textureManager, float scale, JoglCoordinates coordinates) {
+		this(gl, createURL(url), textureManager, scale, coordinates);
+	}
+
 	public JoglModelMqo(GL gl, URL url) {
 		this(gl, url, null);
 	}
@@ -86,7 +98,7 @@ public class JoglModelMqo extends JoglModel {
 	}
 
 	public JoglModelMqo(GL gl, URL url, JoglTextureManager textureManager, float scale, JoglCoordinates coordinates) {
-		this(gl, url, textureManager, scale, coordinates, false);
+		this(gl, url, textureManager, scale, coordinates, true);
 	}
 
 	/**
@@ -105,8 +117,8 @@ public class JoglModelMqo extends JoglModel {
 	 * @param isVboEnabled
 	 *            Whether to use VBO or not.
 	 */
-	public JoglModelMqo(GL gl, URL url, JoglTextureManager textureManager, float scale, JoglCoordinates coordinates, boolean isUseVBO) {
-		super(gl, textureManager, coordinates, isUseVBO);
+	public JoglModelMqo(GL gl, URL url, JoglTextureManager textureManager, float scale, JoglCoordinates coordinates, boolean isVboEnabled) {
+		super(gl, textureManager, coordinates, isVboEnabled);
 
 		this.url = url;
 

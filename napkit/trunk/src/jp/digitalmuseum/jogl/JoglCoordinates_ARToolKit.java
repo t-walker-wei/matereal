@@ -29,6 +29,8 @@ package jp.digitalmuseum.jogl;
 import jp.digitalmuseum.jogl.JoglModel.Point;
 
 /**
+ * Coordinate system suitable for use with ARToolKit.
+ *
  * <pre>OpenGL default coordinates:
  *
  *       Y
@@ -45,8 +47,6 @@ import jp.digitalmuseum.jogl.JoglModel.Point;
  *       |   ／
  *        | ／
  *        +------X</pre>
- *
- * @author Jun KATO, kei
  */
 public class JoglCoordinates_ARToolKit extends JoglCoordinates {
 
