@@ -33,7 +33,7 @@ import javax.media.opengl.GL;
 import jp.digitalmuseum.napkit.NapJoglUtils;
 
 /**
- * Base class for holding a three-dimensional model object for JOGL
+ * Base class for holding a three-dimensional model object for JOGL.
  */
 public class JoglModel {
 	protected GL gl;
@@ -53,8 +53,6 @@ public class JoglModel {
 	 *            OpenGL object.
 	 * @param textureManager
 	 *            JoglTextureManager for managing textures. Create new one inside the instance if this parameter is null.
-	 * @param scale
-	 *            Scale for the model.
 	 * @param coordinates
 	 *            JoglCoordinates for managing coordinates.
 	 * @param isVboEnabled
@@ -470,7 +468,7 @@ public class JoglModel {
 	}
 
 	/**
-	 * Class for holding UV texture mapping parameter.
+	 * Class for holding UV texture mapping parameters.
 	 */
 	public static class UV extends FloatArray {
 		public UV() {
@@ -518,7 +516,7 @@ public class JoglModel {
 	}
 
 	/**
-	 * Class for holding three-dimensional coordinates of a point
+	 * Class for holding three-dimensional coordinates of a point.
 	 */
 	public static class Point extends FloatArray {
 		public Point() {

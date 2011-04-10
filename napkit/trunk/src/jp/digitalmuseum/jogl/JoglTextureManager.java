@@ -44,7 +44,7 @@ import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
 
 /**
- * Class for managing textures of JoglModel
+ * Class for managing textures of JoglModel.
  *
  * @see JoglModel
  */
@@ -66,7 +66,9 @@ public class JoglTextureManager {
 
 		// Get parent directory for the texture files.
 		String dir = url.toString();
-		dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
+		int lastIndexSeparator = dir.lastIndexOf(File.separator);
+		int lastIndexURLSeparator = dir.lastIndexOf('/');
+		dir = dir.substring(0, max(lastIndexSeparator, lastIndexURLSeparator) + 1);
 
 		// Get ID for already generated texture.
 		String key = dir + textureFileName + textureAlphaFileName;
@@ -191,6 +193,10 @@ public class JoglTextureManager {
 		gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
 		textures.put(key, id);
 		return id;
+	}
+
+	private int max(int a, int b) {
+		return a > b ? a : b;
 	}
 
 	private int glGenTexture() {

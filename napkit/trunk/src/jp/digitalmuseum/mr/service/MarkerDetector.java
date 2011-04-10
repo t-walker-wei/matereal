@@ -491,6 +491,10 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		detector.setTransMatEnabled(isTransMatEnabled);
 	}
 
+	public boolean setPixelReader(String readerName) {
+		return detector.setPixelReader(readerName);
+	}
+
 	public int getWidth() {
 		return detector.getWidth();
 	}
@@ -503,7 +507,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		detector.setSize(width, height);
 	}
 
-	public Array<NapDetectionResult> detectMarker(byte[] imageData) {
+	public Array<NapDetectionResult> detectMarker(Object imageData) {
 		detectionResults = detector.detectMarker(imageData);
 		return detectionResults;
 	}

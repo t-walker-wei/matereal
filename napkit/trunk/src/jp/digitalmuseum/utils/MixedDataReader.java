@@ -32,6 +32,9 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
+/**
+ * Class for reading InputStream which contains mixed data of binary and text.
+ */
 public class MixedDataReader {
 	private static final String defaultCharset = "Shift_JIS";
 	private BufferedInputStream bis = null ;

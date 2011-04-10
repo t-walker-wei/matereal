@@ -15,10 +15,6 @@
 	<!-- Source directory -->
 	<property name="napkit-src.dir" value="src" />
 
-	<!-- MQO loader classes and source codes -->
-	<property name="mqoloader.classes" value="jp/digitalmuseum/jogl/*.class jp/digitalmuseum/utils/MixedDataReader.class" />
-	<property name="mqoloader.codes" value="jp/digitalmuseum/jogl/*.java jp/digitalmuseum/utils/MixedDataReader.java" />
-
 	<!-- NyARToolkit directory -->
 	<property name="nyar-src.dir" value="lib/NyARToolkit-2.5.2/src" />
 	<property name="nyar-classes.dir" value="bin.nyar" />
@@ -34,10 +30,16 @@
 	<property name="napkit-lib.dir" value="lib/" />
 	<property name="napkit-jar.dir" value="${napkit-dist.dir}${napkit-lib.dir}" />
 	<property name="napkit-jar.name" value="napkit-${napkit.version}.jar" />
-	<property name="mqoloader-jar.name" value="mqoloader-${mqoloader.version}.jar" />
 
 	<!-- Zip file name -->
 	<property name="napkit-zip.name" value="napkit-${napkit.version}.zip" />
+
+	<!-- MQO loader -->
+	<property name="mqoloader.classes" value="jp/digitalmuseum/jogl/*.class jp/digitalmuseum/utils/MixedDataReader.class" />
+	<property name="mqoloader.codes" value="jp/digitalmuseum/jogl/*.java jp/digitalmuseum/utils/MixedDataReader.java" />
+	<property name="mqoloader.packages" value="jp.digitalmuseum.jogl.*,jp.digitalmuseum.utils.*" />
+	<property name="mqoloader-javadoc.dir" value="docs.mqoloader" />
+	<property name="mqoloader-jar.name" value="mqoloader-${mqoloader.version}.jar" />
 	<property name="mqoloader-zip.name" value="mqoloader-${mqoloader.version}.zip" />
 
 	<!-- ****Targets**** -->
@@ -85,8 +87,25 @@
 		</jar>
 	</target>
 
+	<!-- Javadoc -->
+	<target name="mqoloader-javadoc" depends="napkit-extract">
+		<javadoc sourcepath="${napkit-src.dir}"
+			destdir="${mqoloader-javadoc.dir}"
+			packagenames="${mqoloader.packages}"
+			charset="UTF-8"
+			encoding="UTF-8"
+			docencoding="UTF-8"
+			locale="en"
+			windowtitle="MQO loader ${mqoloader.version} API"
+			classpath="${napkit-classes.dir};${jogl}"
+			stylesheetfile="${style}"
+			use="true"
+			bottom="${copyright}">
+		</javadoc>
+	</target>
+
 	<!-- Compile -->
-	<target name="napkit-compile" depends="nyar-compile">
+	<target name="napkit-compile" depends="nyar-compile, napkit-extract">
 		<mkdir dir="${napkit-classes.dir}" />
 		<javac srcdir="${napkit-src.dir}" destdir="${napkit-classes.dir}"
 				source="1.5"
@@ -111,15 +130,15 @@
 	</target>
 
 	<!-- Javadoc -->
-	<target name="napkit-javadoc" depends="nyar-compile">
-		<javadoc sourcepath="${napkit-src.dir}"
+	<target name="napkit-javadoc" depends="napkit-extract">
+		<javadoc sourcepath="${napkit-src.dir};${nyar-src.dir}"
 			destdir="${napkit-javadoc.dir}"
 			packagenames="jp.digitalmuseum.*"
 			charset="UTF-8"
 			encoding="UTF-8"
 			docencoding="UTF-8"
 			locale="en"
-			classpath="${napkit-classpath};${nyar-classes.dir}"
+			classpath="${napkit-classpath};${nyar-classes.dir};${jogl}"
 			stylesheetfile="../matereal/${style}"
 			bottom="${copyright}" />
 	</target>
@@ -129,6 +148,7 @@
 		<delete dir="${napkit-classes.dir}" />
 		<delete dir="${nyar-classes.dir}" />
 		<delete dir="${napkit-javadoc.dir}" />
+		<delete dir="${mqoloader-javadoc.dir}" />
 		<delete dir="${napkit-dist.dir}" />
 	</target>
 </project>

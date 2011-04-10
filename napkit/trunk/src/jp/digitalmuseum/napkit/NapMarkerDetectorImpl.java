@@ -148,7 +148,7 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		markers.remove(marker);
 	}
 
-	public Array<NapDetectionResult> detectMarker(byte[] imageData) {
+	public Array<NapDetectionResult> detectMarker(Object imageData) {
 		synchronized (squareDetector) {
 			squares.clear();
 			results.clear();
@@ -192,7 +192,7 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 
 	public boolean loadCameraParameter(String fileName) {
 
-		// Back up the screen size.
+		// Backup the screen size.
 		final NyARIntSize size = param.getScreenSize();
 		final int width = size.w, height = size.h;
 
@@ -273,12 +273,20 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		}
 		@SuppressWarnings("unchecked")
 		Class<? extends INyARRgbPixelReader> pixelReaderClassObject = (Class<? extends INyARRgbPixelReader>) classObject;
-		setPixelReader(pixelReaderClassObject);
-		return true;
+		return setPixelReader(pixelReaderClassObject);
 	}
 
-	public void setPixelReader(Class<? extends INyARRgbPixelReader> pixelReaderClassObject) {
+	public boolean setPixelReader(Class<? extends INyARRgbPixelReader> pixelReaderClassObject) {
+		try {
+			binarizationFilter = new NyARRasterFilter_ARToolkitThreshold(
+					getThreshold(),
+					NyARRgbRaster.getBufferType(pixelReaderClassObject));
+		} catch (NyARException e) {
+			return false;
+		}
 		this.pixelReaderClassObject = pixelReaderClassObject;
+		updateScreenSize();
+		return true;
 	}
 
 	public double[] getCameraProjectionMatrix() {
@@ -305,12 +313,14 @@ public class NapMarkerDetectorImpl implements NapMarkerDetector {
 		final NyARIntSize size = param.getScreenSize();
 		try {
 			squareDetector = new NyARSquareContourDetector_Rle(size);
-			image = pixelReaderClassObject == null ?
-					new NyARRgbRaster(size.w, size.h)
-					: new NyARRgbRaster(size.w, size.h, pixelReaderClassObject);
-			binarizedImage = new NyARBinRaster(size.w, size.h);
-			coordline = new NyARCoord2Linear(size, param.getDistortionFactor());
-			cameraProjectionMatrix = null; // @see #getCameraProjectionMatrixOut(double[])
+			synchronized (squareDetector) {
+				image = pixelReaderClassObject == null ?
+						new NyARRgbRaster(size.w, size.h)
+						: new NyARRgbRaster(size.w, size.h, pixelReaderClassObject);
+				binarizedImage = new NyARBinRaster(size.w, size.h);
+				coordline = new NyARCoord2Linear(size, param.getDistortionFactor());
+				cameraProjectionMatrix = null; // @see #getCameraProjectionMatrixOut(double[])
+			}
 		} catch (NyARException e) {
 			e.printStackTrace();
 		}

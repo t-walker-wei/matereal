@@ -35,29 +35,35 @@ import jp.nyatla.nyartoolkit.core.raster.rgb.NyARRgbRaster_BasicClass;
 
 public class NyARRgbRaster extends NyARRgbRaster_BasicClass
 {
+	private static final int T_BYTE1D =0x00010000;
+	private static final int T_INT1D  =0x00040000;
+
 	protected Object buffer;
 	protected INyARRgbPixelReader reader;
 
-	/**
-	 * バッファオブジェクトがアタッチされていればtrue
-	 */
 	protected boolean isAttachedBuffer;
 
-	private static int getBufferType(Class<? extends INyARRgbPixelReader> pixelReaderClass) {
+	public static int getBufferType(Class<? extends INyARRgbPixelReader> pixelReaderClass) {
 		if (NyARRgbPixelReader_BYTE1D_B8G8R8_24.class.isAssignableFrom(pixelReaderClass)) {
 			return NyARBufferType.BYTE1D_B8G8R8_24;
 		} else if (NyARRgbPixelReader_BYTE1D_R8G8B8_24.class.isAssignableFrom(pixelReaderClass)) {
 			return NyARBufferType.BYTE1D_R8G8B8_24;
+		} else if (NyARRgbPixelReader_BYTE1D_B8G8R8X8_32.class.isAssignableFrom(pixelReaderClass)) {
+			return NyARBufferType.BYTE1D_B8G8R8X8_32;
+		} else if (NyARRgbPixelReader_BYTE1D_X8R8G8B8_32.class.isAssignableFrom(pixelReaderClass)) {
+			return NyARBufferType.BYTE1D_X8R8G8B8_32;
+		} else if (NyARRgbPixelReader_INT1D_GRAY_8.class.isAssignableFrom(pixelReaderClass)) {
+			return NyARBufferType.INT1D_GRAY_8;
+		} else if (NyARRgbPixelReader_INT1D_X8R8G8B8_32.class.isAssignableFrom(pixelReaderClass)) {
+			return NyARBufferType.INT1D_X8R8G8B8_32;
 		}
-		return -1;
+		return 0;
 	}
 
-	public NyARRgbRaster(int width, int height, Class<? extends INyARRgbPixelReader> pixelReaderClass) throws NyARException
+	public NyARRgbRaster(int width, int height, Class<? extends INyARRgbPixelReader> pixelReaderClass)
 	{
 		super(width, height, getBufferType(pixelReaderClass));
-		if(!initInstance(this._size, pixelReaderClass, true)){
-			throw new NyARException();
-		}
+		initInstance(this._size, pixelReaderClass, false);
 	}
 
 	public NyARRgbRaster(int width, int height) throws NyARException
@@ -67,20 +73,37 @@ public class NyARRgbRaster extends NyARRgbRaster_BasicClass
 
 	protected boolean initInstance(NyARIntSize size, Class<? extends INyARRgbPixelReader> pixelReaderClass, boolean isAlloc)
 	{
-		this.buffer = isAlloc ? new byte[size.w*size.h*3] : null;
+		int bufferType = getBufferType(pixelReaderClass);
+
+		// 0:24bit, 1:32bit, 2:16bit
+		int bufferSize = bufferType >> 16 & 0x3;
+		bufferSize = bufferSize == 0 ? 3 : (bufferSize == 1 ? 4 : 2);
+
+		// 1:byte[], 2:int[][], 3:short[], 4:int[], ...
+		Class<?> type;
+		if ((bufferType & T_BYTE1D) != 0) {
+			type = byte[].class;
+			this.buffer = isAlloc ? new byte[size.w*size.h*bufferSize] : null;
+		} else if ((bufferType & T_INT1D) != 0) {
+			type = int[].class;
+			this.buffer = isAlloc ? new int[size.w*size.h] : null;
+		} else {
+			return false;
+		}
+		this.isAttachedBuffer = isAlloc;
+
+		// Instantiate pixel reader.
 		try {
 			Constructor<? extends INyARRgbPixelReader> constructor =
-					pixelReaderClass.getConstructor(byte[].class, NyARIntSize.class);
-			this.reader = constructor.newInstance((byte[]) this.buffer, size);
+				pixelReaderClass.getConstructor(type, NyARIntSize.class);
+			this.reader = constructor.newInstance(this.buffer, size);
 		} catch (Exception e) {
 			return false;
 		}
-
-		this.isAttachedBuffer=isAlloc;
 		return true;
 	}
 
-	public INyARRgbPixelReader getRgbPixelReader() throws NyARException
+	public INyARRgbPixelReader getRgbPixelReader()
 	{
 		return this.reader;
 	}
@@ -92,17 +115,13 @@ public class NyARRgbRaster extends NyARRgbRaster_BasicClass
 
 	public boolean hasBuffer()
 	{
-		return this.buffer!=null;
+		return this.buffer != null;
 	}
 
 	public void wrapBuffer(Object buffer) throws NyARException
 	{
-		//バッファがアタッチされていたら機能しない。
 		assert(!this.isAttachedBuffer);
-
-		this.buffer=buffer;
-
-		//ピクセルリーダーの参照バッファを切り替える。
+		this.buffer = buffer;
 		this.reader.switchBuffer(buffer);
 	}
 }

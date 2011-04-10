@@ -30,8 +30,6 @@ import jp.digitalmuseum.jogl.JoglModel.Point;
 
 /**
  * Default coordinate system.
- *
- * @author Jun KATO
  */
 public class JoglCoordinates {
 	Point convert(Point point) {
