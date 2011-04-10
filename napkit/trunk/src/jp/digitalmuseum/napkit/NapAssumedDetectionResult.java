@@ -1,8 +1,9 @@
 /*
- * PROJECT: napkit at http://matereal.sourceforge.jp/
+ * PROJECT: napkit at http://mr.digitalmuseum.jp/
  * ----------------------------------------------------------------------------
  *
  * This file is part of NyARToolkit Application Toolkit.
+ *
  * NyARToolkit Application Toolkit, or simply "napkit",
  * is a simple wrapper library for NyARToolkit.
  *

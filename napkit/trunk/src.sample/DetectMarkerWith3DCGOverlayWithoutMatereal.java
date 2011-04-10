@@ -12,8 +12,8 @@ import com.sun.opengl.util.FPSAnimator;
 
 import jp.digitalmuseum.capture.VideoCapture;
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
-import jp.digitalmuseum.jogl.JoglUtils;
 import jp.digitalmuseum.napkit.NapDetectionResult;
+import jp.digitalmuseum.napkit.NapJoglUtils;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.NapMarkerDetector;
 import jp.digitalmuseum.napkit.NapMarkerDetectorImpl;
@@ -34,7 +34,7 @@ public class DetectMarkerWith3DCGOverlayWithoutMatereal implements GLEventListen
 	private JFrame frame;
 
 	private GL gl;
-	private JoglUtils util;
+	private NapJoglUtils util;
 	private Animator animator;
 	private int polyList = 0;
 
@@ -98,7 +98,7 @@ public class DetectMarkerWith3DCGOverlayWithoutMatereal implements GLEventListen
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-		util = new JoglUtils(gl);
+		util = new NapJoglUtils(gl);
 
 		animator = new FPSAnimator(drawable, fps);
 		animator.start();
