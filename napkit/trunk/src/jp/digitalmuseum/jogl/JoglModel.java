@@ -1,102 +1,105 @@
+/*
+ * PROJECT: napkit at http://mr.digitalmuseum.jp/
+ * ----------------------------------------------------------------------------
+ *
+ * This file is part of NyARToolkit Application Toolkit.
+ *
+ * NyARToolkit Application Toolkit, or simply "napkit",
+ * is a simple wrapper library for NyARToolkit.
+ *
+ * ----------------------------------------------------------------------------
+ *
+ * License version: GPL 3.0
+ *
+ * napkit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * napkit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with napkit. If not, see <http://www.gnu.org/licenses/>.
+ */
 package jp.digitalmuseum.jogl;
 
 import java.nio.ByteBuffer;
 
 import javax.media.opengl.GL;
 
-public class JoglModelBase {
+import jp.digitalmuseum.napkit.NapJoglUtils;
 
+/**
+ * Base class for holding a three-dimensional model object for JOGL
+ */
+public class JoglModel {
 	protected GL gl;
-
-	/**
-	 * テクスチャ管理クラス
-	 */
-	protected TextureManager textureManager = null;
-
-	/**
-	 * テクスチャ管理クラスをこのクラスで作成したかどうか
-	 */
-	protected boolean hasOwnTextureManager = false;
-
-	/**
-	 * VBO（頂点配列バッファ）を使用するかどうか
-	 */
-	protected boolean isUseVBO = false;
-
-	/**
-	 * 表面の設定
-	 */
-	protected int frontFace = -1;
-
-	/**
-	 * 座標系情報
-	 */
-	protected JoglCoordinates coordinates = null;
-
-	/**
-	 * モデルの頂点の最低値
-	 */
-	protected Point minPos = null;
-
-	/**
-	 * モデルの頂点の最小値
-	 */
-	protected Point maxPos = null;
-
-	/**
-	 * 描画用内部データ
-	 */
+	protected JoglTextureManager textureManager;
+	protected boolean hasOwnTextureManager;
+	protected boolean isVboEnabled;
+	protected int frontFace;
+	protected JoglCoordinates coordinates;
+	protected Point minPos;
+	protected Point maxPos;
 	protected JoglObject[] joglObjects;
 
 	/**
+	 * Default constructor.
 	 *
 	 * @param gl
-	 *            OpenGLコマンド群をカプセル化したクラス
+	 *            OpenGL object.
 	 * @param textureManager
-	 *            テクスチャ管理クラス（nullならこのクラス内部に作成）
+	 *            JoglTextureManager for managing textures. Create new one inside the instance if this parameter is null.
 	 * @param scale
-	 *            モデルの倍率
+	 *            Scale for the model.
 	 * @param coordinates
-	 *            表示座標情報クラス
-	 * @param isUseVBO
-	 *            頂点配列バッファを使用するかどうか
+	 *            JoglCoordinates for managing coordinates.
+	 * @param isVboEnabled
+	 *            Whether to use VBO or not.
 	 */
-	protected JoglModelBase(GL gl, TextureManager textureManager, JoglCoordinates coordinates, boolean isUseVBO) {
+	protected JoglModel(GL gl, JoglTextureManager textureManager, JoglCoordinates coordinates, boolean isVboEnabled) {
 
 		this.gl = gl;
 
 		if (textureManager == null) {
-			this.textureManager = new TextureManager(this.gl);
+			this.textureManager = new JoglTextureManager(this.gl);
 			hasOwnTextureManager = true;
 		} else {
 			this.textureManager = textureManager;
+			hasOwnTextureManager = false;
 		}
 
 		if(coordinates == null) {
-			this.coordinates = new JoglCoordinates() ;
+			this.coordinates = new JoglCoordinates_ARToolKit();
 		} else {
 			this.coordinates = coordinates;
 		}
 
-		if (isUseVBO) {
-			this.isUseVBO = JoglUtils.isExtensionSupported(gl, "GL_ARB_vertex_buffer_object");
+		if (isVboEnabled) {
+			this.isVboEnabled = NapJoglUtils.isExtensionSupported(gl, "GL_ARB_vertex_buffer_object");
 		}
 
-		this.frontFace = GL.GL_CCW;
-		this.joglObjects = null;
+		frontFace = GL.GL_CCW;
+		minPos = null;
+		maxPos = null;
+		joglObjects = null;
 	}
 
 	/**
-	 * 描画有無を変更する<br>
+	 * Set visibility of an object.
 	 *
 	 * @param objectName
-	 *            オブジェクト名
+	 *            Name of an object.
 	 * @param isVisible
-	 *            描画有無
+	 *            Visibility.
 	 */
-	public void objectVisible(String objectName, boolean isVisible) {
-		if (joglObjects == null)
+	public void setObjectVisible(String objectName, boolean isVisible) {
+		if (joglObjects == null) {
 			return;
+		}
 		for (int o = 0; o < joglObjects.length; o++) {
 			if (objectName.equals(joglObjects[o].name)) {
 				joglObjects[o].isVisible = isVisible;
@@ -107,19 +110,20 @@ public class JoglModelBase {
 	}
 
 	/**
-	 * 描画有無を変更する<br>
+	 * Set visibility of material.
 	 *
-	 * @param materialtName
-	 *            マテリアル名
+	 * @param materialName
+	 *            Name of material.
 	 * @param isVisible
-	 *            描画有無
+	 *            Visibility.
 	 */
-	public void materialVisible(String materialtName, boolean isVisible) {
-		if (joglObjects == null)
+	public void setMaterialVisible(String materialName, boolean isVisible) {
+		if (joglObjects == null) {
 			return;
+		}
 		for (int o = 0; o < joglObjects.length; o++) {
 			for (int m = 0; m < joglObjects[o].materials.length; m++) {
-				if (materialtName.equals(joglObjects[o].materials[m].name)) {
+				if (materialName.equals(joglObjects[o].materials[m].name)) {
 					joglObjects[o].materials[m].isVisible = isVisible;
 					break;
 				}
@@ -129,24 +133,26 @@ public class JoglModelBase {
 	}
 
 	/**
-	 * 描画有無を変更する<br>
+	 * Set visibility of material of an object.
 	 *
 	 * @param objectName
-	 *            オブジェクト名
-	 * @param materialtName
-	 *            マテリアル名
+	 *            Name of an object.
+	 * @param materialName
+	 *            Name of material.
 	 * @param isVisible
-	 *            描画有無
+	 *            Visibility.
 	 */
-	public void materialVisible(String objectName, String materialtName,
+	public void setMaterialVisible(String objectName, String materialName,
 			boolean isVisible) {
-		if (joglObjects == null)
+		if (joglObjects == null) {
 			return;
+		}
 		for (int o = 0; o < joglObjects.length; o++) {
-			if (!objectName.equals(joglObjects[o].name))
+			if (!objectName.equals(joglObjects[o].name)) {
 				continue;
+			}
 			for (int m = 0; m < joglObjects[o].materials.length; m++) {
-				if (materialtName.equals(joglObjects[o].materials[m].name)) {
+				if (materialName.equals(joglObjects[o].materials[m].name)) {
 					joglObjects[o].materials[m].isVisible = isVisible;
 					break;
 				}
@@ -156,33 +162,50 @@ public class JoglModelBase {
 	}
 
 	private void updateMinMax() {
-		if( joglObjects == null ) return ;
-		minPos = null ;
-		maxPos = null ;
-		for( int o = 0 ; o < joglObjects.length ; o++ ) {
-			if( joglObjects[o].isVisible ) {
-				if( minPos == null ) minPos = new Point(joglObjects[o].minPos) ;
-				else minPos.updateMinimum(joglObjects[o].minPos) ;
-				if( maxPos == null ) maxPos = new Point(joglObjects[o].maxPos) ;
-				else maxPos.updateMinimum(joglObjects[o].maxPos) ;
+		if (joglObjects == null) {
+			return;
+		}
+		minPos = null;
+		maxPos = null;
+		for (int o = 0; o < joglObjects.length; o++) {
+			if (joglObjects[o].isVisible) {
+				if (minPos == null) {
+					minPos = new Point(joglObjects[o].minPos);
+				} else {
+					minPos.updateMinimum(joglObjects[o].minPos);
+				}
+				if (maxPos == null) {
+					maxPos = new Point(joglObjects[o].maxPos);
+				} else {
+					maxPos.updateMinimum(joglObjects[o].maxPos);
+				}
 			}
 		}
 	}
 
+	/**
+	 * Draw this object.
+	 */
 	public void draw() {
 		draw(1.0f) ;
 	}
 
+	/**
+	 * Draw this object with the specified transparency.
+	 *
+	 * @param alpha 0 (completely transparent) - 1.0 (not transparent)
+	 */
 	public void draw(float alpha) {
 		if (joglObjects == null) {
 			return;
 		}
 
-		boolean isGL_BLEND = gl.glIsEnabled(GL.GL_BLEND);
+		// Backup settings.
+		boolean isBlendEnabled = gl.glIsEnabled(GL.GL_BLEND);
 		int[] intBlendFunc = new int[2];
 		gl.glGetIntegerv(GL.GL_BLEND_SRC, intBlendFunc, 0);
 		gl.glGetIntegerv(GL.GL_BLEND_DST, intBlendFunc, 1);
-		if (!isGL_BLEND) {
+		if (!isBlendEnabled) {
 			gl.glEnable(GL.GL_BLEND);
 		}
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -191,7 +214,7 @@ public class JoglModelBase {
 		gl.glGetIntegerv(GL.GL_FRONT_FACE, intFrontFace, 0);
 		gl.glFrontFace(frontFace);
 
-		boolean isGL_TEXTURE_2D = gl.glIsEnabled(GL.GL_TEXTURE_2D);
+		boolean isTexture2dEnabled = gl.glIsEnabled(GL.GL_TEXTURE_2D);
 
 		float[] color = new float[4];
 		for (JoglObject joglObject : joglObjects) {
@@ -206,11 +229,10 @@ public class JoglModelBase {
 					continue;
 				}
 
-				// OpenGLの描画フラグ設定
 				if (joglMaterial.textureID != 0) {
 					gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP);
 					gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP);
-					if (!isGL_TEXTURE_2D) {
+					if (!isTexture2dEnabled) {
 						gl.glEnable(GL.GL_TEXTURE_2D);
 					}
 				}
@@ -221,7 +243,6 @@ public class JoglModelBase {
 					gl.glShadeModel(GL.GL_FLAT);
 				}
 
-				// 色関係の設定
 				gl.glColor4f(joglMaterial.color[0], joglMaterial.color[1], joglMaterial.color[2], joglMaterial.color[3]);
 				if (joglMaterial.dif != null) {
 					System.arraycopy(joglMaterial.dif, 0, color, 0, joglMaterial.dif.length);
@@ -243,13 +264,11 @@ public class JoglModelBase {
 					gl.glMaterialf(GL.GL_FRONT_AND_BACK, GL.GL_SHININESS, joglMaterial.power[0]);
 				}
 
-				// テクスチャの設定
 				if (joglMaterial.textureID != 0) {
 					gl.glBindTexture(GL.GL_TEXTURE_2D, joglMaterial.textureID);
 				}
 
-				// 描画実行
-				if (isUseVBO) {
+				if (isVboEnabled) {
 					gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, joglObject.vboIds[m]);
 					gl.glInterleavedArrays(joglMaterial.interleaveFormat, 0, 0);
 				} else {
@@ -258,25 +277,24 @@ public class JoglModelBase {
 				}
 				gl.glDrawArrays(GL.GL_TRIANGLES, 0, joglMaterial.numVertices);
 
-				// 設定をクリア
 				if (joglMaterial.textureID != 0) {
 					gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
 				}
-				if (isUseVBO) {
+				if (isVboEnabled) {
 					gl.glBindBufferARB(GL.GL_ARRAY_BUFFER_ARB, 0);
 				}
 
-				// 設定を復帰 (1)
-				if (joglMaterial.textureID != 0 && !isGL_TEXTURE_2D) {
+				// Restore settings (1)
+				if (joglMaterial.textureID != 0 && !isTexture2dEnabled) {
 					gl.glDisable(GL.GL_TEXTURE_2D);
-				} else if (joglMaterial.textureID == 0 && isGL_TEXTURE_2D) {
+				} else if (joglMaterial.textureID == 0 && isTexture2dEnabled) {
 					gl.glEnable(GL.GL_TEXTURE_2D);
 				}
 			}
 		}
 
-		// 設定を復帰 (2)
-		if (!isGL_BLEND) {
+		// Restore settings (2)
+		if (!isBlendEnabled) {
 			gl.glDisable(GL.GL_BLEND);
 		}
 		gl.glBlendFunc(intBlendFunc[0], intBlendFunc[1]);
@@ -303,13 +321,18 @@ public class JoglModelBase {
 		p.set(minPos.data);
 	}
 
+	/**
+	 * Free used memory spaces.
+	 */
 	public void clear() {
-		if (joglObjects == null)
+		if (joglObjects == null) {
 			return;
+		}
 		for (int o = 0; o < joglObjects.length; o++) {
-			if (joglObjects[o].vboIds != null)
+			if (joglObjects[o].vboIds != null) {
 				gl.glDeleteBuffersARB(
 						joglObjects[o].vboIds.length, joglObjects[o].vboIds, 0);
+			}
 		}
 		joglObjects = null;
 		if (hasOwnTextureManager) {
@@ -319,32 +342,32 @@ public class JoglModelBase {
 	}
 
 	/**
-	 * 法線を求める
+	 * Calculate normal vector of a triangle face.
 	 *
-	 * @param V
-	 *            頂点配列
-	 * @param A
-	 *            頂点の位置
-	 * @param B
-	 *            頂点の位置
-	 * @param C
-	 *            頂点の位置
-	 * @return 法線ベクトル
+	 * @param vertices
+	 *            Array of the coordinates of the vertices
+	 * @param indexVertexA
+	 *            Index of vertex A in the array
+	 * @param indexVertexB
+	 *            Index of vertex B in the array
+	 * @param indexVertexC
+	 *            Index of vertex C in the array
+	 * @return Normal vector
 	 */
-	protected Point calcNormal(Point[] V, int A, int B, int C) {
+	protected Point calcNormal(Point[] vertices, int indexVertexA, int indexVertexB, int indexVertexC) {
 
-		// ベクトルB->A
-		Point AB = V[B].sub(V[A]);
+		// Vector ab
+		Point vectorAB = vertices[indexVertexB].sub(vertices[indexVertexA]);
 
-		// ベクトルB->C
-		Point BC = V[C].sub(V[B]);
+		// Vector bc
+		Point vectorBC = vertices[indexVertexC].sub(vertices[indexVertexB]);
 
-		// 法線の計算
+		// Calculate normal vector.
 		Point ret = new Point(
-				AB.getY() * BC.getZ() - AB.getZ() * BC.getY(),
-				AB.getZ() * BC.getX() - AB.getX() * BC.getZ(),
-				AB.getX() * BC.getY() - AB.getY() * BC.getX());
-		ret.normalize();// 正規化
+				vectorAB.getY() * vectorBC.getZ() - vectorAB.getZ() * vectorBC.getY(),
+				vectorAB.getZ() * vectorBC.getX() - vectorAB.getX() * vectorBC.getZ(),
+				vectorAB.getX() * vectorBC.getY() - vectorAB.getY() * vectorBC.getX());
+		ret.normalize();
 		return ret;
 	}
 
@@ -381,6 +404,9 @@ public class JoglModelBase {
 		}
 	}
 
+	/**
+	 * Class which represents a JOGL material.
+	 */
 	public static class JoglMaterial {
 		String name;
 		boolean isVisible = true;
@@ -397,6 +423,9 @@ public class JoglModelBase {
 		ByteBuffer interleaved = null;
 	}
 
+	/**
+	 * Class which represents a JOGL object.
+	 */
 	public static class JoglObject {
 		String name = null;
 		boolean isVisible = true;
@@ -406,6 +435,9 @@ public class JoglModelBase {
 		Point maxPos = null;
 	}
 
+	/**
+	 * Class for holding a float array.
+	 */
 	public static class FloatArray {
 		protected float[] data;
 
@@ -437,6 +469,9 @@ public class JoglModelBase {
 		}
 	}
 
+	/**
+	 * Class for holding UV texture mapping parameter.
+	 */
 	public static class UV extends FloatArray {
 		public UV() {
 			super(2);
@@ -456,6 +491,9 @@ public class JoglModelBase {
 		public float getV() { return data[1]; }
 	}
 
+	/**
+	 * Class for holding color parameter.
+	 */
 	public static class Color extends FloatArray {
 		public Color() {
 			super(4);
@@ -479,6 +517,9 @@ public class JoglModelBase {
 		public float getA() { return data[3]; }
 	}
 
+	/**
+	 * Class for holding three-dimensional coordinates of a point
+	 */
 	public static class Point extends FloatArray {
 		public Point() {
 			super(3);
@@ -564,6 +605,9 @@ public class JoglModelBase {
 		}
 	}
 
+	/**
+	 * Class for holding three-dimensional coordinates of a light source.
+	 */
 	public static class LightSourcePoint extends Point {
 		public LightSourcePoint() {
 			super();

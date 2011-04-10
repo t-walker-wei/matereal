@@ -1,6 +1,35 @@
+/*
+ * PROJECT: napkit at http://mr.digitalmuseum.jp/
+ * ----------------------------------------------------------------------------
+ *
+ * This file is part of NyARToolkit Application Toolkit.
+ *
+ * NyARToolkit Application Toolkit, or simply "napkit",
+ * is a simple wrapper library for NyARToolkit.
+ *
+ * ----------------------------------------------------------------------------
+ *
+ * License version: GPL 3.0
+ *
+ * napkit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * napkit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with napkit. If not, see <http://www.gnu.org/licenses/>.
+ */
 package jp.digitalmuseum.jogl;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -15,15 +44,16 @@ import com.sun.opengl.util.texture.TextureData;
 import com.sun.opengl.util.texture.TextureIO;
 
 /**
+ * Class for managing textures of JoglModel
  *
+ * @see JoglModel
  */
-public class TextureManager {
+public class JoglTextureManager {
 
 	private GL gl;
-
 	private HashMap<String, Integer> textures;
 
-	public TextureManager(GL gl) {
+	public JoglTextureManager(GL gl) {
 		this.gl = gl;
 		textures = new HashMap<String, Integer>();
 	}
@@ -36,7 +66,7 @@ public class TextureManager {
 
 		// Get parent directory for the texture files.
 		String dir = url.toString();
-		dir = dir.substring(0, dir.lastIndexOf('/') + 1);
+		dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
 
 		// Get ID for already generated texture.
 		String key = dir + textureFileName + textureAlphaFileName;
@@ -188,5 +218,121 @@ public class TextureManager {
 		}
 		gl.glDeleteTextures(idsArray.length, idsArray, 0);
 		textures.clear();
+	}
+
+	/**
+	 * Class for loading TGA image file.
+	 *
+	 * @see <a href="http://paulbourke.net/dataformats/tga/">http://paulbourke.net/dataformats/tga/</a>
+	 */
+	public static class Tga {
+
+		private Header header = null;
+
+		private byte[] data = null;
+
+		/**
+		 * Screen origin bit.
+		 * <dl>
+		 * 	<dt>0</dt><dd>Origin in lower left-hand corner.</dd>
+		 * 	<dt>1</dt><dd>Origin in upper left-hand corner.</dd>
+		 * </dl>
+		 */
+		private boolean screenOriginBit = true;
+
+		public Tga(URL url) throws IOException {
+			BufferedInputStream in;
+			try {
+				in = new BufferedInputStream(url.openStream());
+			} catch (IOException e) {
+				// File not found.
+				throw e;
+			}
+
+			byte[] headerInfo = new byte[18];
+			try {
+				read(in, headerInfo);
+			} catch (IOException e) {
+				// Failed to read header.
+				throw e;
+			}
+
+			ByteBuffer bb = ByteBuffer.wrap(headerInfo);
+			bb.order(ByteOrder.LITTLE_ENDIAN);
+			header = new Header();
+			header.id = bb.get();
+			header.hasColorMap = bb.get();
+			header.type = bb.get();
+			header.colorMapOrigin = bb.getShort();
+			header.colorMapLength = bb.getShort();
+			header.colorMapEntrySize = bb.get();
+			header.x = bb.getShort();
+			header.y = bb.getShort();
+			header.width = bb.getShort();
+			header.height = bb.getShort();
+			header.bitDepth = bb.get();
+			header.imageDescriptorByte = bb.get();
+			if ((header.imageDescriptorByte & 0x02) != 0) {
+				screenOriginBit = false;
+			}
+
+			data = new byte[header.width * header.height * (header.bitDepth / 8)];
+			try {
+				read(in, data);
+			} catch (IOException e) {
+				// Failed to read image data.
+				throw e;
+			}
+		}
+
+		private int read(InputStream in, byte[] data) throws IOException {
+			int sz = 0;
+			while (sz < data.length) {
+				int read = in.read(data, sz, data.length - sz);
+				if (read < 0) {
+					if (sz == 0) {
+						return -1;
+					}
+					break;
+				}
+				sz += read;
+			}
+			return sz;
+		}
+
+		public byte[] getDataReference() {
+			return data;
+		}
+
+		public int getWidth() {
+			return header.width;
+		}
+
+		public int getHeight() {
+			return header.height;
+		}
+
+		public boolean isVerticallyInverted() {
+			return !screenOriginBit;
+		}
+
+		/**
+		 * TGA file header.
+		 */
+		@SuppressWarnings("unused")
+		private static class Header {
+			byte id;
+			byte hasColorMap;
+			byte type;
+			short colorMapOrigin;
+			short colorMapLength;
+			byte colorMapEntrySize;
+			short x;
+			short y;
+			short width;
+			short height;
+			byte bitDepth;
+			byte imageDescriptorByte;
+		}
 	}
 }

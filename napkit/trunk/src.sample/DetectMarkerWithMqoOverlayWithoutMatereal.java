@@ -14,11 +14,11 @@ import com.sun.opengl.util.FPSAnimator;
 
 import jp.digitalmuseum.capture.VideoCapture;
 import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
-import jp.digitalmuseum.jogl.JoglModelBase;
-import jp.digitalmuseum.jogl.JoglModelMetasequoia;
-import jp.digitalmuseum.jogl.JoglUtils;
+import jp.digitalmuseum.jogl.JoglModel;
+import jp.digitalmuseum.jogl.JoglModelMqo;
 import jp.digitalmuseum.jogl.JoglCoordinates_ARToolKit;
 import jp.digitalmuseum.napkit.NapDetectionResult;
+import jp.digitalmuseum.napkit.NapJoglUtils;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.NapMarkerDetector;
 import jp.digitalmuseum.napkit.NapMarkerDetectorImpl;
@@ -39,7 +39,7 @@ public class DetectMarkerWithMqoOverlayWithoutMatereal implements GLEventListene
 	private JFrame frame;
 
 	private GL gl;
-	private JoglUtils util;
+	private NapJoglUtils util;
 	private Animator animator;
 
 	private int fps = 15;
@@ -109,7 +109,7 @@ public class DetectMarkerWithMqoOverlayWithoutMatereal implements GLEventListene
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-		util = new JoglUtils(gl);
+		util = new NapJoglUtils(gl);
 
 		initModel();
 
@@ -164,12 +164,12 @@ public class DetectMarkerWithMqoOverlayWithoutMatereal implements GLEventListene
 	// private final String mqoFileName = "model/box.mqo";
 	// private final float scale = .01f;
 
-	private JoglModelBase data;
+	private JoglModel data;
 	private float translate;
 	private void initModel() {
 		if (data == null) {
 			try {
-				data = new JoglModelMetasequoia(gl, null, new URL("file:"+mqoFileName),
+				data = new JoglModelMqo(gl, new URL("file:"+mqoFileName), null,
 						scale, new JoglCoordinates_ARToolKit(), true);
 
 				// 髪の毛が足より下にあるので、地面に足をつけようとするとこうなる。

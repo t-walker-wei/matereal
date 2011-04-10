@@ -1,34 +1,30 @@
 /*
- * PROJECT: NyARToolkit JOGL utilities.
- * --------------------------------------------------------------------------------
- * This work is based on the original ARToolKit developed by
- *   Hirokazu Kato
- *   Mark Billinghurst
- *   HITLab, University of Washington, Seattle
- * http://www.hitl.washington.edu/artoolkit/
+ * PROJECT: napkit at http://mr.digitalmuseum.jp/
+ * ----------------------------------------------------------------------------
  *
- * The NyARToolkit is Java edition ARToolKit class library.
- * Copyright (C)2008-2009 Ryo Iizuka
+ * This file is part of NyARToolkit Application Toolkit.
  *
- * This program is free software: you can redistribute it and/or modify
+ * NyARToolkit Application Toolkit, or simply "napkit",
+ * is a simple wrapper library for NyARToolkit.
+ *
+ * ----------------------------------------------------------------------------
+ *
+ * License version: GPL 3.0
+ *
+ * napkit is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * napkit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For further information please contact.
- *	http://nyatla.jp/nyatoolkit/
- *	<airmail(at)ebony.plala.or.jp> or <nyatla(at)nyatla.jp>
- *
+ * along with napkit. If not, see <http://www.gnu.org/licenses/>.
  */
-package jp.digitalmuseum.jogl;
+package jp.digitalmuseum.napkit;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -36,17 +32,13 @@ import java.nio.IntBuffer;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
-import jp.digitalmuseum.napkit.NapDetectionResult;
-import jp.digitalmuseum.napkit.NapMarkerDetector;
-import jp.digitalmuseum.napkit.NapUtils;
-
-public class JoglUtils {
+public class NapJoglUtils {
 	public GLU glu;
 	private GL gl;
 	private double[] cameraProjectionMatrix = new double[16];
 	private double[] modelViewMatrix = new double[16];
 
-	public JoglUtils(GL gl) {
+	public NapJoglUtils(GL gl) {
 		this.gl = gl;
 		this.glu = new GLU();
 	}

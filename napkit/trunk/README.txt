@@ -1,12 +1,12 @@
 NyARToolkit Application Toolkit - napkit
-Copyright (C) 2009-2010 Jun KATO
+Copyright (C) 2009-2011 Jun KATO
 
-version 1.0.2
+version 1.1.0
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 NyARToolkit Application Toolkit, or simply "napkit", is a simple
 wrapper library for NyARToolkit.
-It uses NyARToolkit 2.3.1 for marker detection,
+It uses NyARToolkit 2.5.2 for marker detection,
 and allows to detect markers in a very smart way.
 
 "napkit" is distributed under GNU GPLv3.
@@ -31,7 +31,6 @@ of eliminated packages and classes is shown below:
 	jp/nyatla/nyartoolkit/nyidmarker/
 	jp/nyatla/nyartoolkit/nyidmarker/data/
 	jp/nyatla/nyartoolkit/processor/
-	jp/nyatla/nyartoolkit/core/transmat/
 	jp/nyatla/nyartoolkit/utils/
 
 The official site of NyARToolkit may also be helpful for you.

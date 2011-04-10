@@ -1,5 +1,5 @@
 NyARToolkit Application Toolkit - napkit
-Copyright (C) 2009-2010 Jun KATO
+Copyright (C) 2009-2011 Jun KATO
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
 
@@ -8,7 +8,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 NyARToolkit Application Toolkit - napkit
-Copyright (C) 2009-2010 Jun KATO
+Copyright (C) 2009-2011 Jun KATO
 
 このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェア財団によって発行されたGNU 一般公衆利用許諾書(バージョン3か、 それ以降のバージョンのうちどれか)が定める条件の下で再頒布または改変することができます。
 

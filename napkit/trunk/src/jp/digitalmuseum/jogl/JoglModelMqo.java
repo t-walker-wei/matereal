@@ -1,3 +1,29 @@
+/*
+ * PROJECT: napkit at http://mr.digitalmuseum.jp/
+ * ----------------------------------------------------------------------------
+ *
+ * This file is part of NyARToolkit Application Toolkit.
+ *
+ * NyARToolkit Application Toolkit, or simply "napkit",
+ * is a simple wrapper library for NyARToolkit.
+ *
+ * ----------------------------------------------------------------------------
+ *
+ * License version: GPL 3.0
+ *
+ * napkit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * napkit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with napkit. If not, see <http://www.gnu.org/licenses/>.
+ */
 package jp.digitalmuseum.jogl;
 
 import java.io.IOException;
@@ -13,7 +39,10 @@ import javax.media.opengl.GL;
 
 import jp.digitalmuseum.utils.MixedDataReader;
 
-public class JoglModelMetasequoia extends JoglModelBase {
+/**
+ * Metasequoia 3D model file (*.mqo) loader for Java OpenGL (JOGL.)
+ */
+public class JoglModelMqo extends JoglModel {
 	private URL url;
 
 	private static final Field[] materialFields = MqoMaterial.class.getDeclaredFields();
@@ -24,53 +53,63 @@ public class JoglModelMetasequoia extends JoglModelBase {
 		try {
 			return new URL(url);
 		} catch (MalformedURLException e) {
-			return null;
+			try {
+				return new URL("file:"+url);
+			} catch (MalformedURLException e1) {
+				return null;
+			}
 		}
 	}
 
-	public JoglModelMetasequoia(GL gl, String url) {
-		this(gl, null, createURL(url));
+	public JoglModelMqo(GL gl, String url) {
+		this(gl, createURL(url));
 	}
 
-	public JoglModelMetasequoia(GL gl, String url, float scale) {
-		this(gl, null, createURL(url), scale);
+	public JoglModelMqo(GL gl, String url, float scale) {
+		this(gl, createURL(url), scale);
 	}
 
-	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url) {
-		this(gl, textureManager, url, 1.0f);
+	public JoglModelMqo(GL gl, URL url) {
+		this(gl, url, null);
 	}
 
-	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url, float scale) {
-		this(gl, textureManager, url, scale, new JoglCoordinates_ARToolKit());
+	public JoglModelMqo(GL gl, URL url, float scale) {
+		this(gl, url, null, scale);
 	}
 
-	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url, float scale, JoglCoordinates coordinates) {
-		this(gl, textureManager, url, scale, coordinates, false);
+	public JoglModelMqo(GL gl, URL url, JoglTextureManager textureManager) {
+		this(gl, url, textureManager, 1.0f);
+	}
+
+	public JoglModelMqo(GL gl, URL url, JoglTextureManager textureManager, float scale) {
+		this(gl, url, textureManager, scale, null);
+	}
+
+	public JoglModelMqo(GL gl, URL url, JoglTextureManager textureManager, float scale, JoglCoordinates coordinates) {
+		this(gl, url, textureManager, scale, coordinates, false);
 	}
 
 	/**
-	 * 読み込み処理を実行する。
+	 * Default constructor.
 	 *
 	 * @param gl
-	 *            OpenGLコマンド群をカプセル化したクラス
+	 *            OpenGL object.
+	 * @param url
+	 *            URL object which locates a MQO file to load.
 	 * @param textureManager
-	 *            テクスチャ管理クラス
-	 * @param mqoFile
-	 *            読み込みデータ
+	 *            JoglTextureManager for managing textures. Create new one inside the instance if this parameter is null.
 	 * @param scale
-	 *            モデルの倍率
+	 *            Scale for the model.
 	 * @param coordinates
-	 *            表示座標情報クラス
-	 * @param isUseVBO
-	 *            頂点配列バッファを使用するかどうか
-	 * @throws JoglException
+	 *            JoglCoordinates for managing coordinates.
+	 * @param isVboEnabled
+	 *            Whether to use VBO or not.
 	 */
-	public JoglModelMetasequoia(GL gl, TextureManager textureManager, URL url, float scale, JoglCoordinates coordinates, boolean isUseVBO) {
+	public JoglModelMqo(GL gl, URL url, JoglTextureManager textureManager, float scale, JoglCoordinates coordinates, boolean isUseVBO) {
 		super(gl, textureManager, coordinates, isUseVBO);
 
 		this.url = url;
 
-		// Metasequoia は表面からみた頂点の並びは右回り
 		frontFace = GL.GL_CW;
 
 		// Load MQO file.
@@ -153,21 +192,12 @@ public class JoglModelMetasequoia extends JoglModelBase {
 		joglObjects = glObjects.toArray(new JoglObject[0]);
 	}
 
-	/**
-	 * 描画用オブジェクト情報を作成する
-	 *
-	 * @param materials
-	 *            MQOファイルから読み込んだマテリアル情報配列
-	 * @param object
-	 *            MQOファイルのオブジェクト情報
-	 * @return 描画用オブジェクト情報
-	 */
 	private JoglObject makeGLObject(List<MqoMaterial> materials, MqoObject object) {
 		JoglObject glObject = null;
 		List<JoglMaterial> glMaterials = new ArrayList<JoglMaterial>();
-		Point[] vn = vNormal(object);
+		Point[] vertexNormals = calcVertexNormals(object);
 		for (int i = 0; i < materials.size(); i++) {
-			JoglMaterial glMaterial = makeGLMaterial(materials.get(i), i, object, vn);
+			JoglMaterial glMaterial = makeGLMaterial(materials.get(i), i, object, vertexNormals);
 			if (glMaterial != null) {
 				glMaterials.add(glMaterial);
 			}
@@ -181,7 +211,7 @@ public class JoglModelMetasequoia extends JoglModelBase {
 		glObject.isVisible = (object.visible != 0);
 		glObject.minPos = new Point(object.minPos);
 		glObject.maxPos = new Point(object.maxPos);
-		if (!isUseVBO) {
+		if (!isVboEnabled) {
 			return glObject;
 		}
 		glObject.vboIds = new int[glObject.materials.length];
@@ -196,19 +226,6 @@ public class JoglModelMetasequoia extends JoglModelBase {
 		return glObject;
 	}
 
-	/**
-	 * 描画用マテリアル情報をMQOデータから作成
-	 *
-	 * @param material
-	 *            MQOファイルから読み込んだマテリアル情報
-	 * @param materialIndex
-	 *            MQOファイルのマテリアル番号
-	 * @param object
-	 *            MQOファイルのオブジェクト情報
-	 * @param vertexNormals
-	 *            頂点法線配列
-	 * @return 描画用マテリアル情報
-	 */
 	private JoglMaterial makeGLMaterial(MqoMaterial material, int materialIndex, MqoObject object, Point[] vertexNormals) {
 		JoglMaterial joglMaterial = new JoglMaterial();
 		List<Point> vertices = new ArrayList<Point>();
@@ -369,38 +386,39 @@ public class JoglModelMetasequoia extends JoglModelBase {
 	}
 
 	/**
-	 * 頂点法線を求める
+	 * Calculate vertex normals for the specifiedMQO object.
 	 *
-	 * @param mqoObj
-	 *            読み込んだMQOデータ
-	 * @return 頂点法線
+	 * @param mqoObject
+	 *            Loaded MQO object.
+	 * @return Normal vectors for the face of the object.
 	 */
-	private Point[] vNormal(MqoObject mqoObj) {
-		Point[] ret = null;
-		Point sn = null;
+	private Point[] calcVertexNormals(MqoObject mqoObject) {
+		Point[] normalVectors = new Point[mqoObject.vertex.length];
 
-		// 頂点に接している面の法線を頂点法線に足し込んでいく
-		ret = new Point[mqoObj.vertex.length];
-		for (int f = 0; f < mqoObj.face.length; f++) {
-			sn = calcNormal(mqoObj.vertex, mqoObj.face[f].V[0],
-					mqoObj.face[f].V[1], mqoObj.face[f].V[2]);
-			if (sn != null) {
+		// To calculate vertex normal, sum up surface normals around the vertex.
+		for (int f = 0; f < mqoObject.face.length; f++) {
+			Point surfaceNormal = calcNormal(
+					mqoObject.vertex,
+					mqoObject.face[f].V[0],
+					mqoObject.face[f].V[1],
+					mqoObject.face[f].V[2]);
+			if (surfaceNormal != null) {
 				for (int i = 0; i < 3; i++) {
-					if (ret[mqoObj.face[f].V[i]] == null) {
-						ret[mqoObj.face[f].V[i]] = new Point(0, 0, 0);
+					if (normalVectors[mqoObject.face[f].V[i]] == null) {
+						normalVectors[mqoObject.face[f].V[i]] = new Point(0, 0, 0);
 					}
-					ret[mqoObj.face[f].V[i]].add(sn);
+					normalVectors[mqoObject.face[f].V[i]].add(surfaceNormal);
 				}
 			}
 		}
 
-		// 正規化
-		for (int v = 0; v < ret.length; v++) {
-			if (ret[v] != null) {
-				ret[v].normalize();
+		// Normalize the vectors.
+		for (int v = 0; v < normalVectors.length; v++) {
+			if (normalVectors[v] != null) {
+				normalVectors[v].normalize();
 			}
 		}
-		return ret;
+		return normalVectors;
 	}
 
 	private void parseMaterialChunk(MixedDataReader mdr, List<MqoMaterial> materials) throws IOException {
@@ -682,24 +700,10 @@ public class JoglModelMetasequoia extends JoglModelBase {
 		}
 	}
 
-	/**
-	 *
-	 * @param line
-	 * @param j
-	 * @return
-	 */
 	private int skipQuotedString(String line, int j) {
 		return skipQuotedString(line, j, false, null);
 	}
 
-	/**
-	 *
-	 * @param line
-	 * @param j
-	 * @param multipleString
-	 * @param delimiter
-	 * @return
-	 */
 	private int skipQuotedString(String line, int j, boolean multipleString, String delimiter) {
 		if (line.charAt(j) == '"') {
 			while (true) {

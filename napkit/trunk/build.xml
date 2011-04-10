@@ -7,12 +7,17 @@
 
 	<!-- Software version -->
 	<property name="napkit.version" value="1.1.0" />
+	<property name="mqoloader.version" value="1.0.0" />
 
 	<!-- Dependent class pathes -->
 	<property name="napkit-classpath" value="../matereal/${matereal-jar.dir}${matereal-jar.name};${capture};${connector};${jogl}" />
 
 	<!-- Source directory -->
 	<property name="napkit-src.dir" value="src" />
+
+	<!-- MQO loader classes and source codes -->
+	<property name="mqoloader.classes" value="jp/digitalmuseum/jogl/*.class jp/digitalmuseum/utils/MixedDataReader.class" />
+	<property name="mqoloader.codes" value="jp/digitalmuseum/jogl/*.java jp/digitalmuseum/utils/MixedDataReader.java" />
 
 	<!-- NyARToolkit directory -->
 	<property name="nyar-src.dir" value="lib/NyARToolkit-2.5.2/src" />
@@ -29,9 +34,11 @@
 	<property name="napkit-lib.dir" value="lib/" />
 	<property name="napkit-jar.dir" value="${napkit-dist.dir}${napkit-lib.dir}" />
 	<property name="napkit-jar.name" value="napkit-${napkit.version}.jar" />
+	<property name="mqoloader-jar.name" value="mqoloader-${mqoloader.version}.jar" />
 
 	<!-- Zip file name -->
 	<property name="napkit-zip.name" value="napkit-${napkit.version}.zip" />
+	<property name="mqoloader-zip.name" value="mqoloader-${mqoloader.version}.zip" />
 
 	<!-- ****Targets**** -->
 
@@ -52,11 +59,29 @@
 		<jar jarfile="${napkit-jar.dir}${napkit-jar.name}">
 			<fileset dir="${napkit-classes.dir}" includes="**/*.class" />
 			<fileset dir="${nyar-classes.dir}" includes="**/*.class" />
-			<!--
 			<fileset dir="${napkit-classes.dir}" includes="**/*.java" />
 			<fileset dir="${napkit-src.dir}" includes="**/*.java" />
 			<fileset dir="${nyar-src.dir}" includes="**/*.java" />
-			-->
+		</jar>
+	</target>
+
+	<!-- Zip -->
+	<target name="mqoloader-zip" depends="mqoloader-jar">
+		<zip destfile="${napkit-jar.dir}${mqoloader-zip.name}">
+			<fileset file="${napkit-jar.dir}${mqoloader-jar.name}" />
+			<fileset dir="./">
+				<include name="LICENSE.txt"/>
+				<include name="README_mqoloader.txt"/>
+			</fileset>
+		</zip>
+	</target>
+
+	<!-- Jar -->
+	<target name="mqoloader-jar" depends="napkit-compile, napkit-extract">
+		<mkdir dir="${napkit-jar.dir}"/>
+		<jar jarfile="${napkit-jar.dir}${mqoloader-jar.name}">
+			<fileset dir="${napkit-classes.dir}" includes="${mqoloader.classes}" />
+			<fileset dir="${napkit-src.dir}" includes="${mqoloader.codes}" />
 		</jar>
 	</target>
 
