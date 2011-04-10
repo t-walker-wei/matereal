@@ -43,20 +43,6 @@ public class NapJoglUtils {
 		this.glu = new GLU();
 	}
 
-	public static boolean isExtensionSupported(GL gl, String targetExtension) {
-		String extensions = gl.glGetString(GL.GL_EXTENSIONS);
-		int p;
-		while ((p = extensions.indexOf(targetExtension)) != -1) {
-			extensions = extensions.substring(p);
-			String[] s = extensions.split(" ", 2);
-			if (s[0].trim().equals(targetExtension)) {
-				return true;
-			}
-			extensions = s[1];
-		}
-		return false;
-	}
-
 	/**
 	 * Show background image.
 	 *

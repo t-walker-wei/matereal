@@ -30,8 +30,6 @@ import java.nio.ByteBuffer;
 
 import javax.media.opengl.GL;
 
-import jp.digitalmuseum.napkit.NapJoglUtils;
-
 /**
  * Base class for holding a three-dimensional model object for JOGL.
  */
@@ -77,7 +75,7 @@ public class JoglModel {
 		}
 
 		if (isVboEnabled) {
-			this.isVboEnabled = NapJoglUtils.isExtensionSupported(gl, "GL_ARB_vertex_buffer_object");
+			this.isVboEnabled = isExtensionSupported(gl, "GL_ARB_vertex_buffer_object");
 		}
 
 		frontFace = GL.GL_CCW;
@@ -400,6 +398,26 @@ public class JoglModel {
 			sb.append(array[i]);
 			if (i != array.length - 1) sb.append(" ");
 		}
+	}
+
+	/**
+	 * Returns whether current OpenGL implementation supports the specified extension.
+	 * @param gl OpenGL object
+	 * @param targetExtension Name of OpenGL extension
+	 * @return Whether current OpenGL implementation supports the specified extension.
+	 */
+	public static boolean isExtensionSupported(GL gl, String targetExtension) {
+		String extensions = gl.glGetString(GL.GL_EXTENSIONS);
+		int p;
+		while ((p = extensions.indexOf(targetExtension)) != -1) {
+			extensions = extensions.substring(p);
+			String[] s = extensions.split(" ", 2);
+			if (s[0].trim().equals(targetExtension)) {
+				return true;
+			}
+			extensions = s[1];
+		}
+		return false;
 	}
 
 	/**
