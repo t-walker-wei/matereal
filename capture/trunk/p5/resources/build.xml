@@ -42,7 +42,7 @@
 	<property name="libraryName"  value="CaptureDS"/>
 
 <!-- #### (8) give your library a name. edit value.   #### -->
-	<property name="versionNumber"  value="1.0.0"/>
+	<property name="versionNumber"  value="2011-04-06"/>
 
 <!-- #### (9) your contact url. edit value. #### -->
 	<property name="yourLink"  value="http://digitalmuseum.jp/" />
@@ -148,7 +148,7 @@
  	<javadoc bottom="processing library ${libraryName} by ${author}. ${copyright}"
  			 encoding="UTF-8"
 			 charset="UTF-8"
- 			 classpath="${libraryClasspath}/core.jar"
+ 			 classpath="${libraryClasspath}/core.jar;${libraryClasspath}/../dsj/dsj.jar"
  			 destdir="${reference}"
  			 verbose="false"
  			 stylesheetfile="resources/stylesheet.css"
