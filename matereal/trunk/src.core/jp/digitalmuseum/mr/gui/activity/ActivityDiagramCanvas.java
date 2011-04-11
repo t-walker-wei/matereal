@@ -396,7 +396,7 @@ public class ActivityDiagramCanvas extends PCanvas implements
 					pDummyNode.setDepth(d + 1);
 					PNodeAbstractImpl pDummyNode2 = new PDummyNode(source);
 					pDummyNode.addChild(pDummyNode2);
-					pDummyNode2.setDepth(depth - 1);
+					pDummyNode2.setDepth(depth);
 					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,
 							pDummyNode));
 					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,
@@ -450,7 +450,7 @@ public class ActivityDiagramCanvas extends PCanvas implements
 		s = sourcePNode.localToGlobal(s);
 		PNodeAbstractImpl destinationPNode = pLineNodeAbstractImpl
 				.getDestinationPNode();
-		e.setLocation(000, 35);
+		e.setLocation(0, 35);
 		e = destinationPNode.localToGlobal(e);
 		pLineNodeAbstractImpl.setLine(s, e);
 	}
