@@ -36,7 +36,10 @@ public class SplayTree<T> {
 			root = new BinaryNode<T>(key);
 			return;
 		}
+		// System.out.println("insert: "+key);
+		// System.out.print(size());
 		splay(key);
+		// System.out.println(" "+size());
 		if ((c = comparator.compare(key, root.key)) == 0) {
 			// throw new DuplicateItemException(x.toString());
 			return;
@@ -45,16 +48,16 @@ public class SplayTree<T> {
 		if (c < 0) {
 			n.left = root.left;
 			n.right = root;
+			root.size -= size(root.left);
 			root.left = null;
 		} else {
 			n.right = root.right;
 			n.left = root;
+			root.size -= size(root.right);
 			root.right = null;
 		}
+		n.size = size(n.left) + size(n.right);
 		root = n;
-		root.size = 1
-				+ (root.left == null ? 0 : root.left.size)
-				+ (root.right == null ? 0 : root.right.size);
 	}
 
 	/**
@@ -193,11 +196,13 @@ public class SplayTree<T> {
 		return node == null ? 0 : node.size;
 	}
 
-	/*
+	/**
+	 * Doesn't work well...
+	 * @return size of this tree.
+	 */
 	public int size() {
 		return size(root);
 	}
-	*/
 
 	private void toString(BinaryNode<T> p, StringBuilder sb) {
 		if (p == null) {
@@ -244,20 +249,32 @@ public class SplayTree<T> {
 				// Rotate right
 				if (comparator.compare(key, t.left.key) < 0) {
 					y = t.left;
+
 					t.left = y.right;
+					t.size -= 1 + size(y.left);
+
 					y.right = t;
-					t.size = size(t.left) + size(t.right) + 1;
-					y.size = size(y.left) + size(t) + 1;
+					y.size += 1 + size(t.right);
+
 					t = y;
+
 					if (t.left == null) {
 						break;
 					}
 				}
 
 				// Link right
+				int diff = -size(rightTreeMin.left) + size(t) - size(t.left);
+				BinaryNode<T> n = header.left;
+				if (n != null) {
+					while ((n = n.left) != rightTreeMin && n != null) {
+						n.size += diff;
+					}
+				}
+				rightTreeMin.size += diff;
 				rightTreeMin.left = t;
-				rightTreeMin.size = size(t) + size(rightTreeMin.right) + 1;
 				rightTreeMin = t;
+				// rightTreeMin.left will be overwritten in the next call of "Link right"
 				t = t.left;
 			} else if (comparator.compare(key, t.key) > 0) {
 				if (t.right == null) {
@@ -267,10 +284,13 @@ public class SplayTree<T> {
 				// Rotate left
 				if (comparator.compare(key, t.right.key) > 0) {
 					y = t.right;
+
 					t.right = y.left;
+					t.size -= 1 + size(y.right);
+
 					y.left = t;
-					t.size = size(t.left) + size(t.right) + 1;
-					y.size = size(t) + size(y.right) + 1;
+					y.size += 1 + size(t.left);
+
 					t = y;
 					if (t.right == null) {
 						break;
@@ -278,24 +298,37 @@ public class SplayTree<T> {
 				}
 
 				// Link left
+				int diff = -size(leftTreeMax.right) + size(t) - size(t.right);
+				BinaryNode<T> n = header.right;
+				if (n != null) {
+					while ((n = n.right) != leftTreeMax && n != null) {
+						n.size += diff;
+					}
+				}
+				leftTreeMax.size += diff;
 				leftTreeMax.right = t;
-				leftTreeMax.size = size(leftTreeMax.left) + size(t) + 1;
 				leftTreeMax = t;
+				// leftTreeMax.right will be overwritten in the next call of "Link right"
 				t = t.right;
 			} else {
 				break;
 			}
 		}
 
-		// Assemble
+		// Reassemble
+
+		leftTreeMax.size -= size(leftTreeMax.right);
 		leftTreeMax.right = t.left;
-		leftTreeMax.size = size(leftTreeMax.left) + size(leftTreeMax.right) + 1;
+		leftTreeMax.size += size(t.left);
+
+		rightTreeMin.size -= size(rightTreeMin.left);
 		rightTreeMin.left = t.right;
-		rightTreeMin.size = size(rightTreeMin.left) + size(rightTreeMin.right) + 1;
+		rightTreeMin.size += size(t.right);
+
 		t.left = header.right;
 		t.right = header.left;
+		t.size = size(header.left) + size(header.right) + 1;
 		root = t;
-		root.size = size(root.left) + size(root.right) + 1;
 	}
 
 	// test code stolen from Weiss
@@ -305,21 +338,23 @@ public class SplayTree<T> {
 				return o1 - o2;
 			}
 		});
-		final int NUMS = 40000;
-		final int GAP = 307;
+		final int NUMS = 200;
+		final int GAP = 3;
 
 		System.out.println("Checking... (no bad output means success)");
 
-		int idx = 0;
+		// int idx = 0;
 		for (int i = GAP; i != 0; i = (i + GAP) % NUMS) {
+			/*
 			if ((idx ++ > 120) && (idx < 140)) {
-				//System.out.println(idx +" " +t.size());
+				System.out.println(idx +" " +t.size());
 			}
+			*/
 			t.insert(i);
 		}
 		System.out.println("Inserts complete");
 		// System.out.println(t.size());
-		System.out.println(idx);
+		// System.out.println(idx);
 
 		for (int i = 1; i < NUMS; i += 2) {
 			t.remove(i);
