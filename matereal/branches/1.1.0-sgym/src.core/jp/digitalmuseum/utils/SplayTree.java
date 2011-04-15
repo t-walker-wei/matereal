@@ -1,19 +1,25 @@
 package jp.digitalmuseum.utils;
 
 import java.util.Comparator;
+import java.util.Random;
+import java.util.Stack;
 
 /**
  * A tow-down splay tree based on Danny Sleator's implementation.
  *
- * @param <T> Type of elements of this tree.
+ * @param <T> Type of elements of the tree.
  * @see {@link ftp://ftp.cs.cmu.edu/user/sleator/splaying/SplayTree.java}
  */
-public class SplayTree<T> {
+public class SplayTree<T> implements Cloneable {
 	private BinaryNode<T> root;
 	private Comparator<T> comparator;
 
 	public SplayTree(Comparator<T> comparator) {
 		this(null, comparator);
+	}
+
+	public SplayTree(SplayTree<T> splayTree) {
+		this(splayTree.root, splayTree.comparator);
 	}
 
 	public SplayTree(BinaryNode<T> root, Comparator<T> comparator) {
@@ -26,25 +32,23 @@ public class SplayTree<T> {
 	 *
 	 * @param x
 	 *            the item to insert.
-	 * @throws DuplicateItemException
-	 *             if x is already present.
+	 * @return
+	 *            false if x is already present, otherwise true.
 	 */
-	public void insert(T key) {
-		BinaryNode<T> n;
-		int c;
+	public boolean insert(T x) {
 		if (root == null) {
-			root = new BinaryNode<T>(key);
-			return;
+			root = new BinaryNode<T>(x);
+			return true;
 		}
-		// System.out.println("insert: "+key);
-		// System.out.print(size());
-		splay(key);
-		// System.out.println(" "+size());
-		if ((c = comparator.compare(key, root.key)) == 0) {
-			// throw new DuplicateItemException(x.toString());
-			return;
+		splay(x);
+
+		int c;
+		if ((c = comparator.compare(x, root.key)) == 0) {
+			return false;
 		}
-		n = new BinaryNode<T>(key);
+
+		BinaryNode<T> n = new BinaryNode<T>(x);
+		n.size = size(root) + 1;
 		if (c < 0) {
 			n.left = root.left;
 			n.right = root;
@@ -56,8 +60,8 @@ public class SplayTree<T> {
 			root.size -= size(root.right);
 			root.right = null;
 		}
-		n.size = size(n.left) + size(n.right);
 		root = n;
+		return true;
 	}
 
 	/**
@@ -68,11 +72,10 @@ public class SplayTree<T> {
 	 * @throws ItemNotFoundException
 	 *             if x is not found.
 	 */
-	public void remove(T key) {
-		BinaryNode<T> x;
-		splay(key);
+	public void remove(T x) {
+		splay(x);
 
-		if (comparator.compare(key, root.key) != 0) {
+		if (comparator.compare(x, root.key) != 0) {
 			// throw new ItemNotFoundException(x.toString());
 			return;
 		}
@@ -81,10 +84,11 @@ public class SplayTree<T> {
 		if (root.left == null) {
 			root = root.right;
 		} else {
-			x = root.right;
+			BinaryNode<T> n = root.right;
 			root = root.left;
-			splay(key);
-			root.right = x;
+			splay(x);
+			root.right = n;
+			root.size += size(n);
 		}
 	}
 
@@ -92,95 +96,138 @@ public class SplayTree<T> {
 	 * Find the smallest item in the tree.
 	 */
 	public T findMin() {
-		BinaryNode<T> x = root;
 		if (root == null) {
 			return null;
 		}
-		while (x.left != null) {
-			x = x.left;
+		BinaryNode<T> n = root;
+		while (n.left != null) {
+			n = n.left;
 		}
-		splay(x.key);
-		return x.key;
+		splay(n.key);
+		return n.key;
 	}
 
 	/**
 	 * Find the largest item in the tree.
 	 */
 	public T findMax() {
-		BinaryNode<T> x = root;
-		if (root == null)
+		if (root == null) {
 			return null;
-		while (x.right != null)
-			x = x.right;
-		splay(x.key);
-		return x.key;
+		}
+		BinaryNode<T> n = root;
+		while (n.right != null) {
+			n = n.right;
+		}
+		splay(n.key);
+		return n.key;
 	}
 
 	/**
 	 * Find an item in the tree.
+	 *
+	 * @param x
+	 *            the item to find.
+	 * @return the item if found, otherwise null.
 	 */
-	public T find(T key) {
+	public T find(T x) {
 		if (root == null) {
 			return null;
 		}
-		splay(key);
-		if (comparator.compare(root.key, key) != 0) {
+		splay(x);
+		if (comparator.compare(root.key, x) != 0) {
 			return null;
 		}
 		return root.key;
 	}
 
-	public SplayTree<T> split(T key) {
+	/**
+	 * Split the tree with the specified index.
+	 *
+	 * @param index
+	 *            index of the separator item.
+	 * @return  a new splay tree with items of the values greater than the item of the specified index.
+	 */
+	public SplayTree<T> split(int index) {
+		return splitByValue(get(index));
+	}
+
+	/**
+	 * Split the tree with the specified value.
+	 *
+	 * @param x
+	 *            the separator item.
+	 * @return a new splay tree with items of greater values.
+	 */
+	public SplayTree<T> splitByValue(T x) {
 		if (root == null) {
 			return null;
 		}
-		splay(key);
+		splay(x);
 		SplayTree<T> splayTree = new SplayTree<T>(root.right, comparator);
+		root.size -= size(root.right);
 		root.right = null;
 		return splayTree;
 	}
 
-	public SplayTree<T> split(int index) {
-		return null;
-	}
-
+	/**
+	 * Find an item which has the specified index.
+	 *
+	 * @param index
+	 *            index of the item to find.
+	 * @return the item if found, otherwise null.
+	 */
 	public T get(int index) {
-		return get(root, index);
+		BinaryNode<T> n = root;
+		while (true) {
+			if (n == null) {
+				return null;
+			}
+			int size = size(n.left);
+			if (size < index) {
+				n = n.left;
+				index -= size;
+				continue;
+			} else if (size > index) {
+				n = n.right;
+				continue;
+			} else {
+				return n.key;
+			}
+		}
 	}
 
-	private T get(BinaryNode<T> root, int index) {
-		if (index == 0) {
-			return root.key;
-		}
-		T key = get(root.left, index - 1);
-		if (key != null) {
-			return key;
-		}
-		return get(root.right, index - 1 - root.left.size);
-	}
-
-	public void join(SplayTree<T> splayTree) {
+	/**
+	 * Merge two splay trees.
+	 *
+	 * @param splayTree
+	 *            a splay tree to be merged.
+	 * @return whether the operation is succeeded or not.
+	 */
+	public boolean join(SplayTree<T> splayTree) {
 		if (splayTree == null || splayTree.root == null) {
-			return;
+			return false;
 		}
 		if (root == null) {
 			root = splayTree.root;
-			return;
+			return true;
 		}
 
 		splay(splayTree.root.key);
 
 		if (root.left == null) {
+			root.size += splayTree.size();
 			root.left = splayTree.root;
-			return;
+			return true;
 		}
 
 		if (root.right == null) {
+			root.size += splayTree.size();
 			root.right = splayTree.root;
-			return;
+			return true;
 		}
 
 		/* root.left != null && root.right != null */
+		return false;
 	}
 
 	/**
@@ -192,36 +239,50 @@ public class SplayTree<T> {
 		return root == null;
 	}
 
+	public void clear() {
+		root = null;
+	}
+
 	private int size(BinaryNode<T> node) {
 		return node == null ? 0 : node.size;
 	}
 
 	/**
-	 * Doesn't work well...
-	 * @return size of this tree.
+	 * Returns size of the tree.
+	 *
+	 * @return size of the tree.
 	 */
 	public int size() {
 		return size(root);
 	}
 
-	private void toString(BinaryNode<T> p, StringBuilder sb) {
-		if (p == null) {
-			return;
-		}
-		toString(p.left, sb);
-		sb.append(p.key);
-		sb.append(" ");
-		toString(p.right, sb);
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		toString(root, sb);
+		sb.append("[ ");
+		Stack<BinaryNode<T>> stack = new Stack<BinaryNode<T>>();
+		BinaryNode<T> n = root;
+		while (true) {
+			while (n != null) {
+				stack.push(n);
+				n = n.left;
+			}
+			if (stack.isEmpty()) {
+				break;
+			}
+			n = stack.pop();
+			sb.append(n.key.toString());
+			sb.append(" ");
+			n = n.right;
+		}
+		sb.append("]");
 		return sb.toString();
 	}
 
-	private BinaryNode<T> header = new BinaryNode<T>(null); // For splay
+	/**
+	 * Temporary node used for splay operation.
+	 */
+	private BinaryNode<T> header = new BinaryNode<T>(null);
 
 	/**
 	 * Internal method to perform a top-down splay.
@@ -236,8 +297,16 @@ public class SplayTree<T> {
 	 * root. This property is used in the delete() method.
 	 */
 	private void splay(T key) {
-		BinaryNode<T> leftTreeMax, rightTreeMin, t, y;
-		leftTreeMax = rightTreeMin = header;
+		/**
+		 * Reference to the leaf which holds the maximum value in the left tree.
+		 */
+		BinaryNode<T> l;
+		/**
+		 * Reference to the leaf which holds the minimum value in the right tree.
+		 */
+		BinaryNode<T> r;
+		BinaryNode<T> t, y;
+		l = r = header;
 		header.left = header.right = null;
 		t = root;
 		for (;;) {
@@ -264,17 +333,16 @@ public class SplayTree<T> {
 				}
 
 				// Link right
-				int diff = -size(rightTreeMin.left) + size(t) - size(t.left);
-				BinaryNode<T> n = header.left;
-				if (n != null) {
-					while ((n = n.left) != rightTreeMin && n != null) {
-						n.size += diff;
-					}
+				t.size -= size(t.left);
+				int diff = size(t);
+				BinaryNode<T> n = header;
+				while ((n = n.left) != r && n != null) {
+					n.size += diff;
 				}
-				rightTreeMin.size += diff;
-				rightTreeMin.left = t;
-				rightTreeMin = t;
-				// rightTreeMin.left will be overwritten in the next call of "Link right"
+				r.size += diff;
+				r.left = t;
+				r = t;
+				// r.left will be overwritten in the next call of "Link right"
 				t = t.left;
 			} else if (comparator.compare(key, t.key) > 0) {
 				if (t.right == null) {
@@ -298,17 +366,16 @@ public class SplayTree<T> {
 				}
 
 				// Link left
-				int diff = -size(leftTreeMax.right) + size(t) - size(t.right);
-				BinaryNode<T> n = header.right;
-				if (n != null) {
-					while ((n = n.right) != leftTreeMax && n != null) {
-						n.size += diff;
-					}
+				t.size -= size(t.right);
+				int diff = size(t);
+				BinaryNode<T> n = header;
+				while ((n = n.right) != l && n != null) {
+					n.size += diff;
 				}
-				leftTreeMax.size += diff;
-				leftTreeMax.right = t;
-				leftTreeMax = t;
-				// leftTreeMax.right will be overwritten in the next call of "Link right"
+				l.size += diff;
+				l.right = t;
+				l = t;
+				// l.right will be overwritten in the next call of "Link right"
 				t = t.right;
 			} else {
 				break;
@@ -317,13 +384,21 @@ public class SplayTree<T> {
 
 		// Reassemble
 
-		leftTreeMax.size -= size(leftTreeMax.right);
-		leftTreeMax.right = t.left;
-		leftTreeMax.size += size(t.left);
+		int diff = size(t.left);
+		BinaryNode<T> n = header;
+		while ((n = n.right) != l && n != null) {
+			n.size += diff;
+		}
+		l.size += diff;
+		l.right = t.left;
 
-		rightTreeMin.size -= size(rightTreeMin.left);
-		rightTreeMin.left = t.right;
-		rightTreeMin.size += size(t.right);
+		diff = size(t.right);
+		n = header;
+		while ((n = n.left) != r && n != null) {
+			n.size += diff;
+		}
+		r.size += diff;
+		r.left = t.right;
 
 		t.left = header.right;
 		t.right = header.left;
@@ -331,54 +406,120 @@ public class SplayTree<T> {
 		root = t;
 	}
 
-	// test code stolen from Weiss
+	@Override
+	public SplayTree<T> clone() {
+		SplayTree<T> splayTree = new SplayTree<T>(comparator);
+		if (root == null) {
+			return splayTree;
+		}
+
+		BinaryNode<T> newNode = new BinaryNode<T>();
+		BinaryNode<T> n;
+		splayTree.root = newNode;
+
+		Stack<BinaryNode<T>> newStack = new Stack<BinaryNode<T>>();
+		Stack<BinaryNode<T>> stack = new Stack<BinaryNode<T>>();
+		newStack.push(newNode);
+		stack.push(root);
+
+		while (!stack.isEmpty()) {
+			n = stack.pop();
+			newNode = newStack.pop();
+			newNode.key = n.key;
+
+			if (n.left != null) {
+				newNode.left = new BinaryNode<T>();
+				newStack.push(newNode.left);
+				stack.push(n.left);
+			}
+
+			if (n.right != null) {
+				newNode.right = new BinaryNode<T>();
+				newStack.push(newNode.right);
+				stack.push(n.right);
+			}
+		}
+		return splayTree;
+	}
+
 	public static void main(String[] args) {
 		SplayTree<Integer> t = new SplayTree<Integer>(new Comparator<Integer>() {
 			public int compare(Integer o1, Integer o2) {
 				return o1 - o2;
 			}
 		});
-		final int NUMS = 200;
-		final int GAP = 3;
+		test1(t);
+		t.clear();
+		test2(t);
+	}
 
-		System.out.println("Checking... (no bad output means success)");
+	/**
+	 * Test code stolen from Weiss.
+	 *
+	 * @param t a splay tree to be tested.
+	 */
+	private static void test1(SplayTree<Integer> t) {
+		final int NUMS = 20000;
+		final int GAP = 307;
 
-		// int idx = 0;
+		System.out.println("TEST1: Checking... (no bad output means success)");
+
+		int n = 0;
 		for (int i = GAP; i != 0; i = (i + GAP) % NUMS) {
-			/*
-			if ((idx ++ > 120) && (idx < 140)) {
-				System.out.println(idx +" " +t.size());
-			}
-			*/
+			n ++;
 			t.insert(i);
 		}
 		System.out.println("Inserts complete");
-		// System.out.println(t.size());
-		// System.out.println(idx);
 
 		for (int i = 1; i < NUMS; i += 2) {
 			t.remove(i);
 		}
 		System.out.println("Removes complete");
-		// System.out.println(t.size());
 
-		if (((Integer) (t.findMin())).intValue() != 2
-				|| ((Integer) (t.findMax())).intValue() != NUMS - 2)
+		if (t.findMin().intValue() != 2
+				|| t.findMax().intValue() != NUMS - 2) {
 			System.out.println("FindMin or FindMax error!");
+		}
 
-		for (int i = 2; i < NUMS; i += 2)
-			if (((Integer) t.find(i)).intValue() != i)
+		for (int i = 2; i < NUMS; i += 2) {
+			if (t.find(i).intValue() != i) {
 				System.out.println("Error: find fails for " + i);
+			}
+		}
 
-		for (int i = 1; i < NUMS; i += 2)
-			if (t.find(i) != null)
+		for (int i = 1; i < NUMS; i += 2) {
+			if (t.find(i) != null) {
 				System.out.println("Error: Found deleted item " + i);
+			}
+		}
+	}
+
+	/**
+	 * @param t a splay tree to be tested.
+	 */
+	private static void test2(SplayTree<Integer> t) {
+		final int NUMS = 20;
+		System.out.println("TEST2: Inserting " + NUMS + " items...");
+		int num = 0;
+		Random random = new Random();
+		for (int i = 0; i < NUMS; i ++) {
+			if (t.insert(random.nextInt(100))) {
+				num ++;
+			}
+		}
+		System.out.println("Size: " + t.size() + " (should be " + num + ")");
+		System.out.println(t.toString());
 	}
 
 	public static class BinaryNode<T> {
-		BinaryNode(T theKey) {
-			key = theKey;
+
+		BinaryNode() {
 			left = right = null;
+		}
+
+		BinaryNode(T theKey) {
+			this();
+			key = theKey;
 		}
 
 		/**
