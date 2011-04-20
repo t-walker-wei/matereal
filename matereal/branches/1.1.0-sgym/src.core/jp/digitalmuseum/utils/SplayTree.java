@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.Stack;
 
 /**
- * A tow-down splay tree based on Danny Sleator's implementation.
+ * A top-down splay tree based on Danny Sleator's implementation.
  *
  * @param <T> Type of elements of the tree.
  * @see {@link ftp://ftp.cs.cmu.edu/user/sleator/splaying/SplayTree.java}
@@ -183,12 +183,12 @@ public class SplayTree<T> implements Cloneable {
 				return null;
 			}
 			int size = size(n.left);
-			if (size < index) {
+			if (size > index) {
 				n = n.left;
-				index -= size;
 				continue;
-			} else if (size > index) {
+			} else if (size < index) {
 				n = n.right;
+				index -= size + 1;
 				continue;
 			} else {
 				return n.key;
@@ -408,6 +408,11 @@ public class SplayTree<T> implements Cloneable {
 
 	@Override
 	public SplayTree<T> clone() {
+		try {
+			super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Do nothing.
+		}
 		SplayTree<T> splayTree = new SplayTree<T>(comparator);
 		if (root == null) {
 			return splayTree;
@@ -509,6 +514,12 @@ public class SplayTree<T> implements Cloneable {
 		}
 		System.out.println("Size: " + t.size() + " (should be " + num + ")");
 		System.out.println(t.toString());
+		System.out.print("[");
+		for (int i = 0; i < t.size(); i ++) {
+			System.out.print(" ");
+			System.out.print(t.get(i));
+		}
+		System.out.println(" ]");
 	}
 
 	public static class BinaryNode<T> {

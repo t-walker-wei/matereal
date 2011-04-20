@@ -34,41 +34,50 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.activity;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 
-import jp.digitalmuseum.mr.activity.Node;
+public class DummyVertex extends Vertex {
+	private Segment segment;
+	private boolean isHead;
+	private boolean isTail;
 
-import edu.umd.cs.piccolo.nodes.PPath;
-
-public abstract class PNodeAbstractImpl extends PPath {
-	private static final long serialVersionUID = 3592199380497357141L;
-	private Node node;
-
-	public PNodeAbstractImpl(Node node) {
-		this.node = node;
-		setPaint(Color.white);
-		setStrokePaint(Color.black);
+	public DummyVertex() {
+		super(null);
+		this.segment = null;
+		this.isHead = false;
+		this.isTail = false;
 	}
 
-	void setAsInitialNode() {
-		setStroke(new BasicStroke(2f));
+	public DummyVertex(Segment segment, boolean isHead) {
+		super(null);
+		this.segment = segment;
+		this.isHead = isHead;
+		this.isTail = !isHead;
 	}
 
-	Node getNode() {
-		return node;
+	public boolean isHead() {
+		return isHead;
 	}
 
-	public void onEnter() {
-		setStrokePaint(Color.red);
-		repaint();
+	public boolean isTail() {
+		return isTail;
 	}
 
-	public void onLeave() {
-		setStrokePaint(Color.black);
-		repaint();
+	public Segment getSegment() {
+		return segment;
 	}
 
+	@Override
+	protected void appendString(StringBuilder sb) {
+		sb.append("v");
+		if (isHead) {
+			sb.append("h");
+		} else if (isTail) {
+			sb.append("t");
+		} else {
+			sb.append("d");
+		}
+		super.appendString(sb);
+	}
 }
