@@ -34,14 +34,70 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.activity;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
 import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.gui.activity.PNodeAbstractImpl;
+import jp.digitalmuseum.utils.Array;
 
-public class PDummyNode extends PNodeAbstractImpl {
-	private static final long serialVersionUID = -3443925646196477539L;
+public class Vertex extends LayerElement {
 
-	public PDummyNode(Node node) {
-		super(node);
+	private Node node;
+	private Array<Vertex> children;
+	private Array<Vertex> parents;
+	private int width = 0;
+
+	public Vertex(Node node) {
+		this.node = node;
+		children = new Array<Vertex>();
+		parents = new Array<Vertex>();
+	}
+
+	public Node getNode() {
+		return node;
+	}
+
+	public PNodeAbstractImpl getPiccoloNode() {
+		return null;
+	}
+
+	void linkChild(Vertex child) {
+		children.push(child);
+		child.parents.push(this);
+	}
+
+	void unlinkChild(Vertex child) {
+		if (children.remove(child)) {
+			child.parents.remove(this);
+		}
+	}
+
+	Array<Vertex> getParents() {
+		return new Array<Vertex>(parents);
+	}
+
+	Array<Vertex> getChildren() {
+		return new Array<Vertex>(children);
+	}
+
+	boolean hasChildren() {
+		return children.size() > 0;
+	}
+
+	void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	@Override
+	protected void appendString(StringBuilder sb) {
+		if (node != null) {
+			sb.append("vx-");
+			sb.append(node);
+		}
+		super.appendString(sb);
 	}
 }

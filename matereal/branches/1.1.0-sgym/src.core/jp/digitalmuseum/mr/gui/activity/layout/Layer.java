@@ -34,41 +34,72 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.activity;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
+import java.util.Iterator;
 
-import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.utils.Array;
 
-import edu.umd.cs.piccolo.nodes.PPath;
+public class Layer implements Iterable<LayerElement>, Cloneable {
+	private Array<LayerElement> elements;
+	private int depth;
 
-public abstract class PNodeAbstractImpl extends PPath {
-	private static final long serialVersionUID = 3592199380497357141L;
-	private Node node;
-
-	public PNodeAbstractImpl(Node node) {
-		this.node = node;
-		setPaint(Color.white);
-		setStrokePaint(Color.black);
+	public Layer(int depth) {
+		this.elements = new Array<LayerElement>();
+		setDepth(depth);
 	}
 
-	void setAsInitialNode() {
-		setStroke(new BasicStroke(2f));
+	public void setDepth(int depth) {
+		this.depth = depth;
 	}
 
-	Node getNode() {
-		return node;
+	public int getDepth() {
+		return depth;
 	}
 
-	public void onEnter() {
-		setStrokePaint(Color.red);
-		repaint();
+	public void push(LayerElement element) {
+		elements.push(element);
+		element.setDepth(depth);
 	}
 
-	public void onLeave() {
-		setStrokePaint(Color.black);
-		repaint();
+	public LayerElement get(int i) {
+		return elements.get(i);
 	}
 
+	public boolean contains(LayerElement element) {
+		return elements.contains(element);
+	}
+
+	public int size() {
+		return elements.size();
+	}
+
+	public void clear() {
+		elements.clear();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Layer ");
+		sb.append(depth);
+		sb.append(": [ ");
+		for (LayerElement e : this) {
+			e.appendString(sb);
+			sb.append(" ");
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	@Override
+	public Iterator<LayerElement> iterator() {
+		return elements.iterator();
+	}
+
+	public Layer clone() {
+		Layer layer = new Layer(depth);
+		layer.elements = new Array<LayerElement>(elements);
+		return layer;
+	}
 }

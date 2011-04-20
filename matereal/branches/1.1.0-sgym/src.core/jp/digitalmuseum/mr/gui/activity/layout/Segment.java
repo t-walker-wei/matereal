@@ -34,41 +34,38 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.activity;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 
-import jp.digitalmuseum.mr.activity.Node;
+public class Segment extends LayerElement {
+	private DummyVertex head;
+	private DummyVertex tail;
+	private Container container;
 
-import edu.umd.cs.piccolo.nodes.PPath;
-
-public abstract class PNodeAbstractImpl extends PPath {
-	private static final long serialVersionUID = 3592199380497357141L;
-	private Node node;
-
-	public PNodeAbstractImpl(Node node) {
-		this.node = node;
-		setPaint(Color.white);
-		setStrokePaint(Color.black);
+	public Segment() {
+		this.head = new DummyVertex(this, true);
+		this.tail = new DummyVertex(this, false);
 	}
 
-	void setAsInitialNode() {
-		setStroke(new BasicStroke(2f));
+	public DummyVertex getHead() {
+		return head;
 	}
 
-	Node getNode() {
-		return node;
+	public DummyVertex getTail() {
+		return tail;
 	}
 
-	public void onEnter() {
-		setStrokePaint(Color.red);
-		repaint();
+	void setContainer(Container container) {
+		this.container = container;
 	}
 
-	public void onLeave() {
-		setStrokePaint(Color.black);
-		repaint();
+	Container getContainer() {
+		return container;
 	}
 
+	@Override
+	protected void appendString(StringBuilder sb) {
+		sb.append("sg");
+		super.appendString(sb);
+	}
 }

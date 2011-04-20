@@ -34,41 +34,47 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.activity;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
+public class LayerElement {
+	private int depth = 0;
+	private double measure;
+	private int x = 0;
 
-import jp.digitalmuseum.mr.activity.Node;
-
-import edu.umd.cs.piccolo.nodes.PPath;
-
-public abstract class PNodeAbstractImpl extends PPath {
-	private static final long serialVersionUID = 3592199380497357141L;
-	private Node node;
-
-	public PNodeAbstractImpl(Node node) {
-		this.node = node;
-		setPaint(Color.white);
-		setStrokePaint(Color.black);
+	void setDepth(int depth) {
+		this.depth = depth;
 	}
 
-	void setAsInitialNode() {
-		setStroke(new BasicStroke(2f));
+	int getDepth() {
+		return depth;
 	}
 
-	Node getNode() {
-		return node;
+	void setX(int x) {
+		this.x = x;
 	}
 
-	public void onEnter() {
-		setStrokePaint(Color.red);
-		repaint();
+	public int getX() {
+		return x;
 	}
 
-	public void onLeave() {
-		setStrokePaint(Color.black);
-		repaint();
+	void setMeasure(double measure) {
+		this.measure = measure;
 	}
 
+	double getMeasure() {
+		return measure;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		appendString(sb);
+		return sb.toString();
+	}
+
+	protected void appendString(StringBuilder sb) {
+		sb.append("(");
+		sb.append(String.format("%.3f", getMeasure()));
+		sb.append(")");
+	}
 }
