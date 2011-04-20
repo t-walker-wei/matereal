@@ -51,7 +51,7 @@ import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.utils.Array;
 
 public class SugiyamaLayout {
-	private static final int NUM_SWEEPS = 2;
+	private static final int NUM_SWEEPS = 1;
 	private Map<Node, Vertex> nodeMap;
 	private Array<Layer> layers;
 
@@ -77,9 +77,12 @@ public class SugiyamaLayout {
 		doCrossingReduction();
 		doHorizontalCoordinateAssignment();
 
+		System.out.println("---- Contents ----");
 		for (Layer layer : layers) {
 			System.out.println(layer);
 		}
+		System.out.println("----- Layout -----");
+		printLayers();
 	}
 
 	/**
@@ -190,7 +193,8 @@ public class SugiyamaLayout {
 
 		for (Layer layer : layers) {
 			for (LayerElement e : layer) {
-				if (!(e instanceof Vertex)) {
+				if (!(e instanceof Vertex) ||
+						e instanceof DummyVertex) {
 					continue;
 				}
 				Vertex vertex = (Vertex) e;
@@ -311,26 +315,26 @@ public class SugiyamaLayout {
 	/**
 	 * <b>Crossing minimization</b>: minimize crossing between the two layers.
 	 *
-	 * @param layer1 vertices in the previous layer. (-> replaced by the vertices in the current layer.)
+	 * @param workingLayer vertices in the previous layer. (-> replaced by the vertices in the current layer.)
 	 * @param containers1 containers in the previous layer. (-> edited in this method.)
 	 * @param layer2 vertices and segments in the current layer. (-> re-ordered in this method.)
 	 * @param containers2 null (-> containers in the current layer.)
 	 */
 	private void minimizeCrossing(
-			Layer layer1, Array<Container> containers1,
+			Layer workingLayer, Array<Container> containers1,
 			Layer layer2, Array<Container> containers2,
 			boolean isReverse) {
 
 		/*
 		System.out.print("----Layer ");
-		System.out.print(layer1.getDepth());
+		System.out.print(workingLayer.getDepth());
 		System.out.print("->");
 		System.out.println(layer2.getDepth());
-		 */
+		*/
 
-		crStep1(layer1, containers1, isReverse);
-		// printLayer("Step1 (l"+layer1.getDepth()+"):", layer1, containers1);
-		crStep2_1(layer1, containers1);
+		crStep1(workingLayer, containers1, isReverse);
+		// printLayer("Step1 (l"+workingLayer.getDepth()+"):", workingLayer, containers1);
+		crStep2_1(workingLayer, containers1);
 		crStep2_2(layer2, tmp, isReverse);
 		// printLayer("Step2 (l"+layer2.getDepth()+"):", tmp);
 		crStep3(tmp, containers1);
@@ -339,31 +343,10 @@ public class SugiyamaLayout {
 		// printLayer("Step4 (l"+layer2.getDepth()+"):", tmp);
 
 		// crStep5(); // Step.5: Count crossings.
-		layer1.setDepth(layer2.getDepth());
-		crStep6(tmp, layer2, layer1, containers2);
+		workingLayer.setDepth(layer2.getDepth());
+		crStep6(tmp, layer2, workingLayer, containers2);
 
 		// printLayer("Step6 (l"+layer2.getDepth()+"):", layer2, containers2);
-	}
-
-	private void printLayer(String prefix, Layer layer1, Array<Container> containers1) {
-		System.out.print(prefix);
-		System.out.print(containers1.get(0));
-		for (int j = 0; j < layer1.size(); j ++) {
-			System.out.print(" ");
-			System.out.print(layer1.get(j));
-			System.out.print(" ");
-			System.out.print(containers1.get(j + 1));
-		}
-		System.out.println();
-	}
-
-	private void printLayer(String prefix, Array<LayerElement> elements) {
-		System.out.print(prefix);
-		for (LayerElement e : elements) {
-			System.out.print(" ");
-			System.out.print(e);
-		}
-		System.out.println();
 	}
 
 	/**
@@ -385,10 +368,12 @@ public class SugiyamaLayout {
 			if (vertex instanceof DummyVertex) {
 				DummyVertex dummyVertex = (DummyVertex) vertex;
 				if (isReverse ? dummyVertex.isTail() : dummyVertex.isHead()) {
-					Container nextContainer = containers1.get(i);
 					container.append(dummyVertex.getSegment());
-					container.join(nextContainer);
-					containers1.remove(i);
+					if (i < containers1.size()) {
+						Container nextContainer = containers1.get(i);
+						container.join(nextContainer);
+						containers1.remove(i --);
+					}
 					it.remove();
 				}
 			}
@@ -558,25 +543,29 @@ public class SugiyamaLayout {
 		for (LayerElement e : tmp) {
 			if (e instanceof Vertex) {
 				if (last == null) {
-					last = new Container();
+					// for (Segment s : last) layer2.push(s);
+					containers2.push(new Container());
+				} else {
 					for (Segment s : last) layer2.push(s);
 					containers2.push(last);
+					last = null;
 				}
-				last = null;
 				layer2.push(e);
 				layer1.push(e);
 			} else if (e instanceof Container) {
 				Container container = (Container) e;
 				if (last == null) {
 					last = container;
-					for (Segment s : last) layer2.push(s);
-					containers2.push(last);
 				} else {
 					last.join(container);
 				}
 			} else {
 				// Cannot happen.
 			}
+		}
+		if (last != null) {
+			for (Segment s : last) layer2.push(s);
+			containers2.push(last);
 		}
 	}
 
@@ -588,11 +577,87 @@ public class SugiyamaLayout {
 	 * </dl>
 	 */
 	private void doHorizontalCoordinateAssignment() {
-		for (Layer layer : layers) {
+
+		// Regular sweep.
+		for (int i = 0; i < layers.size(); i ++) {
+			Layer layer = layers.get(i);
 			int x = 0;
 			for (LayerElement e : layer) {
-				e.setX(x ++);
+				if (e.getX() > x) {
+					x = e.getX();
+				} else {
+					e.setX(x);
+				}
+				x ++;
 			}
+		}
+
+		// Reverse sweep.
+		for (int i = layers.size() - 1; i >= 0; i --) {
+			Layer layer = layers.get(i);
+			int x = 0;
+			for (LayerElement e : layer) {
+				if (e.getX() > x) {
+					x = e.getX();
+				} else {
+					e.setX(x);
+				}
+				x ++;
+			}
+		}
+	}
+
+	private void printLayer(String prefix, Layer layer1, Array<Container> containers1) {
+		System.out.print(prefix);
+		System.out.print(containers1.get(0));
+		for (int j = 0; j < layer1.size(); j ++) {
+			System.out.print(" ");
+			System.out.print(layer1.get(j));
+			System.out.print(" ");
+			System.out.print(containers1.get(j + 1));
+		}
+		System.out.println();
+	}
+
+	private void printLayer(String prefix, Array<LayerElement> elements) {
+		System.out.print(prefix);
+		for (LayerElement e : elements) {
+			System.out.print(" ");
+			System.out.print(e);
+		}
+		System.out.println();
+	}
+
+	private void printLayers() {
+		for (Layer layer : layers) {
+			System.out.print("Layer ");
+			System.out.print(layer.getDepth());
+			System.out.print(":");
+			int x = 0;
+			for (LayerElement e : layer) {
+				for (int i = x; i < e.getX(); i ++) {
+					System.out.print("  ");
+				}
+				System.out.print(" ");
+				if (e instanceof Vertex) {
+					if (e instanceof DummyVertex) {
+						if (((DummyVertex) e).isHead()) {
+							System.out.print("h");
+						} else
+						if (((DummyVertex) e).isTail()) {
+							System.out.print("t");
+						} else {
+							System.out.print("d");
+						}
+					} else {
+						System.out.print("v");
+					}
+				} else {
+					System.out.print("|");
+				}
+				x = e.getX() + 1;
+			}
+			System.out.println();
 		}
 	}
 }

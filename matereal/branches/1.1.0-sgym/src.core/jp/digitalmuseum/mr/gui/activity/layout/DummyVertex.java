@@ -69,6 +69,24 @@ public class DummyVertex extends Vertex {
 	}
 
 	@Override
+	public int getX() {
+		if (segment == null) {
+			return super.getX();
+		} else {
+			return segment.getX();
+		}
+	}
+
+	@Override
+	public void setX(int x) {
+		if (segment == null) {
+			super.setX(x);
+		} else {
+			segment.setX(x);
+		}
+	}
+
+	@Override
 	protected void appendString(StringBuilder sb) {
 		sb.append("v");
 		if (isHead) {
