@@ -36,48 +36,55 @@
  */
 package jp.digitalmuseum.mr.gui.activity.layout;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import jp.digitalmuseum.mr.activity.Edge;
 import jp.digitalmuseum.mr.activity.Node;
-import jp.digitalmuseum.mr.gui.activity.PNodeAbstractImpl;
-import jp.digitalmuseum.utils.Array;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout.Coordinate;
 
 public class Vertex extends LayerElement {
 
 	private Node node;
-	private Array<Vertex> children;
-	private Array<Vertex> parents;
+	private Map<Vertex, Edge> children;
+	private Map<Vertex, Edge> parents;
 	private int width = 0;
 
 	public Vertex(Node node) {
 		this.node = node;
-		children = new Array<Vertex>();
-		parents = new Array<Vertex>();
+		children = new HashMap<Vertex, Edge>();
+		parents = new HashMap<Vertex, Edge>();
 	}
 
 	public Node getNode() {
 		return node;
 	}
 
-	public PNodeAbstractImpl getPiccoloNode() {
-		return null;
+	void linkChild(Vertex child, Edge edge) {
+		children.put(child, edge);
+		child.parents.put(this, edge);
 	}
 
-	void linkChild(Vertex child) {
-		children.push(child);
-		child.parents.push(this);
-	}
-
-	void unlinkChild(Vertex child) {
-		if (children.remove(child)) {
+	Edge unlinkChild(Vertex child) {
+		Edge edge = children.remove(child);
+		if (edge != null) {
 			child.parents.remove(this);
 		}
+		return edge;
 	}
 
-	Array<Vertex> getParents() {
-		return new Array<Vertex>(parents);
+	Set<Vertex> getParents() {
+		return new HashSet<Vertex>(parents.keySet());
 	}
 
-	Array<Vertex> getChildren() {
-		return new Array<Vertex>(children);
+	public Set<Vertex> getChildren() {
+		return new HashSet<Vertex>(children.keySet());
+	}
+
+	public Map<Vertex, Edge> getChildrenEdges() {
+		return new HashMap<Vertex, Edge>(children);
 	}
 
 	boolean hasChildren() {
@@ -99,5 +106,12 @@ public class Vertex extends LayerElement {
 			sb.append(node);
 		}
 		super.appendString(sb);
+	}
+
+	public Coordinate getCoord() {
+		Coordinate coord = new Coordinate();
+		coord.x = getX();
+		coord.y = getDepth();
+		return coord;
 	}
 }

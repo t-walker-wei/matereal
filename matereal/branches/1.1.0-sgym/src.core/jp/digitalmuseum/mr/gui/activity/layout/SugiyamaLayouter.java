@@ -36,11 +36,13 @@
  */
 package jp.digitalmuseum.mr.gui.activity.layout;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import jp.digitalmuseum.mr.activity.ControlNode;
 import jp.digitalmuseum.mr.activity.Edge;
@@ -48,41 +50,167 @@ import jp.digitalmuseum.mr.activity.Fork;
 import jp.digitalmuseum.mr.activity.Join;
 import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.activity.Transition;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout.Coordinate;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout.Line;
 import jp.digitalmuseum.utils.Array;
 
-public class SugiyamaLayout {
-	private static final int NUM_SWEEPS = 1;
-	private Map<Node, Vertex> nodeMap;
+public class SugiyamaLayouter {
+	private static final int NUM_SWEEPS = 2;
 	private Array<Layer> layers;
 
-	private Node initialNode;
-	private Vertex initialVertex;
+	// Used for cycle removal.
+	private Map<Node, Vertex> nodeMap;
+	private Array<Vertex> currentVertices;
+	private Array<Vertex> nextVertices;
+	private Set<Transition> transitions;
+	private Set<Edge> nextEdges;
 
-	public SugiyamaLayout() {
+	// Used for crossing reduction.
+	private Array<LayerElement> tmp;
+	private Array<Container> containers1;
+	private Array<Container> containers2;
+
+	public SugiyamaLayouter() {
+
 		nodeMap = new HashMap<Node, Vertex>();
 		layers = new Array<Layer>();
+		currentVertices = new Array<Vertex>();
+		nextVertices = new Array<Vertex>();
+
+		transitions = new HashSet<Transition>();
+		nextEdges = new HashSet<Edge>();
+
+		tmp = new Array<LayerElement>();
+		containers1 = new Array<Container>();
+		containers2 = new Array<Container>();
 	}
 
-	public void doLayout(Node initialNode) {
-
-		// Set initial node.
-		this.initialNode = initialNode;
-
-		// Clear the graph.
-		nodeMap.clear();
+	public synchronized Layout doLayout(Node initialNode) {
 
 		// Construct a new graph.
-		doCycleRemoval();
+		doCycleRemoval(initialNode);
 		doNormalization();
 		doCrossingReduction();
 		doHorizontalCoordinateAssignment();
 
+		/*
 		System.out.println("---- Contents ----");
 		for (Layer layer : layers) {
 			System.out.println(layer);
 		}
 		System.out.println("----- Layout -----");
 		printLayers();
+		*/
+
+		// Manage layout information.
+		Layout layout = new Layout();
+		for (Layer layer : layers) {
+			for (LayerElement e : layer) {
+				if (e instanceof Vertex) {
+					if (!(e instanceof DummyVertex)) {
+						Vertex vertex = (Vertex) e;
+						layout.putNodeCoord(vertex.getNode(), vertex.getCoord());
+						for (Entry<Vertex, Edge> entry :
+								vertex.getChildrenEdges().entrySet()) {
+							Edge edge = entry.getValue();
+							// if (layout.contains(edge)) {
+							//	Cannot happen.
+							// }
+							Vertex v = entry.getKey();
+							Vertex childVertex;
+							Coordinate[] coords;
+							if (v instanceof DummyVertex) {
+								DummyVertex dv = (DummyVertex) v;
+								Vertex v2 = dv.getChildren().iterator().next();
+								if (dv.isHead()) {
+									childVertex = v2.getChildren().iterator().next();
+									coords = new Coordinate[] {
+											vertex.getCoord(),
+											v.getCoord(),
+											v2.getCoord(),
+											childVertex.getCoord()
+									};
+								} else {
+									childVertex = v2;
+									coords = new Coordinate[] {
+											vertex.getCoord(),
+											v.getCoord(),
+											childVertex.getCoord()
+									};
+								}
+							} else {
+								childVertex = v;
+								coords = new Coordinate[] {
+										vertex.getCoord(),
+										childVertex.getCoord()
+								};
+							}
+
+							boolean isReversed;
+							if (vertex.getNode() != edge.getSource()) {
+								isReversed = true;
+							} else {
+								isReversed = false;
+							}
+							layout.putEdgeCoords(edge, new Line(coords, isReversed));
+						}
+					}
+				}
+			}
+		}
+		/*
+		currentVertices.clear();
+		currentVertices.push(initialVertex);
+		while (currentVertices.size() > 0) {
+			nextVertices.clear();
+			for (Vertex vertex : currentVertices) {
+				layout.putNodeCoord(vertex.getNode(), vertex.getCoord());
+				for (Entry<Vertex, Edge> entry :
+						vertex.getChildrenEdges().entrySet()) {
+					Edge edge = entry.getValue();
+					// if (layout.contains(edge)) {
+					//	Cannot happen.
+					// }
+					Vertex v = entry.getKey();
+					Vertex childVertex;
+					if (v instanceof DummyVertex) {
+						Coordinate[] coords;
+						DummyVertex dv = (DummyVertex) v;
+						Vertex v2 = dv.getChildren().iterator().next();
+						if (dv.isHead()) {
+							childVertex = v2.getChildren().iterator().next();
+							coords = new Coordinate[] {
+									vertex.getCoord(),
+									v.getCoord(),
+									v2.getCoord(),
+									childVertex.getCoord()
+							};
+						} else {
+							childVertex = v2;
+							coords = new Coordinate[] {
+									vertex.getCoord(),
+									v.getCoord(),
+									childVertex.getCoord()
+							};
+						}
+						System.out.println("----");
+						System.out.println(edge.getSource());
+						System.out.println(edge.getDestination());
+						layout.putEdgeCoords(edge, coords);
+					} else {
+						childVertex = v;
+					}
+					if (!layout.contains(childVertex.getNode())) {
+						nextVertices.push(childVertex);
+					}
+				}
+			}
+			Array<Vertex> tmp = currentVertices;
+			currentVertices = nextVertices;
+			nextVertices = tmp;
+		}
+		*/
+		return layout;
 	}
 
 	/**
@@ -92,20 +220,15 @@ public class SugiyamaLayout {
 	 * <dt>OUT</dt><dd>{@link #initialVertex} and {@link #layers}, each of which contains {@link Vertex} objects.</dd>
 	 * </dl>
 	 */
-	private void doCycleRemoval() {
+	private void doCycleRemoval(Node initialNode) {
+		nodeMap.clear();
 		layers.clear();
 
-		Array<Vertex> currentVertices = new Array<Vertex>();
-		Array<Vertex> nextVertices = new Array<Vertex>();
+		currentVertices.clear();
+		currentVertices.push(new Vertex(initialNode));
 
 		Layer currentLayer = new Layer(0);
 		Layer nextLayer;
-
-		initialVertex = new Vertex(initialNode);
-		currentVertices.push(initialVertex);
-
-		Set<Transition> transitions = new HashSet<Transition>();
-		Set<Node> nextNodes = new HashSet<Node>();
 
 		int depth = 0;
 		while (currentVertices.size() > 0) {
@@ -118,19 +241,16 @@ public class SugiyamaLayout {
 				// Skip if the node should be in the next layer.
 				if (nextVertices.contains(vertex)) {
 					// This happens when there is a transition from a node in the same depth.
-					System.out.println("a?");
 					continue;
 				}
 
-				nextNodes.clear();
+				nextEdges.clear();
 
 				// Get control flows from the node.
 				if (node instanceof ControlNode) {
 					Edge[] edges = ((ControlNode) node).getEdges();
 					if (node instanceof Fork) {
-						for (Edge edge : edges) {
-							nextNodes.add(edge.getDestination());
-						}
+						nextEdges.addAll(Arrays.asList(edges));
 					} else if (node instanceof Join) {
 
 						// Skip if all of the joining nodes have not already been visited in the shallow layers.
@@ -142,32 +262,33 @@ public class SugiyamaLayout {
 								continue BFS; // TODO check infinite loop.
 							}
 						}
-
-						for (Edge edge : edges) {
-							nextNodes.add(edge.getSource());
-						}
+						nextEdges.addAll(Arrays.asList(edges));
 					}
 				}
 
 				// Get transitions from the node.
 				node.getTransitionsOut(transitions);
-				for (Transition transition : transitions) {
-					nextNodes.add(transition.getDestination());
-				}
+				nextEdges.addAll(transitions);
 
 				// Set the vertex as visited.
 				nodeMap.put(node, vertex);
 				currentLayer.push(vertex);
 
 				// Check if nodes to sweep in the next loop have already been visited.
-				for (Node nextNode : nextNodes) {
+				for (Edge edge : nextEdges) {
+					Node nextNode;
+					if (edge.getSource() == node) {
+						nextNode = edge.getDestination();
+					} else {
+						nextNode = edge.getSource();
+					}
 					Vertex nextVertex;
 					if (nodeMap.containsKey(nextNode)) {
 						nextVertex = nodeMap.get(nextNode);
-						nextVertex.linkChild(vertex);
+						nextVertex.linkChild(vertex, edge);
 					} else {
 						nextVertex = new Vertex(nextNode);
-						vertex.linkChild(nextVertex);
+						vertex.linkChild(nextVertex, edge);
 						nextVertices.push(nextVertex);
 					}
 				}
@@ -214,9 +335,9 @@ public class SugiyamaLayout {
 
 						DummyVertex dummy = new DummyVertex();
 
-						vertex.unlinkChild(child);
-						vertex.linkChild(dummy);
-						dummy.linkChild(child);
+						Edge edge = vertex.unlinkChild(child);
+						vertex.linkChild(dummy, edge);
+						dummy.linkChild(child, edge);
 
 						layers.get(e.getDepth() + 1).push(dummy);
 					}
@@ -228,15 +349,15 @@ public class SugiyamaLayout {
 						DummyVertex head = segment.getHead();
 						DummyVertex tail = segment.getTail();
 
-						vertex.unlinkChild(child);
-						vertex.linkChild(head);
+						Edge edge = vertex.unlinkChild(child);
+						vertex.linkChild(head, edge);
 						// if (depthDiff == 3) {
-							head.linkChild(tail);
+							head.linkChild(tail, edge);
 						// } else {
 						//	head.linkChild(segment);
 						//	segment.linkChild(tail);
 						// }
-						tail.linkChild(child);
+						tail.linkChild(child, edge);
 
 						for (int i = vertex.getDepth() + 1; i < child.getDepth(); i ++) {
 							if (i == vertex.getDepth() + 1) {
@@ -270,11 +391,11 @@ public class SugiyamaLayout {
 		Layer layer1 = layers.get(0).clone();
 		Layer layer2;
 
-		Array<Container> containers1 = new Array<Container>();
-		Array<Container> containers2 = new Array<Container>();
+		containers1.clear();
+		containers1.push(new Container());
+		containers1.push(new Container());
 
-		containers1.push(new Container());
-		containers1.push(new Container());
+		containers2.clear();
 
 		for (int i = 0; i < NUM_SWEEPS; i ++) {
 
@@ -309,8 +430,6 @@ public class SugiyamaLayout {
 			*/
 		}
 	}
-
-	Array<LayerElement> tmp = new Array<LayerElement>();
 
 	/**
 	 * <b>Crossing minimization</b>: minimize crossing between the two layers.
@@ -425,19 +544,15 @@ public class SugiyamaLayout {
 				continue;
 			}
 			Vertex vertex = (Vertex) e;
-			Array<Vertex> neighbors = isReverse ? vertex.getChildren() : vertex.getParents();
-			if (neighbors.size() == 0) {
+			Set<Vertex> neighbors = isReverse ? vertex.getChildren() : vertex.getParents();
+			if (neighbors.isEmpty()) {
 				// This cannot occur.
 			} else {
-				// System.out.println("----calc m for "+vertex);
 				double m = 0;
 				for (LayerElement neighbor : neighbors) {
-					// System.out.println(neighbor);
 					m += neighbor.getMeasure();
 				}
 				m /= neighbors.size();
-				// System.out.println(m);
-				// System.out.println();
 				vertex.setMeasure(m);
 
 				// TODO make this operation fast by using a binary tree.
@@ -607,6 +722,7 @@ public class SugiyamaLayout {
 		}
 	}
 
+	/*
 	private void printLayer(String prefix, Layer layer1, Array<Container> containers1) {
 		System.out.print(prefix);
 		System.out.print(containers1.get(0));
@@ -660,4 +776,5 @@ public class SugiyamaLayout {
 			System.out.println();
 		}
 	}
+	*/
 }

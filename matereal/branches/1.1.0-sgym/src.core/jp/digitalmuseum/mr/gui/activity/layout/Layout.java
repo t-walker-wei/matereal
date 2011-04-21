@@ -34,68 +34,57 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.activity;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import java.awt.Color;
-import java.awt.geom.Point2D;
+import java.util.HashMap;
+import java.util.Map;
 
-import edu.umd.cs.piccolo.nodes.PText;
-
+import jp.digitalmuseum.mr.activity.Edge;
 import jp.digitalmuseum.mr.activity.Node;
-import jp.digitalmuseum.mr.activity.TimeoutTransition;
-import jp.digitalmuseum.mr.activity.Transition;
 
-public class PTransitionLineNode extends PLineNodeAbstractImpl {
-	private static final long serialVersionUID = 5091941901786318920L;
-	private transient Transition transition;
-	private PText text;
-	private static Color color = new Color(100, 100, 100);
+public class Layout {
+	private Map<Node, Coordinate> nodeCoords;
+	private Map<Edge, Line> edgeCoords;
 
-	public PTransitionLineNode(Transition transition) {
-		this.transition = transition;
-		if (transition instanceof TimeoutTransition) {
-			long timeout = ((TimeoutTransition) transition).getTimeout();
-			text = new PText(String.format("%.1fs", (float)timeout/1000));
-			text.setFont(text.getFont().deriveFont(10f));
-			text.setConstrainWidthToTextWidth(true);
-			text.setPaint(Color.white);
-			addChild(text);
-		} else {
-			text = null;
+	public Layout() {
+		nodeCoords = new HashMap<Node, Coordinate>();
+		edgeCoords = new HashMap<Edge, Line>();
+	}
+
+	void putNodeCoord(Node node, Coordinate coord) {
+		nodeCoords.put(node, coord);
+	}
+
+	void putEdgeCoords(Edge edge, Line coords) {
+		edgeCoords.put(edge, coords);
+	}
+
+	public Coordinate getNodeCoord(Node node) {
+		return nodeCoords.get(node);
+	}
+
+	public Line getEdgeCoord(Edge edge) {
+		return edgeCoords.get(edge);
+	}
+
+	public boolean contains(Node node) {
+		return nodeCoords.containsKey(node);
+	}
+
+	public boolean contains(Edge edge) {
+		return edgeCoords.containsKey(edge);
+	}
+
+	public static class Line {
+		public Line(Coordinate[] coordinates, boolean isReversed) {
+			this.coordinates = coordinates;
+			this.isReversed = isReversed;
 		}
+		public Coordinate[] coordinates;
+		public boolean isReversed;
 	}
 
-	public Transition getTransition() {
-		return transition;
-	}
-
-	public Node getSource() {
-		return transition.getSource();
-	}
-
-	public Node getDestination() {
-		return transition.getDestination();
-	}
-
-	@Override
-	protected void setLine(Point2D[] points) {
-		super.setLine(points);
-		if (text != null) {
-			Point2D start, end;
-			if (points.length == 2) {
-				start = points[0];
-				end = points[1];
-			} else {
-				start = points[1];
-				end = points[2];
-			}
-			text.setOffset(
-					(start.getX() + end.getX() - text.getWidth()) / 2,
-					(start.getY() + end.getY()) / 2 - text.getHeight() - 2);
-		}
-	}
-
-	protected Color getDefaultStrokeColor() {
-		return color;
+	public static class Coordinate {
+		public int x, y;
 	}
 }

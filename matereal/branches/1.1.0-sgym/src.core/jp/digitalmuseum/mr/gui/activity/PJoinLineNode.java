@@ -44,25 +44,22 @@ import jp.digitalmuseum.mr.activity.Node;
 
 public class PJoinLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 5862618628516003680L;
-	private transient Node source;
-	private transient Join join;
 	private static Color color = new Color(0, 0, 200);
+	private transient Edge edge;
 
-	public PJoinLineNode(
-			Edge edge,
-			PNodeAbstractImpl pSourceNode,
-			PNodeAbstractImpl pDestinationNode) {
-		super(pSourceNode, pDestinationNode);
-		source = edge.getSource();
-		join = (Join) edge.getDestination();
-		setStrokePaint(color);
+	public PJoinLineNode(Edge edge) {
+		this.edge = edge;
 	}
 
 	public Node getSource() {
-		return source;
+		return edge.getSource();
 	}
 
 	public Join getDestination() {
-		return join;
+		return (Join) edge.getDestination();
+	}
+
+	protected Color getDefaultStrokeColor() {
+		return color;
 	}
 }

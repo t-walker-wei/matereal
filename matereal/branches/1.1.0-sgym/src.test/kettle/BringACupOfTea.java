@@ -56,9 +56,10 @@ public class BringACupOfTea {
 		Action boil = new Action(kettle, new Boil());
 		Action pour = new Action(kettle, new Pour());
 		Action stop = new Action(kettle, new Stop());
+		Action stop2 = new Action(kettle, new Stop());
 		Fork fork = new Fork(push, boil);
 		Join join = new Join(push, boil, stop);
-		ad.add(new Node[] {fork, push, boil, join, pour, stop});
+		ad.add(new Node[] { fork, push, boil, join, pour, stop, stop2 });
 		ad.addTransition(new TimeoutTransition(push, stop, 10000));
 		ad.addTransition(new Transition(fork, join));
 		ad.addTransition(new Transition(join, pour));

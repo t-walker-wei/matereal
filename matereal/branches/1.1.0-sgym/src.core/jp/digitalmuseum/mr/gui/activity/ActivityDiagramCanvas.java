@@ -39,11 +39,19 @@ package jp.digitalmuseum.mr.gui.activity;
 import java.awt.Color;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
+import jp.digitalmuseum.mr.activity.ControlNode;
+import jp.digitalmuseum.mr.activity.Edge;
 import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.gui.DisposableComponent;
-import jp.digitalmuseum.mr.gui.activity.layout.SugiyamaLayout;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout;
+import jp.digitalmuseum.mr.gui.activity.layout.SugiyamaLayouter;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
 import jp.digitalmuseum.mr.message.ActivityEvent;
 import jp.digitalmuseum.mr.message.Event;
@@ -51,11 +59,13 @@ import jp.digitalmuseum.mr.message.EventListener;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.activities.PTransformActivity;
+import edu.umd.cs.piccolo.activities.PActivity;
+import edu.umd.cs.piccolo.activities.PActivity.PActivityDelegate;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * A canvas for rendering an activity diagram as a timeline-like directed
@@ -71,13 +81,18 @@ import edu.umd.cs.piccolo.nodes.PText;
 public class ActivityDiagramCanvas extends PCanvas implements
 		DisposableComponent {
 	private static final long serialVersionUID = -6783170737987111980L;
+	private static final Color backgroundColor = new Color(240, 240, 240);
+	private static final int padding = 10;
+	private static final int marginX = 50;
+	private static final int marginY = 10;
 
 	private ActivityDiagram ad;
 	private ActivityDiagramEventListener adel;
-
 	private ActivityEventListener ael;
 
-	private SugiyamaLayout layout;
+	private Map<Node, PNodeAbstractImpl> nodeMap;
+	private Map<Edge, PLineNodeAbstractImpl> edgeMap;
+	private SugiyamaLayouter layouter;
 
 	private PLayer pNodeLayer;
 	private PLayer pLineLayer;
@@ -85,73 +100,72 @@ public class ActivityDiagramCanvas extends PCanvas implements
 	private PPath sticky;
 	private PText stickyText;
 
-	private PTransformActivity cameraActivity;
+	private transient PActivity cameraActivity;
+	private transient PActivity graphLayoutActivity;
+	boolean isGraphUpdated = false;
 
 	public ActivityDiagramCanvas(final ActivityDiagram ad) {
 		this.ad = ad;
+		initialize();
+	}
 
-		layout = new SugiyamaLayout();
+	public static Color getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	public static int getPadding() {
+		return padding;
+	}
+
+	public static int getMarginX() {
+		return marginX;
+	}
+
+	public static int getMarginY() {
+		return marginY;
+	}
+
+	public void animateViewToCenterDiagram() {
+		if (cameraActivity != null) {
+			cameraActivity.terminate();
+		}
+		PBounds pBounds = pNodeLayer.getFullBounds();
+		pBounds.x -= padding;
+		pBounds.y -= padding;
+		pBounds.width += padding * 2;
+		pBounds.height += padding * 2;
+		cameraActivity = getCamera().animateViewToCenterBounds(pBounds, true, 500);
+	}
+
+	public void dispose() {
+		synchronized (ad) {
+			ad.removeEventListener(adel);
+			for (Node node : ad.getNodes()) {
+				node.removeEventListener(ael);
+			}
+		}
+	}
+
+	private void initialize() {
+
+		nodeMap = new HashMap<Node, PNodeAbstractImpl>();
+		edgeMap = new HashMap<Edge, PLineNodeAbstractImpl>();
+		layouter = new SugiyamaLayouter();
 
 		pLineLayer = new PLayer();
 		getCamera().addLayer(pLineLayer);
 		pNodeLayer = new PLayer();
 		getCamera().addLayer(pNodeLayer);
-		setBackground(new Color(240, 240, 240));
 
-		sticky = PPath.createRectangle(0, 0, 240, 25);
-		sticky.setPaint(Color.black);
-		sticky.setStroke(null);
-		stickyText = new PText("Activity Diagram Viewer");
-		stickyText.setWidth(230);
-		stickyText.setHeight(15);
-		stickyText.setOffset(5, 5);
-		stickyText.setTextPaint(Color.white);
-		sticky.addChild(stickyText);
-		getCamera().addChild(sticky);
+		setBackground(backgroundColor);
 
-		addInputEventListener(new PBasicInputEventHandler() {
+		initializeSticky();
 
-			@Override
-			public void mousePressed(PInputEvent event) {
-				if (cameraActivity != null) {
-					cameraActivity.terminate();
-				}
-			}
-
-			@Override
-			public void mouseClicked(PInputEvent event) {
-				if (!(event.getPickedNode() instanceof PCamera)) {
-					if (!event.isLeftMouseButton()) {
-						cameraActivity = getCamera()
-								.animateViewToCenterBounds(
-										event.getPickedNode()
-												.getGlobalBounds(), false,
-										300);
-					}
-				} else if (event.getClickCount() == 2) {
-					if (event.isLeftMouseButton()) {
-						if (ad.isPaused()) {
-							ad.resume();
-						} else {
-							ad.pause();
-						}
-					} else {
-						animateViewToCenterDiagram();
-					}
-				}
-			}
-		});
-
-		addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				updateSticky();
-			}
-		});
+		addInputEventListener(new InputEventHandler());
 
 		synchronized (ad) {
 			if (ad.getInitialNode() != null) {
-				initialize();
+				initializeGraph();
 			}
 			adel = new ActivityDiagramEventListener();
 			ad.addEventListener(adel);
@@ -165,28 +179,24 @@ public class ActivityDiagramCanvas extends PCanvas implements
 		}
 	}
 
-	public void animateViewToCenterDiagram() {
-		if (cameraActivity != null) {
-			cameraActivity.terminate();
-		}
-		// TODO implement this.
-		/*
-		PBounds pBounds = initialVertex.getPiccoloNode().getGlobalFullBounds();
-		pBounds.x -= 10;
-		pBounds.y -= 10;
-		pBounds.width += 20;
-		pBounds.height += 20;
-		cameraActivity = getCamera().animateViewToCenterBounds(pBounds, true, 500);
-		 */
-	}
+	private void initializeSticky() {
+		sticky = PPath.createRectangle(0, 0, 240, 25);
+		sticky.setPaint(Color.black);
+		sticky.setStroke(null);
+		stickyText = new PText("Activity Diagram Viewer");
+		stickyText.setWidth(230);
+		stickyText.setHeight(15);
+		stickyText.setOffset(5, 5);
+		stickyText.setTextPaint(Color.white);
+		sticky.addChild(stickyText);
+		getCamera().addChild(sticky);
 
-	public void dispose() {
-		synchronized (ad) {
-			ad.removeEventListener(adel);
-			for (Node node : ad.getNodes()) {
-				node.removeEventListener(ael);
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				updateSticky();
 			}
-		}
+		});
 	}
 
 	private void updateSticky() {
@@ -194,50 +204,157 @@ public class ActivityDiagramCanvas extends PCanvas implements
 				- sticky.getHeight() - 5);
 	}
 
-	private void initialize() {
+	private void initializeGraph() {
+		if (graphLayoutActivity != null &&
+				graphLayoutActivity.isStepping()) {
+			isGraphUpdated = true;
+			return;
+		}
 
 		// Clear the graph.
+		nodeMap.clear();
+		edgeMap.clear();
 		pNodeLayer.removeAllChildren();
 		pLineLayer.removeAllChildren();
 
-		// Construct a new graph.
-		layout.doLayout(ad.getInitialNode());
+		// Layout a new graph.
+		layoutGraph();
+	}
 
-		// initialPNode = nodeMap.get(ad.getInitialNode());
-		// initialPNode.setAsInitialNode();
+	private void layoutGraph() {
+		if (graphLayoutActivity != null &&
+				graphLayoutActivity.isStepping()) {
+			isGraphUpdated = true;
+			return;
+		}
+		graphLayoutActivity = null;
+
+		Layout layout = layouter.doLayout(ad.getInitialNode());
+		Set<Edge> edges = new HashSet<Edge>();
+		for (Node node : ad.getNodes()) {
+			if (layout.contains(node)) {
+
+				// Layout a node.
+				PNodeAbstractImpl pNode;
+				if (nodeMap.containsKey(node)) {
+					pNode = nodeMap.get(node);
+				} else {
+					pNode = PNodeFactory.newNodeInstance(node);
+					pNodeLayer.addChild(pNode);
+					nodeMap.put(node, pNode);
+				}
+				PActivity a = pNode.setPosition(layout.getNodeCoord(node));
+				if (graphLayoutActivity == null) {
+					graphLayoutActivity = a;
+				}
+				getRoot().addActivity(a);
+
+				// Count up edges from the node.
+				edges.clear();
+				if (node instanceof ControlNode) {
+					edges.addAll(Arrays.asList(((ControlNode) node).getEdges()));
+				}
+				edges.addAll(node.getTransitions());
+
+				// Layout edges.
+				for (Edge edge : edges) {
+					PLineNodeAbstractImpl pLineNode;
+					if (edgeMap.containsKey(edge)) {
+						pLineNode = edgeMap.get(edge);
+					} else {
+						pLineNode = PNodeFactory.newEdgeInstance(edge);
+						edgeMap.put(edge, pLineNode);
+					}
+					pLineLayer.addChild(pLineNode);
+					getRoot().addActivity(pLineNode.setLine(layout.getEdgeCoord(edge)));
+				}
+			}
+		}
+
+		nodeMap.get(ad.getInitialNode()).setAsInitialNode();
+
+		if (graphLayoutActivity != null) {
+			graphLayoutActivity.setDelegate(new PActivityDelegate() {
+				public void activityStepped(PActivity pactivity) {
+					// Do nothing.
+				}
+				public void activityStarted(PActivity pactivity) {
+					// Do nothing.
+				}
+				public void activityFinished(PActivity pactivity) {
+					graphLayoutActivity = null;
+					if (isGraphUpdated) {
+						isGraphUpdated = false;
+						initializeGraph();
+					}
+				}
+			});
+		}
 	}
 
 	private void onEnter(Node node) {
-		// pNodeAbstractImpl.onEnter();
+		PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(node);
+		if (pNodeAbstractImpl != null) {
+			pNodeAbstractImpl.onEnter();
+		}
 	}
 
 	private void onLeave(Node node) {
-		// pNodeAbstractImpl.onLeave();
+		PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(node);
+		if (pNodeAbstractImpl != null) {
+			pNodeAbstractImpl.onLeave();
+		}
+	}
+
+	private class InputEventHandler extends PBasicInputEventHandler {
+
+		@Override
+		public void mousePressed(PInputEvent event) {
+			if (cameraActivity != null) {
+				cameraActivity.terminate();
+			}
+		}
+
+		@Override
+		public void mouseClicked(PInputEvent event) {
+			if (!(event.getPickedNode() instanceof PCamera)) {
+				if (!event.isLeftMouseButton()) {
+					cameraActivity = getCamera()
+							.animateViewToCenterBounds(
+									event.getPickedNode()
+											.getGlobalBounds(), false,
+									300);
+				}
+			} else if (event.getClickCount() == 2) {
+				if (event.isLeftMouseButton()) {
+					ActivityDiagram ad = ActivityDiagramCanvas.this.ad;
+					if (ad.isPaused()) {
+						ad.resume();
+					} else {
+						ad.pause();
+					}
+				} else {
+					animateViewToCenterDiagram();
+				}
+			}
+		}
 	}
 
 	private class ActivityDiagramEventListener implements EventListener {
 		public void eventOccurred(Event e) {
 			if (e instanceof ActivityDiagramEvent) {
-				/*
 				ActivityDiagramEvent ade = (ActivityDiagramEvent) e;
 				switch (ade.getStatus()) {
 				case NODE_ADDED:
-					onNodeAdded(ade.getAffectedNode());
+				case TRANSITION_ADDED:
+					layoutGraph();
 					break;
 				case NODE_REMOVED:
-					onNodeRemoved(ade.getAffectedNode());
-					break;
-				case TRANSITION_ADDED:
-					onTransitionAdded(ade.getAffectedTransition());
-					break;
 				case TRANSITION_REMOVED:
-					break;
 				case INITIAL_NODE_SET:
-					initialize();
+					initializeGraph();
 					break;
 				}
-				*/
-				initialize();
 			}
 		}
 	}

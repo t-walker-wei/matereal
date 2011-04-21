@@ -40,12 +40,24 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 
 import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout.Coordinate;
 
+import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.nodes.PPath;
 
 public abstract class PNodeAbstractImpl extends PPath {
 	private static final long serialVersionUID = 3592199380497357141L;
 	private Node node;
+	private static final int width = 200;
+	private static final int height = 70;
+
+	public static int getAreaWidth() {
+		return width;
+	}
+
+	public static int getAreaHeight() {
+		return height;
+	}
 
 	public PNodeAbstractImpl(Node node) {
 		this.node = node;
@@ -55,6 +67,13 @@ public abstract class PNodeAbstractImpl extends PPath {
 
 	void setAsInitialNode() {
 		setStroke(new BasicStroke(2f));
+	}
+
+	PActivity setPosition(Coordinate coord) {
+		int p = ActivityDiagramCanvas.getPadding();
+		int w = ActivityDiagramCanvas.getMarginX() + getAreaWidth();
+		int h = ActivityDiagramCanvas.getMarginY() + getAreaHeight();
+		return animateToPositionScaleRotation(coord.y * w + p, coord.x * h + p, 1.0f, 0.0f, 200);
 	}
 
 	Node getNode() {
