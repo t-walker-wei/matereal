@@ -38,21 +38,35 @@ package jp.digitalmuseum.mr.gui.activity;
 
 import edu.umd.cs.piccolo.nodes.PText;
 import jp.digitalmuseum.mr.activity.ControlNode;
+import jp.digitalmuseum.mr.activity.Fork;
 
 public class PControlNode extends PNodeAbstractImpl {
 	private static final long serialVersionUID = -3824502669188344253L;
+	private static final int width = 3;
+
+	public static int getAreaWidth() {
+		return width;
+	}
 
 	public PControlNode(ControlNode controlNode) {
 		super(controlNode);
-		setPathToRectangle(0, 0, 200, 70);
 
 		PText pText = new PText();
-		pText.translate(15, 15);
-		pText.setConstrainWidthToTextWidth(true);
-		pText.setConstrainHeightToTextHeight(true);
 		pText.setText(controlNode.getClass().getSimpleName());
-		pText.setWidth(170);
-		pText.setHeight(40);
 		addChild(pText);
+
+		if (controlNode instanceof Fork) {
+			setPathToRectangle(
+					super.getAreaWidth() - width, 0,
+					width, super.getAreaHeight());
+			pText.setOffset(
+					super.getAreaWidth() - width - pText.getWidth() - 10, 0);
+		} else {
+			setPathToRectangle(
+					0, 0,
+					width, super.getAreaHeight());
+			pText.setOffset(
+					10 - width, 0);
+		}
 	}
 }

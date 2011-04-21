@@ -39,6 +39,9 @@ package jp.digitalmuseum.mr.activity;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JComponent;
+
+import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent.STATUS;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
@@ -191,8 +194,9 @@ public class ActivityDiagram extends Node {
 	}
 
 	synchronized boolean start(Node node) {
-		if (!node.isAllowedEntry() ||
-				currentNodes.contains(node)) {
+		if (node == null
+				|| !node.isAllowedEntry()
+				|| currentNodes.contains(node)) {
 			return false;
 		}
 		currentNodes.push(node);
@@ -254,6 +258,12 @@ public class ActivityDiagram extends Node {
 	}
 
 	private class TransitionMonitor extends ServiceAbstractImpl {
+
+		@Override
+		public String getName() {
+			return "Activity Diagram";
+		}
+
 		public void run() {
 			synchronized (ActivityDiagram.this) {
 				isDone = true;
@@ -280,6 +290,11 @@ public class ActivityDiagram extends Node {
 					ActivityDiagram.this.stop();
 				}
 			}
+		}
+
+		@Override
+		public JComponent getConfigurationComponent() {
+			return new ActivityDiagramPane(ActivityDiagram.this);
 		}
 	}
 

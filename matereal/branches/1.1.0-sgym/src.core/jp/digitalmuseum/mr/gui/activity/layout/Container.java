@@ -133,9 +133,12 @@ public class Container extends LayerElement implements Cloneable, Iterable<Segme
 
 	@Override
 	public Container clone() {
-		Container container = new Container();
-		container.setMeasure(getMeasure());
-		container.list = new LinkedList<Segment>(list);
-		return container;
+		try {
+			Container container = (Container) super.clone();
+			container.list = new LinkedList<Segment>(list);
+			return container;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 }

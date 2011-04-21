@@ -44,6 +44,7 @@ import java.util.List;
 
 import jp.digitalmuseum.connector.BluetoothConnector;
 import jp.digitalmuseum.connector.Connector;
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
@@ -237,9 +238,10 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 			// Get the result.
 			final byte[] ret = read(connector);
 			if (0 >= ret[2]) {
-				System.out.println("NXT Firmware version: " +
-						ret[4] + "." + ret[3] + ", " +
-						ret[6] + "." + ret[5]);
+				Matereal.getInstance().getOutStream().println(
+						"NXT Firmware version: "
+						+ ret[4] + "." + ret[3]
+						+ ", " + ret[6] + "." + ret[5]);
 			}
 		}
 		return false;

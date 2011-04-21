@@ -169,7 +169,6 @@ public class NetTansor extends PhysicalRobotAbstractImpl {
 			} else {
 				cmd = String.format("mm,%d,%d", getPower(rightPower), getPower(leftPower));
 			}
-			System.out.println(cmd);
 			return write(cmd);
 		}
 

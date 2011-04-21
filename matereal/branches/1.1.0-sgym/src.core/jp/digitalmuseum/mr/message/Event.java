@@ -42,10 +42,10 @@ package jp.digitalmuseum.mr.message;
  * @author Jun KATO
  */
 public class Event {
-	private Object source;
+	private EventProvider source;
 	public Event() { }
-	public Event(Object source) { this.source = source; }
-	public Object getSource() {
+	public Event(EventProvider source) { this.source = source; }
+	public EventProvider getSource() {
 		return source;
 	}
 }

@@ -87,6 +87,10 @@ public class SugiyamaLayouter {
 
 	public synchronized Layout doLayout(Node initialNode) {
 
+		if (initialNode == null) {
+			return null;
+		}
+
 		// Construct a new graph.
 		doCycleRemoval(initialNode);
 		doNormalization();

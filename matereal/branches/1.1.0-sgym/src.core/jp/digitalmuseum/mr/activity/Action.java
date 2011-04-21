@@ -114,6 +114,7 @@ public class Action extends Node implements EventListener {
 	protected void onLeave() {
 		task.removeEventListener(this);
 		task.stop();
+		
 		rollbackRequiredResources();
 	}
 
