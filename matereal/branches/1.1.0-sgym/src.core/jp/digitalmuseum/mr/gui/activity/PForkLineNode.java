@@ -39,24 +39,27 @@ package jp.digitalmuseum.mr.gui.activity;
 import java.awt.Color;
 
 import jp.digitalmuseum.mr.activity.Edge;
+import jp.digitalmuseum.mr.activity.Fork;
 import jp.digitalmuseum.mr.activity.Node;
 
 public class PForkLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 6558976118238198984L;
-	private transient Edge edge;
 	private static Color color = new Color(200, 0, 0);
+	private transient Edge edge;
 
-	public PForkLineNode(Edge edge, PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
-		super(pSourceNode, pDestinationNode);
+	public PForkLineNode(Edge edge) {
 		this.edge = edge;
-		setStrokePaint(color);
 	}
 
-	public Node getSource() {
-		return edge.getSource();
+	public Fork getSource() {
+		return (Fork) edge.getSource();
 	}
 
 	public Node getDestination() {
 		return edge.getDestination();
+	}
+
+	protected Color getDefaultStrokeColor() {
+		return color;
 	}
 }

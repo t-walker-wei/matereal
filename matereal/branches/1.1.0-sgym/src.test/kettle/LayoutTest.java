@@ -8,7 +8,7 @@ import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.activity.TimeoutTransition;
 import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.activity.layout.SugiyamaLayout;
+import jp.digitalmuseum.mr.gui.activity.layout.SugiyamaLayouter;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
@@ -21,7 +21,7 @@ import kettle.task.Stop;
 public class LayoutTest {
 
 	public static void main(String[] args) {
-		SugiyamaLayout layout = new SugiyamaLayout();
+		SugiyamaLayouter layout = new SugiyamaLayouter();
 		Node node = initGraph();
 
 		layout.doLayout(node);
