@@ -40,6 +40,9 @@ import java.awt.Color;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
+import jp.digitalmuseum.mr.activity.Fork;
+import jp.digitalmuseum.mr.activity.Join;
+import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.gui.activity.layout.Layout.Coordinate;
 import jp.digitalmuseum.mr.gui.activity.layout.Layout.Line;
 
@@ -66,6 +69,10 @@ public abstract class PLineNodeAbstractImpl extends PPath implements PStrokeColo
 
 	protected abstract Color getDefaultStrokeColor();
 
+	public abstract Node getSource();
+
+	public abstract Node getDestination();
+
 	PActivity setLine(Line line) {
 		setStrokeColor(ActivityDiagramCanvas.getBackgroundColor());
 		Coordinate[] coords = line.coordinates;
@@ -74,16 +81,29 @@ public abstract class PLineNodeAbstractImpl extends PPath implements PStrokeColo
 		int my = ActivityDiagramCanvas.getMarginY();
 		int aw = PNodeAbstractImpl.getAreaWidth();
 		int ah = PNodeAbstractImpl.getAreaHeight();
+		int cw = PControlNode.getAreaWidth();
 		int w = mx + aw, h = my + ah;
 		Point2D[] points = new Point2D[2 + (coords.length - 2 > 0 ? 2 : 0)];
 
 		// Draw lines.
-		points[0] = new Point2D.Float(
-				coords[0].y * w + aw + p,
-				coords[0].x * h + ah/2 + p);
-		points[points.length - 1] = new Point2D.Float(
-				coords[coords.length - 1].y * w + p,
-				coords[coords.length - 1].x * h + ah/2 + p);
+		if (getSource() instanceof Join) {
+			points[0] = new Point2D.Float(
+					coords[0].y * w + cw + p,
+					coords[0].x * h + ah/2 + p);
+		} else {
+			points[0] = new Point2D.Float(
+					coords[0].y * w + aw + p,
+					coords[0].x * h + ah/2 + p);
+		}
+		if (getDestination() instanceof Fork) {
+			points[points.length - 1] = new Point2D.Float(
+					coords[coords.length - 1].y * w + w - cw + p,
+					coords[coords.length - 1].x * h + ah/2 + p);
+		} else {
+			points[points.length - 1] = new Point2D.Float(
+					coords[coords.length - 1].y * w + p,
+					coords[coords.length - 1].x * h + ah/2 + p);
+		}
 		if (coords.length == 3) {
 			points[1] = new Point2D.Float(
 					coords[1].y * w + p,

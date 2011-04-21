@@ -98,8 +98,12 @@ public class Layer implements Iterable<LayerElement>, Cloneable {
 	}
 
 	public Layer clone() {
-		Layer layer = new Layer(depth);
-		layer.elements = new Array<LayerElement>(elements);
-		return layer;
+		try {
+			Layer layer = (Layer) super.clone();
+			layer.elements = new Array<LayerElement>(elements);
+			return layer;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 }

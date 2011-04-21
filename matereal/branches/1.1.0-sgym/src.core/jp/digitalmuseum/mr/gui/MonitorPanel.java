@@ -42,6 +42,7 @@ import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.mr.service.ServiceHolder;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -50,14 +51,13 @@ import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import javax.swing.JTable;
 import javax.swing.JScrollPane;
 
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -72,26 +72,26 @@ import java.awt.FlowLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import javax.swing.border.SoftBevelBorder;
+import java.awt.CardLayout;
 
 /**
- * Status monitor panel of matereal. Singleton.
+ * Status monitor panel of matereal.
  *
  * @author Jun KATO
  */
 public class MonitorPanel extends JPanel {
 
+	private static final long serialVersionUID = 3317150753032501439L;
 	private JTree jTree = null;
-	private JPanel jPanel = null;
-	private JPanel jPanel1 = null;
-	private JLabel jLabel1 = null;
-	private JLabel jLabel2 = null;
-	private JTable jTable = null;
+	private JLabel jSelectedServiceGroupLabel = null;
+	private JLabel jSelectedServiceLabel = null;
 	private JScrollPane jScrollPane = null;
-	private JPanel jPanel2 = null;
+	private JPanel jServiceInformationPanel = null;
 	private JLabel jLabel = null;
 	private JLabel jLabel3 = null;
 	private JLabel jLabel4 = null;
-	private static final long serialVersionUID = 1L;
+	private transient Map<Service, JComponent> serviceComponents;
 
 	/** Root node for jTree. */
 	private DefaultMutableTreeNode root;
@@ -106,6 +106,7 @@ public class MonitorPanel extends JPanel {
 	private MonitorService monitorService;  //  @jve:decl-index=0:
 
 	final private transient Runnable reloadJTree;
+	private JPanel jServicePanel = null;
 
 	/** Singleton constructor. */
 	public MonitorPanel() {
@@ -115,6 +116,7 @@ public class MonitorPanel extends JPanel {
 		groupNodeMap = new HashMap<ServiceHolder, DefaultMutableTreeNode>();
 		serviceNodeMap = new HashMap<Service, DefaultMutableTreeNode>();
 		serviceMap = new HashMap<ServiceHolder, List<Service>>();
+		serviceComponents = new HashMap<Service, JComponent>();
 
 		// Root node of the tree view, used at getJTree() etc.
 		final Matereal matereal = Matereal.getInstance();
@@ -139,26 +141,71 @@ public class MonitorPanel extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
+		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+		gridBagConstraints3.gridx = 1;
+		gridBagConstraints3.fill = GridBagConstraints.BOTH;
+		gridBagConstraints3.weightx = 0.7D;
+		gridBagConstraints3.weighty = 1.0D;
+		gridBagConstraints3.insets = new Insets(0, 5, 5, 5);
+		gridBagConstraints3.gridy = 3;
+		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+		gridBagConstraints2.gridx = 1;
+		gridBagConstraints2.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints2.anchor = GridBagConstraints.EAST;
+		gridBagConstraints2.weighty = 0.0D;
+		gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints2.gridy = 2;
+		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		gridBagConstraints1.gridx = 1;
+		gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints1.anchor = GridBagConstraints.EAST;
+		gridBagConstraints1.weighty = 0.0D;
+		gridBagConstraints1.insets = new Insets(0, 5, 0, 5);
+		gridBagConstraints1.gridy = 1;
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.anchor = GridBagConstraints.NORTHEAST;
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints.weighty = 0.0D;
+		gridBagConstraints.ipadx = 5;
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints.gridx = 1;
 		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 		gridBagConstraints4.fill = GridBagConstraints.BOTH;
 		gridBagConstraints4.weightx = 0.3D;
+		gridBagConstraints4.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints4.gridx = 0;
+		gridBagConstraints4.gridy = 0;
+		gridBagConstraints4.gridheight = 4;
 		gridBagConstraints4.weighty = 1.0;
-		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-		gridBagConstraints3.weightx = 0.7D;
-		gridBagConstraints3.fill = GridBagConstraints.BOTH;
-		gridBagConstraints3.gridx = 1;
-		gridBagConstraints3.gridy = 0;
-		gridBagConstraints3.gridheight = 1;
-		gridBagConstraints3.weighty = 1.0D;
-		setPreferredSize(new Dimension(480, 320));
+		setPreferredSize(new Dimension(640, 420));
 		setLayout(new GridBagLayout());
 		setBounds(new Rectangle(0, 0, 480, 320));
-		add(getJScrollPane(), gridBagConstraints4);
-		add(getJPanel(), gridBagConstraints3);
+		jSelectedServiceLabel = new JLabel();
+		jSelectedServiceLabel.setText(Messages.getString("MonitorPanel.selectedService")); //$NON-NLS-1$
+		jSelectedServiceLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+		jSelectedServiceLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedService")); //$NON-NLS-1$
+		jSelectedServiceGroupLabel = new JLabel();
+		jSelectedServiceGroupLabel.setText(Messages.getString("MonitorPanel.selectedServiceGroup")); //$NON-NLS-1$
+		jSelectedServiceGroupLabel.setFont(new Font("Dialog", Font.BOLD, 14)); //$NON-NLS-1$
+		jSelectedServiceGroupLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
+		this.add(getJScrollPane(), gridBagConstraints4);
+		this.add(jSelectedServiceGroupLabel, gridBagConstraints);
+		this.add(jSelectedServiceLabel, gridBagConstraints2);
+		this.add(getJServiceInformationPanel(), gridBagConstraints1);
+		this.add(getJServicePanel(), gridBagConstraints3);
 	}
 
 	public void dispose() {
 		monitorService.stop();
+		for (JComponent serviceComponent : serviceComponents.values()) {
+			if (serviceComponent != null) {
+				if (serviceComponent instanceof DisposableComponent) {
+					((DisposableComponent) serviceComponent).dispose();
+				}
+			}
+		}
+		serviceComponents.clear();
 	}
 
 	/**
@@ -178,77 +225,6 @@ public class MonitorPanel extends JPanel {
 	}
 
 	/**
-	 * This method initializes jPanel
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJPanel() {
-		if (jPanel == null) {
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.fill = GridBagConstraints.BOTH;
-			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.gridy = 1;
-			gridBagConstraints1.weightx = 1.0;
-			gridBagConstraints1.weighty = 1.0;
-			gridBagConstraints1.insets = new Insets(0, 5, 5, 5);
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints.gridy = 0;
-			gridBagConstraints.ipadx = 0;
-			gridBagConstraints.anchor = GridBagConstraints.WEST;
-			gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.gridx = 0;
-			jPanel = new JPanel();
-			jPanel.setLayout(new GridBagLayout());
-			jPanel.setPreferredSize(new Dimension(320, 320));
-			jPanel.add(getJPanel1(), gridBagConstraints);
-			jPanel.add(getJTable(), gridBagConstraints1);
-		}
-		return jPanel;
-	}
-
-	/**
-	 * This method initializes jPanel1
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJPanel1() {
-		if (jPanel1 == null) {
-			GridLayout gridLayout = new GridLayout();
-			gridLayout.setRows(3);
-			gridLayout.setVgap(5);
-			jLabel2 = new JLabel();
-			jLabel2.setText(Messages.getString("MonitorPanel.selectedService")); //$NON-NLS-1$
-			jLabel2.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
-			jLabel2.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedService")); //$NON-NLS-1$
-			jLabel1 = new JLabel();
-			jLabel1.setText(Messages.getString("MonitorPanel.selectedServiceGroup")); //$NON-NLS-1$
-			jLabel1.setFont(new Font("Dialog", Font.BOLD, 14)); //$NON-NLS-1$
-			jLabel1.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
-			jPanel1 = new JPanel();
-			jPanel1.setPreferredSize(new Dimension(310, 67));
-			jPanel1.setLayout(gridLayout);
-			jPanel1.add(jLabel1, null);
-			jPanel1.add(getJPanel2(), null);
-			jPanel1.add(jLabel2, null);
-		}
-		return jPanel1;
-	}
-
-	/**
-	 * This method initializes jTable
-	 *
-	 * @return javax.swing.JTable
-	 */
-	private JTable getJTable() {
-		if (jTable == null) {
-			jTable = new JTable();
-			jTable.setRowHeight(20);
-		}
-		return jTable;
-	}
-
-	/**
 	 * This method initializes jScrollPane
 	 *
 	 * @return javax.swing.JScrollPane
@@ -258,19 +234,19 @@ public class MonitorPanel extends JPanel {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setBorder(null);
 			jScrollPane.setComponentOrientation(ComponentOrientation.UNKNOWN);
-			jScrollPane.setPreferredSize(new Dimension(160, 320));
+			jScrollPane.setPreferredSize(new Dimension(200, 420));
 			jScrollPane.setViewportView(getJTree());
 		}
 		return jScrollPane;
 	}
 
 	/**
-	 * This method initializes jPanel2
+	 * This method initializes jServiceInformationPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJPanel2() {
-		if (jPanel2 == null) {
+	private JPanel getJServiceInformationPanel() {
+		if (jServiceInformationPanel == null) {
 			FlowLayout flowLayout = new FlowLayout();
 			flowLayout.setAlignment(FlowLayout.LEFT);
 			flowLayout.setVgap(0);
@@ -284,13 +260,28 @@ public class MonitorPanel extends JPanel {
 			jLabel3.setFont(new Font("Dialog", Font.PLAIN, 12)); //$NON-NLS-1$
 			jLabel = new JLabel();
 			jLabel.setText(Messages.getString("MonitorPanel.interval")); //$NON-NLS-1$
-			jPanel2 = new JPanel();
-			jPanel2.setLayout(flowLayout);
-			jPanel2.add(jLabel, null);
-			jPanel2.add(jLabel3, null);
-			jPanel2.add(jLabel4, null);
+			jServiceInformationPanel = new JPanel();
+			jServiceInformationPanel.setLayout(flowLayout);
+			jServiceInformationPanel.add(jLabel, null);
+			jServiceInformationPanel.add(jLabel3, null);
+			jServiceInformationPanel.add(jLabel4, null);
 		}
-		return jPanel2;
+		return jServiceInformationPanel;
+	}
+
+	/**
+	 * This method initializes jServicePanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getJServicePanel() {
+		if (jServicePanel == null) {
+			jServicePanel = new JPanel();
+			jServicePanel.setPreferredSize(new Dimension(400, 420));
+			jServicePanel.setLayout(new CardLayout());
+			jServicePanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
+		}
+		return jServicePanel;
 	}
 
 	private void refreshServiceGroups() {
@@ -355,9 +346,16 @@ public class MonitorPanel extends JPanel {
 				if (!currentServices.contains(service)) {
 
 					// Remove from the list view and serviceNodeMap.
-					// System.out.println("removed: "+service);
 					root.remove(
 							serviceNodeMap.remove(service));
+					if (serviceComponents.containsKey(service)) {
+						JComponent serviceComponent = serviceComponents.get(service);
+						getJServicePanel().remove(serviceComponent);
+						if (serviceComponent instanceof DisposableComponent) {
+							((DisposableComponent) serviceComponent).dispose();
+						}
+						serviceComponents.remove(service);
+					}
 					changed = true;
 				}
 			}
@@ -369,9 +367,8 @@ public class MonitorPanel extends JPanel {
 		// Add new Services.
 		for (Service service : currentServices) {
 			if (!serviceNodeMap.containsKey(service)) {
-				// System.out.println("added: "+service+" ("+service.getClass()+")");
 				final DefaultMutableTreeNode node =
-					new DefaultMutableTreeNode(service);
+						new DefaultMutableTreeNode(service);
 				root.add(node);
 				serviceNodeMap.put(service, node);
 				changed = true;
@@ -382,21 +379,31 @@ public class MonitorPanel extends JPanel {
 
 	private void selectService(Service service) {
 		if (service == null) {
-			jLabel2.setText(""); //$NON-NLS-1$
+			jSelectedServiceLabel.setText(""); //$NON-NLS-1$
 			jLabel3.setText(""); //$NON-NLS-1$
 			return;
 		}
-		jLabel2.setText(service.toString());
+		if (!serviceComponents.containsKey(service)) {
+			JComponent serviceComponent = service.getConfigurationComponent();
+			if (serviceComponent != null) {
+				getJServicePanel().add(serviceComponent, String.valueOf(service.hashCode()));
+				getJServicePanel().validate();
+				serviceComponents.put(service, serviceComponent);
+			}
+		}
+		((CardLayout) getJServicePanel().getLayout()).show(
+				getJServicePanel(), String.valueOf(service.hashCode()));
+		jSelectedServiceLabel.setText(service.toString());
 		jLabel3.setText(String.valueOf(service.getInterval()));
 	}
 
 	private void selectServiceGroup(ServiceHolder serviceHolder) {
-		jLabel1.setText(serviceHolder.toString());
+		jSelectedServiceGroupLabel.setText(serviceHolder.toString());
 		selectService(null);
 	}
 
 	private class MonitorService extends ServiceAbstractImpl {
-		final public static String SERVICE_NAME = "Monitor Pane Service"; //$NON-NLS-1$
+		final public static String SERVICE_NAME = "Debug Window Service"; //$NON-NLS-1$
 
 		/** Get a name. */
 		public String getName() { return SERVICE_NAME; }
@@ -429,5 +436,4 @@ public class MonitorPanel extends JPanel {
 		}
 
 	}
-
 }

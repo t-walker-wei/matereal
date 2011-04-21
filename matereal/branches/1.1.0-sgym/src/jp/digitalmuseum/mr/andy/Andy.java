@@ -38,6 +38,7 @@ package jp.digitalmuseum.mr.andy;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.PrintStream;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.service.CoordProvider;
@@ -49,11 +50,12 @@ public class Andy {
 	private LocationProvider locationProvider;
 
 	private Andy() {
-		System.out.println("---Starting Andy.");
+		final PrintStream out = Matereal.getInstance().getOutStream();
+		out.println("---Starting Andy.");
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
-				System.out.println("---Shutting down Andy.");
+				out.println("---Shutting down Andy.");
 				Andy.this.dispose();
 			}
 		});

@@ -409,42 +409,42 @@ public class SplayTree<T> implements Cloneable {
 	@Override
 	public SplayTree<T> clone() {
 		try {
-			super.clone();
-		} catch (CloneNotSupportedException e) {
-			// Do nothing.
-		}
-		SplayTree<T> splayTree = new SplayTree<T>(comparator);
-		if (root == null) {
+			@SuppressWarnings("unchecked")
+			SplayTree<T> splayTree = (SplayTree<T>) super.clone();
+			if (root == null) {
+				return splayTree;
+			}
+
+			BinaryNode<T> newNode = new BinaryNode<T>();
+			BinaryNode<T> n;
+			splayTree.root = newNode;
+
+			Stack<BinaryNode<T>> newStack = new Stack<BinaryNode<T>>();
+			Stack<BinaryNode<T>> stack = new Stack<BinaryNode<T>>();
+			newStack.push(newNode);
+			stack.push(root);
+
+			while (!stack.isEmpty()) {
+				n = stack.pop();
+				newNode = newStack.pop();
+				newNode.key = n.key;
+
+				if (n.left != null) {
+					newNode.left = new BinaryNode<T>();
+					newStack.push(newNode.left);
+					stack.push(n.left);
+				}
+
+				if (n.right != null) {
+					newNode.right = new BinaryNode<T>();
+					newStack.push(newNode.right);
+					stack.push(n.right);
+				}
+			}
 			return splayTree;
+		} catch (CloneNotSupportedException e) {
+			return null;
 		}
-
-		BinaryNode<T> newNode = new BinaryNode<T>();
-		BinaryNode<T> n;
-		splayTree.root = newNode;
-
-		Stack<BinaryNode<T>> newStack = new Stack<BinaryNode<T>>();
-		Stack<BinaryNode<T>> stack = new Stack<BinaryNode<T>>();
-		newStack.push(newNode);
-		stack.push(root);
-
-		while (!stack.isEmpty()) {
-			n = stack.pop();
-			newNode = newStack.pop();
-			newNode.key = n.key;
-
-			if (n.left != null) {
-				newNode.left = new BinaryNode<T>();
-				newStack.push(newNode.left);
-				stack.push(n.left);
-			}
-
-			if (n.right != null) {
-				newNode.right = new BinaryNode<T>();
-				newStack.push(newNode.right);
-				stack.push(n.right);
-			}
-		}
-		return splayTree;
 	}
 
 	public static void main(String[] args) {

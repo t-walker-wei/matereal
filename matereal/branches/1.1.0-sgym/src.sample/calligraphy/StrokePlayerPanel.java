@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
-import javax.swing.SwingUtilities;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -29,10 +28,7 @@ import jp.digitalmuseum.mr.activity.Fork;
 import jp.digitalmuseum.mr.activity.Join;
 import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.gui.activity.ActivityDiagramCanvas;
-import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
 import jp.digitalmuseum.mr.resource.WheelsController;
 import jp.digitalmuseum.mr.service.CoordProvider;
 import jp.digitalmuseum.mr.task.DrawPath;
@@ -52,6 +48,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 	private JCheckBox jStrokeCheckBox = null;
 	private transient CoordProvider imageProvider;
 	private transient PathsProvider pathProvider;
+	private transient ActivityDiagram ad;
 	private transient Robot[] robots;
 	private transient Stroke stroke;  //  @jve:decl-index=0:
 	private transient List<Path> paths;
@@ -60,9 +57,10 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 	/**
 	 * This is the default constructor
 	 */
-	public StrokePlayerPanel(CoordProvider coordProvider) {
+	public StrokePlayerPanel(CoordProvider coordProvider, ActivityDiagram ad) {
 		super();
 		this.imageProvider = coordProvider;
+		this.ad = ad;
 		initialize();
 	}
 
@@ -107,9 +105,11 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 		synchronized (pathProvider) {
 			paths = pathProvider.getPaths();
 			int forks = robots.length > paths.size() ? paths.size() : robots.length;
+			if (forks == 0) {
+				return;
+			}
 
 			// Construct an activity diagram.
-			final ActivityDiagram ad = new ActivityDiagram();
 			Action[] inits = new Action[forks];
 			Action[] tails = new Action[forks];
 			int offset = 0;
@@ -157,16 +157,6 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 			ad.addTransition(new Transition(fork, join));
 			ad.setInitialNode(fork);
 			ad.start();
-
-			// Show the activity diagram.
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					ActivityDiagramCanvas canvas = new ActivityDiagramCanvas(ad);
-					DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ActivityDiagramPane(canvas));
-					frame.setFrameSize(640, 480);
-					frame.setTitle("Activity viewer");
-				}
-			});
 		}
 	}
 
