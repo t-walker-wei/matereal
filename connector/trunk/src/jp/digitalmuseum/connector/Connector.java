@@ -38,9 +38,10 @@ package jp.digitalmuseum.connector;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 
-public interface Connector {
+public interface Connector extends Serializable {
 
 	public String getConnectionString();
 	public boolean connect();

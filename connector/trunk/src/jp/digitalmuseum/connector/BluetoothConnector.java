@@ -52,6 +52,7 @@ import javax.microedition.io.StreamConnection;
 
 
 public final class BluetoothConnector extends ConnectorAbstractImpl {
+	private static final long serialVersionUID = 5420574858269993109L;
 	final public static String CON_PREFIX = "btspp://";
 	private StreamConnection streamConnection;
 	private String host;

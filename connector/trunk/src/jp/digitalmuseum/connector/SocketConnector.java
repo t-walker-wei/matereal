@@ -41,10 +41,11 @@ import java.net.Socket;
 
 
 public final class SocketConnector extends ConnectorAbstractImpl {
+	private static final long serialVersionUID = -2742909372817735417L;
 	final public static String CON_PREFIX2 = "http://";
 	final public static String CON_PREFIX = "tcp:";
 	final public static int DEFAULT_PORT = 80;
-	private Socket socket;
+	private transient Socket socket;
 	private String host;
 	private int port;
 
