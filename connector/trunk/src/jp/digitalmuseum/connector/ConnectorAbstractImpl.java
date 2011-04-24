@@ -41,8 +41,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public abstract class ConnectorAbstractImpl implements Connector {
-	private OutputStream outputStream;
-	private InputStream inputStream;
+	private static final long serialVersionUID = -6942192285671509229L;
+	private transient OutputStream outputStream;
+	private transient InputStream inputStream;
 
 	public void disconnect() {
 		outputStream = null;
@@ -109,6 +110,9 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public boolean write(byte[] byteArray) {
+		if (!isConnected()) {
+			connect();
+		}
 		if (outputStream == null) {
 			return false;
 		}

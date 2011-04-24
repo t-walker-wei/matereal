@@ -40,9 +40,10 @@ import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 
 public final class RXTXConnector extends ConnectorAbstractImpl {
+	private static final long serialVersionUID = 7565866420854582460L;
 	final public static String CON_PREFIX = "COM:";
 	private String portName;
-	private CommPort port;
+	private transient CommPort port;
 
 	public RXTXConnector(String con) {
 		parseConnectionString(con);
