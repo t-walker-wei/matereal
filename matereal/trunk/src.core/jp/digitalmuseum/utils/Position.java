@@ -47,6 +47,7 @@ package jp.digitalmuseum.utils;
  * @author Jun KATO
  */
 public class Position extends Vector2D {
+	private static final long serialVersionUID = 8401243578082968254L;
 	private boolean isNotFound = false;
 
 	public Position() {

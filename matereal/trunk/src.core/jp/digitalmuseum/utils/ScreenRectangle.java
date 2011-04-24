@@ -42,6 +42,7 @@
 package jp.digitalmuseum.utils;
 
 import java.awt.Graphics2D;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -50,7 +51,8 @@ import java.util.NoSuchElementException;
  *
  * @author Jun KATO
  */
-public class ScreenRectangle implements Iterable<ScreenPosition> {
+public class ScreenRectangle implements Iterable<ScreenPosition>, Serializable {
+	private static final long serialVersionUID = 8793281047504948273L;
 	public static final int RIGHT_TOP = 0;
 	public static final int RIGHT_BOTTOM = 1;
 	public static final int LEFT_BOTTOM = 2;

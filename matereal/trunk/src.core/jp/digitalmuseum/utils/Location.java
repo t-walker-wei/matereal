@@ -41,12 +41,15 @@
  */
 package jp.digitalmuseum.utils;
 
+import java.io.Serializable;
+
 /**
  * Location information. (X, Y) [cm] and direction [rad] in the world coordinate.
  *
  * @author Jun KATO
  */
-public class Location {
+public class Location implements Serializable {
+	private static final long serialVersionUID = 370618063374236950L;
 	private Position position;
 	private double rotation;
 

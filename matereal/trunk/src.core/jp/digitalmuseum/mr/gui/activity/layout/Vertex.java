@@ -34,45 +34,84 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.vectorfield;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.service.LocationProvider;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.Vector2D;
-import jp.digitalmuseum.utils.VectorField;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-public abstract class VectorFieldAbstractImpl implements VectorField {
-	private static final long serialVersionUID = -1793520348544861746L;
-	private LocationProvider locationProvider;
+import jp.digitalmuseum.mr.activity.Edge;
+import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout.Coordinate;
 
-	protected void updateLocationProvider() {
-		for (LocationProvider locationProvider :
-				Matereal.getInstance().lookForServices(LocationProvider.class)) {
-			if (checkLocationProvider(locationProvider)) {
-				this.locationProvider = locationProvider;
-			}
+public class Vertex extends LayerElement {
+
+	private Node node;
+	private Map<Vertex, Edge> children;
+	private Map<Vertex, Edge> parents;
+	private int width = 0;
+
+	public Vertex(Node node) {
+		this.node = node;
+		children = new HashMap<Vertex, Edge>();
+		parents = new HashMap<Vertex, Edge>();
+	}
+
+	public Node getNode() {
+		return node;
+	}
+
+	void linkChild(Vertex child, Edge edge) {
+		children.put(child, edge);
+		child.parents.put(this, edge);
+	}
+
+	Edge unlinkChild(Vertex child) {
+		Edge edge = children.remove(child);
+		if (edge != null) {
+			child.parents.remove(this);
 		}
+		return edge;
 	}
 
-	protected LocationProvider getLocationProvider() {
-		if (locationProvider == null) {
-			updateLocationProvider();
+	Set<Vertex> getParents() {
+		return new HashSet<Vertex>(parents.keySet());
+	}
+
+	public Set<Vertex> getChildren() {
+		return new HashSet<Vertex>(children.keySet());
+	}
+
+	public Map<Vertex, Edge> getChildrenEdges() {
+		return new HashMap<Vertex, Edge>(children);
+	}
+
+	boolean hasChildren() {
+		return children.size() > 0;
+	}
+
+	void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	@Override
+	protected void appendString(StringBuilder sb) {
+		if (node != null) {
+			sb.append("vx-");
+			sb.append(node);
 		}
-		return locationProvider;
+		super.appendString(sb);
 	}
 
-	public Vector2D getVector(Position position) {
-		Vector2D vector = new Vector2D();
-		getVectorOut(position, vector);
-		return vector;
-	}
-
-	protected boolean checkLocationProvider(LocationProvider locationProvider) {
-		return true;
-	}
-
-	public String getName() {
-		return this.getClass().getSimpleName();
+	public Coordinate getCoord() {
+		Coordinate coord = new Coordinate();
+		coord.x = getX();
+		coord.y = getDepth();
+		return coord;
 	}
 }

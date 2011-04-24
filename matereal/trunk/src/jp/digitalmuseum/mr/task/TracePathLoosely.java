@@ -43,6 +43,7 @@ import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
 public class TracePathLoosely extends TracePath {
+	private static final long serialVersionUID = 8725371859793237111L;
 
 	public TracePathLoosely(List<Position> path) {
 		super(path);
@@ -54,6 +55,7 @@ public class TracePathLoosely extends TracePath {
 			final Position goal = ((Move) actions[i].getTask()).getDestination();
 			getSubDiagram().addTransition(
 					new Transition(actions[i], actions[i+1]) {
+				private static final long serialVersionUID = -8090374836293962317L;
 				private Vector2D initialVector;
 
 				@Override

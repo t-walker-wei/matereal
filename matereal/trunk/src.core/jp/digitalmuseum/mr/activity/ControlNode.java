@@ -37,6 +37,7 @@
 package jp.digitalmuseum.mr.activity;
 
 public abstract class ControlNode extends Node {
+	private static final long serialVersionUID = 1540782749873077097L;
 
 	public abstract Edge[] getEdges();
 }

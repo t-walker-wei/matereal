@@ -53,25 +53,35 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.UIManager;
 
 import jp.digitalmuseum.mr.entity.Entity;
+import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
+import jp.digitalmuseum.mr.gui.MonitorPanel;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.EventListener;
+import jp.digitalmuseum.mr.message.EventProvider;
+import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.mr.service.ServiceHolder;
+import jp.digitalmuseum.utils.Array;
 
 /**
  * Main class of matereal. Singleton.
  *
  * @author Jun KATO
  */
-public final class Matereal implements ServiceHolder {
+public final class Matereal implements ServiceHolder, EventProvider, EventListener {
 	final public static String LIBRARY_NAME = "Matereal";
 	final private static String THREAD_NAME = "Matereal Thread";
 	public static int DEFAULT_NUM_THREADS = 20;
 	private static Matereal instance;
+	private Array<EventListener> listeners;
 	private ScheduledExecutorService executor;
 	private Set<Entity> entities;
 	private Set<Service> services;
 	private PrintStream out;
 	private PrintStream err;
+	private DisposeOnCloseFrame debugFrame;
 	private boolean isDisposing = false;
 
 // Singleton and application related methods.
@@ -84,6 +94,7 @@ public final class Matereal implements ServiceHolder {
 		out = System.out;
 		err = System.err;
 		out.println("--Starting matereal.");
+		listeners = new Array<EventListener>();
 		executor = Executors.newScheduledThreadPool(DEFAULT_NUM_THREADS);
 		entities = new HashSet<Entity>();
 		services = new HashSet<Service>();
@@ -117,6 +128,32 @@ public final class Matereal implements ServiceHolder {
 		this.err = err;
 	}
 
+	public void showDebugFrame() {
+		if (debugFrame == null) {
+			MonitorPanel monitor = new MonitorPanel();
+			debugFrame = new DisposeOnCloseFrame(monitor) {
+				private static final long serialVersionUID = -3861483678329980836L;
+				@Override
+				public void dispose() {
+					super.dispose();
+					Matereal.this.debugFrame = null;
+				}
+			};
+		}
+		debugFrame.setVisible(true);
+	}
+
+	public void hideDebugFrame() {
+		debugFrame.setVisible(false);
+	}
+
+	public void disposeDebugFrame() {
+		if (debugFrame != null) {
+			debugFrame.dispose();
+			debugFrame = null;
+		}
+	}
+
 	public String getName() {
 		return THREAD_NAME;
 	}
@@ -132,6 +169,7 @@ public final class Matereal implements ServiceHolder {
 		if (isDisposing) {
 			return;
 		}
+		disposeDebugFrame();
 		isDisposing = true;
 		out.println("--Shutting down matereal.");
 		synchronized (services) {
@@ -146,7 +184,7 @@ public final class Matereal implements ServiceHolder {
 			}
 			entities.clear();
 		}
-		executor.shutdown();
+		executor.shutdownNow();
 		out.print("--THANK YOU. GOOD ");
 		final int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
 		if (hour > 6 && hour < 17) {
@@ -166,6 +204,7 @@ public final class Matereal implements ServiceHolder {
 	public void registerEntity(Entity entity) {
 		synchronized (entities) {
 			entities.add(entity);
+			entity.addEventListener(this);
 		}
 	}
 
@@ -176,7 +215,11 @@ public final class Matereal implements ServiceHolder {
 	 */
 	public boolean unregisterEntity(Entity entity) {
 		synchronized (entities) {
-			return entities.remove(entity);
+			if (entities.remove(entity)) {
+				entity.removeEventListener(this);
+				return true;
+			}
+			return false;
 		}
 	}
 
@@ -188,6 +231,7 @@ public final class Matereal implements ServiceHolder {
 	public void registerService(Service service) {
 		synchronized (services) {
 			services.add(service);
+			service.addEventListener(this);
 		}
 	}
 
@@ -325,14 +369,33 @@ public final class Matereal implements ServiceHolder {
 					while (true) {
 						future.get();
 					}
-				}
-				catch (ExecutionException e) {
-					System.err.print("Service ("+getName()+") killed by: ");
+				} catch (ExecutionException e) {
+					if (isDisposing) {
+						return;
+					}
+					err.print("Service ");
+					String name = null;
+					if (runnable instanceof Service) {
+						name = ((Service) runnable).getName();
+					}
+					if (name != null) {
+						err.print("(");
+						err.print(name);
+						err.print(") ");
+					}
+					err.print("killed by: ");
 					e.getCause().printStackTrace();
-					System.out.println("Restarting "+getName()+".");
+					if (runnable instanceof Service) {
+						if (!((Service) runnable).isStarted()) {
+							return;
+						}
+					}
+					out.print("Restarting ");
+					out.print(name == null ? "the service" : name);
+					out.println(".");
 					scheduleAtFixedRate(runnable, interval);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					// Do nothing.
 				}
 			}
 		});
@@ -350,6 +413,33 @@ public final class Matereal implements ServiceHolder {
 					future.cancel(false);
 				}
 			});
+		}
+	}
+
+	/**
+	 * Add an event listener.
+	 */
+	public void addEventListener(EventListener listener) {
+		listeners.push(listener);
+	}
+
+	/**
+	 * Remove an event listener.
+	 *
+	 * @return Returns whether removal succeeded or not.
+	 */
+	public boolean removeEventListener(EventListener listener) {
+		return listeners.remove(listener);
+	}
+
+	@Override
+	public void eventOccurred(Event e) {
+		if (e instanceof ServiceEvent &&
+				((ServiceEvent) e).getStatus() == STATUS.STOPPED) {
+			e.getSource().removeEventListener(this);
+		}
+		for (EventListener listener : listeners) {
+			listener.eventOccurred(e);
 		}
 	}
 

@@ -36,8 +36,6 @@
  */
 package jp.digitalmuseum.mr.entity;
 
-import java.awt.Shape;
-
 /**
  * Abstract implementation of ProxyRobot.<br />
  * VirtualRobot implementation classes must extend this abstract class.
@@ -45,8 +43,5 @@ import java.awt.Shape;
  * @author Jun KATO
  */
 public abstract class ProxyRobotAbstractImpl extends RobotAbstractImpl implements ProxyRobot {
-
-	public Shape getShape() {
-		return null;
-	}
+	private static final long serialVersionUID = -8977179709189051697L;
 }

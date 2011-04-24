@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.mr.service;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 
 
@@ -46,6 +47,7 @@ import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
  * @author Jun KATO
  */
 public class TestService extends ServiceAbstractImpl {
+	private static final long serialVersionUID = -2568791622352759651L;
 	private static long id = 0;
 	private String name;
 
@@ -59,7 +61,8 @@ public class TestService extends ServiceAbstractImpl {
 	}
 
 	public void run() {
-		System.out.println(getName()
+		Matereal.getInstance().getOutStream().println(
+				getName()
 				+ " is running properly every "
 				+ getInterval()+"ms.");
 	}

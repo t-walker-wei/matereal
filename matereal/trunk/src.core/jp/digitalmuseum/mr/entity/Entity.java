@@ -37,6 +37,7 @@
 package jp.digitalmuseum.mr.entity;
 
 import java.awt.Shape;
+import java.io.Serializable;
 
 import jp.digitalmuseum.mr.message.EventProvider;
 
@@ -46,7 +47,7 @@ import jp.digitalmuseum.mr.message.EventProvider;
  * @author Jun KATO
  * @see Robot
  */
-public interface Entity extends EventProvider {
+public interface Entity extends EventProvider, Serializable {
 
 	/**
 	 * Called when disposing this Entity.

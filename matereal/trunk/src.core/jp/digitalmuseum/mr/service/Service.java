@@ -36,6 +36,8 @@
  */
 package jp.digitalmuseum.mr.service;
 
+import java.io.Serializable;
+
 import javax.swing.JComponent;
 
 import jp.digitalmuseum.mr.message.EventProvider;
@@ -45,7 +47,7 @@ import jp.digitalmuseum.mr.message.EventProvider;
  *
  * @author Jun KATO
  */
-public interface Service extends Runnable, EventProvider {
+public interface Service extends Runnable, EventProvider, Serializable {
 
 	/**
 	 * Start this service.	 *

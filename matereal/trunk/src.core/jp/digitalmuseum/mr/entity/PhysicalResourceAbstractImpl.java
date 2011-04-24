@@ -39,7 +39,7 @@ package jp.digitalmuseum.mr.entity;
 import jp.digitalmuseum.connector.Connector;
 
 public abstract class PhysicalResourceAbstractImpl extends ResourceAbstractImpl {
-
+	private static final long serialVersionUID = -8174014896649506666L;
 	private Connector connector;
 
 	protected PhysicalResourceAbstractImpl(PhysicalRobotAbstractImpl robot) {

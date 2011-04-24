@@ -49,6 +49,7 @@ import java.awt.Point;
  * @author Jun KATO
  */
 public class ScreenPosition extends ScreenVector2D {
+	private static final long serialVersionUID = 7724280665928559617L;
 	private boolean isNotFound = false;
 
 	public ScreenPosition() {

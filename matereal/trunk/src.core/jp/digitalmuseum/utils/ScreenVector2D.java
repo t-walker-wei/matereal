@@ -42,13 +42,15 @@
 package jp.digitalmuseum.utils;
 
 import java.awt.Point;
+import java.io.Serializable;
 
 /**
  * 2D vector in a screen coordinate.
  *
  * @author Jun KATO
  */
-public class ScreenVector2D {
+public class ScreenVector2D implements Serializable {
+	private static final long serialVersionUID = -8961098699551120179L;
 	protected int x;
 	protected int y;
 

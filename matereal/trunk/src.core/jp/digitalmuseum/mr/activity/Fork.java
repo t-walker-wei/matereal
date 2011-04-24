@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class Fork extends ControlNode {
+	private static final long serialVersionUID = 8421184101422231273L;
 	private Set<EdgeImpl> edges;
 	private Set<Node> nodesToGo;
 

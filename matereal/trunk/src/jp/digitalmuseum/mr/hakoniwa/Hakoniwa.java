@@ -13,8 +13,11 @@ import java.awt.image.DataBufferByte;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JComponent;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
+import jp.digitalmuseum.mr.gui.ImageProviderPanel;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.message.LocationUpdateEvent;
 import jp.digitalmuseum.mr.service.CoordProvider;
@@ -47,6 +50,7 @@ import org.jbox2d.dynamics.joints.MouseJointDef;
 import org.jbox2d.dynamics.joints.PulleyJoint;
 
 public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, ScreenLocationProvider, CoordProvider {
+	private static final long serialVersionUID = 9041637143139612791L;
 
 	/** Default maximum world width. */
 	private final static float WORLD_WIDTH = 400f;
@@ -827,4 +831,8 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 		g.draw(line);
 	}
 
+	@Override
+	public JComponent getConfigurationComponent() {
+		return new ImageProviderPanel(this);
+	}
 }

@@ -34,45 +34,57 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.vectorfield;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.service.LocationProvider;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.Vector2D;
-import jp.digitalmuseum.utils.VectorField;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class VectorFieldAbstractImpl implements VectorField {
-	private static final long serialVersionUID = -1793520348544861746L;
-	private LocationProvider locationProvider;
+import jp.digitalmuseum.mr.activity.Edge;
+import jp.digitalmuseum.mr.activity.Node;
 
-	protected void updateLocationProvider() {
-		for (LocationProvider locationProvider :
-				Matereal.getInstance().lookForServices(LocationProvider.class)) {
-			if (checkLocationProvider(locationProvider)) {
-				this.locationProvider = locationProvider;
-			}
+public class Layout {
+	private Map<Node, Coordinate> nodeCoords;
+	private Map<Edge, Line> edgeCoords;
+
+	public Layout() {
+		nodeCoords = new HashMap<Node, Coordinate>();
+		edgeCoords = new HashMap<Edge, Line>();
+	}
+
+	void putNodeCoord(Node node, Coordinate coord) {
+		nodeCoords.put(node, coord);
+	}
+
+	void putEdgeCoords(Edge edge, Line coords) {
+		edgeCoords.put(edge, coords);
+	}
+
+	public Coordinate getNodeCoord(Node node) {
+		return nodeCoords.get(node);
+	}
+
+	public Line getEdgeCoord(Edge edge) {
+		return edgeCoords.get(edge);
+	}
+
+	public boolean contains(Node node) {
+		return nodeCoords.containsKey(node);
+	}
+
+	public boolean contains(Edge edge) {
+		return edgeCoords.containsKey(edge);
+	}
+
+	public static class Line {
+		public Line(Coordinate[] coordinates, boolean isReversed) {
+			this.coordinates = coordinates;
+			this.isReversed = isReversed;
 		}
+		public Coordinate[] coordinates;
+		public boolean isReversed;
 	}
 
-	protected LocationProvider getLocationProvider() {
-		if (locationProvider == null) {
-			updateLocationProvider();
-		}
-		return locationProvider;
-	}
-
-	public Vector2D getVector(Position position) {
-		Vector2D vector = new Vector2D();
-		getVectorOut(position, vector);
-		return vector;
-	}
-
-	protected boolean checkLocationProvider(LocationProvider locationProvider) {
-		return true;
-	}
-
-	public String getName() {
-		return this.getClass().getSimpleName();
+	public static class Coordinate {
+		public int x, y;
 	}
 }

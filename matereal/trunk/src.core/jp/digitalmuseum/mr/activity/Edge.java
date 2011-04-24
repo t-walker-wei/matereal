@@ -36,7 +36,9 @@
  */
 package jp.digitalmuseum.mr.activity;
 
-public interface Edge {
+import java.io.Serializable;
+
+public interface Edge extends Serializable {
 
 	public Node getSource();
 	public Node getDestination();

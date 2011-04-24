@@ -51,10 +51,11 @@ import jp.digitalmuseum.utils.VectorField;
  * @author Jun KATO
  */
 public abstract class VectorFieldTask extends LocationBasedTaskAbstractImpl implements VectorField {
+	private static final long serialVersionUID = -7112272585041055060L;
 	public static double defaultAllowedDeviationAngle = 0.2; // 17 degrees+
 	private final Array<VectorField> optionalFields;
-	private final Vector2D vector;
-	private final Position position;
+	private transient final Vector2D vector;
+	private transient final Position position;
 	private double allowedDeviationAngle;
 
 	public VectorFieldTask() {

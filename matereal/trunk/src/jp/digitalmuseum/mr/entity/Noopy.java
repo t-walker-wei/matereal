@@ -38,6 +38,8 @@ package jp.digitalmuseum.mr.entity;
 
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +59,7 @@ import jp.digitalmuseum.mr.resource.WheelsController;
  * @see NoopyWheels
  */
 public class Noopy extends PhysicalRobotAbstractImpl {
+	private static final long serialVersionUID = -5602909671919783633L;
 	final public static double WIDTH = 12;
 	final public static double HEIGHT = 16;
 	private NoopyWheels wheels;
@@ -156,6 +159,7 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 	 * @see Noopy
 	 */
 	public static class NoopyWheels extends PhysicalResourceAbstractImpl implements WheelsController {
+		private static final long serialVersionUID = 6183145475982755979L;
 		private STATUS status;
 
 		public NoopyWheels(Noopy noopy) {
@@ -165,6 +169,11 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 
 		public NoopyWheels(Connector connector) {
 			super(connector);
+			initialize();
+		}
+
+		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+			ois.defaultReadObject();
 			initialize();
 		}
 
@@ -239,6 +248,7 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 	 * @see Noopy
 	 */
 	public static class NoopyPen extends PhysicalResourceAbstractImpl implements Pen {
+		private static final long serialVersionUID = 529214318121894129L;
 		private STATUS penStatus;
 
 		public NoopyPen(Noopy noopy) {
@@ -253,6 +263,11 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 
 		private void initialize() {
 			penStatus = STATUS.UP;
+		}
+
+		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+			ois.defaultReadObject();
+			initialize();
 		}
 
 		@Override

@@ -53,6 +53,7 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
  * @author Jun KATO
  */
 public class Mini extends PhysicalRobotAbstractImpl {
+	private static final long serialVersionUID = 3586580600456610155L;
 	final public static double WIDTH = 8;
 	final public static double HEIGHT = 6;
 	private MiniWheels w;
@@ -108,11 +109,12 @@ public class Mini extends PhysicalRobotAbstractImpl {
 	 * @see Mini
 	 */
 	public static class MiniWheels extends DifferentialWheelsAbstractImpl {
+		private static final long serialVersionUID = 8894011744025618265L;
 		public static final int DEFAULT_SPEED = 70; // 11=too slow, 13=too fast
 		public static final int MAX_STEP = 50000;
 		public static final int MAX_ROTATION_SPEED = 8000;
 		public static final int MIN_COMMAND_INTERVAL = 100;
-		private long time = 0;
+		private transient long time = 0;
 
 		public MiniWheels(Mini mini) {
 			super(mini);

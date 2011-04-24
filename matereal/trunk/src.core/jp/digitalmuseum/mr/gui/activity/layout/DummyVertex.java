@@ -34,45 +34,68 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.vectorfield;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.service.LocationProvider;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.Vector2D;
-import jp.digitalmuseum.utils.VectorField;
 
-public abstract class VectorFieldAbstractImpl implements VectorField {
-	private static final long serialVersionUID = -1793520348544861746L;
-	private LocationProvider locationProvider;
+public class DummyVertex extends Vertex {
+	private Segment segment;
+	private boolean isHead;
+	private boolean isTail;
 
-	protected void updateLocationProvider() {
-		for (LocationProvider locationProvider :
-				Matereal.getInstance().lookForServices(LocationProvider.class)) {
-			if (checkLocationProvider(locationProvider)) {
-				this.locationProvider = locationProvider;
-			}
+	public DummyVertex() {
+		super(null);
+		this.segment = null;
+		this.isHead = false;
+		this.isTail = false;
+	}
+
+	public DummyVertex(Segment segment, boolean isHead) {
+		super(null);
+		this.segment = segment;
+		this.isHead = isHead;
+		this.isTail = !isHead;
+	}
+
+	public boolean isHead() {
+		return isHead;
+	}
+
+	public boolean isTail() {
+		return isTail;
+	}
+
+	public Segment getSegment() {
+		return segment;
+	}
+
+	@Override
+	public int getX() {
+		if (segment == null) {
+			return super.getX();
+		} else {
+			return segment.getX();
 		}
 	}
 
-	protected LocationProvider getLocationProvider() {
-		if (locationProvider == null) {
-			updateLocationProvider();
+	@Override
+	public void setX(int x) {
+		if (segment == null) {
+			super.setX(x);
+		} else {
+			segment.setX(x);
 		}
-		return locationProvider;
 	}
 
-	public Vector2D getVector(Position position) {
-		Vector2D vector = new Vector2D();
-		getVectorOut(position, vector);
-		return vector;
-	}
-
-	protected boolean checkLocationProvider(LocationProvider locationProvider) {
-		return true;
-	}
-
-	public String getName() {
-		return this.getClass().getSimpleName();
+	@Override
+	protected void appendString(StringBuilder sb) {
+		sb.append("v");
+		if (isHead) {
+			sb.append("h");
+		} else if (isTail) {
+			sb.append("t");
+		} else {
+			sb.append("d");
+		}
+		super.appendString(sb);
 	}
 }

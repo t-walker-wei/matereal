@@ -38,57 +38,45 @@ package jp.digitalmuseum.mr.gui.activity;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.util.Deque;
-import java.util.LinkedList;
 
 import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout.Coordinate;
 
-import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.nodes.PPath;
 
 public abstract class PNodeAbstractImpl extends PPath {
 	private static final long serialVersionUID = 3592199380497357141L;
-	private int depth = 0;
 	private Node node;
-	private Deque<PNodeAbstractImpl> unmanagedChildren;
-	public double y;
+	private static final int width = 200;
+	private static final int height = 70;
+
+	public static int getAreaWidth() {
+		return width;
+	}
+
+	public static int getAreaHeight() {
+		return height;
+	}
 
 	public PNodeAbstractImpl(Node node) {
 		this.node = node;
 		setPaint(Color.white);
 		setStrokePaint(Color.black);
-		unmanagedChildren = new LinkedList<PNodeAbstractImpl>();
-		y = 0;
 	}
 
 	void setAsInitialNode() {
 		setStroke(new BasicStroke(2f));
 	}
 
-	void setDepth(int depth) {
-		this.depth = depth;
+	PActivity setPosition(Coordinate coord) {
+		int p = ActivityDiagramCanvas.getPadding();
+		int w = ActivityDiagramCanvas.getMarginX() + getAreaWidth();
+		int h = ActivityDiagramCanvas.getMarginY() + getAreaHeight();
+		return animateToPositionScaleRotation(coord.y * w + p, coord.x * h + p, 1.0f, 0.0f, 200);
 	}
 
-	/**
-	 * Add provided offset to depth of the node and its all descendants.
-	 *
-	 * @param depthOffset
-	 */
-	void setDepthOffset(int depthOffset) {
-		Deque<PNodeAbstractImpl> stack = new LinkedList<PNodeAbstractImpl>();
-		stack.push(this);
-		while (!stack.isEmpty()) {
-			PNodeAbstractImpl node = stack.poll();
-			node.setDepth(node.getDepth() + depthOffset);
-			stack.addAll(node.getUnmanagedChildrenReference());
-		}
-	}
-
-	public int getDepth() {
-		return depth;
-	}
-
-	public Node getNode() {
+	Node getNode() {
 		return node;
 	}
 
@@ -100,27 +88,5 @@ public abstract class PNodeAbstractImpl extends PPath {
 	public void onLeave() {
 		setStrokePaint(Color.black);
 		repaint();
-	}
-
-	Deque<PNodeAbstractImpl> getUnmanagedChildrenReference() {
-		return unmanagedChildren;
-	}
-
-	@Override
-	public void addChild(int i, PNode pNode) {
-		super.addChild(i, pNode);
-		if (pNode instanceof PNodeAbstractImpl) {
-			unmanagedChildren.add((PNodeAbstractImpl) pNode);
-		}
-	}
-
-	@Override
-	public PNode removeChild(int i) {
-		PNode removedPNode = super.removeChild(i);
-		if (removedPNode != null &&
-				removedPNode instanceof PNodeAbstractImpl) {
-			unmanagedChildren.remove(removedPNode);
-		}
-		return removedPNode;
 	}
 }

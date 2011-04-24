@@ -55,6 +55,7 @@ import jp.digitalmuseum.mr.resource.WheelsController;
  * @author Jun KATO
  */
 public class CloneWheelsRobot extends ProxyRobotAbstractImpl {
+	private static final long serialVersionUID = 4996307031791909067L;
 	final private Set<Robot> robots;
 	final private Set<WheelsController> wheels;
 	final private CloneWheels w;
@@ -100,6 +101,7 @@ public class CloneWheelsRobot extends ProxyRobotAbstractImpl {
 	}
 
 	private class CloneWheels extends ProxyResourceAbstractImpl implements WheelsController {
+		private static final long serialVersionUID = -4046377720816462415L;
 		private STATUS status;
 
 		public CloneWheels(ProxyRobotAbstractImpl robot) {

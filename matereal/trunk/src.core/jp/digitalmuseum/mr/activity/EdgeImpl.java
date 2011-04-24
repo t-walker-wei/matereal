@@ -37,6 +37,7 @@
 package jp.digitalmuseum.mr.activity;
 
 public class EdgeImpl implements Edge {
+	private static final long serialVersionUID = 873973476602139733L;
 	private Node source;
 	private Node destination;
 

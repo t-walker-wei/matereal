@@ -41,12 +41,15 @@
  */
 package jp.digitalmuseum.utils;
 
+import java.io.Serializable;
+
 /**
  * Location information. (X, Y) [px] and direction [rad] in a screen coordinate.
  *
  * @author Jun KATO
  */
-public class ScreenLocation {
+public class ScreenLocation implements Serializable {
+	private static final long serialVersionUID = 129802525260500361L;
 	private ScreenPosition position;
 	private double rotation;
 

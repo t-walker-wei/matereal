@@ -51,6 +51,7 @@ import jp.digitalmuseum.utils.Position;
  * @see LocationProvider
  */
 public abstract class LocationProviderAbstractImpl extends ServiceAbstractImpl implements LocationProvider {
+	private static final long serialVersionUID = 3860237767370741601L;
 	final Location location = new Location();
 
 	public Location getLocation(Entity e) {

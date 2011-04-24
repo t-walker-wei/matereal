@@ -34,14 +34,38 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.activity;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import jp.digitalmuseum.mr.activity.Node;
 
-public class PDummyNode extends PNodeAbstractImpl {
-	private static final long serialVersionUID = -3443925646196477539L;
+public class Segment extends LayerElement {
+	private DummyVertex head;
+	private DummyVertex tail;
+	private Container container;
 
-	public PDummyNode(Node node) {
-		super(node);
+	public Segment() {
+		this.head = new DummyVertex(this, true);
+		this.tail = new DummyVertex(this, false);
+	}
+
+	public DummyVertex getHead() {
+		return head;
+	}
+
+	public DummyVertex getTail() {
+		return tail;
+	}
+
+	void setContainer(Container container) {
+		this.container = container;
+	}
+
+	Container getContainer() {
+		return container;
+	}
+
+	@Override
+	protected void appendString(StringBuilder sb) {
+		sb.append("sg");
+		super.appendString(sb);
 	}
 }

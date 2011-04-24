@@ -40,6 +40,7 @@ import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.activity.Transition;
 
 public class TimeoutTransition extends Transition {
+	private static final long serialVersionUID = 969263044496168882L;
 	private long timeout;
 
 	public TimeoutTransition(Node source, Node destination, long timeout) {

@@ -36,36 +36,18 @@
  */
 package jp.digitalmuseum.mr.activity;
 
-public class Transition implements Edge {
-	private Node source;
-	private Node destination;
+public class Transition extends EdgeImpl {
+	private static final long serialVersionUID = 5832491295660003588L;
 
 	public Transition(Node source, Node destination) {
-		this.source = source;
-		this.destination = destination;
+		super(source, destination);
 	}
 
 	protected boolean guard() {
 		return sourceIsDone();
 	}
 
-	void setSource(Node source) {
-		this.source = source;
-	}
-
 	protected boolean sourceIsDone() {
-		return source.isDone();
-	}
-
-	public Node getSource() {
-		return source;
-	}
-
-	void setDestination(Node destination) {
-		this.destination = destination;
-	}
-
-	public Node getDestination() {
-		return destination;
+		return getSource().isDone();
 	}
 }

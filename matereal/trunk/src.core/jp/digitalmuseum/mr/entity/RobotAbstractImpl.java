@@ -52,6 +52,7 @@ import jp.digitalmuseum.mr.task.Task;
  * @author Jun KATO
  */
 public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
+	private static final long serialVersionUID = 7934515270996412490L;
 
 	/** Name of the type of this robot. */
 	private String typeName;

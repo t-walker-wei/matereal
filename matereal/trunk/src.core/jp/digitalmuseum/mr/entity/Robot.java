@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.mr.entity;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +52,7 @@ import jp.digitalmuseum.mr.task.Task;
  * @see RobotAbstractImpl
  * @see ProxyRobot
  */
-public interface Robot extends Entity, EventProvider {
+public interface Robot extends Entity, EventProvider, Serializable {
 
 	/**
 	 * Get a name of the type of this robot.

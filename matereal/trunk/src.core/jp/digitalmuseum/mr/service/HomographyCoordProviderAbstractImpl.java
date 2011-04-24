@@ -51,6 +51,7 @@ import jp.digitalmuseum.utils.ScreenRectangle;
  * @see CoordProvider
  */
 public abstract class HomographyCoordProviderAbstractImpl extends ServiceAbstractImpl implements HomographyCoordProvider {
+	private static final long serialVersionUID = -7516458060912262010L;
 	final public static double DEFAULT_REAL_WIDTH = 800.0;
 	final public static double DEFAULT_REAL_HEIGHT = 600.0;
 

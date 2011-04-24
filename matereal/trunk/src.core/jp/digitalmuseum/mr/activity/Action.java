@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.mr.activity;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,11 +50,12 @@ import jp.digitalmuseum.mr.message.ServiceEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.task.Task;
 
-public class Action extends Node implements EventListener {
+public class Action extends Node implements EventListener, Serializable {
+	private static final long serialVersionUID = -7946448386025919578L;
 	private Robot robot;
 	private Task task;
-	private Set<Class<? extends Resource>> transferringResourceTypes;
-	private boolean isDone;
+	private transient Set<Class<? extends Resource>> transferringResourceTypes;
+	private transient boolean isDone;
 
 	public Action(Robot robot, Task task) {
 		this.robot = robot;

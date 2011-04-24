@@ -36,12 +36,14 @@
  */
 package jp.digitalmuseum.mr.entity;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ResourceMap implements Iterable<Map.Entry<Class<? extends Resource>, Resource>> {
+public class ResourceMap implements Iterable<Map.Entry<Class<? extends Resource>, Resource>>, Serializable {
+	private static final long serialVersionUID = 2730930267963392638L;
 	private HashMap<Class<? extends Resource>, Resource> map;
 
 	public ResourceMap() {

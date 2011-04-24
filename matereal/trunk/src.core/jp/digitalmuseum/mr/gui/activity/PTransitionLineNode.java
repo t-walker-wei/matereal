@@ -47,14 +47,12 @@ import jp.digitalmuseum.mr.activity.Transition;
 
 public class PTransitionLineNode extends PLineNodeAbstractImpl {
 	private static final long serialVersionUID = 5091941901786318920L;
-	private transient Transition transition;
+	private Transition transition;
 	private PText text;
 	private static Color color = new Color(100, 100, 100);
 
-	public PTransitionLineNode(Transition transition, PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
-		super(pSourceNode, pDestinationNode);
+	public PTransitionLineNode(Transition transition) {
 		this.transition = transition;
-		setStrokePaint(color);
 		if (transition instanceof TimeoutTransition) {
 			long timeout = ((TimeoutTransition) transition).getTimeout();
 			text = new PText(String.format("%.1fs", (float)timeout/1000));
@@ -80,10 +78,24 @@ public class PTransitionLineNode extends PLineNodeAbstractImpl {
 	}
 
 	@Override
-	protected void setLine(Point2D start, Point2D end) {
-		super.setLine(start, end);
+	protected void setLine(Point2D[] points) {
+		super.setLine(points);
 		if (text != null) {
-			text.setOffset((start.getX()+end.getX()-text.getWidth())/2, (start.getY()+end.getY())/2+5);
+			Point2D start, end;
+			if (points.length == 2) {
+				start = points[0];
+				end = points[1];
+			} else {
+				start = points[1];
+				end = points[2];
+			}
+			text.setOffset(
+					(start.getX() + end.getX() - text.getWidth()) / 2,
+					(start.getY() + end.getY()) / 2 - text.getHeight() - 2);
 		}
+	}
+
+	protected Color getDefaultStrokeColor() {
+		return color;
 	}
 }

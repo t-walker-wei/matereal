@@ -36,18 +36,22 @@
  */
 package jp.digitalmuseum.mr.resource;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import jp.digitalmuseum.connector.Connector;
 import jp.digitalmuseum.mr.entity.PhysicalResourceAbstractImpl;
 import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 
 public abstract class DifferentialWheelsAbstractImpl extends PhysicalResourceAbstractImpl
 		implements DifferentialWheelsController {
+	private static final long serialVersionUID = 4104568454137232520L;
 	private STATUS status;
 	private int speed;
 	private int rotationSpeed;
 	private int innerSpeed;
-	private int leftPower = 0;
-	private int rightPower = 0;
+	private transient int leftPower = 0;
+	private transient int rightPower = 0;
 
 	public DifferentialWheelsAbstractImpl(PhysicalRobotAbstractImpl robot) {
 		super(robot);
@@ -63,6 +67,11 @@ public abstract class DifferentialWheelsAbstractImpl extends PhysicalResourceAbs
 		speed = getRecommendedSpeed();
 		rotationSpeed = getRecommendedRotationSpeed();
 		status = STATUS.STOP;
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
 	}
 
 	protected void onFree() {
