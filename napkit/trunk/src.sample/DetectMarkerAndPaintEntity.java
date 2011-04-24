@@ -62,6 +62,7 @@ public class DetectMarkerAndPaintEntity {
 		// Detect a marker.
 		final NapMarker marker = new NapMarker("markers\\4x4_78.patt", 45);
 		final Entity dummy = new EntityImpl("test") {
+			private static final long serialVersionUID = -4798999695959433895L;
 			public Shape getShape() { return new Rectangle2D.Double(-10, -10, 20, 20); }
 		};
 		detector.addMarker(marker, dummy);
