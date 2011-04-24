@@ -99,9 +99,15 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 	}
 
 	private class WatcherService extends ServiceAbstractImpl {
-		public String getName() { return "Marker Detector Source Watcher"; }
+		private static final long serialVersionUID = 4436866502915761610L;
+
+		public String getName() {
+			return "Marker Detector Source Watcher";
+		}
+
 		public void run() {
-			final ImageProvider currentImageProvider = markerDetector.getImageProvider();
+			final ImageProvider currentImageProvider =
+					markerDetector.getImageProvider();
 			if (!currentImageProvider.equals(coordProvider)) {
 				updateCoordsTab();
 			}
