@@ -132,6 +132,8 @@ public class KeyController {
 		});
 
 		Service service = new ServiceAbstractImpl() {
+			private static final long serialVersionUID = -7696883253059763835L;
+
 			public void run() {
 				switch (key) {
 				case UP:

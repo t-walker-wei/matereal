@@ -41,6 +41,7 @@
  */
 package jp.digitalmuseum.utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -54,7 +55,9 @@ import java.util.Set;
  *
  * @author Jun KATO
  */
-public class Array<T> implements Iterable<T> {
+public class Array<T> implements Iterable<T>, Serializable {
+	private static final long serialVersionUID = -1129675547003612162L;
+
 	final public static int INITIAL_SIZE = 10;
 
 	private Set<ArrayIterator> iterators;
@@ -106,10 +109,23 @@ public class Array<T> implements Iterable<T> {
 
 	/** Put an element to the specified index. */
 	public synchronized void put(T e, int index) {
-		if (index < 0 || index + 1 >= elements.length) {
+		if (index < 0 || index + 1 > validSize) {
 			throw new ArrayIndexOutOfBoundsException();
 		}
 		elements[index] = e;
+	}
+
+	/** Insert an element to the specified index. */
+	public synchronized void insert(T e, int index) {
+		if (index < 0 || index > validSize) {
+			throw new ArrayIndexOutOfBoundsException();
+		}
+		if (validSize + 1 >= elements.length) {
+			realloc(elements.length + 1);
+		}
+		System.arraycopy(elements, index, elements, index + 1, validSize - index);
+		elements[index] = e;
+		validSize ++;
 	}
 
 	/** Push an element. */

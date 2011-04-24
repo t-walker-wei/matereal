@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.mr.entity;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -44,7 +45,7 @@ import java.util.Set;
  * @author Jun KATO
  * @see Robot
  */
-public interface Resource {
+public interface Resource extends Serializable {
 
 	public Robot getRobot();
 	public Set<Object> getReaders();

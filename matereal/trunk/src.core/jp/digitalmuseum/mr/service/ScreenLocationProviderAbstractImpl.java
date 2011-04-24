@@ -49,6 +49,7 @@ import jp.digitalmuseum.utils.ScreenPosition;
  * @see LocationProvider
  */
 public abstract class ScreenLocationProviderAbstractImpl extends ServiceAbstractImpl implements ScreenLocationProvider {
+	private static final long serialVersionUID = -2104247148124396683L;
 	final ScreenLocation screenLocation = new ScreenLocation();
 
 	public ScreenLocation getScreenLocation(Entity e) {

@@ -36,34 +36,128 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import java.awt.Color;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
+import jp.digitalmuseum.mr.activity.Fork;
+import jp.digitalmuseum.mr.activity.Join;
+import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout.Coordinate;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout.Line;
+
+import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.nodes.PPath;
+import edu.umd.cs.piccolo.util.PUtil;
 
-public abstract class PLineNodeAbstractImpl extends PPath {
+public abstract class PLineNodeAbstractImpl extends PPath implements PStrokeColorActivity.Target {
 	private static final long serialVersionUID = -8586619092371481425L;
-	private PNodeAbstractImpl pSourceNode;
-	private PNodeAbstractImpl pDestinationNode;
-	private Point2D[] points;
+	private Color color;
 
-	public PLineNodeAbstractImpl(PNodeAbstractImpl pSourceNode, PNodeAbstractImpl pDestinationNode) {
-		this.pSourceNode = pSourceNode;
-		this.pDestinationNode = pDestinationNode;
-		points = new Point2D[2];
+	public PLineNodeAbstractImpl() {
 		setPickable(false);
 	}
 
-	PNodeAbstractImpl getSourcePNode() {
-		return pSourceNode;
+	public Color getStrokeColor() {
+		return color;
 	}
 
-	PNodeAbstractImpl getDestinationPNode() {
-		return pDestinationNode;
+	public void setStrokeColor(Color color) {
+		setStrokePaint(color);
+		this.color = color;
 	}
 
-	protected void setLine(Point2D start, Point2D end) {
-		points[0] = (Point2D) start.clone();
-		points[1] = (Point2D) end.clone();
-		setPathToPolyline(points);
+	protected abstract Color getDefaultStrokeColor();
+
+	public abstract Node getSource();
+
+	public abstract Node getDestination();
+
+	PActivity setLine(Line line) {
+		setStrokeColor(ActivityDiagramCanvas.getBackgroundColor());
+		Coordinate[] coords = line.coordinates;
+		int p = ActivityDiagramCanvas.getPadding();
+		int mx = ActivityDiagramCanvas.getMarginX();
+		int my = ActivityDiagramCanvas.getMarginY();
+		int aw = PNodeAbstractImpl.getAreaWidth();
+		int ah = PNodeAbstractImpl.getAreaHeight();
+		int cw = PControlNode.getAreaWidth();
+		int w = mx + aw, h = my + ah;
+		Point2D[] points = new Point2D[2 + (coords.length - 2 > 0 ? 2 : 0)];
+
+		// Draw lines.
+		if (getSource() instanceof Join) {
+			points[0] = new Point2D.Float(
+					coords[0].y * w + cw + p,
+					coords[0].x * h + ah/2 + p);
+		} else {
+			points[0] = new Point2D.Float(
+					coords[0].y * w + aw + p,
+					coords[0].x * h + ah/2 + p);
+		}
+		if (getDestination() instanceof Fork) {
+			points[points.length - 1] = new Point2D.Float(
+					coords[coords.length - 1].y * w + w - cw + p,
+					coords[coords.length - 1].x * h + ah/2 + p);
+		} else {
+			points[points.length - 1] = new Point2D.Float(
+					coords[coords.length - 1].y * w + p,
+					coords[coords.length - 1].x * h + ah/2 + p);
+		}
+		if (coords.length == 3) {
+			points[1] = new Point2D.Float(
+					coords[1].y * w + p,
+					coords[1].x * h + ah/2 + p);
+			points[2] = new Point2D.Float(
+					coords[1].y * w + aw + p,
+					coords[1].x * h + ah/2 + p);
+		} else if (coords.length == 4) {
+			points[1] = new Point2D.Float(
+					coords[1].y * w + p,
+					coords[1].x * h + ah/2 + p);
+			points[2] = new Point2D.Float(
+					coords[2].y * w + aw + p,
+					coords[2].x * h + ah/2 + p);
+		}
+		if (line.isReversed) {
+			for (int i = 0; i < points.length / 2; i++) {
+				Point2D tmp = points[i];
+				points[i] = points[points.length - i - 1];
+				points[points.length - i - 1] = tmp;
+			}
+		}
+
+		setLine(points);
+		return new PStrokeColorActivity(
+				200, PUtil.DEFAULT_ACTIVITY_STEP_RATE, this, getDefaultStrokeColor());
+	}
+
+	void setLine(Point2D[] points) {
+		GeneralPath path = new GeneralPath();
+		for (int i = 0; i < points.length; i ++) {
+			Point2D p = points[i];
+			if (i == 0) {
+				path.moveTo(p.getX(), p.getY());
+			} else {
+				path.lineTo(p.getX(), p.getY());
+			}
+		}
+
+		// Arrow settings.
+		int b = 7;
+		double theta = Math.toRadians(12);
+		Point2D start = points[points.length - 2];
+		Point2D end = points[points.length - 1];
+		double alpha = Math.atan2(
+				end.getY() - start.getY(),
+				end.getX() - start.getX());
+		double dx1 = b * Math.cos(alpha + theta);
+		double dy1 = b * Math.sin(alpha + theta);
+		double dx2 = b * Math.cos(alpha - theta);
+		double dy2 = b * Math.sin(alpha - theta);
+		path.lineTo(end.getX() - dx1, end.getY() - dy1);
+	    path.moveTo(end.getX(), end.getY());
+	    path.lineTo(end.getX() - dx2, end.getY() - dy2);
+		setPathTo(path);
 	}
 }

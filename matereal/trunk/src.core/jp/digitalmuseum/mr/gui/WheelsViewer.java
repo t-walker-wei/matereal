@@ -70,6 +70,8 @@ public class WheelsViewer extends JPanel implements DisposableComponent {
 		initialize();
 		this.wheels = wheels;
 		wheelsMonitor = new ServiceAbstractImpl() {
+			private static final long serialVersionUID = 8561727051108470192L;
+
 			public void run() {
 				update();
 			}

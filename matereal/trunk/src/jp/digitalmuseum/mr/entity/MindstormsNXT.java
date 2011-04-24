@@ -40,10 +40,12 @@ import java.awt.Shape;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
 
 import jp.digitalmuseum.connector.BluetoothConnector;
 import jp.digitalmuseum.connector.Connector;
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
@@ -55,6 +57,7 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
  * @see MindstormsNXTDifferentialWheels
  */
 public class MindstormsNXT extends PhysicalRobotAbstractImpl {
+	private static final long serialVersionUID = -2489251030390060500L;
 	public static final int A = 0;
 	public static final int B = 1;
 	public static final int C = 2;
@@ -237,9 +240,10 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 			// Get the result.
 			final byte[] ret = read(connector);
 			if (0 >= ret[2]) {
-				System.out.println("NXT Firmware version: " +
-						ret[4] + "." + ret[3] + ", " +
-						ret[6] + "." + ret[5]);
+				Matereal.getInstance().getOutStream().println(
+						"NXT Firmware version: "
+						+ ret[4] + "." + ret[3]
+						+ ", " + ret[6] + "." + ret[5]);
 			}
 		}
 		return false;
@@ -284,6 +288,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	 * @see MindstormsNXT
 	 */
 	public static class MindstormsNXTDifferentialWheels extends DifferentialWheelsAbstractImpl {
+		private static final long serialVersionUID = 3164832272022311974L;
 		public final static int DEFAULT_SPEED = 10;
 		public final static int DEFAULT_ROTATION_SPEED = 5;
 		private byte leftWheelPort = C;
@@ -503,7 +508,9 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	/**
 	 * Container for holding the output state values.
 	 */
-	public static class OutputState {
+	public static class OutputState implements Serializable {
+		private static final long serialVersionUID = 3684447310030845407L;
+
 		/** Status of GET_OUTPUT_STATE command. */
 		public byte status;
 		/** Output port [0 to 2]. */

@@ -36,7 +36,9 @@
  */
 package jp.digitalmuseum.utils;
 
-public interface VectorField {
+import java.io.Serializable;
+
+public interface VectorField extends Serializable {
 	public String getName();
 	public Vector2D getVector(Position position);
 	public void getVectorOut(Position position, Vector2D vector);

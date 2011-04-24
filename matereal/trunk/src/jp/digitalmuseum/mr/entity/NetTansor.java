@@ -61,6 +61,7 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
  * @see NetTansorDriver
  */
 public class NetTansor extends PhysicalRobotAbstractImpl {
+	private static final long serialVersionUID = 4329906174875793193L;
 	final public double RADIUS = 8;
 	private NetTansorDriver driver;
 	private NetTansorHeadmountedCamera camera;
@@ -118,6 +119,7 @@ public class NetTansor extends PhysicalRobotAbstractImpl {
 	 * @see NetTansor
 	 */
 	public static class NetTansorDriver extends DifferentialWheelsAbstractImpl {
+		private static final long serialVersionUID = -4990542634338107040L;
 		public final static int DEFAULT_SPEED = 80;
 		public final static int DEFAULT_ROTATION_SPEED = 60;
 		private static final int MAXIMUM_DISTANCE = 250;
@@ -169,7 +171,6 @@ public class NetTansor extends PhysicalRobotAbstractImpl {
 			} else {
 				cmd = String.format("mm,%d,%d", getPower(rightPower), getPower(leftPower));
 			}
-			System.out.println(cmd);
 			return write(cmd);
 		}
 
@@ -187,8 +188,9 @@ public class NetTansor extends PhysicalRobotAbstractImpl {
 
 	public static class NetTansorHeadmountedCamera extends PhysicalResourceAbstractImpl
 			implements Camera {
-		private BufferedImage image;
-		private long lastTime = 0;
+		private static final long serialVersionUID = -1792941087488727942L;
+		private transient BufferedImage image;
+		private transient long lastTime = 0;
 		private URL url;
 
 		public NetTansorHeadmountedCamera(final NetTansor netTansor) {

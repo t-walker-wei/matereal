@@ -36,6 +36,8 @@
  */
 package jp.digitalmuseum.mr.entity;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.List;
 
 import jp.digitalmuseum.connector.Connector;
@@ -46,6 +48,7 @@ import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 
 public class MindstormsNXTWithPen extends MindstormsNXT {
+	private static final long serialVersionUID = -8608966459762063865L;
 	private MindstormsNXTPen pen;
 	private static int instances = 0;
 
@@ -75,7 +78,6 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 		}
 	}
 
-
 	@Override
 	protected List<ResourceAbstractImpl> getResources() {
 		List<ResourceAbstractImpl> rs = super.getResources();
@@ -84,12 +86,14 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 	}
 
 	public static class MindstormsNXTPen extends PhysicalResourceAbstractImpl implements PenController {
+		private static final long serialVersionUID = -5728192484061964775L;
 		private STATUS status;
 		private byte penPort = A;
 		private byte power = 100;
 		private int tachoLimit = 180;
 
 		final private Service stateWatcher = new ServiceAbstractImpl() {
+			private static final long serialVersionUID = 1994711563180836282L;
 			final private OutputState outputState = new OutputState();
 			public void run() {
 				MindstormsNXTWithPen.getOutputState(penPort,
@@ -104,11 +108,20 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 
 		public MindstormsNXTPen(MindstormsNXTWithPen robot) {
 			super(robot);
-			status = STATUS.UP;
+			initialize();
 		}
 
 		public MindstormsNXTPen(Connector connector) {
 			super(connector);
+			initialize();
+		}
+
+		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+			ois.defaultReadObject();
+			initialize();
+		}
+
+		private void initialize() {
 			status = STATUS.UP;
 		}
 

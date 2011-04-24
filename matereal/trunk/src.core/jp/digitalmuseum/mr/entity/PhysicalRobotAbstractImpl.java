@@ -40,6 +40,7 @@ import jp.digitalmuseum.connector.Connector;
 import jp.digitalmuseum.connector.ConnectorFactory;
 
 public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implements PhysicalEntity {
+	private static final long serialVersionUID = 2914683592930955216L;
 
 	/** Connector for this robot */
 	private Connector connector;

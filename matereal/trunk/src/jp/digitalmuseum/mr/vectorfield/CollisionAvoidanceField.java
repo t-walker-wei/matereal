@@ -42,6 +42,7 @@ import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
 public class CollisionAvoidanceField extends VectorFieldAbstractImpl {
+	private static final long serialVersionUID = -58673229376225058L;
 	private static final double MAX_DISTANCE = 100;
 	private Entity entity;
 	private Position p;

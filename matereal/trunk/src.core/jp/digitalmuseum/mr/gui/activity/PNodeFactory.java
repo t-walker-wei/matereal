@@ -36,10 +36,12 @@
  */
 package jp.digitalmuseum.mr.gui.activity;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ControlNode;
 import jp.digitalmuseum.mr.activity.Edge;
 import jp.digitalmuseum.mr.activity.Fork;
+import jp.digitalmuseum.mr.activity.Join;
 import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.activity.Transition;
 
@@ -63,26 +65,18 @@ public class PNodeFactory {
 		return pNodeAbstractImpl;
 	}
 
-	public static PLineNodeAbstractImpl newEdgeInstance(Edge edge,
-			PNodeAbstractImpl parentPNode, PNodeAbstractImpl pNode) {
+	public static PLineNodeAbstractImpl newEdgeInstance(Edge edge) {
 		PLineNodeAbstractImpl pNodeAbstractImpl;
 		if (edge instanceof Transition) {
-			pNodeAbstractImpl = new PTransitionLineNode((Transition) edge,
-					parentPNode, pNode);
-		} else if (parentPNode.getNode() instanceof Fork) {
-			pNodeAbstractImpl = new PForkLineNode(edge, parentPNode, pNode);
-		}/* else if (pNode.getNode() instanceof Join) {
-			// Join node requires special treatment,
-			// and is instantiated directly in ActivityDiagramCanvas class.
-			pNodeAbstractImpl = new PJoinLineNode(edge, parentPNode, pNode);
-		}*/ else {
+			pNodeAbstractImpl = new PTransitionLineNode((Transition) edge);
+		} else if (edge.getSource() instanceof Fork) {
+			pNodeAbstractImpl = new PForkLineNode(edge);
+		} else if (edge.getDestination() instanceof Join) {
+			pNodeAbstractImpl = new PJoinLineNode(edge);
+		} else {
 			pNodeAbstractImpl = null;
-			if (edge == null) {
-				System.err.println("No edge provided.");
-			} else {
-				System.err.print("Invalid type edge: ");
-				System.out.println(edge.getClass().getSimpleName());
-			}
+			Matereal.getInstance().getErrorStream().print("Invalid type edge: ");
+			Matereal.getInstance().getErrorStream().println(edge.getClass().getSimpleName());
 		}
 		return pNodeAbstractImpl;
 	}

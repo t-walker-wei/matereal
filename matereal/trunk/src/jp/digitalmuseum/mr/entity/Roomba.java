@@ -38,6 +38,8 @@ package jp.digitalmuseum.mr.entity;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -56,6 +58,7 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
  * @see RoombaDriver
  */
 public class Roomba extends PhysicalRobotAbstractImpl {
+	private static final long serialVersionUID = -4274597295040015350L;
 	public final double RADIUS = 17;
 	private RoombaDriver driver;
 	private RoombaCleanerBrush cleaner;
@@ -110,11 +113,12 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 	 * @see Roomba
 	 */
 	public static class RoombaDriver extends DifferentialWheelsAbstractImpl {
+		private static final long serialVersionUID = -8077520687089529287L;
 		public final static int MAXIMUM_VELOCITY = 500;
 		public final static int DEFAULT_SPEED = 14;
 		public final static int DEFAULT_ROTATION_SPEED = 10;
 
-		private MODE mode = MODE.UNKNOWN;
+		private transient MODE mode = MODE.UNKNOWN;
 
 		/** Roomba modes */
 		public static enum MODE {
@@ -194,6 +198,22 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 
 		public RoombaDriver(Connector connector) {
 			super(connector);
+			initialize();
+		}
+
+		public RoombaDriver(Roomba roomba) {
+			super(roomba);
+			initialize();
+		}
+
+		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+			ois.defaultReadObject();
+			initialize();
+		}
+
+		@Override
+		protected void initialize() {
+			super.initialize();
 			start();
 			control();
 		}
@@ -201,12 +221,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		protected void onFree() {
 			stopWheels();
 			power();
-		}
-
-		public RoombaDriver(Roomba roomba) {
-			super(roomba);
-			start();
-			control();
 		}
 
 		public int getRecommendedSpeed() {
@@ -699,8 +713,9 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 	}
 
 	public static class RoombaCleanerBrush extends ResourceAbstractImpl implements CleanerBrushController {
+		private static final long serialVersionUID = -293735845062700029L;
 		private Roomba roomba;
-		private boolean isWorking = false;
+		private transient boolean isWorking = false;
 
 		public RoombaCleanerBrush(Roomba roomba) {
 			super(roomba);

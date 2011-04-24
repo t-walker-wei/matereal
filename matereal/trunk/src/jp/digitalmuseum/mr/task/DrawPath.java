@@ -46,6 +46,7 @@ import jp.digitalmuseum.utils.Vector2D;
 
 public class DrawPath extends VectorFieldTask {
 	final private static double DUMMY_LENGTH = 20.0;
+	private PenController pen;
 	private List<Position> path;
 	private int currentGoalIndex;
 	private Position currentGoal;
@@ -66,9 +67,15 @@ public class DrawPath extends VectorFieldTask {
 	}
 
 	@Override
+	protected void onAssigned() {
+		super.onAssigned();
+		pen = getResourceMap().get(PenController.class);
+	}
+
+	@Override
 	protected void onStart() {
 		super.onStart();
-		getResourceMap().get(PenController.class).putPen();
+		pen.putPen();
 		getNextGoal();
 	}
 
@@ -104,7 +111,7 @@ public class DrawPath extends VectorFieldTask {
 		p.sub(nextGoal);
 		if (p.dot(v) > 0) {
 			if (!getNextGoal()) {
-				getResourceMap().get(PenController.class).endPen();
+				pen.endPen();
 				finish();
 			}
 		}

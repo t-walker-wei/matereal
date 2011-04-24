@@ -43,12 +43,13 @@ import jp.digitalmuseum.utils.Vector2D;
 import jp.digitalmuseum.utils.VectorField;
 
 /**
- * Task: Move<br />
- * Move to a certain position.
+ * Task: Avoid collision<br />
+ * Avoid collision with other entities.
  *
  * @author Jun KATO
  */
 public class AvoidCollision extends VectorFieldTask {
+	private static final long serialVersionUID = 3701979074127266081L;
 	private VectorField vf;
 
 	public AvoidCollision() {

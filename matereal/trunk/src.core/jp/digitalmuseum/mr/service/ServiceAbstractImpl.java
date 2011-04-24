@@ -36,6 +36,9 @@
  */
 package jp.digitalmuseum.mr.service;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -53,11 +56,12 @@ import jp.digitalmuseum.utils.Array;
  * @author Jun KATO
  */
 public abstract class ServiceAbstractImpl implements Service {
+	private static final long serialVersionUID = -768269750331766789L;
 	public final static int DEFAULT_INTERVAL = 33;
-	private Matereal.Canceller canceller;
+	private transient Matereal.Canceller canceller;
 	private ServiceGroup serviceGroup;
-	private Array<EventListener> listeners;
-	private long birthDate;
+	private transient Array<EventListener> listeners;
+	private transient long birthDate;
 	private long interval;
 	private boolean isStarted;
 	private boolean isPaused;
@@ -287,6 +291,17 @@ public abstract class ServiceAbstractImpl implements Service {
 	protected void distributeEvent(Event e) {
 		for (EventListener listener : listeners) {
 			listener.eventOccurred(e);
+		}
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		listeners = new Array<EventListener>();
+		if (isStarted) {
+			start(serviceGroup);
+			if (isPaused) {
+				pause();
+			}
 		}
 	}
 }

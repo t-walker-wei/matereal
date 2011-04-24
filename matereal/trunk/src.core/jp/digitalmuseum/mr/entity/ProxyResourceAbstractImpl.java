@@ -43,6 +43,8 @@ package jp.digitalmuseum.mr.entity;
  * @see ProxyRobot
  */
 public abstract class ProxyResourceAbstractImpl extends ResourceAbstractImpl {
+	private static final long serialVersionUID = 7609791745069361161L;
+
 	public ProxyResourceAbstractImpl(ProxyRobotAbstractImpl robot) {
 		super(robot);
 	}

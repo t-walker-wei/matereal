@@ -36,6 +36,8 @@
  */
 package jp.digitalmuseum.mr.entity;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,9 +48,10 @@ import java.util.Set;
  * @author Jun KATO
  */
 public abstract class ResourceAbstractImpl implements Resource {
+	private static final long serialVersionUID = 9203266594684803786L;
 	private RobotAbstractImpl robot;
-	private Object writer;
-	private Set<Object> readers;
+	private transient Object writer;
+	private transient Set<Object> readers;
 
 	protected ResourceAbstractImpl() {
 		readers = new HashSet<Object>();
@@ -57,6 +60,11 @@ public abstract class ResourceAbstractImpl implements Resource {
 	protected ResourceAbstractImpl(RobotAbstractImpl robot) {
 		this();
 		this.robot = robot;
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		readers = new HashSet<Object>();
 	}
 
 	/**

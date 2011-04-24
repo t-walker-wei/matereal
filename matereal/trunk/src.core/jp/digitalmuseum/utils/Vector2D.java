@@ -41,12 +41,15 @@
  */
 package jp.digitalmuseum.utils;
 
+import java.io.Serializable;
+
 /**
  * 2D vector in the world coordinate.
  *
  * @author Jun KATO
  */
-public class Vector2D {
+public class Vector2D implements Serializable {
+	private static final long serialVersionUID = -350886875168567751L;
 	protected double x;
 	protected double y;
 

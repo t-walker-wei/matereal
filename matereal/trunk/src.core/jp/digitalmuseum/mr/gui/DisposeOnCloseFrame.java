@@ -72,6 +72,7 @@ public class DisposeOnCloseFrame extends JFrame {
 			pack();
 		}
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 

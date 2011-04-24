@@ -61,19 +61,20 @@ import jp.digitalmuseum.utils.Array;
  * @author Jun KATO
  */
 public class Camera extends HomographyCoordProviderAbstractImpl {
+	private static final long serialVersionUID = -8691594856197985417L;
 	final public static String SERVICE_NAME = "Camera";
 	final public static int DEFAULT_WIDTH = 640;
 	final public static int DEFAULT_HEIGHT = 480;
 
 	/** VideoCapture object used for image capturing. */
-	private VideoCapture capture;
+	private transient VideoCapture capture;
 
 	/** Captured image data in a BGR byte array. */
-	private byte[] pixels;
+	private transient byte[] pixels;
 	/** Captured image width and height. */
 	private int width, height;
 	/** Captured image as a BufferedImage object. */
-	private BufferedImage image;
+	private transient BufferedImage image;
 	/** Image updated flag. */
 	private boolean imageUpdated;
 

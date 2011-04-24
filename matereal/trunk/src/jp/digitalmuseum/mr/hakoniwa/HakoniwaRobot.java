@@ -39,6 +39,9 @@ package jp.digitalmuseum.mr.hakoniwa;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.jbox2d.collision.shapes.CircleDef;
@@ -54,7 +57,6 @@ import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.entity.RobotAbstractImpl;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
 import jp.digitalmuseum.mr.resource.Wheels.STATUS;
-import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 
@@ -65,6 +67,7 @@ import jp.digitalmuseum.utils.Position;
  * @see HakoniwaRobotWheels
  */
 public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
+	private static final long serialVersionUID = 2997179665544048896L;
 
 	/** Hakoniwa */
 	private Hakoniwa hakoniwa;
@@ -256,6 +259,17 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		return body;
 	}
 
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+		oos.writeObject(hakoniwa.getLocation(this));
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		Location location = (Location) ois.readObject();
+		initialize(location.getX(), location.getY(), location.getRotation());
+	}
+
 	/**
 	 * Wheels of HakoniwaRobot.
 	 *
@@ -263,9 +277,9 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 	 * @see HakoniwaRobot
 	 */
 	protected static class HakoniwaRobotWheels extends ResourceAbstractImpl implements DifferentialWheelsController {
+		private static final long serialVersionUID = 4609377279740403081L;
 		private final static int DEFAULT_SPEED = 50;
 		private final static int DEFAULT_ROTATION_SPEED = 50;
-		protected Task task;
 		private STATUS status;
 		private int speed;
 		private int rotationSpeed;
@@ -273,6 +287,15 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 
 		private HakoniwaRobotWheels(HakoniwaRobot hakoniwaRobot) {
 			super(hakoniwaRobot);
+			initialize();
+		}
+
+		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+			initialize();
+			ois.defaultReadObject();
+		}
+
+		private void initialize() {
 			speed = DEFAULT_SPEED;
 			rotationSpeed = DEFAULT_ROTATION_SPEED;
 			status = STATUS.STOP;
@@ -439,7 +462,6 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 			}
 			return true;
 		}
-
 	}
 
 }

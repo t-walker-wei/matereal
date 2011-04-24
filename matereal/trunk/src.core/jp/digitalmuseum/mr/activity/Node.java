@@ -36,6 +36,9 @@
  */
 package jp.digitalmuseum.mr.activity;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,15 +51,21 @@ import jp.digitalmuseum.mr.message.EventProvider;
 import jp.digitalmuseum.mr.message.ActivityEvent.STATUS;
 import jp.digitalmuseum.utils.Array;
 
-public abstract class Node implements EventProvider {
+public abstract class Node implements EventProvider, Serializable {
+	private static final long serialVersionUID = -5556889510147602017L;
 	private long entranceDate;
 	private ActivityDiagram activityDiagram;
 	private Set<Transition> transitions;
-	private Array<EventListener> listeners;
+	private transient Array<EventListener> listeners;
 
 	public Node() {
-		listeners = new Array<EventListener>();
 		transitions = new HashSet<Transition>();
+		listeners = new Array<EventListener>();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		listeners = new Array<EventListener>();
 	}
 
 	public final boolean isEntered() {

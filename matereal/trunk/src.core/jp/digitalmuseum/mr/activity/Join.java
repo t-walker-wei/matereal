@@ -45,6 +45,7 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 
 public class Join extends ControlNode implements EventListener {
+	private static final long serialVersionUID = -6755092474761544807L;
 	private Set<EdgeImpl> edges;
 	private Set<Node> nodesToWait;
 

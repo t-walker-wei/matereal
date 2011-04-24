@@ -34,45 +34,47 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.vectorfield;
+package jp.digitalmuseum.mr.gui.activity.layout;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.service.LocationProvider;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.Vector2D;
-import jp.digitalmuseum.utils.VectorField;
+public class LayerElement {
+	private int depth = 0;
+	private double measure;
+	private int x = 0;
 
-public abstract class VectorFieldAbstractImpl implements VectorField {
-	private static final long serialVersionUID = -1793520348544861746L;
-	private LocationProvider locationProvider;
-
-	protected void updateLocationProvider() {
-		for (LocationProvider locationProvider :
-				Matereal.getInstance().lookForServices(LocationProvider.class)) {
-			if (checkLocationProvider(locationProvider)) {
-				this.locationProvider = locationProvider;
-			}
-		}
+	void setDepth(int depth) {
+		this.depth = depth;
 	}
 
-	protected LocationProvider getLocationProvider() {
-		if (locationProvider == null) {
-			updateLocationProvider();
-		}
-		return locationProvider;
+	int getDepth() {
+		return depth;
 	}
 
-	public Vector2D getVector(Position position) {
-		Vector2D vector = new Vector2D();
-		getVectorOut(position, vector);
-		return vector;
+	void setX(int x) {
+		this.x = x;
 	}
 
-	protected boolean checkLocationProvider(LocationProvider locationProvider) {
-		return true;
+	public int getX() {
+		return x;
 	}
 
-	public String getName() {
-		return this.getClass().getSimpleName();
+	void setMeasure(double measure) {
+		this.measure = measure;
+	}
+
+	double getMeasure() {
+		return measure;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		appendString(sb);
+		return sb.toString();
+	}
+
+	protected void appendString(StringBuilder sb) {
+		sb.append("(");
+		sb.append(String.format("%.3f", getMeasure()));
+		sb.append(")");
 	}
 }

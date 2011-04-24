@@ -37,23 +37,20 @@
 package jp.digitalmuseum.mr.gui.activity;
 
 import java.awt.Color;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.geom.Point2D;
-import java.util.Deque;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.activity.ControlNode;
 import jp.digitalmuseum.mr.activity.Edge;
-import jp.digitalmuseum.mr.activity.Join;
 import jp.digitalmuseum.mr.activity.Node;
 import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.gui.DisposableComponent;
+import jp.digitalmuseum.mr.gui.activity.layout.Layout;
+import jp.digitalmuseum.mr.gui.activity.layout.SugiyamaLayouter;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
 import jp.digitalmuseum.mr.message.ActivityEvent;
 import jp.digitalmuseum.mr.message.Event;
@@ -61,12 +58,10 @@ import jp.digitalmuseum.mr.message.EventListener;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.activities.PTransformActivity;
+import edu.umd.cs.piccolo.activities.PActivity;
+import edu.umd.cs.piccolo.activities.PActivity.PActivityDelegate;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -83,383 +78,192 @@ import edu.umd.cs.piccolo.util.PBounds;
 public class ActivityDiagramCanvas extends PCanvas implements
 		DisposableComponent {
 	private static final long serialVersionUID = -6783170737987111980L;
+	private static final Color backgroundColor = new Color(240, 240, 240);
+	private static final int padding = 10;
+	private static final int marginX = 50;
+	private static final int marginY = 10;
+
 	private ActivityDiagram ad;
 	private ActivityDiagramEventListener adel;
 	private ActivityEventListener ael;
 
-	private HashMap<Node, PNodeAbstractImpl> nodeMap;
-	private PNodeAbstractImpl rootPNode;
+	private Map<Node, PNodeAbstractImpl> nodeMap;
+	private Map<Edge, PLineNodeAbstractImpl> edgeMap;
+	private SugiyamaLayouter layouter;
 
 	private PLayer pNodeLayer;
 	private PLayer pLineLayer;
-	private PPath sticky;
-	private PText stickyText;
-	private PTransformActivity cameraActivity;
 
-	private Point2D s;
-	private Point2D e;
+	private transient PActivity cameraActivity;
+	private transient PActivity graphLayoutActivity = null;
+	boolean isGraphUpdated = false;
 
 	public ActivityDiagramCanvas(final ActivityDiagram ad) {
 		this.ad = ad;
-		synchronized (ad) {
+		initialize();
+	}
 
-			nodeMap = new HashMap<Node, PNodeAbstractImpl>();
-			pLineLayer = new PLayer();
-			getCamera().addLayer(pLineLayer);
-			pNodeLayer = new PLayer();
-			getCamera().addLayer(pNodeLayer);
-			setBackground(new Color(240, 240, 240));
+	public static Color getBackgroundColor() {
+		return backgroundColor;
+	}
 
-			sticky = PPath.createRectangle(0, 0, 240, 25);
-			sticky.setPaint(Color.black);
-			sticky.setStroke(null);
-			stickyText = new PText("Activity Diagram Viewer");
-			stickyText.setWidth(230);
-			stickyText.setHeight(15);
-			stickyText.setOffset(5, 5);
-			stickyText.setTextPaint(Color.white);
-			sticky.addChild(stickyText);
-			getCamera().addChild(sticky);
+	public static int getPadding() {
+		return padding;
+	}
 
-			s = new Point2D.Float();
-			e = new Point2D.Float();
+	public static int getMarginX() {
+		return marginX;
+	}
 
-			if (ad.getInitialNode() != null) {
-				initialize();
-			}
-
-			adel = new ActivityDiagramEventListener();
-			ad.addEventListener(adel);
-
-			ael = new ActivityEventListener();
-			for (Node node : ad.getNodes()) {
-				node.addEventListener(ael);
-				if (node.isEntered()) {
-					PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(node);
-					if (pNodeAbstractImpl != null) {
-						pNodeAbstractImpl.onEnter();
-					}
-				}
-			}
-
-			addInputEventListener(new PBasicInputEventHandler() {
-
-				@Override
-				public void mousePressed(PInputEvent event) {
-					if (cameraActivity != null) {
-						cameraActivity.terminate();
-					}
-				}
-
-				@Override
-				public void mouseClicked(PInputEvent event) {
-					if (!(event.getPickedNode() instanceof PCamera)) {
-						if (!event.isLeftMouseButton()) {
-							cameraActivity = getCamera()
-									.animateViewToCenterBounds(
-											event.getPickedNode()
-													.getGlobalBounds(), false,
-											300);
-						}
-					} else if (event.getClickCount() == 2) {
-						if (event.isLeftMouseButton()) {
-							if (ad.isPaused()) {
-								ad.resume();
-							} else {
-								ad.pause();
-							}
-						} else {
-							animateViewToCenterDiagram();
-						}
-					}
-				}
-			});
-
-			addComponentListener(new ComponentAdapter() {
-				@Override
-				public void componentResized(ComponentEvent e) {
-					updateSticky();
-				}
-			});
-		}
+	public static int getMarginY() {
+		return marginY;
 	}
 
 	public void animateViewToCenterDiagram() {
 		if (cameraActivity != null) {
 			cameraActivity.terminate();
 		}
-		PBounds pBounds = rootPNode.getGlobalFullBounds();
-		pBounds.x -= 10;
-		pBounds.y -= 10;
-		pBounds.width += 20;
-		pBounds.height += 20;
-		cameraActivity = getCamera().animateViewToCenterBounds(pBounds, true,
-				500);
+		PBounds pBounds = pNodeLayer.getFullBounds();
+		pBounds.x -= padding;
+		pBounds.y -= padding;
+		pBounds.width += padding * 2;
+		pBounds.height += padding * 2;
+		cameraActivity = getCamera().animateViewToCenterBounds(pBounds, true, 500);
 	}
 
 	public void dispose() {
 		synchronized (ad) {
 			ad.removeEventListener(adel);
 			for (Node node : ad.getNodes()) {
-				node.removeEventListener(ael);
+				onNodeRemoved(node);
 			}
 		}
-	}
-
-	private void updateSticky() {
-		sticky.setOffset(getWidth() - sticky.getWidth() - 5, getHeight()
-				- sticky.getHeight() - 5);
 	}
 
 	private void initialize() {
 
+		nodeMap = new HashMap<Node, PNodeAbstractImpl>();
+		edgeMap = new HashMap<Edge, PLineNodeAbstractImpl>();
+		layouter = new SugiyamaLayouter();
+
+		pLineLayer = new PLayer();
+		getCamera().addLayer(pLineLayer);
+		pNodeLayer = new PLayer();
+		getCamera().addLayer(pNodeLayer);
+
+		setBackground(backgroundColor);
+
+		addInputEventListener(new InputEventHandler());
+
+		synchronized (ad) {
+			if (ad.getInitialNode() != null) {
+				initializeGraph();
+			}
+			adel = new ActivityDiagramEventListener();
+			ad.addEventListener(adel);
+			ael = new ActivityEventListener();
+			for (Node node : ad.getNodes()) {
+				onNodeAdded(node);
+				if (node.isEntered()) {
+					onEnter(node);
+				}
+			}
+		}
+	}
+
+	private void initializeGraph() {
+		if (graphLayoutActivity != null &&
+				graphLayoutActivity.isStepping()) {
+			isGraphUpdated = true;
+			return;
+		}
+
 		// Clear the graph.
 		nodeMap.clear();
+		edgeMap.clear();
 		pNodeLayer.removeAllChildren();
 		pLineLayer.removeAllChildren();
 
-		// Construct a new graph.
-		rootPNode = constructAcyclicGraph(ad.getInitialNode(), 0);
-		rootPNode.setAsInitialNode();
-		layoutNodes(rootPNode);
-		layoutEdges();
+		// Layout a new graph.
+		layoutGraph();
 	}
 
-	/**
-	 * Construct an acyclic graph with the provided root node.
-	 *
-	 * @param rootNode
-	 * @return PNodeAbstractImpl instance corresponding to the provided root
-	 *         node.
-	 */
-	private PNodeAbstractImpl constructAcyclicGraph(Node rootNode, int depth) {
-		Set<Join> pendingNodes = constructRootedTree(rootNode, depth);
-		connectPendingNodes(pendingNodes);
-		return nodeMap.get(rootNode);
-	}
+	private void layoutGraph() {
+		synchronized (ad) {
+			if (graphLayoutActivity != null &&
+					graphLayoutActivity.isStepping()) {
+				isGraphUpdated = true;
+				return;
+			}
+			graphLayoutActivity = null;
 
-	/**
-	 * Do breadth first search and construct a <a
-	 * href="http://en.wikipedia.org/wiki/Rooted_tree">rooted tree</a>.
-	 *
-	 * @return pending nodes which will be part of this rooted tree.
-	 */
-	private Set<Join> constructRootedTree(Node initialNode, int depth) {
-		Set<Node> currentNodes = new HashSet<Node>();
-		Set<Node> nextNodes = new HashSet<Node>();
-		Set<Transition> transitions = new HashSet<Transition>();
-		Set<Join> pendingNodes = new HashSet<Join>();
+			Node initialNode = ad.getInitialNode();
+			if (initialNode == null) {
+				return;
+			}
 
-		PNodeAbstractImpl initialPNode = PNodeFactory
-				.newNodeInstance(initialNode);
-		initialPNode.setDepth(depth);
-		initialPNode.setOffset(5, 5);
+			Layout layout = layouter.doLayout(initialNode);
+			Set<Edge> edges = new HashSet<Edge>();
+			for (Node node : ad.getNodes()) {
+				if (layout.contains(node)) {
 
-		nodeMap.put(initialNode, initialPNode);
-		pNodeLayer.addChild(initialPNode);
-		depth++;
-
-		currentNodes.add(initialNode);
-		while (!currentNodes.isEmpty()) {
-			nextNodes.clear();
-			for (Node parentNode : currentNodes) {
-				PNodeAbstractImpl parentPNode = nodeMap.get(parentNode);
-
-				parentNode.getTransitionsOut(transitions);
-				constructLeaves(transitions, parentPNode, nextNodes);
-
-				if (parentNode instanceof ControlNode) {
-					if (parentNode instanceof Join) {
-						pendingNodes.add((Join) parentNode);
+					// Layout a node.
+					PNodeAbstractImpl pNode;
+					if (nodeMap.containsKey(node)) {
+						pNode = nodeMap.get(node);
 					} else {
-						Edge[] edges = ((ControlNode) parentNode).getEdges();
-						constructLeaves(edges, parentPNode, nextNodes);
+						pNode = PNodeFactory.newNodeInstance(node);
+						pNodeLayer.addChild(pNode);
+						nodeMap.put(node, pNode);
+					}
+					PActivity a = pNode.setPosition(layout.getNodeCoord(node));
+					if (graphLayoutActivity == null) {
+						graphLayoutActivity = a;
+					}
+					getRoot().addActivity(a);
+
+					// Count up edges from the node.
+					edges.clear();
+					if (node instanceof ControlNode) {
+						edges.addAll(Arrays.asList(((ControlNode) node).getEdges()));
+					}
+					edges.addAll(node.getTransitions());
+
+					// Layout edges.
+					for (Edge edge : edges) {
+						PLineNodeAbstractImpl pLineNode;
+						if (edgeMap.containsKey(edge)) {
+							pLineNode = edgeMap.get(edge);
+						} else {
+							pLineNode = PNodeFactory.newEdgeInstance(edge);
+							edgeMap.put(edge, pLineNode);
+						}
+						pLineLayer.addChild(pLineNode);
+						getRoot().addActivity(pLineNode.setLine(layout.getEdgeCoord(edge)));
 					}
 				}
 			}
-			Set<Node> tmp = currentNodes;
-			currentNodes = nextNodes;
-			nextNodes = tmp;
-			depth++;
-		}
-		return pendingNodes;
-	}
 
-	private void constructLeaves(Set<Transition> edges,
-			PNodeAbstractImpl parentPNode, Set<Node> nextNodes) {
-		for (Edge edge : edges) {
-			constructLeaf(edge, parentPNode, nextNodes);
-		}
-	}
+			nodeMap.get(ad.getInitialNode()).setAsInitialNode();
 
-	private void constructLeaves(Edge[] edges,
-			PNodeAbstractImpl parentPNode, Set<Node> nextNodes) {
-		for (Edge edge : edges) {
-			constructLeaf(edge, parentPNode, nextNodes);
-		}
-	}
-
-	private void constructLeaf(Edge edge,
-			PNodeAbstractImpl parentPNode, Set<Node> nextNodes) {
-		Node node = edge.getDestination();
-		if (constructPNode(node, parentPNode, edge)) {
-			nextNodes.add(node);
-		}
-	}
-
-	/**
-	 * Construct PNode corresponding to the provided node. When it is not the
-	 * first time for the node, a PLinkNode is constructed.
-	 *
-	 * @param node
-	 * @param parentPNode
-	 * @param edge
-	 * @return Whether the provided node appears in the graph for the first time
-	 *         or not. (If no, a PLinkNode is constructed in this method.)
-	 */
-	private boolean constructPNode(Node node, PNodeAbstractImpl parentPNode,
-			Edge edge) {
-		PNodeAbstractImpl pNode = constructPNode(node);
-		parentPNode.addChild(pNode);
-		pNode.setDepth(parentPNode.getDepth() + 1);
-		pLineLayer.addChild(PNodeFactory.newEdgeInstance(edge, parentPNode,
-				pNode));
-		return !(pNode instanceof PLinkNode);
-	}
-
-	private PNodeAbstractImpl constructPNode(Node node) {
-		PNodeAbstractImpl pNode;
-		if (nodeMap.containsKey(node)) {
-			pNode = new PLinkNode(node);
-		} else {
-			pNode = PNodeFactory.newNodeInstance(node);
-			nodeMap.put(node, pNode);
-		}
-		return pNode;
-	}
-
-	/**
-	 * Connect pending nodes to make a complete <a
-	 * href="http://en.wikipedia.org/wiki/Directed_acyclic_graph">acyclic
-	 * graph</a>.
-	 *
-	 * @param pendingNodes
-	 */
-	private void connectPendingNodes(Set<Join> pendingNodes) {
-		Set<Edge> edges = new HashSet<Edge>();
-		for (Join joinNode : pendingNodes) {
-			edges.clear();
-
-			// Look for the deepest joining node.
-			int depth = 0;
-			for (Edge edge : joinNode.getEdges()) {
-				Node source = edge.getSource();
-				if (nodeMap.containsKey(source)) {
-					PNodeAbstractImpl pNode = nodeMap.get(source);
-					int d = pNode.getDepth();
-					if (d > depth) {
-						depth = d;
+			if (graphLayoutActivity != null) {
+				graphLayoutActivity.setDelegate(new PActivityDelegate() {
+					public void activityStepped(PActivity pactivity) {
+						// Do nothing.
 					}
-					edges.add(edge);
-				} else {
-					// Unreachable node.
-				}
+					public void activityStarted(PActivity pactivity) {
+						// Do nothing.
+					}
+					public void activityFinished(PActivity pactivity) {
+						graphLayoutActivity = null;
+						if (isGraphUpdated) {
+							isGraphUpdated = false;
+							layoutGraph();
+						}
+						animateViewToCenterDiagram();
+					}
+				});
 			}
-
-			// Set depth of the join node.
-			PNodeAbstractImpl pJoinNode = nodeMap.get(joinNode);
-			pJoinNode.setDepthOffset(depth + 1 - pJoinNode.getDepth());
-
-			// Add dummy nodes to parents of the join node.
-			for (Edge edge : edges) {
-				Node source = edge.getSource();
-				PNodeAbstractImpl pJoiningNode = nodeMap.get(source);
-				int d = pJoiningNode.getDepth();
-				int depthDiff = depth - d;
-				if (depthDiff <= 1) {
-					// No dummy nodes required.
-					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,
-							pJoinNode));
-				} else if (depthDiff == 2) {
-					// One dummy node required.
-					PNodeAbstractImpl pDummyNode = new PDummyNode(source);
-					pJoiningNode.addChild(pDummyNode);
-					pDummyNode.setDepth(d + 1);
-					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,
-							pDummyNode));
-					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,
-							pJoinNode));
-				} else {
-					// Two dummy node required.
-					PNodeAbstractImpl pDummyNode = new PDummyNode(source);
-					pJoiningNode.addChild(pDummyNode);
-					pDummyNode.setDepth(d + 1);
-					PNodeAbstractImpl pDummyNode2 = new PDummyNode(source);
-					pDummyNode.addChild(pDummyNode2);
-					pDummyNode2.setDepth(depth);
-					pLineLayer.addChild(new PJoinLineNode(edge, pJoiningNode,
-							pDummyNode));
-					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode,
-							pDummyNode2));
-					pLineLayer.addChild(new PJoinLineNode(edge, pDummyNode2,
-							pJoinNode));
-				}
-			}
-		}
-	}
-
-	/**
-	 * Do depth first search for layouting nodes.
-	 */
-	private void layoutNodes(PNodeAbstractImpl rootPNode) {
-		LinkedList<PNodeAbstractImpl> stack = new LinkedList<PNodeAbstractImpl>();
-		stack.push(rootPNode);
-		S: while (!stack.isEmpty()) {
-			PNodeAbstractImpl node = stack.peek();
-			Deque<PNodeAbstractImpl> children = node
-					.getUnmanagedChildrenReference();
-			while (!children.isEmpty()) {
-				PNodeAbstractImpl child = children.peek();
-				if (!child.getUnmanagedChildrenReference().isEmpty()) {
-					stack.push(child);
-					continue S;
-				}
-				child.setOffset((child.getDepth() - node.getDepth()) * 240,
-						node.y);
-				node.y += child.getHeight() + 5;
-				node.getUnmanagedChildrenReference().poll();
-			}
-			stack.poll();
-		}
-	}
-
-	private void layoutEdges() {
-		@SuppressWarnings("unchecked")
-		List<PNode> nodes = pLineLayer.getChildrenReference();
-		for (PNode pNode : nodes) {
-			if (pNode instanceof PLineNodeAbstractImpl) {
-				updateEdgePosition((PLineNodeAbstractImpl) pNode);
-			}
-		}
-	}
-
-	private synchronized void updateEdgePosition(
-			PLineNodeAbstractImpl pLineNodeAbstractImpl) {
-		PNodeAbstractImpl sourcePNode = pLineNodeAbstractImpl.getSourcePNode();
-		s.setLocation(200, 35);
-		s = sourcePNode.localToGlobal(s);
-		PNodeAbstractImpl destinationPNode = pLineNodeAbstractImpl
-				.getDestinationPNode();
-		e.setLocation(0, 35);
-		e = destinationPNode.localToGlobal(e);
-		pLineNodeAbstractImpl.setLine(s, e);
-	}
-
-	private void onNodeRemoved(Node node) {
-		node.removeEventListener(ael);
-		PNodeAbstractImpl pNode = nodeMap.get(node);
-		if (pNode != null) {
-			disposePNode(pNode);
 		}
 	}
 
@@ -467,36 +271,63 @@ public class ActivityDiagramCanvas extends PCanvas implements
 		node.addEventListener(ael);
 	}
 
-	private void disposePNode(PNodeAbstractImpl pNode) {
-		PNode parentPNode = pNode.getParent();
+	private void onNodeRemoved(Node node) {
+		PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(node);
+		pNodeLayer.removeChild(pNodeAbstractImpl);
+		node.removeEventListener(ael);
+	}
 
-		@SuppressWarnings("unchecked")
-		List<PNode> nodeList = parentPNode.getChildrenReference();
-		int index = -1;
-		for (int i = 0; i < nodeList.size(); i++) {
-			if (nodeList.get(i) == pNode) {
-				index = i;
-				break;
+	private void onTransitionRemoved(Transition transition) {
+		PLineNodeAbstractImpl pLineNodeAbstractImpl = edgeMap.get(transition);
+		pLineLayer.removeChild(pLineNodeAbstractImpl);
+	}
+
+	private void onEnter(Node node) {
+		PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(node);
+		if (pNodeAbstractImpl != null) {
+			pNodeAbstractImpl.onEnter();
+		}
+	}
+
+	private void onLeave(Node node) {
+		PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(node);
+		if (pNodeAbstractImpl != null) {
+			pNodeAbstractImpl.onLeave();
+		}
+	}
+
+	private class InputEventHandler extends PBasicInputEventHandler {
+
+		@Override
+		public void mousePressed(PInputEvent event) {
+			if (cameraActivity != null) {
+				cameraActivity.terminate();
 			}
 		}
 
-		double height = pNode.getHeight();
-		parentPNode.removeChild(pNode);
-		for (int i = index; i < nodeList.size(); i++) {
-			PNode shiftingPNode = nodeList.get(i);
-			Point2D offset = shiftingPNode.getOffset();
-			nodeList.get(i).setOffset(offset.getX(), offset.getY() - height);
+		@Override
+		public void mouseClicked(PInputEvent event) {
+			if (!(event.getPickedNode() instanceof PCamera)) {
+				if (!event.isLeftMouseButton()) {
+					cameraActivity = getCamera()
+							.animateViewToCenterBounds(
+									event.getPickedNode()
+											.getGlobalBounds(), false,
+									300);
+				}
+			} else if (event.getClickCount() == 2) {
+				if (event.isLeftMouseButton()) {
+					ActivityDiagram ad = ActivityDiagramCanvas.this.ad;
+					if (ad.isPaused()) {
+						ad.resume();
+					} else {
+						ad.pause();
+					}
+				} else {
+					animateViewToCenterDiagram();
+				}
+			}
 		}
-
-		layoutEdges();
-	}
-
-	private void onTransitionAdded(Transition transition) {
-		Node sourceNode = transition.getSource();
-		if (!nodeMap.containsKey(sourceNode)) {
-			return;
-		}
-
 	}
 
 	private class ActivityDiagramEventListener implements EventListener {
@@ -507,18 +338,18 @@ public class ActivityDiagramCanvas extends PCanvas implements
 				case NODE_ADDED:
 					onNodeAdded(ade.getAffectedNode());
 					break;
+				case TRANSITION_ADDED:
+					break;
 				case NODE_REMOVED:
 					onNodeRemoved(ade.getAffectedNode());
 					break;
-				case TRANSITION_ADDED:
-					onTransitionAdded(ade.getAffectedTransition());
-					break;
 				case TRANSITION_REMOVED:
+					onTransitionRemoved(ade.getAffectedTransition());
 					break;
 				case INITIAL_NODE_SET:
-					initialize();
 					break;
 				}
+				layoutGraph();
 			}
 		}
 	}
@@ -527,17 +358,16 @@ public class ActivityDiagramCanvas extends PCanvas implements
 		public void eventOccurred(Event e) {
 			if (e instanceof ActivityEvent) {
 				ActivityEvent ae = (ActivityEvent) e;
-				PNodeAbstractImpl pNodeAbstractImpl = nodeMap.get(ae
-						.getSource());
 				switch (ae.getStatus()) {
 				case ENTERED:
-					pNodeAbstractImpl.onEnter();
+					onEnter(ae.getSource());
 					break;
 				case LEFT:
-					pNodeAbstractImpl.onLeave();
+					onLeave(ae.getSource());
 					break;
 				}
 			}
 		}
 	}
+
 }

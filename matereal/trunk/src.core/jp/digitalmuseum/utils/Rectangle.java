@@ -41,6 +41,7 @@
  */
 package jp.digitalmuseum.utils;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -49,7 +50,8 @@ import java.util.NoSuchElementException;
  *
  * @author Jun KATO
  */
-public class Rectangle implements Iterable<Position> {
+public class Rectangle implements Iterable<Position>, Serializable {
+	private static final long serialVersionUID = -7999376417606605198L;
 	public static final int RIGHT_TOP = 0;
 	public static final int RIGHT_BOTTOM = 1;
 	public static final int LEFT_BOTTOM = 2;

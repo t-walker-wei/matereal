@@ -63,8 +63,9 @@ import jp.digitalmuseum.mr.service.ServiceGroup;
  * @author Jun KATO
  */
 public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Task {
-	private Robot robot;
-	private Queue<RobotEvent> robotEventQueue;
+	private static final long serialVersionUID = -3132747610411544613L;
+	private transient Robot robot;
+	private transient Queue<RobotEvent> robotEventQueue;
 	private ResourceMap resourceMap;
 	private RobotEventListener robotEventListener;
 	private ActivityDiagram subDiagram;
@@ -143,14 +144,13 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		if (hasSubDiagram()) {
 			getSubDiagram().stop();
 		}
+		super.stop();
 		receiveRobotEvent(false);
 		robot.freeResources(resourceMap.resources(), this);
 		robot = null;
 		resourceMap = null;
-		super.stop();
 		isStopping = false;
 	}
-
 
 	protected void setSubDiagram(ActivityDiagram subDiagram) {
 		this.subDiagram = subDiagram;
@@ -193,9 +193,11 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 	 */
 	final protected void receiveRobotEvent(boolean flag) {
 		if (flag) {
+			robotEventQueue.clear();
 			robot.addEventListener(robotEventListener);
 		} else {
 			robot.removeEventListener(robotEventListener);
+			robotEventQueue.clear();
 		}
 	}
 

@@ -45,6 +45,8 @@ import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.utils.Array;
 
 public class EntityImpl implements Entity {
+	private static final long serialVersionUID = -3099866179891615970L;
+
 	private Array<EventListener> listeners;
 
 	/** Name of this entity. */
