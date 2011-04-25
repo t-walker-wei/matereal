@@ -48,11 +48,12 @@ import jp.digitalmuseum.utils.Vector2D;
  * @author Jun KATO
  */
 public class PushField extends VectorFieldAbstractImpl {
+	private static final long serialVersionUID = 619630171424670817L;
 	private final String nameString;
 	private final Entity entity;
 	private final Position destination;
 	private final Position entityPosition;
-	private double distance;
+	private transient double distance;
 
 	public PushField(Entity entity, double x, double y) {
 		this.entity = entity;

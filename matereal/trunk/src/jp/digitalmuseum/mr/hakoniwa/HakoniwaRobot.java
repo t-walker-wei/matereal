@@ -80,11 +80,13 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 	final private static float DEFAULT_FORCE = 1f;
 	final private static float DEFAULT_TORQUE = 0.1f;
 
-	protected HakoniwaRobotWheels wheels;
+	protected transient HakoniwaRobotWheels wheels;
 
-	private Shape shape;
-	private Body body;
-	private ShapeDef sd;
+	private transient Shape shape;
+	private transient Body body;
+	private transient ShapeDef sd;
+	private transient Vec2 force;
+
 	private Color color;
 
 	public HakoniwaRobot(String name) {
@@ -130,6 +132,30 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		hakoniwa.registerEntity(this);
 	}
 
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+
+		Vec2 position = getBody().getPosition();
+		float x = position.x * 100;
+		float y = position.y * 100;
+		float angle = getBody().getAngle();
+
+		oos.writeObject(new float[] {
+			x, y, angle
+		});
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+
+		float[] parameters = (float[]) ois.readObject();
+		float x = parameters[0];
+		float y = parameters[1];
+		float angle = parameters[2];
+
+		initialize(x, y, angle);
+	}
+
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -162,6 +188,7 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		}
 
 		wheels = new HakoniwaRobotWheels(this);
+		force = new Vec2();
 	}
 
 	@Override
@@ -171,7 +198,6 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		return rs;
 	}
 
-	private final Vec2 force = new Vec2();
 	public void preStep() {
 		final float angle = body.getAngle();
 		final float ex = MathUtils.cos(angle);
@@ -257,17 +283,6 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 
 	public Body getBody() {
 		return body;
-	}
-
-	private void writeObject(ObjectOutputStream oos) throws IOException {
-		oos.defaultWriteObject();
-		oos.writeObject(hakoniwa.getLocation(this));
-	}
-
-	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-		ois.defaultReadObject();
-		Location location = (Location) ois.readObject();
-		initialize(location.getX(), location.getY(), location.getRotation());
 	}
 
 	/**

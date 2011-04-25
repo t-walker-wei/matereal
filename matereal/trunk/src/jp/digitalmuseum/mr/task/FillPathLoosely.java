@@ -41,6 +41,7 @@ import java.util.List;
 import jp.digitalmuseum.utils.Position;
 
 public class FillPathLoosely extends TracePathLoosely {
+	private static final long serialVersionUID = 5500676247437092750L;
 
 	public FillPathLoosely(List<Position> path) {
 		super(path);

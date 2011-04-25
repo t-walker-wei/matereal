@@ -36,6 +36,8 @@
  */
 package jp.digitalmuseum.mr.task;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,18 +47,35 @@ import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
 public class DrawPath extends VectorFieldTask {
+	private static final long serialVersionUID = 5151082669273478700L;
 	final private static double DUMMY_LENGTH = 20.0;
-	private PenController pen;
 	private List<Position> path;
-	private int currentGoalIndex;
-	private Position currentGoal;
-	private Position nextGoal = new Position();
-	private Position realGoal = new Position();
-	private Vector2D v = new Vector2D();
+
+	private transient PenController pen;
+
+	private transient Position currentGoal;
+	private transient int currentGoalIndex;
+
+	private transient Position nextGoal;
+	private transient Position realGoal;
+	private transient Vector2D v;
 
 	public DrawPath(List<Position> path) {
 		this.path = new ArrayList<Position>(path);
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
+	}
+
+	private void initialize() {
+		currentGoalIndex = 0;
 		currentGoal = path.get(currentGoalIndex ++);
+		nextGoal = new Position();
+		realGoal = new Position();
+		v = new Vector2D();
 	}
 
 	@Override

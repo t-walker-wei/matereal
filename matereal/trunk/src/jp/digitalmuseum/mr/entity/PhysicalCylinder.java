@@ -40,6 +40,7 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 
 public class PhysicalCylinder extends PhysicalEntityAbstractImpl {
+	private static final long serialVersionUID = 630826566589394347L;
 	public final static double DEFAULT_RADIUS = 5;
 	private Shape shape;
 

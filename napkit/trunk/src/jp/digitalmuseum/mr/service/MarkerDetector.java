@@ -29,6 +29,8 @@ package jp.digitalmuseum.mr.service;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,30 +70,47 @@ import jp.digitalmuseum.utils.Array;
  * @see NapMarker
  */
 public class MarkerDetector extends ScreenLocationProviderAbstractImpl implements NapMarkerDetector, LocationProvider {
+	private static final long serialVersionUID = 958747719464907174L;
 	public final static String SERVICE_NAME = "Marker Detector";
 	public final static int THRESHOLD_MIN = NapMarkerDetector.THRESHOLD_MIN;
 	public final static int THRESHOLD_MAX = NapMarkerDetector.THRESHOLD_MAX;
 	public final static int THRESHOLD_DEFAULT = NapMarkerDetector.THRESHOLD_DEFAULT;
-	private NapMarkerDetector detector;
+
+	private transient NapMarkerDetector detector;
+	private transient HashMap<Entity, NapDetectionResult> entityResultMap;
+	private transient Array<NapDetectionResult> detectionResults;
+	private transient Rectangle rectangle;
+	private transient Location location;
+	private transient Position position;
+
 	private HashMap<NapMarker, Entity> markerEntityMap;
-	private HashMap<Entity, NapDetectionResult> entityResultMap;
-	private Array<NapDetectionResult> detectionResults;
 	private ImageProvider imageProvider;
 	private CoordProvider coordProvider;
 	private ImageProvider subImageProvider;
 	private NapCameraRelation cameraRelation;
-	private final Rectangle rectangle = new Rectangle();
-	private final Location location = new Location();
-	private final Position position = new Position();
 
 	public String getName() {
 		return SERVICE_NAME;
 	}
 
 	public MarkerDetector() {
-		detector = new NapMarkerDetectorImpl();
 		markerEntityMap = new HashMap<NapMarker, Entity>();
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
+	}
+
+	private void initialize() {
+
+		detector = new NapMarkerDetectorImpl();
 		entityResultMap = new HashMap<Entity, NapDetectionResult>();
+
+		rectangle = new Rectangle();
+		location = new Location();
+		position = new Position();
 	}
 
 	public void setImageProvider(ImageProvider imageProvider) {

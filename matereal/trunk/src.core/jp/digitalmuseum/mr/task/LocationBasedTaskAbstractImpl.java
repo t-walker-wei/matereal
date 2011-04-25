@@ -49,6 +49,7 @@ import jp.digitalmuseum.utils.Position;
  * @author Jun KATO
  */
 public abstract class LocationBasedTaskAbstractImpl extends MobileTaskAbstractImpl implements LocationBasedTask {
+	private static final long serialVersionUID = 8609358749504948317L;
 	private LocationProvider provider;
 
 	/**

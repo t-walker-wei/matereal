@@ -48,9 +48,10 @@ import jp.digitalmuseum.utils.Position;
  * @author Jun KATO
  */
 public class Rotate extends LocationBasedTaskAbstractImpl {
+	private static final long serialVersionUID = -5372638780069273907L;
 	private final static String TASK_NAME_PREFIX = "Rotate to ";
 	private final String nameString;
-	private WheelsController wheels;
+	private transient WheelsController wheels;
 	private Position destinationPosition;
 	private double destination;
 	private double allowedDeviationAngle = 0.2;

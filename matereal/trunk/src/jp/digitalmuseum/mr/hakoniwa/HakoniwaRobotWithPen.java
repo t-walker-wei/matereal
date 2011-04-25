@@ -39,23 +39,25 @@ package jp.digitalmuseum.mr.hakoniwa;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.List;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.resource.PenController;
 import jp.digitalmuseum.mr.resource.Pen.STATUS;
-import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 public class HakoniwaRobotWithPen extends HakoniwaRobot {
+	private static final long serialVersionUID = 3732435694357130474L;
 	public static final int DEFAULT_PEN_RADIUS = 1;
 	public static final Color DEFAULT_PEN_COLOR = Color.red;
-	private HakoniwaRobotPen pen;
-	final private ScreenPosition screenPosition =
-			new ScreenPosition();
+
+	private transient HakoniwaRobotPen pen;
+	private transient ScreenPosition screenPosition;
 
 	public HakoniwaRobotWithPen(String name, Location location) {
 		this(name, location.getX(), location.getY(), location.getRotation());
@@ -83,7 +85,17 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 
 	public HakoniwaRobotWithPen(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
 		super(name, x, y, rotation, hakoniwa);
-		this.pen = new HakoniwaRobotPen();
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
+	}
+
+	private void initialize() {
+		pen = new HakoniwaRobotPen();
+		screenPosition = new ScreenPosition();
 	}
 
 	@Override
@@ -131,15 +143,24 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 	}
 
 	protected static class HakoniwaRobotPen extends ResourceAbstractImpl implements PenController {
-		private STATUS status;
+		private static final long serialVersionUID = 7309774293086967156L;
+		private transient STATUS status;
 		private Color color;
 		private int radius;
-		protected Task task;
 
 		private HakoniwaRobotPen() {
-			status = STATUS.UP;
 			setColor(DEFAULT_PEN_COLOR);
 			setRadius(DEFAULT_PEN_RADIUS);
+			initialize();
+		}
+
+		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+			ois.defaultReadObject();
+			initialize();
+		}
+
+		private void initialize() {
+			status = STATUS.UP;
 		}
 
 		@Override

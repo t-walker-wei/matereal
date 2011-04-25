@@ -46,6 +46,7 @@ import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.resource.PenController;
 
 public class MobilePenTask extends MobileTaskAbstractImpl {
+	private static final long serialVersionUID = 2947306000999075302L;
 	private MobileTask mobileTask;
 
 	public MobilePenTask(MobileTask mobileTask) {

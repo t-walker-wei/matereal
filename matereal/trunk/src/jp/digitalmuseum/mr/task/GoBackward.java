@@ -39,6 +39,7 @@ package jp.digitalmuseum.mr.task;
 import jp.digitalmuseum.mr.task.MobileTaskAbstractImpl;
 
 public class GoBackward extends MobileTaskAbstractImpl {
+	private static final long serialVersionUID = 2483312378579345481L;
 	@Override
 	public String getName() { return "Go backward"; }
 	public void run() { getWheels().goBackward(); }

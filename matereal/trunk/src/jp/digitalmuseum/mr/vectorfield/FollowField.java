@@ -49,6 +49,7 @@ import jp.digitalmuseum.utils.Vector2D;
  * @author Jun KATO
  */
 public class FollowField extends VectorFieldAbstractImpl {
+	private static final long serialVersionUID = 5230860875189729904L;
 	private final static String TASK_NAME_PREFIX = "Follow ";
 	private final String nameString;
 	private final Entity entity;

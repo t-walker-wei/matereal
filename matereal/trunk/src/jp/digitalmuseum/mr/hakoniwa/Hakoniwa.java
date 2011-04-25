@@ -10,6 +10,9 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,6 +78,46 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 			DEFAULT_LINEAR_DAMPING = 1.6f,
 			DEFAULT_ANGULAR_DAMPING = 2f;
 
+	private final static Color sleepingColor = new Color(0.5f, 0.5f, 0.5f);
+	// private final static Color selectedColor = new Color(0.8f, 0.4f, 0.4f);
+	private final static Color worldColor = new Color(0.3f, 0.9f, 0.9f);
+	private final static Color jointColor = new Color(0.5f, 0.8f, 0.8f);
+
+	private transient World world;
+	private transient Vec2[] worldBound;
+	private transient Array<ImageListener> listeners;
+
+	private transient MouseJoint mouseJoint;
+	private transient HakoniwaEntity mouseJointedEntity;
+	private transient Vec2 mouseJointPosition;
+
+	// TODO Implement viewport transform within this class.
+	private transient OBBViewportTransform viewportTransform;
+	private transient Graphics2D g;
+	private transient BufferedImage image;
+	private transient BufferedImage backgroundImage;
+	private transient boolean isUpdated;
+
+	// Temporal variables used in public methods for converting coordinates.
+	private transient Vec2 realSrc;
+	private transient Vec2 screenDest;
+	private transient Vec2 realDest;
+	private transient Vec2 screenSrc;
+
+	// Temporal variables used in methods for painting figures.
+	private transient Vec2 center;
+	private transient Vec2 tmp;
+	private transient Vec2 tmp1;
+	private transient Vec2 tmp2;
+	private transient Line2D.Float line;
+	private transient GeneralPath path;
+	private transient Location location;
+	private transient Position position;
+	private transient ScreenLocation screenLocation;
+	private transient ScreenPosition screenPosition;
+
+	private HashSet<HakoniwaEntity> entities;
+
 	/**
 	 * ODE: dv/dt + c * v = 0
 	 *
@@ -89,60 +132,55 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 			linearDamping = DEFAULT_LINEAR_DAMPING,
 			angularDamping = DEFAULT_ANGULAR_DAMPING;
 
-	private final static Color sleepingColor = new Color(0.5f, 0.5f, 0.5f);
-	// private final static Color selectedColor = new Color(0.8f, 0.4f, 0.4f);
-	private final static Color worldColor = new Color(0.3f, 0.9f, 0.9f);
-	private final static Color jointColor = new Color(0.5f, 0.8f, 0.8f);
-
 	private float scale;
 	private boolean isAntialiased;
-
-	private HashSet<HakoniwaEntity> entities;
-	private World world;
-	private final Vec2[] worldBound = {
-			new Vec2(),
-			new Vec2(),
-			new Vec2(),
-			new Vec2()
-	};
-
-	private Array<ImageListener> listeners;
-
-	private MouseJoint mouseJoint;
-	private HakoniwaEntity mouseJointedEntity;
-	final private Vec2 mouseJointPosition = new Vec2();
-
-	// TODO Implement viewport transform within this class.
-	private OBBViewportTransform viewportTransform;
-	private Graphics2D g;
-	private BufferedImage image;
-	private BufferedImage backgroundImage;
-	private boolean backgroundTransparent = true;
-	private boolean updated = false;
-
-	// Temporal variables used in public methods for converting coordinates.
-	private final Vec2 realSrc = new Vec2();
-	private final Vec2 screenDest = new Vec2();
-	private final Vec2 realDest = new Vec2();
-	private final Vec2 screenSrc = new Vec2();
-
-	// Temporal variables used in methods for painting figures.
-	private final Vec2 center = new Vec2();
-	private final Vec2 tmp = new Vec2();
-	private final Vec2 tmp1 = new Vec2();
-	private final Vec2 tmp2 = new Vec2();
-	private final Line2D.Float line = new Line2D.Float();
-	private final GeneralPath path = new GeneralPath();
-	private final Location location = new Location();
-	private final Position position = new Position();
-	private final ScreenLocation screenLocation = new ScreenLocation();
-	private final ScreenPosition screenPosition = new ScreenPosition();
+	private boolean backgroundTransparent;
 
 	public Hakoniwa() {
 		this(SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
 	public Hakoniwa(int width, int height) {
+		initialize(width, height);
+	}
+
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+		oos.writeInt(getWidth());
+		oos.writeInt(getHeight());
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		int width = ois.readInt();
+		int height = ois.readInt();
+		initialize(width, height);
+	}
+
+	private void initialize(int width, int height) {
+
+		mouseJointPosition = new Vec2();
+
+		backgroundTransparent = true;
+		isUpdated = false;
+
+		// Temporal variables used in public methods for converting coordinates.
+		realSrc = new Vec2();
+		screenDest = new Vec2();
+		realDest = new Vec2();
+		screenSrc = new Vec2();
+
+		// Temporal variables used in methods for painting figures.
+		center = new Vec2();
+		tmp = new Vec2();
+		tmp1 = new Vec2();
+		tmp2 = new Vec2();
+		line = new Line2D.Float();
+		path = new GeneralPath();
+		location = new Location();
+		position = new Position();
+		screenLocation = new ScreenLocation();
+		screenPosition = new ScreenPosition();
 
 		// Instantiate the viewport.
 		viewportTransform = new OBBViewportTransform();
@@ -154,10 +192,12 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 		final Vec2 worldUpper = worldAABB.upperBound;
 		worldLower.set(-WORLD_WIDTH/2, -WORLD_HEIGHT/2);
 		worldUpper.set(WORLD_WIDTH/2, WORLD_HEIGHT/2);
-		worldBound[0].set(worldLower.x, worldLower.y);
-		worldBound[1].set(worldUpper.x, worldLower.y);
-		worldBound[2].set(worldUpper.x, worldUpper.y);
-		worldBound[3].set(worldLower.x, worldUpper.y);
+		worldBound = new Vec2[] {
+				new Vec2(worldLower.x, worldLower.y),
+				new Vec2(worldUpper.x, worldLower.y),
+				new Vec2(worldUpper.x, worldUpper.y),
+				new Vec2(worldLower.x, worldUpper.y)
+		};
 
 		// Set gravity.
 		final Vec2 gravity = new Vec2(0f, 0f);
@@ -199,7 +239,7 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 				listener.imageUpdated(getImage());
 			}
 		}
-		updated = true;
+		isUpdated = true;
 	}
 
 	public static Hakoniwa getHakoniwaFor(HakoniwaEntity e) {
@@ -465,7 +505,7 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 	}
 
 	private void updateImage() {
-		if (!updated) {
+		if (!isUpdated) {
 			return;
 		}
 		synchronized (image){
@@ -507,7 +547,7 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 			setColor(worldColor);
 			drawPolygon(worldBound, 4);
 		}
-		updated = false;
+		isUpdated = false;
 	}
 
 	// EntityInformationProvider

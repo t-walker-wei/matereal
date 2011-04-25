@@ -46,6 +46,7 @@ import jp.digitalmuseum.mr.entity.EntityImpl;
  * @author Jun KATO
  */
 public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements HakoniwaEntity {
+	private static final long serialVersionUID = 8048508309803789117L;
 
 	/** Hakoniwa */
 	private Hakoniwa hakoniwa;
