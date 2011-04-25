@@ -50,6 +50,7 @@ import jp.digitalmuseum.utils.Vector2D;
  * @author Jun KATO
  */
 public class Push extends VectorFieldTask {
+	private static final long serialVersionUID = -8873781987217990435L;
 	private double allowedDistance = 5.0;
 	private double previousDistance;
 	private double distance;

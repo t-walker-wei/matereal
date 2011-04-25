@@ -39,6 +39,9 @@ package jp.digitalmuseum.mr.hakoniwa;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 
 import org.jbox2d.collision.shapes.PolygonDef;
@@ -50,40 +53,74 @@ import org.jbox2d.dynamics.World;
 
 
 public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
+	private static final long serialVersionUID = -1083652973569308258L;
 	final private static float FRICTION = 0.3f;
 	final private static float RESTITUTION = 0.1f;
 	final private static float WEIGHT = 0.8f;
 	final private static float WIDTH = 40f;
 	final private static float HEIGHT = 30f;
 
-	private Body body;
-	private ShapeDef sd;
+	private transient Body body;
+	private transient ShapeDef sd;
+	private transient java.awt.Shape shape;
+
 	private Color color = Color.blue;
-	private java.awt.Shape shape;
 
 	public HakoniwaBox(String name, double x, double y, double angle) {
 		setName(name);
-		initialize((float) x, (float) y, WIDTH, HEIGHT, (float) angle, WEIGHT);
+		initialize((float) x, (float) y, (float) angle, WIDTH, HEIGHT, WEIGHT);
 	}
 
 	public HakoniwaBox(String name, Color color, double x, double y, double angle) {
 		setName(name);
 		setColor(color);
-		initialize((float) x, (float) y, WIDTH, HEIGHT, (float) angle, WEIGHT);
+		initialize((float) x, (float) y, (float) angle, WIDTH, HEIGHT, WEIGHT);
 	}
 
 	public HakoniwaBox(String name, double x, double y, double width, double height, double angle) {
 		setName(name);
-		initialize((float) x, (float) y, (float) width, (float) height, (float) angle, WEIGHT);
+		initialize((float) x, (float) y, (float) angle, (float) width, (float) height, WEIGHT);
 	}
 
 	public HakoniwaBox(String name, Color color, double x, double y, double width, double height, double angle) {
 		setName(name);
 		setColor(color);
-		initialize((float) x, (float) y, (float) width, (float) height, (float) angle, WEIGHT);
+		initialize((float) x, (float) y, (float) angle, (float) width, (float) height, WEIGHT);
 	}
 
-	private void initialize(float x, float y, float width, float height, float angle, float weight) {
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+
+		Vec2 position = getBody().getPosition();
+		float x = position.x * 100;
+		float y = position.y * 100;
+		float angle = getBody().getAngle();
+
+		Rectangle2D bounds = shape.getBounds2D();
+		float width = (float) bounds.getWidth();
+		float height = (float) bounds.getHeight();
+		float weight = sd.density * width * height;
+
+		oos.writeObject(new float[] {
+			x, y, angle, width, height, weight
+		});
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+
+		float[] parameters = (float[]) ois.readObject();
+		float x = parameters[0];
+		float y = parameters[1];
+		float angle = parameters[2];
+		float width = parameters[3];
+		float height = parameters[4];
+		float weight = parameters[5];
+
+		initialize(x, y, height, angle, width, weight);
+	}
+
+	private void initialize(float x, float y, float angle, float width, float height, float weight) {
 		final PolygonDef pd = new PolygonDef();
 		pd.setAsBox(width / 200, height / 200);
 		pd.restitution = RESTITUTION;
@@ -129,5 +166,4 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 	public Shape getShape() {
 		return shape;
 	}
-
 }

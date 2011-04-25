@@ -43,4 +43,5 @@ package jp.digitalmuseum.mr.entity;
  * @see PhysicalEntity
  */
 public abstract class PhysicalEntityAbstractImpl extends EntityImpl implements PhysicalEntity {
+	private static final long serialVersionUID = -1222128955406094268L;
 }

@@ -38,6 +38,8 @@ package jp.digitalmuseum.mr.task;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.List;
 
 import jp.digitalmuseum.mr.entity.Resource;
@@ -47,11 +49,21 @@ import jp.digitalmuseum.mr.service.ImageProvider;
 import jp.digitalmuseum.utils.Array;
 
 public class Capture extends TaskAbstractImpl implements ImageProvider {
+	private static final long serialVersionUID = 4743985668109775616L;
 	private Camera camera;
-	private BufferedImage image;
-	private Array<ImageListener> listeners;
+	private transient BufferedImage image;
+	private transient Array<ImageListener> listeners;
 
 	public Capture() {
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
+	}
+
+	private void initialize() {
 		listeners = new Array<ImageListener>();
 	}
 

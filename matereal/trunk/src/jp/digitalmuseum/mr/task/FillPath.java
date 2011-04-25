@@ -47,6 +47,7 @@ import jp.digitalmuseum.utils.Position;
  * @author shigeo
  */
 public class FillPath extends TracePath {
+	private static final long serialVersionUID = -9063449324838882435L;
 
 	public FillPath(List<Position> path) {
 		super(path);

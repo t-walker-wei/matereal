@@ -49,7 +49,8 @@ import jp.digitalmuseum.mr.resource.WheelsController;
  */
 public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements
 		MobileTask {
-	private WheelsController w;
+	private static final long serialVersionUID = -9218644881209179648L;
+	private transient WheelsController w;
 
 	/**
 	 * @return Returns a set of required interfaces (including Wheels) for this

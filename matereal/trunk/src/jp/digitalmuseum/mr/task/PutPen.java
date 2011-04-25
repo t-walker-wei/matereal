@@ -44,7 +44,8 @@ import jp.digitalmuseum.mr.resource.Pen.STATUS;
 import jp.digitalmuseum.mr.task.TaskAbstractImpl;
 
 public class PutPen extends TaskAbstractImpl {
-	private PenController pen;
+	private static final long serialVersionUID = 112502362134082448L;
+	private transient PenController pen;
 
 	@Override
 	public String getName() {

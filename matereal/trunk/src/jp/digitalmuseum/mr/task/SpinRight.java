@@ -39,6 +39,7 @@ package jp.digitalmuseum.mr.task;
 import jp.digitalmuseum.mr.task.MobileTaskAbstractImpl;
 
 public class SpinRight extends MobileTaskAbstractImpl {
+	private static final long serialVersionUID = 2863110214947626747L;
 	@Override
 	public String getName() { return "Spin right"; }
 	public void run() { getWheels().spinRight(); }

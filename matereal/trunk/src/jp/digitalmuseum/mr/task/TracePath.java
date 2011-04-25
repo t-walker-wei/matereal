@@ -45,6 +45,7 @@ import jp.digitalmuseum.mr.activity.ResourceContext;
 import jp.digitalmuseum.utils.Position;
 
 public class TracePath extends LocationBasedTaskAbstractImpl {
+	private static final long serialVersionUID = 7231006614387931338L;
 	private double allowedDeviationAngle;
 	private double allowedDistance;
 	private double allowedInterimDistance;

@@ -46,10 +46,11 @@ import jp.digitalmuseum.utils.Vector2D;
  * @author Jun KATO
  */
 public class MoveField extends VectorFieldAbstractImpl {
+	private static final long serialVersionUID = -6141693591556712915L;
 	private final static String TASK_NAME_PREFIX = "Move to ";
 	private final String nameString;
 	private final Position destination;
-	private double distance;
+	private transient double distance;
 
 	public MoveField(double x, double y) {
 		destination = new Position();

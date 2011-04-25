@@ -40,7 +40,7 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
 public class PhysicalBox extends PhysicalEntityAbstractImpl {
-
+	private static final long serialVersionUID = 6822030829874476161L;
 	public final static double DEFAULT_WIDTH = 8;
 	public final static double DEFAULT_HEIGHT = 6;
 	private Shape shape;

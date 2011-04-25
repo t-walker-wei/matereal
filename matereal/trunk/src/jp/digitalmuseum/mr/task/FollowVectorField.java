@@ -42,6 +42,7 @@ import jp.digitalmuseum.utils.Vector2D;
 import jp.digitalmuseum.utils.VectorField;
 
 public class FollowVectorField extends VectorFieldTask {
+	private static final long serialVersionUID = 1471022149347359099L;
 	private final VectorField vectorField;
 
 	public FollowVectorField(VectorField vectorField) {

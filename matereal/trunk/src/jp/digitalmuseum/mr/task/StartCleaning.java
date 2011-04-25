@@ -42,6 +42,7 @@ import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.resource.CleanerBrushController;
 
 public class StartCleaning extends TaskAbstractImpl {
+	private static final long serialVersionUID = -2386911873495825245L;
 
 	@Override
 	public List<Class<? extends Resource>> getRequirements() {

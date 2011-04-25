@@ -46,6 +46,7 @@ import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.resource.CleanerBrushController;
 
 public class MobileCleaningTask extends MobileTaskAbstractImpl {
+	private static final long serialVersionUID = 5254602118627672909L;
 	private MobileTask mobileTask;
 
 	public MobileCleaningTask(MobileTask mobileTask) {

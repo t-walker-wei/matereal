@@ -39,6 +39,8 @@ package jp.digitalmuseum.mr.hakoniwa;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.List;
 
 import jp.digitalmuseum.mr.Matereal;
@@ -49,11 +51,11 @@ import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 public class HakoniwaRobotWithCleanerBrush extends HakoniwaRobot {
+	private static final long serialVersionUID = -2267090199931536404L;
 	public static final int DEFAULT_PEN_RADIUS = 20;
 	public static final Color DEFAULT_PEN_COLOR = Color.cyan;
-	private HakoniwaRobotCleanerBrush cleanerBrush;
-	final private ScreenPosition screenPosition =
-			new ScreenPosition();
+	private transient HakoniwaRobotCleanerBrush cleanerBrush;
+	private transient ScreenPosition screenPosition;
 
 	public HakoniwaRobotWithCleanerBrush(String name, Location location) {
 		this(name, location.getX(), location.getY(), location.getRotation());
@@ -81,7 +83,17 @@ public class HakoniwaRobotWithCleanerBrush extends HakoniwaRobot {
 
 	public HakoniwaRobotWithCleanerBrush(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
 		super(name, x, y, rotation, hakoniwa);
-		this.cleanerBrush = new HakoniwaRobotCleanerBrush();
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
+	}
+
+	private void initialize() {
+		cleanerBrush = new HakoniwaRobotCleanerBrush();
+		screenPosition  = new ScreenPosition();
 	}
 
 	@Override
@@ -129,13 +141,23 @@ public class HakoniwaRobotWithCleanerBrush extends HakoniwaRobot {
 	}
 
 	protected static class HakoniwaRobotCleanerBrush extends ResourceAbstractImpl implements CleanerBrushController {
+		private static final long serialVersionUID = 4941075903840939231L;
+		private transient boolean isWorking;
 		private Color color;
 		private int radius;
-		private boolean isWorking;
 
 		private HakoniwaRobotCleanerBrush() {
 			setColor(DEFAULT_PEN_COLOR);
 			setRadius(DEFAULT_PEN_RADIUS);
+			initialize();
+		}
+
+		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+			ois.defaultReadObject();
+			initialize();
+		}
+
+		private void initialize() {
 			isWorking = false;
 		}
 

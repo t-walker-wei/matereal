@@ -48,6 +48,7 @@ import jp.digitalmuseum.utils.Vector2D;
  * @author Jun KATO
  */
 public class Move extends VectorFieldTask {
+	private static final long serialVersionUID = 2472493453089062359L;
 	public static double defaultAllowedDistance = 3.0;
 	private double allowedDistance;
 	private double previousDistance;

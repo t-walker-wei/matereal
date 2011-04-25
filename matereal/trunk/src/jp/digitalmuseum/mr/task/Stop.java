@@ -39,6 +39,7 @@ package jp.digitalmuseum.mr.task;
 import jp.digitalmuseum.mr.task.MobileTaskAbstractImpl;
 
 public class Stop extends MobileTaskAbstractImpl {
+	private static final long serialVersionUID = 1560454314193129957L;
 	@Override
 	public String getName() { return "Stop"; }
 	public void run() { getWheels().stopWheels(); finish(); }

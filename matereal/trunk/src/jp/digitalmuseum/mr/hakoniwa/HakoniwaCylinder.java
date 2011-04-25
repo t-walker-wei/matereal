@@ -39,6 +39,9 @@ package jp.digitalmuseum.mr.hakoniwa;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import org.jbox2d.collision.shapes.CircleDef;
 import org.jbox2d.collision.shapes.ShapeDef;
@@ -48,43 +51,74 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
 
 public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
+	private static final long serialVersionUID = 7085381442084030550L;
 	final private static float FRICTION = 0.3f;
 	final private static float RESTITUTION = 0.1f;
 	final private static float WEIGHT = 0.8f;
 	final private static float RADIUS = 35f;
 
-	private Body body;
-	private ShapeDef sd;
+	private transient Body body;
+	private transient ShapeDef sd;
+	private transient java.awt.Shape shape;
+
 	private Color color = Color.blue;
-	private java.awt.Shape shape;
 
 	public HakoniwaCylinder(String name, double x, double y, double angle) {
 		setName(name);
-		initialize((float) x, (float) y, RADIUS, (float) angle, WEIGHT);
+		initialize((float) x, (float) y, (float) angle, RADIUS, WEIGHT);
 	}
 
 	public HakoniwaCylinder(String name, Color color, double x, double y, double angle) {
 		setName(name);
 		setColor(color);
-		initialize((float) x, (float) y, RADIUS, (float) angle, WEIGHT);
+		initialize((float) x, (float) y, (float) angle, RADIUS, WEIGHT);
 	}
 
 	public HakoniwaCylinder(String name, double x, double y, double radius, double angle) {
 		setName(name);
-		initialize((float) x, (float) y, (float) radius, (float) angle, WEIGHT);
+		initialize((float) x, (float) y, (float) angle, (float) radius, WEIGHT);
 	}
 
 	public HakoniwaCylinder(String name, Color color, double x, double y, double radius, double angle) {
 		setName(name);
 		setColor(color);
-		initialize((float) x, (float) y, (float) radius, (float) angle, WEIGHT);
+		initialize((float) x, (float) y, (float) angle, (float) radius, WEIGHT);
 	}
 
-	private void initialize(float x, float y, float radius, float angle, float weight) {
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+
+		Vec2 position = getBody().getPosition();
+		float x = position.x * 100;
+		float y = position.y * 100;
+		float angle = getBody().getAngle();
+
+		float radius = ((CircleDef) sd).radius * 100;
+		float weight = (float) (sd.density * radius * radius * Math.PI);
+
+		oos.writeObject(new float[] {
+			x, y, angle, radius, weight
+		});
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+
+		float[] parameters = (float[]) ois.readObject();
+		float x = parameters[0];
+		float y = parameters[1];
+		float angle = parameters[2];
+		float radius = parameters[3];
+		float weight = parameters[4];
+
+		initialize(x, y, angle, radius, weight);
+	}
+
+	private void initialize(float x, float y, float angle, float radius, float weight) {
 		final CircleDef cd = new CircleDef();
 		cd.radius = radius / 100;
 		cd.restitution = RESTITUTION;
-		cd.density = weight / (radius * radius / 4);
+		cd.density = (float) (weight / (radius * radius * Math.PI));
 		cd.friction = FRICTION;
 		sd = cd;
 
