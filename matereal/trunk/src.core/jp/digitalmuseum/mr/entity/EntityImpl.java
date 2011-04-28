@@ -38,6 +38,8 @@ package jp.digitalmuseum.mr.entity;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.message.Event;
@@ -47,7 +49,7 @@ import jp.digitalmuseum.utils.Array;
 public class EntityImpl implements Entity {
 	private static final long serialVersionUID = -3099866179891615970L;
 
-	private Array<EventListener> listeners;
+	private transient Array<EventListener> listeners;
 
 	/** Name of this entity. */
 	private String name;
@@ -56,6 +58,15 @@ public class EntityImpl implements Entity {
 	private Shape shape;
 
 	public EntityImpl() {
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
+	}
+
+	private void initialize() {
 		listeners = new Array<EventListener>();
 		Matereal.getInstance().registerEntity(this);
 	}

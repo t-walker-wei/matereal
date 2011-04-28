@@ -89,6 +89,10 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 
 	private Color color;
 
+	public HakoniwaRobot() {
+		this(null);
+	}
+
 	public HakoniwaRobot(String name) {
 		this(name, Matereal.getInstance().lookForService(Hakoniwa.class));
 	}
@@ -129,7 +133,6 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		this.hakoniwa = hakoniwa;
 		setName(name);
 		initialize(x, y, rotation);
-		hakoniwa.registerEntity(this);
 	}
 
 	private void writeObject(ObjectOutputStream oos) throws IOException {
@@ -189,6 +192,8 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 
 		wheels = new HakoniwaRobotWheels(this);
 		force = new Vec2();
+
+		hakoniwa.registerEntity(this);
 	}
 
 	@Override
