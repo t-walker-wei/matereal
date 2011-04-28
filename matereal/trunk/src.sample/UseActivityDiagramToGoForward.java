@@ -1,4 +1,7 @@
-
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.activity.Action;
@@ -22,9 +25,29 @@ public class UseActivityDiagramToGoForward {
 
 	public static void main(String[] args) {
 
+		//
+		Matereal.getInstance().showDebugFrame();
+
 		// Run hakoniwa.
 		Hakoniwa hakoniwa = new Hakoniwa(640, 480);
 		hakoniwa.start();
+
+		// Connect to a robot. Instantiate a task.
+		Robot robot = new HakoniwaRobot("Hakobot",
+				hakoniwa.screenToReal(new ScreenPosition(320, 240)));
+
+		// Test serialization.
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("test.dat"));
+			oos.writeObject(robot);
+
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream("test.dat"));
+			robot = (Robot) ois.readObject();
+			hakoniwa = ((HakoniwaRobot) robot).getHakoniwa();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		// Make a window for showing captured image.
 		DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa) {
@@ -37,10 +60,6 @@ public class UseActivityDiagramToGoForward {
 		frame.setResizable(false);
 		frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
 
-		// Connect to a robot. Instantiate a task.
-		Robot robot = new HakoniwaRobot("Hakobot",
-				hakoniwa.screenToReal(new ScreenPosition(320, 240)));
-
 		// Construct an activity diagram.
 		ActivityDiagram ad = new ActivityDiagram();
 		Action goForward = new Action(robot, new GoForward());
@@ -51,6 +70,7 @@ public class UseActivityDiagramToGoForward {
 
 		// Set the initial node and start running the graph.
 		ad.setInitialNode(goForward);
+
 		ad.start();
 	}
 }

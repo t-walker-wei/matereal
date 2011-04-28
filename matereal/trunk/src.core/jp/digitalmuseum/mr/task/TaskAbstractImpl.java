@@ -36,6 +36,8 @@
  */
 package jp.digitalmuseum.mr.task;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -66,8 +68,8 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 	private static final long serialVersionUID = -3132747610411544613L;
 	private transient Robot robot;
 	private transient Queue<RobotEvent> robotEventQueue;
+	private transient RobotEventListener robotEventListener;
 	private ResourceMap resourceMap;
-	private RobotEventListener robotEventListener;
 	private ActivityDiagram subDiagram;
 	private boolean isStopping;
 
@@ -78,6 +80,15 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 
 	public TaskAbstractImpl() {
 		super();
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
+	}
+
+	private void initialize() {
 		robotEventQueue = new LinkedList<RobotEvent>();
 		robotEventListener = new RobotEventListener();
 	}

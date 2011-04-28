@@ -67,6 +67,23 @@ public abstract class ServiceAbstractImpl implements Service {
 	private boolean isPaused;
 
 	public ServiceAbstractImpl() {
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		boolean isStarted = this.isStarted;
+		boolean isPaused = this.isPaused;
+		initialize();
+		if (isStarted) {
+			start(serviceGroup);
+			if (isPaused) {
+				pause();
+			}
+		}
+	}
+
+	private void initialize() {
 		listeners = new Array<EventListener>();
 		interval = DEFAULT_INTERVAL;
 		isStarted = false;
@@ -291,17 +308,6 @@ public abstract class ServiceAbstractImpl implements Service {
 	protected void distributeEvent(Event e) {
 		for (EventListener listener : listeners) {
 			listener.eventOccurred(e);
-		}
-	}
-
-	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-		ois.defaultReadObject();
-		listeners = new Array<EventListener>();
-		if (isStarted) {
-			start(serviceGroup);
-			if (isPaused) {
-				pause();
-			}
 		}
 	}
 }
