@@ -36,6 +36,8 @@
  */
 package jp.digitalmuseum.mr.hakoniwa;
 
+import org.jbox2d.common.Vec2;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.EntityImpl;
 
@@ -52,12 +54,29 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 	private Hakoniwa hakoniwa;
 
 	public HakoniwaEntityAbstractImpl() {
-		this(Matereal.getInstance().lookForService(Hakoniwa.class));
+		initialize();
 	}
 
 	public HakoniwaEntityAbstractImpl(Hakoniwa hakoniwa) {
+		initialize(hakoniwa);
+	}
+
+	public HakoniwaEntityAbstractImpl(String name) {
+		super(name);
+		initialize();
+	}
+
+	public HakoniwaEntityAbstractImpl(String name, Hakoniwa hakoniwa) {
+		super(name);
+		initialize(hakoniwa);
+	}
+
+	private void initialize() {
+		initialize(Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	private void initialize(Hakoniwa hakoniwa) {
 		this.hakoniwa = hakoniwa;
-		// hakoniwa.registerEntity(this);
 	}
 
 	@Override
@@ -68,5 +87,14 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 
 	public Hakoniwa getHakoniwa() {
 		return hakoniwa;
+	}
+
+	public void setPosition(double x, double y) {
+		setLocation(x, y, getBody().getAngle());
+	}
+
+	public void setLocation(double x, double y, double rotation) {
+		Vec2 position = new Vec2((float) (x/100), (float) (y/100));
+		getBody().setXForm(position, (float) rotation);
 	}
 }

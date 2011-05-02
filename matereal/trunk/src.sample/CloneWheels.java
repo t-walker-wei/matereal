@@ -35,7 +35,7 @@ public class CloneWheels {
 		robots.add(new NetTansor("NetTansor Web", "http://192.168.1.103:8081"));
 		robots.add(new NetTansor("NetTansor", "http://192.168.1.104:8081"));
 		robots.add(new Noopy("Noopy", "btspp://000195090A7D"));
-		robots.add(new MindstormsNXT("MindstormsNXT", "btspp://00165306523e"));
+		robots.add(new MindstormsNXT("btspp://00165306523e", "MindstormsNXT"));
 		robots.add(new Roomba("Roomba", "btspp://00066600d69a"));
 		final Robot virtualRobot = new CloneWheelsRobot(robots);
 

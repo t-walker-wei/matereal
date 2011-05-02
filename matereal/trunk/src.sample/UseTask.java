@@ -25,7 +25,7 @@ public class UseTask {
 	 */
 	public UseTask() {
 
-		Robot robot = new MindstormsNXT("Mindstorms NXT", "btspp://00165306523e");
+		Robot robot = new MindstormsNXT("btspp://00165306523e", "Mindstorms NXT");
 		Action a = new Action(robot, new GoForward());
 		Action b = new Action(robot, new Stop());
 

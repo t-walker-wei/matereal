@@ -67,38 +67,38 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	private static int instances = 0;
 
 	public MindstormsNXT(String connectionString) {
-		this(null, connectionString);
+		super(connectionString);
+		initialize();
 	}
 
-	public MindstormsNXT(String name, String connectionString) {
-		super(connectionString);
-		initialize(name);
+	public MindstormsNXT(String connectionString, String name) {
+		super(connectionString, name);
+		initialize();
 	}
 
 	public MindstormsNXT(Connector connector) {
-		this(null, connector);
+		super(connector);
+		initialize();
 	}
 
-	public MindstormsNXT(String name, Connector connector) {
-		super(connector);
-		initialize(name);
+	public MindstormsNXT(Connector connector, String name) {
+		super(connector, name);
+		initialize();
+	}
+
+	private void initialize() {
+		setTypeName("LEGO MindstormsNXT");
+		instances ++;
+		if (getName() == null) {
+			setName(getTypeName()+" ("+instances+")");
+		}
+		dw = new MindstormsNXTDifferentialWheels(this);
 	}
 
 	@Override
 	public void dispose() {
 		dw.stopWheels();
 		super.dispose();
-	}
-
-	private void initialize(String name) {
-		setTypeName("LEGO MindstormsNXT");
-		instances ++;
-		if (name == null) {
-			setName(getTypeName()+" ("+instances+")");
-		} else {
-			setName(name);
-		}
-		dw = new MindstormsNXTDifferentialWheels(this);
 	}
 
 	@Override

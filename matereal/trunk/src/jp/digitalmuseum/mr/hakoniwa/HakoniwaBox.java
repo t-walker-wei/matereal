@@ -56,9 +56,9 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 	private static final long serialVersionUID = -1083652973569308258L;
 	final private static float FRICTION = 0.3f;
 	final private static float RESTITUTION = 0.1f;
-	final private static float WEIGHT = 0.8f;
-	final private static float WIDTH = 40f;
-	final private static float HEIGHT = 30f;
+	final private static double WEIGHT = 0.8;
+	final private static double WIDTH = 40;
+	final private static double HEIGHT = 30;
 
 	private transient Body body;
 	private transient ShapeDef sd;
@@ -67,25 +67,24 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 	private Color color = Color.blue;
 
 	public HakoniwaBox(String name, double x, double y, double angle) {
-		setName(name);
-		initialize((float) x, (float) y, (float) angle, WIDTH, HEIGHT, WEIGHT);
+		this(name, null, x, y, angle);
 	}
 
 	public HakoniwaBox(String name, Color color, double x, double y, double angle) {
-		setName(name);
-		setColor(color);
-		initialize((float) x, (float) y, (float) angle, WIDTH, HEIGHT, WEIGHT);
+		this(name, color, x, y, angle, WIDTH, HEIGHT);
 	}
 
-	public HakoniwaBox(String name, double x, double y, double width, double height, double angle) {
-		setName(name);
-		initialize((float) x, (float) y, (float) angle, (float) width, (float) height, WEIGHT);
+	public HakoniwaBox(String name, double x, double y, double angle, double width, double height) {
+		this(name, null, x, y, angle, width, height);
 	}
 
-	public HakoniwaBox(String name, Color color, double x, double y, double width, double height, double angle) {
-		setName(name);
-		setColor(color);
-		initialize((float) x, (float) y, (float) angle, (float) width, (float) height, WEIGHT);
+	public HakoniwaBox(String name, Color color, double x, double y, double angle, double width, double height) {
+		this(name, color, x, y, angle, width, height, WEIGHT);
+	}
+
+	public HakoniwaBox(String name, Color color, double x, double y, double angle, double width, double height, double weight) {
+		super(name);
+		initialize(color, x, y, angle, width, height, weight);
 	}
 
 	private void writeObject(ObjectOutputStream oos) throws IOException {
@@ -117,22 +116,27 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 		float height = parameters[4];
 		float weight = parameters[5];
 
-		initialize(x, y, height, angle, width, weight);
+		initialize(null, x, y, angle, width, height, weight);
 	}
 
-	private void initialize(float x, float y, float angle, float width, float height, float weight) {
+	private void initialize(Color color, double x, double y, double angle, double width, double height, double weight) {
+
+		if (color != null) {
+			setColor(color);
+		}
+
 		final PolygonDef pd = new PolygonDef();
-		pd.setAsBox(width / 200, height / 200);
+		pd.setAsBox((float) width / 200, (float) height / 200);
 		pd.restitution = RESTITUTION;
-		pd.density = weight / (width * height);
+		pd.density = (float) (weight / (width * height));
 		pd.friction = FRICTION;
 		sd = pd;
 
 		final BodyDef bd = new BodyDef();
 		bd.position = new Vec2();
-		bd.position.x = x/100;
-		bd.position.y = y/100;
-		bd.angle = angle;
+		bd.position.x = (float) (x/100);
+		bd.position.y = (float) (y/100);
+		bd.angle = (float) angle;
 
 		final Hakoniwa hakoniwa = getHakoniwa();
 		synchronized (hakoniwa) {
