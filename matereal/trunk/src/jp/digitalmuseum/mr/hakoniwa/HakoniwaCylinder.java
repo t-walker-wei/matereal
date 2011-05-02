@@ -64,25 +64,24 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 	private Color color = Color.blue;
 
 	public HakoniwaCylinder(String name, double x, double y, double angle) {
-		setName(name);
-		initialize((float) x, (float) y, (float) angle, RADIUS, WEIGHT);
+		this(name, null, x, y, angle);
 	}
 
 	public HakoniwaCylinder(String name, Color color, double x, double y, double angle) {
-		setName(name);
-		setColor(color);
-		initialize((float) x, (float) y, (float) angle, RADIUS, WEIGHT);
+		this(name, color, x, y, angle, RADIUS);
 	}
 
-	public HakoniwaCylinder(String name, double x, double y, double radius, double angle) {
-		setName(name);
-		initialize((float) x, (float) y, (float) angle, (float) radius, WEIGHT);
+	public HakoniwaCylinder(String name, double x, double y, double angle, double radius) {
+		this(name, null, x, y, angle, radius);
 	}
 
-	public HakoniwaCylinder(String name, Color color, double x, double y, double radius, double angle) {
-		setName(name);
-		setColor(color);
-		initialize((float) x, (float) y, (float) angle, (float) radius, WEIGHT);
+	public HakoniwaCylinder(String name, Color color, double x, double y, double angle, double radius) {
+		this(name, color, x, y, angle, radius, WEIGHT);
+	}
+
+	public HakoniwaCylinder(String name, Color color, double x, double y, double angle, double radius, double weight) {
+		super(name);
+		initialize(color, x, y, angle, radius, weight);
 	}
 
 	private void writeObject(ObjectOutputStream oos) throws IOException {
@@ -111,12 +110,17 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 		float radius = parameters[3];
 		float weight = parameters[4];
 
-		initialize(x, y, angle, radius, weight);
+		initialize(null, x, y, angle, radius, weight);
 	}
 
-	private void initialize(float x, float y, float angle, float radius, float weight) {
+	private void initialize(Color color, double x, double y, double angle, double radius, double weight) {
+
+		if (color != null) {
+			setColor(color);
+		}
+
 		final CircleDef cd = new CircleDef();
-		cd.radius = radius / 100;
+		cd.radius = (float) (radius / 100);
 		cd.restitution = RESTITUTION;
 		cd.density = (float) (weight / (radius * radius * Math.PI));
 		cd.friction = FRICTION;
@@ -124,9 +128,9 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 
 		final BodyDef bd = new BodyDef();
 		bd.position = new Vec2();
-		bd.position.x = x/100;
-		bd.position.y = y/100;
-		bd.angle = angle;
+		bd.position.x = (float) (x/100);
+		bd.position.y = (float) (y/100);
+		bd.angle = (float) angle;
 
 		final Hakoniwa hakoniwa = getHakoniwa();
 		synchronized (hakoniwa) {

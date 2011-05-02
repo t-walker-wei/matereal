@@ -46,11 +46,11 @@ public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implem
 	private Connector connector;
 
 	public PhysicalRobotAbstractImpl() {
+		super();
 	}
 
 	public PhysicalRobotAbstractImpl(String connectionString) {
-		super();
-		setConnector(ConnectorFactory.makeConnector(connectionString));
+		this(ConnectorFactory.makeConnector(connectionString));
 	}
 
 	public PhysicalRobotAbstractImpl(Connector conenctor) {
@@ -58,14 +58,20 @@ public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implem
 		setConnector(conenctor);
 	}
 
+	public PhysicalRobotAbstractImpl(String connectionString, String name) {
+		this(ConnectorFactory.makeConnector(connectionString), name);
+	}
+
+	public PhysicalRobotAbstractImpl(Connector conenctor, String name) {
+		this(conenctor);
+		setName(name);
+	}
+
 	/**
 	 * Bind a connector to this robot.
 	 */
 	final public void setConnector(Connector connector) {
 		this.connector = connector;
-		if (!connector.isConnected()) {
-			connector.connect();
-		}
 	}
 
 	/**
@@ -75,4 +81,14 @@ public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implem
 		return connector;
 	}
 
+	final public boolean connect() {
+		return connector != null
+				&& connector.connect();
+	}
+
+	final public void disconnect() {
+		if (connector != null) {
+			connector.disconnect();
+		}
+	}
 }

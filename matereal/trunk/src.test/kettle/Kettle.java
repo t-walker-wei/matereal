@@ -36,32 +36,72 @@
  */
 package kettle;
 
-import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.ExclusiveResource;
-import jp.digitalmuseum.mr.entity.PhysicalResourceAbstractImpl;
-import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
+import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
 
-public class Kettle extends PhysicalRobotAbstractImpl {
+public class Kettle extends HakoniwaRobot {
+	private static final long serialVersionUID = -1044123032265398208L;
+
 	public Kettle(String name) {
 		setName(name);
 	}
+
 	protected List<ResourceAbstractImpl> getResources() {
 		List<ResourceAbstractImpl> rs = super.getResources();
-		rs.add(new KettleCore(this)); return rs;
+		rs.add(new KettleCore(this));
+		return rs;
 	}
+
 	public static class KettleCore
-			extends PhysicalResourceAbstractImpl
-			implements ExclusiveResource {
-		private KettleCore(Kettle k) { super(k); }
-		public void heat(boolean h) { getConnector().write(h ? "b" : "d"); }
+			extends ResourceAbstractImpl implements ExclusiveResource {
+		private static final long serialVersionUID = 8453184701240270679L;
+		private boolean isOn = false;
+		private int temperature = 25;
+		private long time;
+
+		private KettleCore(Kettle kettle) {
+			super(kettle);
+		}
+
+		public void heat(boolean isOn) {
+			getTemperature();
+			this.isOn = isOn;
+			Matereal.getInstance().getOutStream().println(isOn
+					? "Start heating water."
+					: "Stop heating water.");
+		}
+
 		public int getTemperature() {
-			getConnector().write("t");
-			try { return getConnector().readInt(); }
-			catch (IOException e) { return 100; } }
-		public void pour() { getConnector().write("p"); }
-		public void stop() { getConnector().write("s"); }
+			long currentTime = new Date().getTime();
+			long diff = currentTime - time;
+			if (isOn) {
+				temperature += diff / 1000;
+				if (temperature > 100) {
+					temperature = 100;
+				}
+			} else {
+				temperature -= diff / 2000;
+				if (temperature < 25) {
+					temperature = 25;
+				}
+			}
+			time = currentTime;
+			return temperature;
+		}
+
+		public void startPour() {
+			Matereal.getInstance().getOutStream().println(
+					"Start pouring water.");
+		}
+
+		public void stopPour() {
+			Matereal.getInstance().getOutStream().println(
+					"Stopped pouring water.");
+		}
 	}
 }

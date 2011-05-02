@@ -51,7 +51,7 @@ public class Stop extends TaskAbstractImpl {
 	}
 
 	protected void onStart() {
-		getResourceMap().get(KettleCore.class).stop();
+		getResourceMap().get(KettleCore.class).stopPour();
 	}
 
 	public void run() {

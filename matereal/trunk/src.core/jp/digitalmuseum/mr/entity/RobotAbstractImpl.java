@@ -59,6 +59,15 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 
 	public RobotAbstractImpl() {
 		super();
+		initialize();
+	}
+
+	public RobotAbstractImpl(String name) {
+		super(name);
+		initialize();
+	}
+
+	private void initialize() {
 		typeName = getClass().getSimpleName();
 	}
 

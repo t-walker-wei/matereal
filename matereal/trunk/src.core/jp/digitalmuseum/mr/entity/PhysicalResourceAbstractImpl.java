@@ -44,7 +44,7 @@ public abstract class PhysicalResourceAbstractImpl extends ResourceAbstractImpl 
 
 	protected PhysicalResourceAbstractImpl(PhysicalRobotAbstractImpl robot) {
 		super(robot);
-		setConnector(robot.getConnector());
+		connector = null;
 	}
 
 	protected PhysicalResourceAbstractImpl(Connector connector) {
@@ -59,9 +59,6 @@ public abstract class PhysicalResourceAbstractImpl extends ResourceAbstractImpl 
 	 */
 	protected void setConnector(Connector connector) {
 		this.connector = connector;
-		if (connector != null && !connector.isConnected()) {
-			connector.connect();
-		}
 	}
 
 	/**
@@ -69,7 +66,8 @@ public abstract class PhysicalResourceAbstractImpl extends ResourceAbstractImpl 
 	 * @see #setConnector(Connector)
 	 */
 	final protected Connector getConnector() {
-		return connector;
+		return connector == null ?
+				((PhysicalRobotAbstractImpl) getRobot()).getConnector() : connector;
 	}
 
 }

@@ -51,7 +51,7 @@ public class Pour extends TaskAbstractImpl {
 	}
 
 	protected void onStart() {
-		getResourceMap().get(KettleCore.class).pour();
+		getResourceMap().get(KettleCore.class).startPour();
 	}
 
 	public void run() {

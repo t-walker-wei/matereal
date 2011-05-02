@@ -61,6 +61,11 @@ public class EntityImpl implements Entity {
 		initialize();
 	}
 
+	public EntityImpl(String name) {
+		this();
+		setName(name);
+	}
+
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		initialize();
@@ -69,11 +74,6 @@ public class EntityImpl implements Entity {
 	private void initialize() {
 		listeners = new Array<EventListener>();
 		Matereal.getInstance().registerEntity(this);
-	}
-
-	public EntityImpl(String name) {
-		this();
-		setName(name);
 	}
 
 	/**
