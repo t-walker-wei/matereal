@@ -41,6 +41,7 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
 import jp.digitalmuseum.mr.message.ActivityDiagramEvent.STATUS;
@@ -57,6 +58,7 @@ public class ActivityDiagram extends Node {
 	private transient boolean isStarted;
 	private transient boolean isDone;
 	private transient boolean isPaused;
+	private transient boolean isDisposed;
 	private transient ResourceContext resourceContext;
 
 	public ActivityDiagram() {
@@ -76,6 +78,16 @@ public class ActivityDiagram extends Node {
 		} else {
 			this.resourceContext = resourceContext;
 		}
+		Matereal.getInstance().registerGraph(this);
+		distributeEvent(new ActivityDiagramEvent(this, STATUS.INSTANTIATED));
+		isDisposed = false;
+	}
+
+	public synchronized void dispose() {
+		stop();
+		Matereal.getInstance().unregisterGraph(this);
+		distributeEvent(new ActivityDiagramEvent(this, STATUS.DISPOSED));
+		isDisposed = true;
 	}
 
 	synchronized ResourceContext getResourceContext() {
@@ -182,9 +194,11 @@ public class ActivityDiagram extends Node {
 	 * @throws IllegalStateException
 	 */
 	public synchronized void start() {
-		if (isStarted) {
-			throw new IllegalStateException(
-					"This activity diagram has been already started.");
+		if (isDisposed()) {
+			throw new IllegalStateException("This diagram is already disposed and cannot be started.");
+		}
+		if (isStarted()) {
+			return;
 		}
 		if (!start(initialNode)) {
 			throw new IllegalStateException("Initial node was failed to start.");
@@ -205,16 +219,22 @@ public class ActivityDiagram extends Node {
 		return true;
 	}
 
-	public synchronized boolean isStarted() {
-		return isStarted;
+	public synchronized void stop() {
+		if (isStarted()) {
+			for (Node node : currentNodes) {
+				node.leave();
+			}
+			currentNodes.clear();
+			monitor.stop();
+			isStarted = false;
+			isPaused = false;
+		}
 	}
 
-	protected synchronized boolean isDone() {
-		return isDone;
-	}
-
-	public synchronized boolean isPaused() {
-		return isPaused;
+	void stop(Node node) {
+		if (currentNodes.remove(node)) {
+			node.leave();
+		}
 	}
 
 	public synchronized void pause() {
@@ -240,22 +260,20 @@ public class ActivityDiagram extends Node {
 		isPaused = false;
 	}
 
-	public synchronized void stop() {
-		if (isStarted) {
-			for (Node node : currentNodes) {
-				node.leave();
-			}
-			currentNodes.clear();
-			monitor.stop();
-			isStarted = false;
-			isPaused = false;
-		}
+	public synchronized boolean isDisposed() {
+		return isDisposed;
 	}
 
-	void stop(Node node) {
-		if (currentNodes.remove(node)) {
-			node.leave();
-		}
+	public synchronized boolean isStarted() {
+		return isStarted;
+	}
+
+	public synchronized boolean isPaused() {
+		return isPaused;
+	}
+
+	protected synchronized boolean isDone() {
+		return isDone;
 	}
 
 	private class TransitionMonitor extends ServiceAbstractImpl {
