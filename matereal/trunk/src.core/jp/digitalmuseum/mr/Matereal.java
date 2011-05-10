@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.UIManager;
 
+import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.MonitorPanel;
@@ -78,7 +79,8 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 	private Array<EventListener> listeners;
 	private ScheduledExecutorService executor;
 	private Set<Entity> entities;
-	private Set<Service> services;
+	private List<Service> services;
+	private Set<ActivityDiagram> diagrams;
 	private PrintStream out;
 	private PrintStream err;
 	private DisposeOnCloseFrame debugFrame;
@@ -97,7 +99,8 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 		listeners = new Array<EventListener>();
 		executor = Executors.newScheduledThreadPool(DEFAULT_NUM_THREADS);
 		entities = new HashSet<Entity>();
-		services = new HashSet<Service>();
+		services = new ArrayList<Service>();
+		diagrams = new HashSet<ActivityDiagram>();
 		setLookAndFeel();
 	}
 
@@ -247,6 +250,33 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 	}
 
 	/**
+	 * Called by ActivityDiagram constructor.
+	 * @param graph
+	 * @see jp.digitalmuseum.mr.activity.ActivityDiagram
+	 */
+	public void registerGraph(ActivityDiagram graph) {
+		synchronized (diagrams) {
+			diagrams.add(graph);
+			graph.addEventListener(this);
+		}
+	}
+
+	/**
+	 * Called by ActivityDiagram.dispose().
+	 * @param graph
+	 * @return Returns if unregistered successfully.
+	 */
+	public boolean unregisterGraph(ActivityDiagram graph) {
+		synchronized (diagrams) {
+			if (diagrams.remove(graph)) {
+				graph.removeEventListener(this);
+				return true;
+			}
+			return false;
+		}
+	}
+
+	/**
 	 * Get a set of entities.
 	 */
 	public Set<Entity> getEntities() {
@@ -269,6 +299,15 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 	 */
 	public Set<ServiceGroup> getServiceGroups() {
 		return lookForServices(ServiceGroup.class);
+	}
+
+	/**
+	 * Get a list of activity diagrams.
+	 */
+	public Set<ActivityDiagram> getGraphs() {
+		synchronized (diagrams) {
+			return new HashSet<ActivityDiagram>(diagrams);
+		}
 	}
 
 	/**
