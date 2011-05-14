@@ -91,7 +91,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private JScrollPane jScrollPane = null;
 	private JTree jTree = null;
 
-	private JLabel jSelectedServiceGroupLabel = null;
+	private JLabel jServiceGroupLabel = null;
 	private JLabel jSelectedServiceLabel = null;
 	private JPanel jServiceInformationPanel = null;
 	private JLabel jLabel = null;
@@ -152,14 +152,13 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		setPreferredSize(new Dimension(640, 420));
 		setLayout(new GridBagLayout());
 		setBounds(new Rectangle(0, 0, 480, 320));
-		jSelectedServiceGroupLabel = new JLabel();
-		jSelectedServiceGroupLabel.setText(""); //$NON-NLS-1$
-		jSelectedServiceGroupLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
-		jSelectedServiceGroupLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
 		jSelectedServiceLabel = new JLabel();
 		jSelectedServiceLabel.setText(""); //$NON-NLS-1$
 		jSelectedServiceLabel.setFont(new Font("Dialog", Font.BOLD, 14)); //$NON-NLS-1$
 		jSelectedServiceLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedService")); //$NON-NLS-1$
+		jServiceGroupLabel = new JLabel();
+		jServiceGroupLabel.setText(""); //$NON-NLS-1$
+		jServiceGroupLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
 		this.add(getJSplitPane(), gridBagConstraints11);
 	}
 
@@ -335,7 +334,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			jServiceInformationPanel.add(jLabel3, gridBagConstraints5);
 			jServiceInformationPanel.add(jLabel4, gridBagConstraints7);
 			jServiceInformationPanel.add(jLabel1, gridBagConstraints8);
-			jServiceInformationPanel.add(jSelectedServiceGroupLabel, gridBagConstraints2);
+			jServiceInformationPanel.add(jServiceGroupLabel, gridBagConstraints2);
 		}
 		return jServiceInformationPanel;
 	}
@@ -371,8 +370,6 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		Object nodeInfo = node.getUserObject();
 		if (nodeInfo instanceof Service) {
 			selectService((Service) nodeInfo);
-		} else if (nodeInfo instanceof ServiceGroup) {
-			selectServiceGroup((ServiceGroup) nodeInfo);
 		}
 	}
 
@@ -421,6 +418,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 				getJServicePanel(), String.valueOf(service.hashCode()));
 		jSelectedServiceLabel.setText(service.toString());
 		jLabel3.setText(String.valueOf(service.getInterval()));
+		selectServiceGroup(service.getServiceGroup());
 	}
 
 	private void updateService(Service service) {
@@ -479,9 +477,9 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 	private void selectServiceGroup(ServiceGroup serviceGroup) {
 		if (serviceGroup == null) {
-			jSelectedServiceGroupLabel.setText("-"); //$NON-NLS-1$
+			jServiceGroupLabel.setText("-"); //$NON-NLS-1$
 		} else {
-			jSelectedServiceGroupLabel.setText(serviceGroup.toString());
+			jServiceGroupLabel.setText(serviceGroup.toString());
 		}
 	}
 
