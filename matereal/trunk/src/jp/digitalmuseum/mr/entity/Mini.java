@@ -54,41 +54,53 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
  */
 public class Mini extends PhysicalRobotAbstractImpl {
 	private static final long serialVersionUID = 3586580600456610155L;
-	final public static double WIDTH = 8;
-	final public static double HEIGHT = 6;
+	public static final double WIDTH = 8;
+	public static final double HEIGHT = 6;
+	private static int instances = 0;
 	private MiniWheels w;
 	private Shape shape;
 
-	public Mini(String name) {
-		super();
-		initialize(name);
+	public Mini() {
+		initialize();
 	}
 
-	public Mini(String name, String connectionString) {
+	public Mini(String connectionString) {
 		super(connectionString);
-		initialize(name);
+		initialize();
 	}
 
-	public Mini(String name, Connector connector) {
+	public Mini(String connectionString, String name) {
+		super(connectionString, name);
+		initialize();
+	}
+
+	public Mini(Connector connector) {
 		super(connector);
-		initialize(name);
+		initialize();
+	}
+
+	public Mini(Connector connector, String name) {
+		super(connector, name);
+		initialize();
+	}
+
+	private void initialize() {
+		setTypeName("Mini");
+		instances ++;
+		if (getName() == null) {
+			setName(getTypeName()+" ("+instances+")");
+		}
+		w = new MiniWheels(this);
+		shape = new RoundRectangle2D.Double(
+				-WIDTH/2 , -HEIGHT/2,
+				WIDTH, HEIGHT,
+				3, 3);
 	}
 
 	@Override
 	public void dispose() {
 		w.stopWheels();
 		super.dispose();
-	}
-
-
-	private void initialize(String name) {
-		setName(name);
-		setTypeName("Mini");
-		w = new MiniWheels(this);
-		shape = new RoundRectangle2D.Double(
-				-WIDTH/2 , -HEIGHT/2,
-				WIDTH, HEIGHT,
-				3, 3);
 	}
 
 	@Override

@@ -41,6 +41,7 @@ import jp.digitalmuseum.mr.service.Service;
 public class ServiceUpdateEvent extends Event {
 	private String parameter;
 	private Object value;
+
 	public ServiceUpdateEvent(Service service) {
 		super(service);
 		this.parameter = null;

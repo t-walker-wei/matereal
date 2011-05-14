@@ -29,7 +29,7 @@ public class RunTestService {
 
 		// Show a service monitor.
 		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(
-				new MonitorPanel()) {
+				new ServiceMonitorPanel()) {
 			private static final long serialVersionUID = 1L;
 
 			@Override public void dispose() {

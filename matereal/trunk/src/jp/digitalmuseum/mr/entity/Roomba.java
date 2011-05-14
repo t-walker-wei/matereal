@@ -59,35 +59,42 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
  */
 public class Roomba extends PhysicalRobotAbstractImpl {
 	private static final long serialVersionUID = -4274597295040015350L;
-	public final double RADIUS = 17;
+	public static final double RADIUS = 17;
+	private static int instances = 0;
 	private RoombaDriver driver;
 	private RoombaCleanerBrush cleaner;
 	private Shape shape;
 
-	public Roomba(String name) {
-		super();
-		initialize(name);
+	public Roomba() {
+		initialize();
 	}
 
-	public Roomba(String name, String connectionString) {
+	public Roomba(String connectionString) {
 		super(connectionString);
-		initialize(name);
+		initialize();
 	}
 
-	public Roomba(String name, Connector connector) {
+	public Roomba(String connectionString, String name) {
+		super(connectionString, name);
+		initialize();
+	}
+
+	public Roomba(Connector connector) {
 		super(connector);
-		initialize(name);
+		initialize();
 	}
 
-	@Override
-	public void dispose() {
-		driver.stopWheels();
-		super.dispose();
+	public Roomba(Connector connector, String name) {
+		super(connector, name);
+		initialize();
 	}
 
-	private void initialize(String name) {
-		setName(name);
+	private void initialize() {
 		setTypeName("Roomba");
+		instances ++;
+		if (getName() == null) {
+			setName(getTypeName()+" ("+instances+")");
+		}
 		driver = new RoombaDriver(this);
 		cleaner = new RoombaCleanerBrush(this);
 		shape = new Ellipse2D.Double(-RADIUS, -RADIUS, RADIUS*2, RADIUS*2);

@@ -80,6 +80,10 @@ public class ActivityDiagramEvent extends Event {
 	}
 
 	public String toString() {
-		return getSource()+" ("+status+")";
+		StringBuilder sb = new StringBuilder();
+		sb.append(getSource().getName());
+		sb.append(" changed: ");
+		sb.append(status);
+		return sb.toString();
 	}
 }

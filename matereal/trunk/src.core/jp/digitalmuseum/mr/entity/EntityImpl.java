@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.message.EntityEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.utils.Array;
@@ -74,6 +75,11 @@ public class EntityImpl implements Entity {
 	private void initialize() {
 		listeners = new Array<EventListener>();
 		Matereal.getInstance().registerEntity(this);
+
+		// Distribute this event.
+		distributeEvent(
+				new EntityEvent(
+						this, EntityEvent.STATUS.INSTANTIATED));
 	}
 
 	/**
@@ -82,6 +88,12 @@ public class EntityImpl implements Entity {
 	public void dispose() {
 		Matereal matereal = Matereal.getInstance();
 		if (!matereal.isDisposing()) {
+
+			// Distribute this event.
+			distributeEvent(
+					new EntityEvent(
+							this, EntityEvent.STATUS.DISPOSED));
+
 			matereal.unregisterEntity(this);
 		}
 	}

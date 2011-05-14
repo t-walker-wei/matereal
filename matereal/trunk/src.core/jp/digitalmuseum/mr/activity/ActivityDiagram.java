@@ -50,9 +50,11 @@ import jp.digitalmuseum.utils.Array;
 
 public class ActivityDiagram extends Node {
 	private static final long serialVersionUID = -5950299182178722307L;
+	private static int instances;
 	private Node initialNode;
 	private Set<Node> nodes;
 	private Set<Transition> transitions;
+	private String name;
 	private transient Array<Node> currentNodes;
 	private transient TransitionMonitor monitor;
 	private transient boolean isStarted;
@@ -78,6 +80,8 @@ public class ActivityDiagram extends Node {
 		} else {
 			this.resourceContext = resourceContext;
 		}
+		instances ++;
+		this.name = "Activity diagram (" + instances + ")";
 		Matereal.getInstance().registerGraph(this);
 		distributeEvent(new ActivityDiagramEvent(this, STATUS.INSTANTIATED));
 		isDisposed = false;
@@ -88,6 +92,19 @@ public class ActivityDiagram extends Node {
 		Matereal.getInstance().unregisterGraph(this);
 		distributeEvent(new ActivityDiagramEvent(this, STATUS.DISPOSED));
 		isDisposed = true;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 
 	synchronized ResourceContext getResourceContext() {
