@@ -39,6 +39,8 @@ package jp.digitalmuseum.mr.entity;
 import java.awt.Shape;
 import java.io.Serializable;
 
+import javax.swing.JComponent;
+
 import jp.digitalmuseum.mr.message.EventProvider;
 
 /**
@@ -65,8 +67,12 @@ public interface Entity extends EventProvider, Serializable {
 	 */
 	public String getName();
 
+	public String getTypeName();
+
 	/**
 	 * @return Returns shape of this entity.
 	 */
 	public Shape getShape();
+
+	public JComponent getConfigurationComponent();
 }
