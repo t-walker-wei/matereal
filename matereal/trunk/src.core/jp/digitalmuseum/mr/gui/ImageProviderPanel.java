@@ -36,6 +36,7 @@
  */
 package jp.digitalmuseum.mr.gui;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -63,6 +64,7 @@ public class ImageProviderPanel extends JPanel implements DisposableComponent {
 
 	public ImageProviderPanel(ImageProvider imageProvider) {
 		this.source = imageProvider;
+		setPreferredSize(new Dimension(source.getWidth(), source.getHeight()));
 
 		// Add event listener to the source.
 		eventListener = new EventListener() {

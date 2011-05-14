@@ -51,11 +51,13 @@ public class resources extends PropertyResourceBundle {
 		"CoordProviderPanel.width=Width of the rectangle area:\n" +
 		"CoordProviderPanel.height=Height of the rectangle area:\n" +
 		"CoordProviderPanel.reset=Reset the rectangle\n" +
-		"MonitorPanel.interval=Interval:\n" +
-		"MonitorPanel.selectedService=Selected Service\n" +
+		"EntityMonitorPanel.selectedEntity=Selected Entity\n" +
+		"EntityMonitorPanel.nameOfSelectedEntity=Name of the selected entity.\n" +
+		"EntityTypePanel.entityType=Entity type information\n" +
 		"MonitorPanel.nameOfSelectedService=Name of the selected service.\n" +
-		"MonitorPanel.selectedServiceGroup=Selected ServiceGroup\n" +
-		"MonitorPanel.nameOfSelectedServiceGroup=Name of the selected service group.\n" +
+		"MonitorPanel.nameOfSelectedServiceGroup=Name of the service group.\n" +
+		"MonitorPanel.serviceGroup=Service group:\n" +
+		"MonitorPanel.interval=Interval:\n" +
 		"MonitorPanel.millisecond=[ms]";
 
 	public resources() throws IOException {

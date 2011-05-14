@@ -34,7 +34,7 @@ public class SimpleButtonController extends JFrame {
 	 */
 	public SimpleButtonController() {
 		super();
-		robot = new Noopy("Noopy4", "btspp://00043E3A6FC8");
+		robot = new Noopy("btspp://00043E3A6FC8");
 		wheels = robot.requestResource(WheelsController.class, this);
 		initialize();
 		setVisible(true);

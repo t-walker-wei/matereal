@@ -24,7 +24,7 @@ public class SimpleKeyController {
 
 	public SimpleKeyController() {
 		super();
-		robot = new Noopy("Noopy4", "btspp://00043E3A6561");
+		robot = new Noopy("btspp://00043E3A6561");
 		wheels = robot.requestResource(WheelsController.class, this);
 
 		drawableFrame = new DrawableFrame() {

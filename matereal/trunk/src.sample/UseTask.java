@@ -1,11 +1,11 @@
-
-
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.activity.TimeoutTransition;
 import jp.digitalmuseum.mr.entity.MindstormsNXT;
 import jp.digitalmuseum.mr.entity.Robot;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.task.GoForward;
 import jp.digitalmuseum.mr.task.Stop;
 
@@ -14,7 +14,7 @@ import jp.digitalmuseum.mr.task.Stop;
  *
  * @author Jun KATO
  */
-public class UseTask {
+public class UseTask implements EventListener {
 
 	public static void main(String[] args) {
 		new UseTask();
@@ -25,7 +25,7 @@ public class UseTask {
 	 */
 	public UseTask() {
 
-		Robot robot = new MindstormsNXT("btspp://00165306523e", "Mindstorms NXT");
+		Robot robot = new MindstormsNXT("btspp://00165306523e");
 		Action a = new Action(robot, new GoForward());
 		Action b = new Action(robot, new Stop());
 
@@ -35,10 +35,12 @@ public class UseTask {
 		ad.setInitialNode(a);
 		ad.addTransition(new TimeoutTransition(a, b, 1000));
 		ad.start();
+
+		ad.addEventListener(this);
 	}
 
 	@Override
-	public void finalize() {
+	public void eventOccurred(Event e) {
 		Matereal.getInstance().dispose();
 	}
 }

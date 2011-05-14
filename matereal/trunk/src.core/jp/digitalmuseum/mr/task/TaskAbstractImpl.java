@@ -56,7 +56,6 @@ import jp.digitalmuseum.mr.message.RobotEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
-import jp.digitalmuseum.mr.service.ServiceGroup;
 
 /**
  * Abstract implementation of Task interface.<br />
@@ -129,15 +128,10 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 
 	@Override
 	final public synchronized void start() {
-		start(null);
-	}
-
-	@Override
-	final public synchronized void start(ServiceGroup serviceGroup) {
 		if (robot == null) {
 			throw new IllegalStateException("This task ("+getName()+") is not assigned to a robot.");
 		}
-		super.start(serviceGroup);
+		super.start();
 		if (hasSubDiagram()) {
 			getSubDiagram().start();
 		}

@@ -1,8 +1,3 @@
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.activity.Action;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
@@ -36,29 +31,16 @@ public class UseActivityDiagramToGoForward {
 		Robot robot = new HakoniwaRobot("Hakobot",
 				hakoniwa.screenToReal(new ScreenPosition(320, 240)));
 
-		// Test serialization.
-		try {
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("test.dat"));
-			oos.writeObject(robot);
-
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream("test.dat"));
-			robot = (Robot) ois.readObject();
-			hakoniwa = ((HakoniwaRobot) robot).getHakoniwa();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		// Make a window for showing captured image.
 		DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa) {
 			private static final long serialVersionUID = 1L;
 
 			@Override public void dispose() {
+				super.dispose();
 				Matereal.getInstance().dispose();
 			}
 		});
 		frame.setResizable(false);
-		frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
 
 		// Construct an activity diagram.
 		ActivityDiagram ad = new ActivityDiagram();

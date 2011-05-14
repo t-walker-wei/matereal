@@ -27,6 +27,7 @@ public class UseTaskToGoForward {
 			private static final long serialVersionUID = 1L;
 
 			@Override public void dispose() {
+				super.dispose();
 				Matereal.getInstance().dispose();
 			}
 		});

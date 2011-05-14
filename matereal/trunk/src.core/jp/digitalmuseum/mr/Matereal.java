@@ -55,7 +55,7 @@ import javax.swing.UIManager;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ServiceMonitorPanel;
+import jp.digitalmuseum.mr.gui.MonitorPane;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.EventProvider;
@@ -133,7 +133,7 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 
 	public void showDebugFrame() {
 		if (debugFrame == null) {
-			ServiceMonitorPanel monitor = new ServiceMonitorPanel();
+			MonitorPane monitor = new MonitorPane();
 			debugFrame = new DisposeOnCloseFrame(monitor) {
 				private static final long serialVersionUID = -3861483678329980836L;
 				@Override
@@ -227,19 +227,22 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 	}
 
 	/**
-	 * Called by Service constructor.
+	 * Called by {@link Service#start()}.
+	 *
 	 * @param service
-	 * @see jp.digitalmuseum.mr.service.Service
 	 */
 	public void registerService(Service service) {
 		synchronized (services) {
-			services.add(service);
-			service.addEventListener(this);
+			if (!services.contains(service)) {
+				services.add(service);
+				service.addEventListener(this);
+			}
 		}
 	}
 
 	/**
-	 * Called by Service.dispose().
+	 * Called by {@link Service#stop()}.
+	 *
 	 * @param service
 	 * @return Returns if unregistered successfully.
 	 */

@@ -34,11 +34,63 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.entity;
+package jp.digitalmuseum.mr.gui;
 
-import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
-public class EntityPanel extends JPanel {
-	private static final long serialVersionUID = 5147751877583600512L;
+public class MonitorPane extends JTabbedPane implements DisposableComponent {
+
+	private static final long serialVersionUID = 628084706596398147L;
+	private EntityMonitorPanel entityMonitorPanel = null;
+	private ServiceMonitorPanel serviceMonitorPanel = null;
+
+	/**
+	 * This is the default constructor
+	 */
+	public MonitorPane() {
+		super();
+		initialize();
+	}
+
+	/**
+	 * This method initializes this
+	 *
+	 * @return void
+	 */
+	private void initialize() {
+		this.setSize(300, 200);
+
+		this.addTab("Entities", null, getEntityMonitorPanel(), null);
+		this.addTab("Services", null, getServiceMonitorPanel(), null);
+	}
+
+	public void dispose() {
+		getEntityMonitorPanel().dispose();
+		getServiceMonitorPanel().dispose();
+	}
+
+	/**
+	 * This method initializes entityMonitorPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private EntityMonitorPanel getEntityMonitorPanel() {
+		if (entityMonitorPanel == null) {
+			entityMonitorPanel = new EntityMonitorPanel();
+		}
+		return entityMonitorPanel;
+	}
+
+	/**
+	 * This method initializes serviceMonitorPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private ServiceMonitorPanel getServiceMonitorPanel() {
+		if (serviceMonitorPanel == null) {
+			serviceMonitorPanel = new ServiceMonitorPanel();
+		}
+		return serviceMonitorPanel;
+	}
 
 }

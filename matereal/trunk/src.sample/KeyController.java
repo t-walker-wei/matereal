@@ -28,7 +28,7 @@ import jp.digitalmuseum.utils.Position;
 public class KeyController {
 	private enum KEY { UP, DOWN, LEFT, RIGHT, ESC, NONE }
 	private KEY key;
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private final DrawableFrame drawableFrame;
 	private DisposeOnCloseFrame hakoniwaFrame;
 	private DifferentialWheelsController wheels;

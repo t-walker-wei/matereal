@@ -21,7 +21,7 @@ public class RunNetTansorCamera {
 	public RunNetTansorCamera() {
 
 		// Run the camera of NetTansor.
-		final Robot robot = new NetTansor("My NetTansor", "http://192.168.1.111");
+		final Robot robot = new NetTansor("http://192.168.1.111");
 		final Capture capture = new Capture();
 		capture.setInterval(1000/15);
 		capture.assign(robot);

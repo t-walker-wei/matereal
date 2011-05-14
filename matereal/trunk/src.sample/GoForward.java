@@ -11,7 +11,7 @@ import jp.digitalmuseum.mr.resource.WheelsController;
 public class GoForward {
 
 	public static void main(String[] args) {
-		Robot robot = new NetTansor("Tansor", "http://192.168.32.94:8081");
+		Robot robot = new NetTansor("http://192.168.32.94:8081");
 		WheelsController wheels = robot.requestResource(WheelsController.class, GoForward.class);
 		wheels.goForward();
 		try {
