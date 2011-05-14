@@ -34,15 +34,11 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.entity;
+package jp.digitalmuseum.mr.gui.entity;
 
-import jp.digitalmuseum.connector.Connector;
+import javax.swing.JPanel;
 
-public interface PhysicalRobot extends PhysicalEntity, Robot {
+public class EntityPanel extends JPanel {
+	private static final long serialVersionUID = 5147751877583600512L;
 
-	public void setConnector(Connector connector);
-	public Connector getConnector();
-	public boolean isConnected();
-	public boolean connect();
-	public void disconnect();
 }

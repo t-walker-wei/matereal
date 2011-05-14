@@ -81,6 +81,11 @@ public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implem
 		return connector;
 	}
 
+	final public boolean isConnected() {
+		return connector != null
+				&& connector.isConnected();
+	}
+
 	final public boolean connect() {
 		return connector != null
 				&& connector.connect();

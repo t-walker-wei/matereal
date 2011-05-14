@@ -41,6 +41,9 @@ import java.awt.geom.Ellipse2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.message.EntityEvent;
 import jp.digitalmuseum.mr.message.Event;
@@ -153,4 +156,11 @@ public class EntityImpl implements Entity {
 		return name;
 	}
 
+	public String getTypeName() {
+		return getClass().getSimpleName();
+	}
+
+	public JComponent getConfigurationComponent() {
+		return new JPanel();
+	}
 }

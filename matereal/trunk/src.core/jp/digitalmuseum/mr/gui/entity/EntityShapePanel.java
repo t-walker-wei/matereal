@@ -34,15 +34,49 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.entity;
+package jp.digitalmuseum.mr.gui.entity;
 
-import jp.digitalmuseum.connector.Connector;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
-public interface PhysicalRobot extends PhysicalEntity, Robot {
+import javax.swing.JPanel;
 
-	public void setConnector(Connector connector);
-	public Connector getConnector();
-	public boolean isConnected();
-	public boolean connect();
-	public void disconnect();
+import jp.digitalmuseum.mr.entity.Entity;
+
+public class EntityShapePanel extends JPanel {
+	private static final long serialVersionUID = -4091511207180695499L;
+	private Shape shape;
+	private double zoom;
+
+	public EntityShapePanel(Entity entity) {
+		shape = entity.getShape();
+		initialize();
+	}
+
+	private void initialize() {
+		Rectangle2D bounds = shape.getBounds2D();
+		double w = bounds.getWidth();
+		double h = bounds.getHeight();
+		zoom = w > 0 && h > 0 ? (w < h ? 60 / h : 60 / w) : 1;
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		AffineTransform af = g2.getTransform();
+		int x = (getWidth() - 70) / 2;
+		int y = (getHeight() - 70) / 2;
+		g2.setColor(Color.white);
+		g2.fillRect(x, y, 70, 70);
+		g2.setColor(getForeground());
+		g2.drawRect(x, y, 70, 70);
+		g2.scale(zoom, zoom);
+		g2.translate(x + 5, y + 5);
+		g2.draw(shape);
+		g2.setTransform(af);
+	}
 }
