@@ -48,7 +48,7 @@ import jp.digitalmuseum.utils.Array;
  * @author Jun KATO
  * @see Matereal
  */
-public class ServiceGroup extends ServiceAbstractImpl implements ServiceHolder {
+public class ServiceGroup extends ServiceAbstractImpl {
 	private static final long serialVersionUID = -813365521557471308L;
 	private Array<Service> services;
 
