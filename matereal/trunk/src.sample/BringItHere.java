@@ -60,9 +60,9 @@ public class BringItHere {
 					"Box "+i,
 					x + Math.cos(theta) * r,
 					y - Math.sin(theta) * r,
+					theta,
 					20*(i+1),
-					15*(i+1),
-					theta);
+					15*(i+1));
 		}
 
 		// Show status of hakoniwa.

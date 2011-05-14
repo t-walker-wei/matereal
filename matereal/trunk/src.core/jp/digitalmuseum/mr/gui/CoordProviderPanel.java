@@ -101,12 +101,9 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 	private JLabel jRealYLabel = null;
 	private JTextField jRealYField = null;
 	private JLabel jRealYPostfixLabel = null;
-	private JPanel jCommandPanel = null;
 	protected JButton jResetButton = null;
 	private JButton jApplyButton = null;
-	private JPanel jApplyPanel = null;
-	private JPanel jResetPanel = null;
-
+	private JPanel jCommandPanel = null;
 	public CoordProviderPanel(CoordProvider coordProvider) {
 		source = coordProvider;
 		stroke = new BasicStroke(2);
@@ -193,8 +190,8 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 						for (int i = 0; i < 4; i ++) {
 							final ScreenPosition p = rectangle.get(i);
 							String real,
-									x = getJRealXField().getText(),
-									y = getJRealYField().getText();
+									x = String.format("%.1f", source.getRealWidth()),
+									y = String.format("%.1f", source.getRealHeight());
 							switch (i) {
 							case ScreenRectangle.LEFT_BOTTOM:
 								real = "0, 0"; break;
@@ -323,21 +320,6 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 	}
 
 	/**
-	 * This method initializes jCommandPanel
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJCommandPanel() {
-		if (jCommandPanel == null) {
-			jCommandPanel = new JPanel();
-			jCommandPanel.setLayout(new BoxLayout(getJCommandPanel(), BoxLayout.Y_AXIS));
-			jCommandPanel.add(getJApplyPanel(), null);
-			jCommandPanel.add(getJResetPanel(), null);
-		}
-		return jCommandPanel;
-	}
-
-	/**
 	 * This method initializes jResetButton
 	 *
 	 * @return javax.swing.JButton
@@ -352,6 +334,7 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 				jResetButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						((HomographyCoordProvider) source).resetRectangle();
+						updateRealSize();
 					}
 				});
 			} else {
@@ -372,27 +355,25 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 			jApplyButton.setHorizontalAlignment(SwingConstants.RIGHT);
 			jApplyButton.setName("jApplyButton"); //$NON-NLS-1$
 			jApplyButton.setText(Messages.getString("CoordProviderPanel.apply")); //$NON-NLS-1$
-				if (source instanceof HomographyCoordProvider) {
+			if (source instanceof HomographyCoordProvider) {
 				jApplyButton.addActionListener(new java.awt.event.ActionListener() {
 					public void actionPerformed(java.awt.event.ActionEvent e) {
-						double
-							realWidth = source.getRealWidth(),
-							realHeight = source.getRealHeight();
+						double realWidth, realHeight;
 						try {
-							realWidth = Double.parseDouble(jRealXField.getText());
+							realWidth = Double.parseDouble(getJRealXField().getText());
 						} catch (NumberFormatException nfe) {
 							GUIUtils.errorDialog(CoordProviderPanel.this,
 									Messages.getString("CoordProviderPanel.errorDescWidth"), Messages.getString("CoordProviderPanel.errorTitle")); //$NON-NLS-1$ //$NON-NLS-2$
 							return;
 						}
-						((HomographyCoordProvider) source).setRealWidth(realWidth);
 						try {
-							realHeight = Double.parseDouble(jRealXField.getText());
+							realHeight = Double.parseDouble(getJRealYField().getText());
 						} catch (NumberFormatException nfe) {
 							GUIUtils.errorDialog(CoordProviderPanel.this,
 									Messages.getString("CoordProviderPanel.errorDescHeight"), Messages.getString("CoordProviderPanel.errorTitle")); //$NON-NLS-1$ //$NON-NLS-2$
 							return;
 						}
+						((HomographyCoordProvider) source).setRealWidth(realWidth);
 						((HomographyCoordProvider) source).setRealHeight(realHeight);
 					}
 				});
@@ -404,35 +385,20 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 	}
 
 	/**
-	 * This method initializes jApplyPanel
+	 * This method initializes jCommandPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJApplyPanel() {
-		if (jApplyPanel == null) {
+	private JPanel getJCommandPanel() {
+		if (jCommandPanel == null) {
 			FlowLayout flowLayout1 = new FlowLayout();
 			flowLayout1.setAlignment(FlowLayout.RIGHT);
-			jApplyPanel = new JPanel();
-			jApplyPanel.setLayout(flowLayout1);
-			jApplyPanel.add(getJApplyButton(), null);
+			jCommandPanel = new JPanel();
+			jCommandPanel.setLayout(flowLayout1);
+			jCommandPanel.add(getJResetButton(), null);
+			jCommandPanel.add(getJApplyButton(), null);
 		}
-		return jApplyPanel;
-	}
-
-	/**
-	 * This method initializes jResetPanel
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJResetPanel() {
-		if (jResetPanel == null) {
-			FlowLayout flowLayout2 = new FlowLayout();
-			flowLayout2.setAlignment(FlowLayout.RIGHT);
-			jResetPanel = new JPanel();
-			jResetPanel.setLayout(flowLayout2);
-			jResetPanel.add(getJResetButton(), null);
-		}
-		return jResetPanel;
+		return jCommandPanel;
 	}
 
 }

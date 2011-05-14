@@ -49,7 +49,7 @@ public class ClickAndRunWithoutCollision {
 		hakoniwa.start();
 
 		final Robot robot;
-		robot = new HakoniwaRobotWithPen("robot", new Location(hakoniwa.getRealWidth()/2 - 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
+		robot = new HakoniwaRobotWithPen("My robot", new Location(hakoniwa.getRealWidth()/2 - 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
 
 		Entity[] entities = new Entity[5];
 		final double x = hakoniwa.getRealWidth()/2;
@@ -61,8 +61,8 @@ public class ClickAndRunWithoutCollision {
 					"Cylinder "+i,
 					x + Math.cos(theta) * r,
 					y - Math.sin(theta) * r,
-					20,
-					theta);
+					theta,
+					20);
 		}
 
 		// Make a window for showing captured image.

@@ -42,9 +42,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.gui.entity.EntityTypePanel;
 import jp.digitalmuseum.mr.message.EntityEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -66,8 +66,8 @@ public class EntityImpl implements Entity {
 	}
 
 	public EntityImpl(String name) {
-		this();
 		setName(name);
+		initialize();
 	}
 
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -160,7 +160,13 @@ public class EntityImpl implements Entity {
 		return getClass().getSimpleName();
 	}
 
+	@Override
+	public String toString() {
+		final String name = getName();
+		return name == null ? getTypeName() : name;
+	}
+
 	public JComponent getConfigurationComponent() {
-		return new JPanel();
+		return new EntityTypePanel(this);
 	}
 }

@@ -65,9 +65,19 @@ public class ServiceGroup extends ServiceAbstractImpl implements ServiceHolder {
 
 	public synchronized void run() {
 		for (Service service : services) {
-			if (!service.isPaused()) {
-				service.run();
-			}
+			service.run();
+		}
+	}
+
+	public void add(Service service) {
+		if (service != null) {
+			service.setServiceGroup(this);
+		}
+	}
+
+	public void remove(Service service) {
+		if (service != null) {
+			service.setServiceGroup(null);
 		}
 	}
 
@@ -75,7 +85,7 @@ public class ServiceGroup extends ServiceAbstractImpl implements ServiceHolder {
 	 * Register given service to run in this service group.
 	 * @param service
 	 */
-	public synchronized void registerService(Service service) {
+	synchronized void registerService(Service service) {
 		services.push(service);
 	}
 
@@ -84,7 +94,7 @@ public class ServiceGroup extends ServiceAbstractImpl implements ServiceHolder {
 	 * @param service
 	 * @return True when succeeded in clearing registration.
 	 */
-	public synchronized boolean unregisterService(Service service) {
+	synchronized boolean unregisterService(Service service) {
 		return services.remove(service);
 	}
 
@@ -129,7 +139,7 @@ public class ServiceGroup extends ServiceAbstractImpl implements ServiceHolder {
 	protected synchronized void onStart() {
 		for (Service service : services) {
 			if (service instanceof ServiceAbstractImpl) {
-				ServiceAbstractImpl.class.cast(service).onStart();
+				ServiceAbstractImpl.class.cast(service).start(this);
 			}
 		}
 	}
@@ -138,7 +148,7 @@ public class ServiceGroup extends ServiceAbstractImpl implements ServiceHolder {
 	protected void onStop() {
 		for (Service service : services) {
 			if (service instanceof ServiceAbstractImpl) {
-				ServiceAbstractImpl.class.cast(service).onStop();
+				ServiceAbstractImpl.class.cast(service).stop();
 			}
 		}
 	}
@@ -146,15 +156,19 @@ public class ServiceGroup extends ServiceAbstractImpl implements ServiceHolder {
 	protected void onPause() {
 		for (Service service : services) {
 			if (service instanceof ServiceAbstractImpl) {
-				ServiceAbstractImpl.class.cast(service).onPause();
+				ServiceAbstractImpl.class.cast(service).pause();
 			}
 		}
 	}
 
 	protected void onResume() {
 		for (Service service : services) {
-			if (service instanceof ServiceAbstractImpl) {
-				ServiceAbstractImpl.class.cast(service).onResume();
+			if (!service.isPaused()) {
+				// This service requested to resume this service group.
+			} else {
+				if (service instanceof ServiceAbstractImpl) {
+					ServiceAbstractImpl.class.cast(service).resume();
+				}
 			}
 		}
 	}

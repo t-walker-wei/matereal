@@ -41,18 +41,6 @@ import java.util.List;
 public interface ServiceHolder extends Iterable<Service> {
 
 	/**
-	 * Register given service to this service holder.
-	 * @param service
-	 */
-	public void registerService(Service service);
-
-	/**
-	 * Unregister given service to this service holder.
-	 * @return True when succeeded in clearing registration.
-	 */
-	public boolean unregisterService(Service service);
-
-	/**
 	 * Get a list of services which belongs to this service holder.
 	 * @return A list of services
 	 */

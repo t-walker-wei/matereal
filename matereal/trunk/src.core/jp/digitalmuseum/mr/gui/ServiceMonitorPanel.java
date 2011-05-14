@@ -58,7 +58,6 @@ import javax.swing.JScrollPane;
 
 import java.awt.Font;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.SwingConstants;
@@ -69,7 +68,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import java.awt.FlowLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -82,18 +80,25 @@ import javax.swing.JSplitPane;
  *
  * @author Jun KATO
  */
-public class ServiceMonitorPanel extends JPanel implements EventListener {
+public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSelectionListener, Runnable, DisposableComponent {
 
 	private static final long serialVersionUID = 3317150753032501439L;
-	private JTree jTree = null;
-	private JLabel jSelectedServiceGroupLabel = null;
-	private JLabel jSelectedServiceLabel = null;
+
+	private JSplitPane jSplitPane = null;
+
+	private JPanel jLeftPanel = null;
+	private JPanel jRightPanel = null;
+
 	private JScrollPane jScrollPane = null;
+	private JTree jTree = null;
+
+	private JLabel jSelectedServiceHolderLabel = null;
+	private JLabel jSelectedServiceLabel = null;
 	private JPanel jServiceInformationPanel = null;
 	private JLabel jLabel = null;
 	private JLabel jLabel3 = null;
 	private JLabel jLabel4 = null;
-	private transient Map<Service, JComponent> serviceComponents;
+	private JPanel jServicePanel = null;
 
 	/** Root node for jTree. */
 	private DefaultMutableTreeNode root;
@@ -104,14 +109,12 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 	/** Map of services and their corresponding nodes. */
 	private HashMap<Service, DefaultMutableTreeNode> serviceNodeMap;
 
-	/** List of services. */
-	private HashMap<ServiceHolder, List<Service>> serviceMap;
+	/** Map of services and their corresponding service groups. */
+	private HashMap<Service, ServiceHolder> serviceGroupMap;
 
-	final private transient Runnable reloadJTree;
-	private JPanel jServicePanel = null;
-	private JSplitPane jSplitPane = null;
-	private JPanel jRightPanel = null;
-	private JPanel jLeftPanel = null;
+	private transient Map<Service, JComponent> serviceComponents;
+
+	private JLabel jLabel1 = null;
 
 	/** Singleton constructor. */
 	public ServiceMonitorPanel() {
@@ -120,7 +123,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 		// Initialize hash maps.
 		groupNodeMap = new HashMap<ServiceHolder, DefaultMutableTreeNode>();
 		serviceNodeMap = new HashMap<Service, DefaultMutableTreeNode>();
-		serviceMap = new HashMap<ServiceHolder, List<Service>>();
+		serviceGroupMap = new HashMap<Service, ServiceHolder>();
 		serviceComponents = new HashMap<Service, JComponent>();
 
 		// Root node of the tree view, used at getJTree() etc.
@@ -130,13 +133,12 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 
 		// Initialize the monitor pane.
 		initialize();
-		reloadJTree = new Runnable() {
-			public void run() {
-				((DefaultTreeModel) getJTree().getModel()).reload();
-			}
-		};
-		selectServiceGroup(matereal);
 		Matereal.getInstance().addEventListener(this);
+		for (Service service : Matereal.getInstance().getServices()) {
+			serviceGroupMap.put(service, service.getServiceGroup());
+			updateService(service);
+		}
+		selectService(null);
 	}
 
 	/**
@@ -152,14 +154,14 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 		setPreferredSize(new Dimension(640, 420));
 		setLayout(new GridBagLayout());
 		setBounds(new Rectangle(0, 0, 480, 320));
+		jSelectedServiceHolderLabel = new JLabel();
+		jSelectedServiceHolderLabel.setText(""); //$NON-NLS-1$
+		jSelectedServiceHolderLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+		jSelectedServiceHolderLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
 		jSelectedServiceLabel = new JLabel();
-		jSelectedServiceLabel.setText(Messages.getString("MonitorPanel.selectedService")); //$NON-NLS-1$
-		jSelectedServiceLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+		jSelectedServiceLabel.setText(""); //$NON-NLS-1$
+		jSelectedServiceLabel.setFont(new Font("Dialog", Font.BOLD, 14)); //$NON-NLS-1$
 		jSelectedServiceLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedService")); //$NON-NLS-1$
-		jSelectedServiceGroupLabel = new JLabel();
-		jSelectedServiceGroupLabel.setText(Messages.getString("MonitorPanel.selectedServiceGroup")); //$NON-NLS-1$
-		jSelectedServiceGroupLabel.setFont(new Font("Dialog", Font.BOLD, 14)); //$NON-NLS-1$
-		jSelectedServiceGroupLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
 		this.add(getJSplitPane(), gridBagConstraints11);
 	}
 
@@ -176,19 +178,74 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 	}
 
 	/**
-	 * This method initializes jTree
+	 * This method initializes jSplitPane
 	 *
-	 * @return javax.swing.JTree
+	 * @return javax.swing.JSplitPane
 	 */
-	private JTree getJTree() {
-		if (jTree == null) {
-			jTree = new JTree(root);
-			jTree.setSize(new Dimension(120, 420));
-			jTree.getSelectionModel().setSelectionMode(
-					TreeSelectionModel.SINGLE_TREE_SELECTION);
-			jTree.addTreeSelectionListener(new SelectionListener());
+	private JSplitPane getJSplitPane() {
+		if (jSplitPane == null) {
+			jSplitPane = new JSplitPane();
+			jSplitPane.setRightComponent(getJRightPanel());
+			jSplitPane.setLeftComponent(getJLeftPanel());
 		}
-		return jTree;
+		return jSplitPane;
+	}
+
+	/**
+	 * This method initializes jLeftPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getJLeftPanel() {
+		if (jLeftPanel == null) {
+			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
+			gridBagConstraints6.fill = GridBagConstraints.BOTH;
+			gridBagConstraints6.weighty = 1.0;
+			gridBagConstraints6.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints6.weightx = 1.0;
+			jLeftPanel = new JPanel();
+			jLeftPanel.setLayout(new GridBagLayout());
+			jLeftPanel.add(getJScrollPane(), gridBagConstraints6);
+		}
+		return jLeftPanel;
+	}
+
+	/**
+	 * This method initializes jRightPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getJRightPanel() {
+		if (jRightPanel == null) {
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.gridx = 0;
+			gridBagConstraints.gridy = 0;
+			gridBagConstraints.fill = GridBagConstraints.BOTH;
+			gridBagConstraints.weightx = 1.0D;
+			gridBagConstraints.weighty = 0.0D;
+			gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.gridx = 0;
+			gridBagConstraints3.gridy = 2;
+			gridBagConstraints3.fill = GridBagConstraints.BOTH;
+			gridBagConstraints3.weightx = 1.0D;
+			gridBagConstraints3.weighty = 0.0D;
+			gridBagConstraints3.insets = new Insets(0, 5, 5, 5);
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.gridx = 0;
+			gridBagConstraints4.gridy = 3;
+			gridBagConstraints4.fill = GridBagConstraints.BOTH;
+			gridBagConstraints4.weightx = 1.0D;
+			gridBagConstraints4.weighty = 1.0D;
+			gridBagConstraints4.insets = new Insets(0, 5, 5, 5);
+			jRightPanel = new JPanel();
+			jRightPanel.setLayout(new GridBagLayout());
+			jRightPanel.setPreferredSize(new Dimension(320, 420));
+			jRightPanel.add(jSelectedServiceLabel, gridBagConstraints);
+			jRightPanel.add(getJServiceInformationPanel(), gridBagConstraints3);
+			jRightPanel.add(getJServicePanel(), gridBagConstraints4);
+		}
+		return jRightPanel;
 	}
 
 	/**
@@ -208,30 +265,79 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 	}
 
 	/**
+	 * This method initializes jTree
+	 *
+	 * @return javax.swing.JTree
+	 */
+	private JTree getJTree() {
+		if (jTree == null) {
+			jTree = new JTree(root);
+			jTree.setSize(new Dimension(120, 420));
+			jTree.getSelectionModel().setSelectionMode(
+					TreeSelectionModel.SINGLE_TREE_SELECTION);
+			jTree.addTreeSelectionListener(this);
+		}
+		return jTree;
+	}
+
+	/**
 	 * This method initializes jServiceInformationPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJServiceInformationPanel() {
 		if (jServiceInformationPanel == null) {
-			FlowLayout flowLayout = new FlowLayout();
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			flowLayout.setVgap(0);
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.fill = GridBagConstraints.BOTH;
+			gridBagConstraints2.gridx = 1;
+			gridBagConstraints2.gridy = 1;
+			gridBagConstraints2.gridwidth = 2;
+			gridBagConstraints2.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints2.weighty = 0.0D;
+			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
+			gridBagConstraints8.gridx = 0;
+			gridBagConstraints8.anchor = GridBagConstraints.WEST;
+			gridBagConstraints8.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints8.fill = GridBagConstraints.BOTH;
+			gridBagConstraints8.gridy = 1;
+			jLabel1 = new JLabel();
+			jLabel1.setText(Messages.getString("MonitorPanel.serviceGroup"));
+			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
+			gridBagConstraints7.gridy = 0;
+			gridBagConstraints7.weightx = 0.7D;
+			gridBagConstraints7.anchor = GridBagConstraints.WEST;
+			gridBagConstraints7.insets = new Insets(0, 5, 5, 0);
+			gridBagConstraints7.fill = GridBagConstraints.BOTH;
+			gridBagConstraints7.gridx = 2;
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.gridy = 0;
+			gridBagConstraints5.weightx = 0.0D;
+			gridBagConstraints5.fill = GridBagConstraints.BOTH;
+			gridBagConstraints5.insets = new Insets(0, 5, 5, 0);
+			gridBagConstraints5.gridx = 1;
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.gridy = 0;
+			gridBagConstraints1.insets = new Insets(0, 5, 5, 0);
+			gridBagConstraints1.weightx = 0.3D;
+			gridBagConstraints1.anchor = GridBagConstraints.WEST;
+			gridBagConstraints1.fill = GridBagConstraints.BOTH;
+			gridBagConstraints1.gridx = 0;
 			jLabel4 = new JLabel();
 			jLabel4.setText(Messages.getString("MonitorPanel.millisecond")); //$NON-NLS-1$
 			jLabel4.setFont(new Font("Dialog", Font.PLAIN, 12)); //$NON-NLS-1$
 			jLabel3 = new JLabel();
-			jLabel3.setText("JLabel"); //$NON-NLS-1$
 			jLabel3.setHorizontalTextPosition(SwingConstants.TRAILING);
 			jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
 			jLabel3.setFont(new Font("Dialog", Font.PLAIN, 12)); //$NON-NLS-1$
 			jLabel = new JLabel();
 			jLabel.setText(Messages.getString("MonitorPanel.interval")); //$NON-NLS-1$
 			jServiceInformationPanel = new JPanel();
-			jServiceInformationPanel.setLayout(flowLayout);
-			jServiceInformationPanel.add(jLabel, null);
-			jServiceInformationPanel.add(jLabel3, null);
-			jServiceInformationPanel.add(jLabel4, null);
+			jServiceInformationPanel.setLayout(new GridBagLayout());
+			jServiceInformationPanel.add(jLabel, gridBagConstraints1);
+			jServiceInformationPanel.add(jLabel3, gridBagConstraints5);
+			jServiceInformationPanel.add(jLabel4, gridBagConstraints7);
+			jServiceInformationPanel.add(jLabel1, gridBagConstraints8);
+			jServiceInformationPanel.add(jSelectedServiceHolderLabel, gridBagConstraints2);
 		}
 		return jServiceInformationPanel;
 	}
@@ -252,10 +358,57 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 		return jServicePanel;
 	}
 
+	public void run() {
+		((DefaultTreeModel) getJTree().getModel()).reload();
+	}
+
+	public void valueChanged(TreeSelectionEvent e) {
+		final JTree tree = getJTree();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+				tree.getLastSelectedPathComponent();
+		if (node == null) {
+			return;
+		}
+
+		Object nodeInfo = node.getUserObject();
+		if (nodeInfo instanceof Service) {
+			selectService((Service) nodeInfo);
+		} else if (nodeInfo instanceof ServiceGroup) {
+			selectServiceHolder((ServiceGroup) nodeInfo);
+		}
+	}
+
+	public void eventOccurred(Event e) {
+		if (e instanceof ServiceEvent) {
+			ServiceEvent se = (ServiceEvent) e;
+			if (se.getStatus() == STATUS.STARTED ||
+					se.getStatus() == STATUS.STOPPED) {
+				Service service = se.getSource();
+
+				if (service instanceof ServiceGroup) {
+					if (se.getStatus() == STATUS.STARTED) {
+						addServiceHolder((ServiceHolder) service);
+					} else {
+						removeServiceHolder((ServiceHolder) service);
+					}
+				} else {
+					if (se.getStatus() == STATUS.STARTED) {
+						serviceGroupMap.put(service, service.getServiceGroup());
+						updateService(service);
+					} else {
+						removeService(service);
+					}
+				}
+
+				SwingUtilities.invokeLater(this);
+			}
+		}
+	}
+
 	private void selectService(Service service) {
 		if (service == null) {
-			jSelectedServiceLabel.setText(""); //$NON-NLS-1$
-			jLabel3.setText(""); //$NON-NLS-1$
+			jSelectedServiceLabel.setText("-"); //$NON-NLS-1$
+			jLabel3.setText("-"); //$NON-NLS-1$
 			return;
 		}
 		if (!serviceComponents.containsKey(service)) {
@@ -272,102 +425,36 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 		jLabel3.setText(String.valueOf(service.getInterval()));
 	}
 
-	private void selectServiceGroup(ServiceHolder serviceHolder) {
-		jSelectedServiceGroupLabel.setText(serviceHolder.toString());
-		selectService(null);
-	}
-
-	private class SelectionListener implements TreeSelectionListener {
-
-		public void valueChanged(TreeSelectionEvent e) {
-			final JTree tree = getJTree();
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-					tree.getLastSelectedPathComponent();
-			if (node == null) {
-				return;
-			}
-
-			Object nodeInfo = node.getUserObject();
-			if (nodeInfo instanceof Service) {
-				selectService((Service) nodeInfo);
-			} else if (nodeInfo instanceof ServiceGroup) {
-				selectServiceGroup((ServiceGroup) nodeInfo);
-			}
+	private void updateService(Service service) {
+		if (service instanceof ServiceGroup) {
+			addServiceHolder((ServiceHolder) service);
+			return;
 		}
-
-	}
-
-	@Override
-	public void eventOccurred(Event e) {
-		if (e instanceof ServiceEvent) {
-			ServiceEvent se = (ServiceEvent) e;
-			if (se.getStatus() == STATUS.STARTED ||
-					se.getStatus() == STATUS.STOPPED) {
-				Service service = se.getSource();
-
-				if (service instanceof ServiceGroup) {
-					if (se.getStatus() == STATUS.STARTED) {
-						addServiceHolder((ServiceHolder) service);
-					} else {
-						removeServiceHolder((ServiceHolder) service);
-					}
-				} else {
-					if (se.getStatus() == STATUS.STARTED) {
-						addService(service);
-					} else {
-						removeService(service);
-					}
-				}
-
-				SwingUtilities.invokeLater(reloadJTree);
-			}
+		if (serviceNodeMap.containsKey(service)) {
+			removeServiceFromView(service);
 		}
-	}
-
-	private void addServiceHolder(ServiceHolder serviceHolder) {
-		if (!groupNodeMap.containsKey(serviceHolder)) {
-			final DefaultMutableTreeNode node =
-					new DefaultMutableTreeNode(serviceHolder);
-			root.add(node);
-			groupNodeMap.put(serviceHolder, node);
-		}
-	}
-
-	private void removeServiceHolder(ServiceHolder serviceHolder) {
-
-		// Remove from the list view.
-		MutableTreeNode node = groupNodeMap.get(serviceHolder);
-		root.remove(node);
-
-		// Remove services from serviceMap and serviceNodeMap.
-		final List<Service> removedServices = serviceMap.remove(serviceHolder);
-		for (Service service : removedServices) {
-			serviceNodeMap.remove(service);
-		}
-
-		// Remove from groupNodeMap
-		groupNodeMap.remove(serviceHolder);
-	}
-
-	private void addService(Service service) {
 
 		final DefaultMutableTreeNode node =
 				new DefaultMutableTreeNode(service);
-		root.add(node);
+		final ServiceHolder serviceHolder = serviceGroupMap.get(service);
+		if (serviceHolder == null) {
+			root.add(node);
+		} else {
+			DefaultMutableTreeNode root = groupNodeMap.get(serviceHolder);
+			if (root == null) {
+				root = addServiceHolder(serviceHolder);
+			}
+			root.add(node);
+		}
 		serviceNodeMap.put(service, node);
 	}
 
 	private void removeService(Service service) {
 
 		// Remove from the list view and serviceNodeMap.
-		MutableTreeNode node;
-		if (service.getServiceGroup() == null) {
-			node = root;
-		} else {
-			node = groupNodeMap.get(service.getServiceGroup());
-		}
-		node.remove(
-				serviceNodeMap.remove(service));
+		removeServiceFromView(service);
+
+		serviceGroupMap.remove(service);
 
 		if (serviceComponents.containsKey(service)) {
 			JComponent serviceComponent = serviceComponents.get(service);
@@ -379,82 +466,47 @@ public class ServiceMonitorPanel extends JPanel implements EventListener {
 		}
 	}
 
-	/**
-	 * This method initializes jSplitPane
-	 *
-	 * @return javax.swing.JSplitPane
-	 */
-	private JSplitPane getJSplitPane() {
-		if (jSplitPane == null) {
-			jSplitPane = new JSplitPane();
-			jSplitPane.setRightComponent(getJRightPanel());
-			jSplitPane.setLeftComponent(getJLeftPanel());
+	private void removeServiceFromView(Service service) {
+
+		// Remove from the list view and serviceNodeMap.
+		MutableTreeNode node;
+		if (service.getServiceGroup() == null) {
+			node = root;
+		} else {
+			node = groupNodeMap.get(service.getServiceGroup());
 		}
-		return jSplitPane;
+		node.remove(
+				serviceNodeMap.remove(service));
 	}
 
-	/**
-	 * This method initializes jRightPanel
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJRightPanel() {
-		if (jRightPanel == null) {
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridx = 0;
-			gridBagConstraints.gridy = 0;
-			gridBagConstraints.fill = GridBagConstraints.BOTH;
-			gridBagConstraints.weightx = 1.0D;
-			gridBagConstraints.weighty = 0.0D;
-			gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.gridy = 1;
-			gridBagConstraints2.fill = GridBagConstraints.BOTH;
-			gridBagConstraints2.weightx = 1.0D;
-			gridBagConstraints2.weighty = 0.0D;
-			gridBagConstraints2.insets = new Insets(0, 5, 5, 5);
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.gridy = 2;
-			gridBagConstraints3.fill = GridBagConstraints.BOTH;
-			gridBagConstraints3.weightx = 1.0D;
-			gridBagConstraints3.weighty = 0.0D;
-			gridBagConstraints3.insets = new Insets(0, 5, 5, 5);
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.gridy = 3;
-			gridBagConstraints4.fill = GridBagConstraints.BOTH;
-			gridBagConstraints4.weightx = 1.0D;
-			gridBagConstraints4.weighty = 1.0D;
-			gridBagConstraints4.insets = new Insets(0, 5, 5, 5);
-			jRightPanel = new JPanel();
-			jRightPanel.setLayout(new GridBagLayout());
-			jRightPanel.setPreferredSize(new Dimension(320, 420));
-			jRightPanel.add(jSelectedServiceGroupLabel, gridBagConstraints);
-			jRightPanel.add(jSelectedServiceLabel, gridBagConstraints2);
-			jRightPanel.add(getJServiceInformationPanel(), gridBagConstraints3);
-			jRightPanel.add(getJServicePanel(), gridBagConstraints4);
+	private void selectServiceHolder(ServiceHolder serviceHolder) {
+		if (serviceHolder == null ||
+				serviceHolder == Matereal.getInstance()) {
+			jSelectedServiceHolderLabel.setText("-"); //$NON-NLS-1$
+		} else {
+			jSelectedServiceHolderLabel.setText(serviceHolder.toString());
 		}
-		return jRightPanel;
 	}
 
-	/**
-	 * This method initializes jLeftPanel
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJLeftPanel() {
-		if (jLeftPanel == null) {
-			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-			gridBagConstraints6.fill = GridBagConstraints.BOTH;
-			gridBagConstraints6.weighty = 1.0;
-			gridBagConstraints6.insets = new Insets(5, 5, 5, 5);
-			gridBagConstraints6.weightx = 1.0;
-			jLeftPanel = new JPanel();
-			jLeftPanel.setLayout(new GridBagLayout());
-			jLeftPanel.add(getJScrollPane(), gridBagConstraints6);
+	private DefaultMutableTreeNode addServiceHolder(ServiceHolder serviceHolder) {
+		if (groupNodeMap.containsKey(serviceHolder)) {
+			return groupNodeMap.get(serviceHolder);
 		}
-		return jLeftPanel;
+
+		final DefaultMutableTreeNode node =
+				new DefaultMutableTreeNode(serviceHolder);
+		root.add(node);
+		groupNodeMap.put(serviceHolder, node);
+		return node;
+	}
+
+	private void removeServiceHolder(ServiceHolder serviceHolder) {
+
+		// Remove from the list view.
+		MutableTreeNode node = groupNodeMap.get(serviceHolder);
+		root.remove(node);
+
+		// Remove from groupNodeMap
+		groupNodeMap.remove(serviceHolder);
 	}
 }

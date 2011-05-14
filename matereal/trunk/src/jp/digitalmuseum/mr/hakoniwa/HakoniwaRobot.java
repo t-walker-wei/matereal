@@ -90,7 +90,45 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 	private Color color;
 
 	public HakoniwaRobot() {
-		this(null);
+		this(Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	public HakoniwaRobot(Hakoniwa hakoniwa) {
+		this(hakoniwa.getWidth()/2.0, hakoniwa.getHeight()/2.0);
+	}
+
+	public HakoniwaRobot(Location location) {
+		this(location.getX(), location.getY(), location.getRotation());
+	}
+
+	public HakoniwaRobot(Position position) {
+		this(position.getX(), position.getY());
+	}
+
+	public HakoniwaRobot(Location location, Hakoniwa hakoniwa) {
+		this(location.getX(), location.getY(), location.getRotation(), hakoniwa);
+	}
+
+	public HakoniwaRobot(Position position, Hakoniwa hakoniwa) {
+		this(position.getX(), position.getY(), 0, hakoniwa);
+	}
+
+	public HakoniwaRobot(double x, double y) {
+		this(x, y, 0);
+	}
+
+	public HakoniwaRobot(double x, double y, Hakoniwa hakoniwa) {
+		this(x, y, 0, hakoniwa);
+	}
+
+	public HakoniwaRobot(double x, double y, double rotation) {
+		this(x, y, rotation, Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	public HakoniwaRobot(double x, double y, double rotation, Hakoniwa hakoniwa) {
+		super();
+		this.hakoniwa = hakoniwa;
+		initialize(x, y, rotation);
 	}
 
 	public HakoniwaRobot(String name) {
@@ -130,8 +168,8 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 	}
 
 	public HakoniwaRobot(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
+		super(name);
 		this.hakoniwa = hakoniwa;
-		setName(name);
 		initialize(x, y, rotation);
 	}
 

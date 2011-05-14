@@ -32,11 +32,11 @@ public class CloneWheels {
 
 	public CloneWheels() {
 		final HashSet<Robot> robots = new HashSet<Robot>();
-		robots.add(new NetTansor("NetTansor Web", "http://192.168.1.103:8081"));
-		robots.add(new NetTansor("NetTansor", "http://192.168.1.104:8081"));
-		robots.add(new Noopy("Noopy", "btspp://000195090A7D"));
+		robots.add(new NetTansor("http://192.168.1.103:8081", "NetTansor Web"));
+		robots.add(new NetTansor("http://192.168.1.104:8081", "NetTansor"));
+		robots.add(new Noopy("btspp://000195090A7D", "Noopy"));
 		robots.add(new MindstormsNXT("btspp://00165306523e", "MindstormsNXT"));
-		robots.add(new Roomba("Roomba", "btspp://00066600d69a"));
+		robots.add(new Roomba("btspp://00066600d69a", "Roomba"));
 		final Robot virtualRobot = new CloneWheelsRobot(robots);
 
 		// Initialize task objects.

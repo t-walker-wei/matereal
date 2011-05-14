@@ -71,11 +71,11 @@ public class EntityShapePanel extends JPanel {
 		int x = (getWidth() - 70) / 2;
 		int y = (getHeight() - 70) / 2;
 		g2.setColor(Color.white);
-		g2.fillRect(x, y, 70, 70);
+		g2.fillRect(x + 1, y + 1, 68, 68);
 		g2.setColor(getForeground());
-		g2.drawRect(x, y, 70, 70);
+		g2.drawRect(x, y, 69, 69);
+		g2.translate(x + 35, y + 35);
 		g2.scale(zoom, zoom);
-		g2.translate(x + 5, y + 5);
 		g2.draw(shape);
 		g2.setTransform(af);
 	}

@@ -18,7 +18,7 @@ public class GoForwardAndCapture {
 	}
 
 	public GoForwardAndCapture() {
-		Robot robot = new NetTansor("Tansor", "http://192.168.32.92:8081");
+		Robot robot = new NetTansor("http://192.168.32.92:8081");
 		GoForward gf = new GoForward();
 		Capture cap = new Capture();
 

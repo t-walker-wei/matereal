@@ -242,10 +242,11 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 	/**
 	 * This method throws an IllegalStateException when it failed to start capturing images.
 	 * After the exception is thrown, this service will not start.
+	 *
 	 * @throws IllegalstateException
 	 */
 	@Override
-	public void start(ServiceGroup serviceGroup) {
+	protected void onStart() {
 		try {
 			capture.start();
 			updateSize();
@@ -254,27 +255,21 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 			// simply throw an exception and do not start this service.
 			throw new IllegalStateException(e);
 		}
-		// As a result, this service cannot be started
-		// till the capture starts.
-		super.start(serviceGroup);
 	}
 
 	@Override
-	public void pause() {
+	protected void onPause() {
 		capture.pause();
-		super.pause();
 	}
 
 	@Override
-	public void resume() {
+	protected void onResume() {
 		capture.resume();
-		super.resume();
 	}
 
 	@Override
-	public void stop() {
+	protected void onStop() {
 		capture.stop();
-		super.stop();
 	}
 
 	/**

@@ -37,27 +37,31 @@
 package jp.digitalmuseum.mr.gui.entity;
 
 import javax.swing.JPanel;
+
+import java.awt.Font;
 import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 import jp.digitalmuseum.mr.entity.Entity;
+import jp.digitalmuseum.mr.gui.Messages;
 
-public class EntityInformationPanel extends JPanel {
-	private static final long serialVersionUID = 1899762075174274625L;
+import javax.swing.JLabel;
+import java.awt.Insets;
+import java.awt.Dimension;
 
-	private JLabel jEntityNameLabel = null;
-	private JLabel jEntityTypeNameLabel = null;
-	private JPanel jEntityShapePanel = null;
+public class EntityTypePanel extends JPanel {
 
+	private static final long serialVersionUID = 5147751877583600512L;
+	private EntityShapePanel entityShapePanel = null;
 	private transient Entity entity;
+	private JLabel jEntityTypeLabel = null;
+	private JLabel jEntityTypeNameLabel = null;
 
 	/**
 	 * This method initializes
 	 *
 	 */
-	public EntityInformationPanel(Entity entity) {
+	public EntityTypePanel(Entity entity) {
 		super();
 		this.entity = entity;
 		initialize();
@@ -68,42 +72,56 @@ public class EntityInformationPanel extends JPanel {
 	 *
 	 */
 	private void initialize() {
-        GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-        gridBagConstraints2.gridx = 0;
-        gridBagConstraints2.gridheight = 2;
-        gridBagConstraints2.insets = new Insets(5, 0, 5, 5);
-        gridBagConstraints2.gridy = 0;
-        GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-        gridBagConstraints1.gridx = 1;
-        gridBagConstraints1.insets = new Insets(0, 5, 5, 5);
-        gridBagConstraints1.gridy = 1;
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weightx = 1.0D;
+        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
+        gridBagConstraints.weighty = 1.0D;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
         jEntityTypeNameLabel = new JLabel();
+		final Dimension d = new Dimension(320, 70);
+		jEntityTypeNameLabel.setMinimumSize(d);
+		jEntityTypeNameLabel.setPreferredSize(d);
         jEntityTypeNameLabel.setText(entity.getTypeName());
-        jEntityNameLabel = new JLabel();
-        jEntityNameLabel.setText(entity.getName());
+        GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+        gridBagConstraints2.fill = GridBagConstraints.BOTH;
+        gridBagConstraints2.gridx = 0;
+        gridBagConstraints2.gridy = 0;
+        gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
+        gridBagConstraints2.weightx = 1.0D;
+        gridBagConstraints2.weighty = 0.0D;
+        gridBagConstraints2.gridwidth = 2;
+        jEntityTypeLabel = new JLabel();
+		jEntityTypeLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+        jEntityTypeLabel.setText(Messages.getString("EntityTypePanel.entityType"));
+        GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+        gridBagConstraints1.gridx = 0;
+        gridBagConstraints1.gridy = 1;
+        gridBagConstraints1.insets = new Insets(0, 5, 5, 0);
+        gridBagConstraints1.weighty = 1.0D;
+        gridBagConstraints1.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
         this.setLayout(new GridBagLayout());
-        this.add(getJEntityShapePanel(), gridBagConstraints2);
-        this.add(jEntityNameLabel, gridBagConstraints);
-        this.add(jEntityTypeNameLabel, gridBagConstraints1);
-
+        this.add(jEntityTypeLabel, gridBagConstraints2);
+        this.add(getEntityShapePanel(), gridBagConstraints1);
+        this.add(jEntityTypeNameLabel, gridBagConstraints);
 	}
 
 	/**
-	 * This method initializes jEntityShapePanel
+	 * This method initializes jPanel1
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJEntityShapePanel() {
-		if (jEntityShapePanel == null) {
-			jEntityShapePanel = new EntityShapePanel(entity);
+	private EntityShapePanel getEntityShapePanel() {
+		if (entityShapePanel == null) {
+			entityShapePanel = new EntityShapePanel(entity);
+			final Dimension d = new Dimension(70, 70);
+			entityShapePanel.setMinimumSize(d);
+			entityShapePanel.setPreferredSize(d);
 		}
-		return jEntityShapePanel;
+		return entityShapePanel;
 	}
 
 }

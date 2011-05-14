@@ -50,7 +50,7 @@ import jp.digitalmuseum.utils.VectorField;
  */
 public class AvoidCollision extends VectorFieldTask {
 	private static final long serialVersionUID = 3701979074127266081L;
-	private VectorField vf;
+	private transient VectorField vf;
 
 	public AvoidCollision() {
 		//

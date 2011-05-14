@@ -18,6 +18,7 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.message.LocationUpdateEvent;
+import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.utils.Position;
 
 public class RobotCalligraphy {
@@ -47,7 +48,7 @@ public class RobotCalligraphy {
 		hakoniwa.setAntialiased(true);
 		hakoniwa.setBackgroundTransparent(false);
 		hakoniwa.setViewportSize(640, 480);
-		hakoniwa.start();
+		hakoniwa.start(new ServiceGroup());
 
 		// Instantiate a robot.
 		final Robot[] robots = new Robot[5];

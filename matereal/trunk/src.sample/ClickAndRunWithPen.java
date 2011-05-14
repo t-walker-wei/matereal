@@ -58,8 +58,8 @@ public class ClickAndRunWithPen {
 					"Cylinder "+i,
 					x + Math.cos(theta) * r,
 					y - Math.sin(theta) * r,
-					20,
-					theta);
+					theta,
+					20);
 		}
 
 		// Make a window for showing captured image.
