@@ -147,8 +147,7 @@ public abstract class ServiceAbstractImpl implements Service {
 		// Distribute this event.
 		distributeEvent(
 				new ServiceEvent(
-						ServiceAbstractImpl.this,
-						ServiceEvent.STATUS.STARTED));
+						this, ServiceEvent.STATUS.STARTED));
 		onStart();
 		isStarted = true;
 	}

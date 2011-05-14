@@ -34,36 +34,14 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.message;
+package jp.digitalmuseum.mr.entity;
 
-import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.connector.Connector;
 
-public class ActivityEvent extends Event {
-	static public enum STATUS {
-		/** Transition from another node. */ ENTERED,
-		/** Transition to another node. */ LEFT
-	}
-	private STATUS status;
+public interface PhysicalRobot extends PhysicalEntity, Robot {
 
-	public ActivityEvent(Node source, STATUS status) {
-		super(source);
-		this.status = status;
-	}
-
-	@Override
-	public Node getSource() {
-		return (Node) super.getSource();
-	}
-
-	public STATUS getStatus() {
-		return status;
-	}
-
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getSource());
-		sb.append(" event occurred: ");
-		sb.append(status);
-		return sb.toString();
-	}
+	public void setConnector(Connector connector);
+	public Connector getConnector();
+	public boolean connect();
+	public void disconnect();
 }

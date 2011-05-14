@@ -36,6 +36,11 @@
  */
 package jp.digitalmuseum.mr.message;
 
-public class RobotEvent extends Event {
+import jp.digitalmuseum.mr.entity.Robot;
 
+public class RobotEvent extends EntityEvent {
+
+	public RobotEvent(Robot source, STATUS status) {
+		super(source, status);
+	}
 }

@@ -63,8 +63,12 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	public static final int C = 2;
 	public static final int ALL = 0xff;
 	public static final byte TACHO_FOREVER = 0;
-	private MindstormsNXTDifferentialWheels dw;
 	private static int instances = 0;
+	private MindstormsNXTDifferentialWheels dw;
+
+	public MindstormsNXT() {
+		initialize();
+	}
 
 	public MindstormsNXT(String connectionString) {
 		super(connectionString);

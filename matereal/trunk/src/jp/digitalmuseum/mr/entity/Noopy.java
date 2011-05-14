@@ -40,61 +40,64 @@ import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 
 import jp.digitalmuseum.connector.Connector;
 import jp.digitalmuseum.mr.entity.PhysicalResourceAbstractImpl;
 import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.resource.Pen;
-import jp.digitalmuseum.mr.resource.WheelsController;
+import jp.digitalmuseum.mr.resource.WheelsAbstractImpl;
 
 /**
  * Noopy, a prototype robot.
  *
- * @author Jun KATO
+ * @author Jun KATO &amp; Yuta SUGIURA
  * @see NoopyWheels
  */
 public class Noopy extends PhysicalRobotAbstractImpl {
 	private static final long serialVersionUID = -5602909671919783633L;
 	final public static double WIDTH = 12;
 	final public static double HEIGHT = 16;
-	private NoopyWheels wheels;
-	private Set<PhysicalResourceAbstractImpl> plugins;
-	private Shape shape;
 	private static int instances = 0;
+	private NoopyWheels wheels;
+	private Shape shape;
+
+	public Noopy() {
+		initialize();
+	}
 
 	public Noopy(String connectionString) {
 		super(connectionString);
-		initialize(null);
+		initialize();
 	}
 
-	public Noopy(String connectionString, Class<Resource>... plugins) {
-		super(connectionString);
-		initialize(null, plugins);
+	public Noopy(String connectionString, String name) {
+		super(connectionString, name);
+		initialize();
 	}
 
-	public Noopy(String name, String connectionString) {
-		super(connectionString);
-		initialize(name);
-	}
-
-	public Noopy(String name, String connectionString, Class<Resource>... plugins) {
-		super(connectionString);
-		initialize(name, plugins);
-	}
-
-	public Noopy(String name, Connector connector) {
+	public Noopy(Connector connector) {
 		super(connector);
-		initialize(name);
+		initialize();
 	}
 
-	public Noopy(String name, Connector connector, Class<Resource>... plugins) {
-		super(connector);
-		initialize(name, plugins);
+	public Noopy(Connector connector, String name) {
+		super(connector, name);
+		initialize();
+	}
+
+	private void initialize() {
+		setTypeName("Noopy");
+		instances ++;
+		if (getName() == null) {
+			setName(getTypeName()+" ("+instances+")");
+		}
+		wheels = new NoopyWheels(this);
+		shape = new RoundRectangle2D.Double(
+				-WIDTH/2 , -HEIGHT/2,
+				WIDTH/2, HEIGHT/2,
+				3, 3);
 	}
 
 	@Override
@@ -103,48 +106,10 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 		super.dispose();
 	}
 
-	private void initialize(String name) {
-		initialize(name, null);
-	}
-
-	private void initialize(String name,
-			Class<Resource>[] pluginClasses) {
-		setTypeName("Noopy");
-		instances ++;
-		if (name == null) {
-			setName(getTypeName()+" ("+instances+")");
-		} else {
-			setName(name);
-		}
-		wheels = new NoopyWheels(this);
-		if (pluginClasses != null) {
-			plugins = new HashSet<PhysicalResourceAbstractImpl>();
-			for (Class<Resource> pluginClass : pluginClasses) {
-				PhysicalResourceAbstractImpl plugin;
-				try {
-					plugin = (PhysicalResourceAbstractImpl) pluginClass
-							.getConstructor(Noopy.class).newInstance(this);
-				} catch (Exception e) {
-					throw new RuntimeException("Plugin could't be plugged in.", e);
-				}
-				plugins.add(plugin);
-			}
-		}
-		shape = new RoundRectangle2D.Double(
-				-WIDTH/2 , -HEIGHT/2,
-				WIDTH/2, HEIGHT/2,
-				3, 3);
-	}
-
 	@Override
 	protected List<ResourceAbstractImpl> getResources() {
 		List<ResourceAbstractImpl> rs = super.getResources();
 		rs.add(wheels);
-		if (plugins != null) {
-			for (PhysicalResourceAbstractImpl plugin : plugins) {
-				rs.add(plugin);
-			}
-		}
 		return rs;
 	}
 
@@ -158,27 +123,15 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 	 * @author Jun KATO
 	 * @see Noopy
 	 */
-	public static class NoopyWheels extends PhysicalResourceAbstractImpl implements WheelsController {
+	public static class NoopyWheels extends WheelsAbstractImpl {
 		private static final long serialVersionUID = 6183145475982755979L;
-		private STATUS status;
 
 		public NoopyWheels(Noopy noopy) {
 			super(noopy);
-			initialize();
 		}
 
 		public NoopyWheels(Connector connector) {
 			super(connector);
-			initialize();
-		}
-
-		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-			ois.defaultReadObject();
-			initialize();
-		}
-
-		private void initialize() {
-			status = STATUS.STOP;
 		}
 
 		@Override
@@ -186,58 +139,24 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 			stopWheels();
 		}
 
-		public void goBackward() {
-			if (status != STATUS.GO_BACKWARD) {
-				getConnector().write("b\n");
-				status = STATUS.GO_BACKWARD;
-			}
+		protected void doGoForward() {
+			getConnector().write("f\n");
 		}
 
-		public void goForward() {
-			if (status != STATUS.GO_FORWARD) {
-				getConnector().write("f\n");
-				status = STATUS.GO_FORWARD;
-			}
+		protected void doGoBackward() {
+			getConnector().write("b\n");
 		}
 
-		public void spin(SPIN direction) {
-			if (direction.equals(SPIN.LEFT)) {
-				if (status != STATUS.SPIN_LEFT) {
-					// getConnector().write("l"); 90d
-					getConnector().write("j\n");
-					status = STATUS.SPIN_LEFT;
-				}
-			} else {
-				if (status != STATUS.SPIN_RIGHT) {
-					getConnector().write("y\n");
-					status = STATUS.SPIN_RIGHT;
-				}
-			}
+		protected void doSpinLeft() {
+			getConnector().write("j\n");
 		}
 
-		public void spinLeft() {
-			if (status != STATUS.SPIN_LEFT) {
-				getConnector().write("j\n");
-				status = STATUS.SPIN_LEFT;
-			}
+		protected void doSpinRight() {
+			getConnector().write("y\n");
 		}
 
-		public void spinRight() {
-			if (status != STATUS.SPIN_RIGHT) {
-				getConnector().write("y\n");
-				status = STATUS.SPIN_RIGHT;
-			}
-		}
-
-		public void stopWheels() {
-			if (status != STATUS.STOP) {
-				getConnector().write("s\n");
-				status = STATUS.STOP;
-			}
-		}
-
-		public STATUS getStatus() {
-			return status;
+		protected void doStopWheels() {
+			getConnector().write("s\n");
 		}
 	}
 

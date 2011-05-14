@@ -62,38 +62,51 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
  */
 public class NetTansor extends PhysicalRobotAbstractImpl {
 	private static final long serialVersionUID = 4329906174875793193L;
-	final public double RADIUS = 8;
+	public static final double RADIUS = 8;
+	private static int instances = 0;
 	private NetTansorDriver driver;
 	private NetTansorHeadmountedCamera camera;
 	private Shape shape;
 
-	public NetTansor(String name) {
-		super();
-		initialize(name);
+	public NetTansor() {
+		initialize();
 	}
 
-	public NetTansor(String name, String connectionString) {
+	public NetTansor(String connectionString) {
 		super(connectionString);
-		initialize(name);
+		initialize();
 	}
 
-	public NetTansor(String name, Connector connector) {
+	public NetTansor(String connectionString, String name) {
+		super(connectionString, name);
+		initialize();
+	}
+
+	public NetTansor(Connector connector) {
 		super(connector);
-		initialize(name);
+		initialize();
+	}
+
+	public NetTansor(Connector connector, String name) {
+		super(connector, name);
+		initialize();
+	}
+
+	private void initialize() {
+		setTypeName("NetTansor");
+		instances ++;
+		if (getName() == null) {
+			setName(getTypeName()+" ("+instances+")");
+		}
+		driver = new NetTansorDriver(this);
+		camera = new NetTansorHeadmountedCamera(this);
+		shape = new Ellipse2D.Double(-RADIUS, -RADIUS, RADIUS*2, RADIUS*2);
 	}
 
 	@Override
 	public void dispose() {
 		driver.stopWheels();
 		super.dispose();
-	}
-
-	private void initialize(String name) {
-		setName(name);
-		setTypeName("NetTansor");
-		driver = new NetTansorDriver(this);
-		camera = new NetTansorHeadmountedCamera(this);
-		shape = new Ellipse2D.Double(-RADIUS, -RADIUS, RADIUS*2, RADIUS*2);
 	}
 
 	@Override
@@ -104,12 +117,12 @@ public class NetTansor extends PhysicalRobotAbstractImpl {
 		return rs;
 	}
 
-	private URL getURL() throws MalformedURLException {
-		return new URL("http://"+((SocketConnector) getConnector()).getHost()+"/goform/video/");
-	}
-
 	public Shape getShape() {
 		return shape;
+	}
+
+	private URL getURL() throws MalformedURLException {
+		return new URL("http://"+((SocketConnector) getConnector()).getHost()+"/goform/video/");
 	}
 
 	/**

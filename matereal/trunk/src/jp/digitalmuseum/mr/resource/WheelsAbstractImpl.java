@@ -34,36 +34,96 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.message;
+package jp.digitalmuseum.mr.resource;
 
-import jp.digitalmuseum.mr.activity.Node;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
-public class ActivityEvent extends Event {
-	static public enum STATUS {
-		/** Transition from another node. */ ENTERED,
-		/** Transition to another node. */ LEFT
-	}
+import jp.digitalmuseum.connector.Connector;
+import jp.digitalmuseum.mr.entity.PhysicalResourceAbstractImpl;
+import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
+
+public abstract class WheelsAbstractImpl extends PhysicalResourceAbstractImpl implements
+		WheelsController {
+	private static final long serialVersionUID = 7215831625357912590L;
 	private STATUS status;
 
-	public ActivityEvent(Node source, STATUS status) {
-		super(source);
-		this.status = status;
+	public WheelsAbstractImpl(PhysicalRobotAbstractImpl robot) {
+		super(robot);
+		initialize();
+	}
+
+	public WheelsAbstractImpl(Connector connector) {
+		super(connector);
+		initialize();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException,
+			ClassNotFoundException {
+		ois.defaultReadObject();
+		initialize();
+	}
+
+	private void initialize() {
+		status = STATUS.STOP;
 	}
 
 	@Override
-	public Node getSource() {
-		return (Node) super.getSource();
+	protected void onFree() {
+		stopWheels();
+	}
+
+	public void goForward() {
+		if (status != STATUS.GO_FORWARD) {
+			doGoForward();
+			status = STATUS.GO_FORWARD;
+		}
+	}
+
+	public void goBackward() {
+		if (status != STATUS.GO_BACKWARD) {
+			doGoBackward();
+			status = STATUS.GO_BACKWARD;
+		}
+	}
+
+	public void spin(SPIN direction) {
+		if (direction.equals(SPIN.LEFT)) {
+			spinLeft();
+		} else {
+			spinRight();
+		}
+	}
+
+	public void spinLeft() {
+		if (status != STATUS.SPIN_LEFT) {
+			doSpinLeft();
+			status = STATUS.SPIN_LEFT;
+		}
+	}
+
+	public void spinRight() {
+		if (status != STATUS.SPIN_RIGHT) {
+			doSpinRight();
+			status = STATUS.SPIN_RIGHT;
+		}
+	}
+
+	public void stopWheels() {
+		if (status != STATUS.STOP) {
+			doStopWheels();
+			status = STATUS.STOP;
+		}
 	}
 
 	public STATUS getStatus() {
 		return status;
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getSource());
-		sb.append(" event occurred: ");
-		sb.append(status);
-		return sb.toString();
-	}
+	protected abstract void doGoForward();
+	protected abstract void doGoBackward();
+	protected abstract void doSpinLeft();
+	protected abstract void doSpinRight();
+	protected abstract void doStopWheels();
+
 }

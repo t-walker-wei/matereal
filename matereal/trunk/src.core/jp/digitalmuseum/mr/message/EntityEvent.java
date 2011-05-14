@@ -36,23 +36,25 @@
  */
 package jp.digitalmuseum.mr.message;
 
-import jp.digitalmuseum.mr.activity.Node;
+import jp.digitalmuseum.mr.entity.Entity;
 
-public class ActivityEvent extends Event {
+public class EntityEvent extends Event {
+
 	static public enum STATUS {
-		/** Transition from another node. */ ENTERED,
-		/** Transition to another node. */ LEFT
+		INSTANTIATED,
+		DISPOSED
 	}
+	private Entity source;
 	private STATUS status;
 
-	public ActivityEvent(Node source, STATUS status) {
-		super(source);
+	public EntityEvent(Entity source, STATUS status) {
+		this.source = source;
 		this.status = status;
 	}
 
 	@Override
-	public Node getSource() {
-		return (Node) super.getSource();
+	public Entity getSource() {
+		return source;
 	}
 
 	public STATUS getStatus() {
@@ -61,9 +63,11 @@ public class ActivityEvent extends Event {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getSource());
-		sb.append(" event occurred: ");
+		sb.append("Entity status changed: ");
+		sb.append(source);
+		sb.append(" (");
 		sb.append(status);
+		sb.append(")");
 		return sb.toString();
 	}
 }
