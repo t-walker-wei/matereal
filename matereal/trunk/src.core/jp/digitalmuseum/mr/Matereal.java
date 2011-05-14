@@ -40,7 +40,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -63,7 +62,6 @@ import jp.digitalmuseum.mr.message.ServiceEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
-import jp.digitalmuseum.mr.service.ServiceHolder;
 import jp.digitalmuseum.utils.Array;
 
 /**
@@ -71,7 +69,7 @@ import jp.digitalmuseum.utils.Array;
  *
  * @author Jun KATO
  */
-public final class Matereal implements ServiceHolder, EventProvider, EventListener {
+public final class Matereal implements EventProvider, EventListener {
 	final public static String LIBRARY_NAME = "Matereal";
 	final private static String THREAD_NAME = "Matereal Thread";
 	public static int DEFAULT_NUM_THREADS = 20;
@@ -339,9 +337,7 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 	 * @see ServiceGroup
 	 */
 	public <T extends Service> Set<T> lookForServices(Class<T> classObject) {
-
-		// Look in matereal thread.
-		return lookForServices(classObject, this);
+		return lookForServices(classObject, services);
 	}
 
 	/**
@@ -353,9 +349,7 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 	 * @see ServiceGroup
 	 */
 	public <T extends Service> T lookForService(Class<T> classObject) {
-
-		// Look in matereal thread.
-		return lookForService(classObject, this);
+		return lookForService(classObject, services);
 	}
 
 	/**
@@ -500,49 +494,5 @@ public final class Matereal implements ServiceHolder, EventProvider, EventListen
 	@Override
 	public String toString() {
 		return LIBRARY_NAME;
-	}
-
-	public Iterator<Service> iterator() {
-		return new ServiceIterator();
-	}
-
-	private class ServiceIterator implements Iterator<Service> {
-		private Iterator<Service> iterator;
-		private Iterator<Service> currentIterator;
-
-		public ServiceIterator() {
-			iterator = services.iterator();
-			currentIterator = iterator;
-		}
-
-		public ServiceIterator(ServiceGroup serviceGroup) {
-			iterator = serviceGroup.iterator();
-			currentIterator = iterator;
-		}
-
-		public boolean hasNext() {
-			if (currentIterator.hasNext()) {
-				return true;
-			}
-			if (currentIterator != iterator) {
-				currentIterator = iterator;
-				return currentIterator.hasNext();
-			}
-			return false;
-		}
-
-		public Service next() {
-			Service next = currentIterator.next();
-			if (next instanceof ServiceGroup) {
-				currentIterator = new ServiceIterator(
-						ServiceGroup.class.cast(next));
-				return currentIterator.next();
-			}
-			return next;
-		}
-
-		public void remove() {
-			currentIterator.remove();
-		}
 	}
 }

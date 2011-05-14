@@ -43,7 +43,6 @@ import jp.digitalmuseum.mr.message.ServiceEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
-import jp.digitalmuseum.mr.service.ServiceHolder;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -92,7 +91,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private JScrollPane jScrollPane = null;
 	private JTree jTree = null;
 
-	private JLabel jSelectedServiceHolderLabel = null;
+	private JLabel jSelectedServiceGroupLabel = null;
 	private JLabel jSelectedServiceLabel = null;
 	private JPanel jServiceInformationPanel = null;
 	private JLabel jLabel = null;
@@ -104,13 +103,13 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private DefaultMutableTreeNode root;
 
 	/** Map of service groups and their corresponding nodes. */
-	private HashMap<ServiceHolder, DefaultMutableTreeNode> groupNodeMap;
+	private HashMap<ServiceGroup, DefaultMutableTreeNode> groupNodeMap;
 
 	/** Map of services and their corresponding nodes. */
 	private HashMap<Service, DefaultMutableTreeNode> serviceNodeMap;
 
 	/** Map of services and their corresponding service groups. */
-	private HashMap<Service, ServiceHolder> serviceGroupMap;
+	private HashMap<Service, ServiceGroup> serviceGroupMap;
 
 	private transient Map<Service, JComponent> serviceComponents;
 
@@ -121,15 +120,14 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		super();
 
 		// Initialize hash maps.
-		groupNodeMap = new HashMap<ServiceHolder, DefaultMutableTreeNode>();
+		groupNodeMap = new HashMap<ServiceGroup, DefaultMutableTreeNode>();
 		serviceNodeMap = new HashMap<Service, DefaultMutableTreeNode>();
-		serviceGroupMap = new HashMap<Service, ServiceHolder>();
+		serviceGroupMap = new HashMap<Service, ServiceGroup>();
 		serviceComponents = new HashMap<Service, JComponent>();
 
 		// Root node of the tree view, used at getJTree() etc.
 		final Matereal matereal = Matereal.getInstance();
 		root = new DefaultMutableTreeNode(matereal);
-		groupNodeMap.put(matereal, root);
 
 		// Initialize the monitor pane.
 		initialize();
@@ -154,10 +152,10 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		setPreferredSize(new Dimension(640, 420));
 		setLayout(new GridBagLayout());
 		setBounds(new Rectangle(0, 0, 480, 320));
-		jSelectedServiceHolderLabel = new JLabel();
-		jSelectedServiceHolderLabel.setText(""); //$NON-NLS-1$
-		jSelectedServiceHolderLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
-		jSelectedServiceHolderLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
+		jSelectedServiceGroupLabel = new JLabel();
+		jSelectedServiceGroupLabel.setText(""); //$NON-NLS-1$
+		jSelectedServiceGroupLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+		jSelectedServiceGroupLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
 		jSelectedServiceLabel = new JLabel();
 		jSelectedServiceLabel.setText(""); //$NON-NLS-1$
 		jSelectedServiceLabel.setFont(new Font("Dialog", Font.BOLD, 14)); //$NON-NLS-1$
@@ -337,7 +335,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			jServiceInformationPanel.add(jLabel3, gridBagConstraints5);
 			jServiceInformationPanel.add(jLabel4, gridBagConstraints7);
 			jServiceInformationPanel.add(jLabel1, gridBagConstraints8);
-			jServiceInformationPanel.add(jSelectedServiceHolderLabel, gridBagConstraints2);
+			jServiceInformationPanel.add(jSelectedServiceGroupLabel, gridBagConstraints2);
 		}
 		return jServiceInformationPanel;
 	}
@@ -374,7 +372,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		if (nodeInfo instanceof Service) {
 			selectService((Service) nodeInfo);
 		} else if (nodeInfo instanceof ServiceGroup) {
-			selectServiceHolder((ServiceGroup) nodeInfo);
+			selectServiceGroup((ServiceGroup) nodeInfo);
 		}
 	}
 
@@ -387,9 +385,9 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 				if (service instanceof ServiceGroup) {
 					if (se.getStatus() == STATUS.STARTED) {
-						addServiceHolder((ServiceHolder) service);
+						addServiceGroup((ServiceGroup) service);
 					} else {
-						removeServiceHolder((ServiceHolder) service);
+						removeServiceGroup((ServiceGroup) service);
 					}
 				} else {
 					if (se.getStatus() == STATUS.STARTED) {
@@ -427,7 +425,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 	private void updateService(Service service) {
 		if (service instanceof ServiceGroup) {
-			addServiceHolder((ServiceHolder) service);
+			addServiceGroup((ServiceGroup) service);
 			return;
 		}
 		if (serviceNodeMap.containsKey(service)) {
@@ -436,13 +434,13 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 		final DefaultMutableTreeNode node =
 				new DefaultMutableTreeNode(service);
-		final ServiceHolder serviceHolder = serviceGroupMap.get(service);
-		if (serviceHolder == null) {
+		final ServiceGroup serviceGroup = serviceGroupMap.get(service);
+		if (serviceGroup == null) {
 			root.add(node);
 		} else {
-			DefaultMutableTreeNode root = groupNodeMap.get(serviceHolder);
+			DefaultMutableTreeNode root = groupNodeMap.get(serviceGroup);
 			if (root == null) {
-				root = addServiceHolder(serviceHolder);
+				root = addServiceGroup(serviceGroup);
 			}
 			root.add(node);
 		}
@@ -479,34 +477,33 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 				serviceNodeMap.remove(service));
 	}
 
-	private void selectServiceHolder(ServiceHolder serviceHolder) {
-		if (serviceHolder == null ||
-				serviceHolder == Matereal.getInstance()) {
-			jSelectedServiceHolderLabel.setText("-"); //$NON-NLS-1$
+	private void selectServiceGroup(ServiceGroup serviceGroup) {
+		if (serviceGroup == null) {
+			jSelectedServiceGroupLabel.setText("-"); //$NON-NLS-1$
 		} else {
-			jSelectedServiceHolderLabel.setText(serviceHolder.toString());
+			jSelectedServiceGroupLabel.setText(serviceGroup.toString());
 		}
 	}
 
-	private DefaultMutableTreeNode addServiceHolder(ServiceHolder serviceHolder) {
-		if (groupNodeMap.containsKey(serviceHolder)) {
-			return groupNodeMap.get(serviceHolder);
+	private DefaultMutableTreeNode addServiceGroup(ServiceGroup serviceGroup) {
+		if (groupNodeMap.containsKey(serviceGroup)) {
+			return groupNodeMap.get(serviceGroup);
 		}
 
 		final DefaultMutableTreeNode node =
-				new DefaultMutableTreeNode(serviceHolder);
+				new DefaultMutableTreeNode(serviceGroup);
 		root.add(node);
-		groupNodeMap.put(serviceHolder, node);
+		groupNodeMap.put(serviceGroup, node);
 		return node;
 	}
 
-	private void removeServiceHolder(ServiceHolder serviceHolder) {
+	private void removeServiceGroup(ServiceGroup serviceGroup) {
 
 		// Remove from the list view.
-		MutableTreeNode node = groupNodeMap.get(serviceHolder);
+		MutableTreeNode node = groupNodeMap.get(serviceGroup);
 		root.remove(node);
 
 		// Remove from groupNodeMap
-		groupNodeMap.remove(serviceHolder);
+		groupNodeMap.remove(serviceGroup);
 	}
 }
