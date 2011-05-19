@@ -43,27 +43,29 @@ import javax.swing.JPanel;
 import javax.swing.JComboBox;
 import java.awt.GridBagConstraints;
 
-import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.entity.Robot;
+import jp.digitalmuseum.mr.gui.DisposableComponent;
 
 import java.awt.Insets;
 import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
-public class RobotResourcePanel extends JPanel {
+public class RobotResourcePanel extends JPanel implements ActionListener, DisposableComponent {
 
 	private static final long serialVersionUID = 1L;
 	private JComboBox jComboBox = null;
 	private JPanel resourcePanel = null;
 
-	private transient Robot robot;
+	private transient List<JComponent> resourceComponents;
 
 	/**
 	 * This is the default constructor
 	 */
 	public RobotResourcePanel(Robot robot) {
 		super();
-		this.robot = robot;
+		this.resourceComponents = robot.getResourceComponents();
 		initialize();
 	}
 
@@ -93,6 +95,17 @@ public class RobotResourcePanel extends JPanel {
 		this.add(getResourcePanel(), gridBagConstraints1);
 	}
 
+	public void dispose() {
+		getResourcePanel().removeAll();
+		getJComboBox().removeAllItems();
+		for (JComponent resourceComponent : resourceComponents) {
+			if (resourceComponent instanceof DisposableComponent) {
+				((DisposableComponent) resourceComponent).dispose();
+			}
+		}
+		resourceComponents.clear();
+	}
+
 	/**
 	 * This method initializes jComboBox
 	 *
@@ -101,9 +114,10 @@ public class RobotResourcePanel extends JPanel {
 	private JComboBox getJComboBox() {
 		if (jComboBox == null) {
 			jComboBox = new JComboBox();
-			List<Class<? extends Resource>> resourceTypes = robot.getResourceTypes();
-			List<JComponent> resourceComponents = robot.getResourceComponents(resourceTypes);
-			// TODO implement this.
+			for (JComponent resourceComponent : resourceComponents) {
+				jComboBox.addItem(resourceComponent);
+			}
+			jComboBox.addActionListener(this);
 		}
 		return jComboBox;
 	}
@@ -117,8 +131,21 @@ public class RobotResourcePanel extends JPanel {
 		if (resourcePanel == null) {
 			resourcePanel = new JPanel();
 			resourcePanel.setLayout(new CardLayout());
+			for (JComponent resourceComponent : resourceComponents) {
+				resourcePanel.add(resourceComponent, String.valueOf(
+						resourceComponent.hashCode()));
+			}
 		}
 		return resourcePanel;
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e == null || e.getSource() != getJComboBox()) {
+			return;
+		}
+		((CardLayout) getResourcePanel().getLayout()).show(
+				getResourcePanel(),
+				String.valueOf(getJComboBox().getSelectedItem().hashCode()));
+	}
 }

@@ -46,6 +46,7 @@ import java.util.Map.Entry;
 
 import javax.swing.JComponent;
 
+import jp.digitalmuseum.mr.gui.entity.RobotPanel;
 import jp.digitalmuseum.mr.task.Task;
 
 /**
@@ -244,6 +245,11 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 		if (resource instanceof ResourceAbstractImpl) {
 			((ResourceAbstractImpl) resource).free(object);
 		}
+	}
+
+	@Override
+	public JComponent getConfigurationComponent() {
+		return new RobotPanel(this);
 	}
 
 	public JComponent getResourceComponent(Class<? extends Resource> resourceType) {

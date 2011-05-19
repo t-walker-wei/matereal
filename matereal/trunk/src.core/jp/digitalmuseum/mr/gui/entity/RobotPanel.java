@@ -42,28 +42,27 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
-import jp.digitalmuseum.mr.entity.Entity;
+import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.Messages;
 
 import javax.swing.JLabel;
 import java.awt.Insets;
-import java.awt.Dimension;
 
-public class EntityPanel extends JPanel {
+public class RobotPanel extends JPanel {
 
-	private static final long serialVersionUID = 5147751877583600512L;
-	private EntityShapePanel entityShapePanel = null;
-	private transient Entity entity;
-	private JLabel jEntityTypeLabel = null;
-	private JLabel jEntityTypeNameLabel = null;
+	private static final long serialVersionUID = -1601581324059426126L;
+	private RobotResourcePanel robotResourcePanel = null;
+	private transient Robot robot;
+	private JLabel jRobotLabel = null;
+	private JPanel entityPanel = null;
 
 	/**
 	 * This method initializes
 	 *
 	 */
-	public EntityPanel(Entity entity) {
+	public RobotPanel(Robot robot) {
 		super();
-		this.entity = entity;
+		this.robot = robot;
 		initialize();
 	}
 
@@ -73,40 +72,32 @@ public class EntityPanel extends JPanel {
 	 */
 	private void initialize() {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.weightx = 1.0D;
-        gridBagConstraints.insets = new Insets(0, 5, 5, 5);
-        gridBagConstraints.weighty = 1.0D;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.gridx = 1;
-        jEntityTypeNameLabel = new JLabel();
-		final Dimension d = new Dimension(320, 70);
-		jEntityTypeNameLabel.setMinimumSize(d);
-		jEntityTypeNameLabel.setPreferredSize(d);
-        jEntityTypeNameLabel.setText(entity.getTypeName());
+        gridBagConstraints.weighty = 0.0D;
+        gridBagConstraints.gridx = 0;
         GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
         gridBagConstraints2.fill = GridBagConstraints.BOTH;
         gridBagConstraints2.gridx = 0;
-        gridBagConstraints2.gridy = 0;
+        gridBagConstraints2.gridy = 1;
         gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
         gridBagConstraints2.weightx = 1.0D;
         gridBagConstraints2.weighty = 0.0D;
-        gridBagConstraints2.gridwidth = 2;
-        jEntityTypeLabel = new JLabel();
-		jEntityTypeLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
-        jEntityTypeLabel.setText(Messages.getString("EntityPanel.entityType"));
+        jRobotLabel = new JLabel();
+		jRobotLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+        jRobotLabel.setText(Messages.getString("RobotPanel.resources"));
         GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
         gridBagConstraints1.gridx = 0;
-        gridBagConstraints1.gridy = 1;
+        gridBagConstraints1.gridy = 2;
         gridBagConstraints1.insets = new Insets(0, 5, 5, 0);
         gridBagConstraints1.weighty = 1.0D;
         gridBagConstraints1.anchor = GridBagConstraints.NORTHWEST;
         gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
         this.setLayout(new GridBagLayout());
-        this.add(jEntityTypeLabel, gridBagConstraints2);
-        this.add(getEntityShapePanel(), gridBagConstraints1);
-        this.add(jEntityTypeNameLabel, gridBagConstraints);
+        this.add(getEntityPanel(), gridBagConstraints);
+        this.add(jRobotLabel, gridBagConstraints2);
+        this.add(getRobotResourcePanel(), gridBagConstraints1);
 	}
 
 	/**
@@ -114,14 +105,23 @@ public class EntityPanel extends JPanel {
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private EntityShapePanel getEntityShapePanel() {
-		if (entityShapePanel == null) {
-			entityShapePanel = new EntityShapePanel(entity);
-			final Dimension d = new Dimension(70, 70);
-			entityShapePanel.setMinimumSize(d);
-			entityShapePanel.setPreferredSize(d);
+	private RobotResourcePanel getRobotResourcePanel() {
+		if (robotResourcePanel == null) {
+			robotResourcePanel = new RobotResourcePanel(robot);
 		}
-		return entityShapePanel;
+		return robotResourcePanel;
+	}
+
+	/**
+	 * This method initializes entityPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getEntityPanel() {
+		if (entityPanel == null) {
+			entityPanel = new EntityPanel(robot);
+		}
+		return entityPanel;
 	}
 
 }

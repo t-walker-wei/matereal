@@ -55,7 +55,8 @@ public class resources_ja extends PropertyResourceBundle {
 		"CoordProviderPanel.reset=矩形のリセット\n" +
 		"EntityMonitorPanel.selectedEntity=選択された物体\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=選択された物体の名称.\n" +
-		"EntityTypePanel.entityType=物体の種類\n" +
+		"EntityPanel.entityType=物体の種類\n" +
+		"RobotPanel.resources=ロボットの部品\n" +
 		"MonitorPanel.nameOfSelectedService=選択されたサービスの名称.\n" +
 		"MonitorPanel.nameOfSelectedServiceGroup=サービスグループの名称.\n" +
 		"MonitorPanel.serviceGroup=サービスグループ:\n" +

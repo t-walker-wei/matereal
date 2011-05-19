@@ -154,4 +154,8 @@ public class ResourceViewer extends JPanel implements DisposableComponent {
 		jClassLabel.setText(resource.getClass().getSimpleName());
 	}
 
+	@Override
+	public String toString() {
+		return resource.toString();
+	}
 }
