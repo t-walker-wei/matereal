@@ -41,6 +41,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JComponent;
+
 import jp.digitalmuseum.mr.message.EventProvider;
 import jp.digitalmuseum.mr.task.Task;
 
@@ -101,4 +103,8 @@ public interface Robot extends Entity, EventProvider, Serializable {
 
 	public void freeResource(
 			Resource resource, Object object);
+
+	public JComponent getResourceComponent(Class<? extends Resource> resourceType);
+	public List<JComponent> getResourceComponents();
+	public List<JComponent> getResourceComponents(Collection<Class<? extends Resource>> resourceTypes);
 }

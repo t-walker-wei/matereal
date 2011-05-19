@@ -44,7 +44,7 @@ import java.io.ObjectInputStream;
 import javax.swing.JComponent;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.entity.EntityTypePanel;
+import jp.digitalmuseum.mr.gui.entity.EntityPanel;
 import jp.digitalmuseum.mr.message.EntityEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -167,6 +167,6 @@ public class EntityImpl implements Entity {
 	}
 
 	public JComponent getConfigurationComponent() {
-		return new EntityTypePanel(this);
+		return new EntityPanel(this);
 	}
 }

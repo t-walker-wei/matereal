@@ -39,9 +39,12 @@ package jp.digitalmuseum.mr.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
+
+import javax.swing.JComponent;
 
 import jp.digitalmuseum.mr.task.Task;
 
@@ -169,9 +172,12 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 			requestResources(Collection<Class<? extends Resource>> resourceTypes, Object object) {
 
 		// Look for the desired resources.
+		final Set<Resource> resources = new HashSet<Resource>(getResources());
 		final ResourceMap resourceMap = new ResourceMap();
 		for (Class<? extends Resource> resourceType : resourceTypes) {
-			for (Resource resource : getResources()) {
+			Iterator<Resource> it = resources.iterator();
+			while (it.hasNext()) {
+				Resource resource = it.next();
 				if (resourceType.isInstance(resource)) {
 					if (ExclusiveResource.class.isAssignableFrom(resourceType)) {
 						if (!(resource instanceof ResourceAbstractImpl) ||
@@ -180,6 +186,8 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 						}
 					}
 					resourceMap.put(resourceType, resource);
+					it.remove();
+					break;
 				}
 			}
 		}
@@ -191,9 +199,13 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 
 		// Assign task to the exclusive resources.
 		for (Entry<Class<? extends Resource>, Resource> e : resourceMap) {
+			Resource resource = e.getValue();
 			if (ExclusiveResource.class.isAssignableFrom(e.getKey()) &&
 					(e.getValue() instanceof ResourceAbstractImpl)) {
-				((ResourceAbstractImpl) e.getValue()).setWriter(object);
+				((ResourceAbstractImpl) resource).setWriter(object);
+			} else {
+				((ResourceAbstractImpl) resource).addReader(object);
+
 			}
 		}
 		return resourceMap;
@@ -232,5 +244,36 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 		if (resource instanceof ResourceAbstractImpl) {
 			((ResourceAbstractImpl) resource).free(object);
 		}
+	}
+
+	public JComponent getResourceComponent(Class<? extends Resource> resourceType) {
+		for (Resource resource : getResources()) {
+			if (resourceType.isInstance(resource)) {
+				return resource.getConfigurationComponent();
+			}
+		}
+		return null;
+	}
+
+	public List<JComponent> getResourceComponents() {
+		return getResourceComponents(getResourceTypes());
+	}
+
+	public List<JComponent> getResourceComponents(Collection<Class<? extends Resource>> resourceTypes) {
+		final Set<Resource> resources = new HashSet<Resource>(getResources());
+		final List<JComponent> components = new ArrayList<JComponent>();
+
+		for (Class<? extends Resource> resourceType : resourceTypes) {
+			Iterator<Resource> it = resources.iterator();
+			while (it.hasNext()) {
+				Resource resource = it.next();
+				if (resourceType.isInstance(resource)) {
+					components.add(resource.getConfigurationComponent());
+					it.remove();
+					break;
+				}
+			}
+		}
+		return components;
 	}
 }

@@ -139,7 +139,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 					ad.add(head);
 					ad.add(a);
 					ad.add(b);
-					if (i == 0) {
+					if (tail == null) {
 						inits[r] = head;
 					} else {
 						ad.addTransition(new Transition(tail, head));

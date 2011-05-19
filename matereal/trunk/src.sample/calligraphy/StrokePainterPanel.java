@@ -115,10 +115,12 @@ public class StrokePainterPanel extends JPanel implements PathsProvider {
 				public void mouseReleased(MouseEvent e) {
 					if (currentPath.size() > 0) {
 						currentPath.resample(RESAMPLE_PIXELS);
-						synchronized (strokePainterPanel) {
-							paths.add(currentPath);
+						if (currentPath.size() > 0) {
+							synchronized (strokePainterPanel) {
+								paths.add(currentPath);
+							}
+							currentPath = null;
 						}
-						currentPath = null;
 						repaint();
 					}
 				}
