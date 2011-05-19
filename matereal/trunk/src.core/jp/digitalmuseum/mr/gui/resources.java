@@ -53,7 +53,8 @@ public class resources extends PropertyResourceBundle {
 		"CoordProviderPanel.reset=Reset the rectangle\n" +
 		"EntityMonitorPanel.selectedEntity=Selected Entity\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=Name of the selected entity.\n" +
-		"EntityTypePanel.entityType=Entity type information\n" +
+		"EntityPanel.entityType=Entity type information\n" +
+		"RobotPanel.resources=Robot resources\n" +
 		"MonitorPanel.nameOfSelectedService=Name of the selected service.\n" +
 		"MonitorPanel.nameOfSelectedServiceGroup=Name of the service group.\n" +
 		"MonitorPanel.serviceGroup=Service group:\n" +

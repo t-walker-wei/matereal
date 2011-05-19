@@ -139,6 +139,11 @@ public abstract class ResourceAbstractImpl implements Resource {
 		//
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
+
 	public JComponent getConfigurationComponent() {
 		return new ResourceViewer(this);
 	}
