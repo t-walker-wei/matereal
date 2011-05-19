@@ -41,6 +41,10 @@ import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JComponent;
+
+import jp.digitalmuseum.mr.gui.ResourceViewer;
+
 /**
  * Abstract implementation of Resource.<br />
  * Resource implementation classes must extend this abstract class.
@@ -133,5 +137,9 @@ public abstract class ResourceAbstractImpl implements Resource {
 	 */
 	protected void onFree() {
 		//
+	}
+
+	public JComponent getConfigurationComponent() {
+		return new ResourceViewer(this);
 	}
 }

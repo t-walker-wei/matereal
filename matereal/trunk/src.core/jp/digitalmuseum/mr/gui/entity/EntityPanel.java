@@ -49,7 +49,7 @@ import javax.swing.JLabel;
 import java.awt.Insets;
 import java.awt.Dimension;
 
-public class EntityTypePanel extends JPanel {
+public class EntityPanel extends JPanel {
 
 	private static final long serialVersionUID = 5147751877583600512L;
 	private EntityShapePanel entityShapePanel = null;
@@ -61,7 +61,7 @@ public class EntityTypePanel extends JPanel {
 	 * This method initializes
 	 *
 	 */
-	public EntityTypePanel(Entity entity) {
+	public EntityPanel(Entity entity) {
 		super();
 		this.entity = entity;
 		initialize();

@@ -39,6 +39,8 @@ package jp.digitalmuseum.mr.entity;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.swing.JComponent;
+
 /**
  * Resource interface.
  *
@@ -49,4 +51,5 @@ public interface Resource extends Serializable {
 
 	public Robot getRobot();
 	public Set<Object> getReaders();
+	public JComponent getConfigurationComponent();
 }
