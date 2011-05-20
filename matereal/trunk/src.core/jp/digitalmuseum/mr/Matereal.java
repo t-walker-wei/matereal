@@ -144,6 +144,7 @@ public final class Matereal implements EventProvider, EventListener {
 					Matereal.this.debugFrame = null;
 				}
 			};
+			debugFrame.setTitle(Messages.getString("Matereal.debugTitle"));
 		}
 		debugFrame.setVisible(true);
 	}
