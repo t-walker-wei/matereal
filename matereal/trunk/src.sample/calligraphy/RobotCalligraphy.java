@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
@@ -19,6 +18,7 @@ import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.message.LocationUpdateEvent;
 import jp.digitalmuseum.mr.service.ServiceGroup;
+import jp.digitalmuseum.mr.workflow.Workflow;
 import jp.digitalmuseum.utils.Position;
 
 public class RobotCalligraphy {
@@ -56,8 +56,8 @@ public class RobotCalligraphy {
 					hakoniwa.getRealHeight()/2));
 		}
 
-		// Prepare an activity diagram.
-		final ActivityDiagram ad = new ActivityDiagram();
+		// Prepare a workflow graph.
+		final Workflow ad = new Workflow();
 
 		// Show the main window.
 		SwingUtilities.invokeLater(new Runnable() {

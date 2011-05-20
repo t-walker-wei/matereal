@@ -1,13 +1,13 @@
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.TimeoutTransition;
 import jp.digitalmuseum.mr.entity.MindstormsNXT;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.task.GoForward;
 import jp.digitalmuseum.mr.task.Stop;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.TimeoutTransition;
 
 /**
  * Assign one task to a robot. Get the robot to go forward for 5 seconds.
@@ -29,7 +29,7 @@ public class UseTask implements EventListener {
 		Action a = new Action(robot, new GoForward());
 		Action b = new Action(robot, new Stop());
 
-		ActivityDiagram ad = new ActivityDiagram();
+		Workflow ad = new Workflow();
 		ad.add(a);
 		ad.add(b);
 		ad.setInitialNode(a);

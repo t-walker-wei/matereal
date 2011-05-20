@@ -34,23 +34,57 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow.layout;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import jp.digitalmuseum.utils.Position;
+import jp.digitalmuseum.mr.workflow.Edge;
+import jp.digitalmuseum.mr.workflow.Node;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+public class Layout {
+	private Map<Node, Coordinate> nodeCoords;
+	private Map<Edge, Line> edgeCoords;
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public Layout() {
+		nodeCoords = new HashMap<Node, Coordinate>();
+		edgeCoords = new HashMap<Edge, Line>();
 	}
 
-	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	void putNodeCoord(Node node, Coordinate coord) {
+		nodeCoords.put(node, coord);
+	}
+
+	void putEdgeCoords(Edge edge, Line coords) {
+		edgeCoords.put(edge, coords);
+	}
+
+	public Coordinate getNodeCoord(Node node) {
+		return nodeCoords.get(node);
+	}
+
+	public Line getEdgeCoord(Edge edge) {
+		return edgeCoords.get(edge);
+	}
+
+	public boolean contains(Node node) {
+		return nodeCoords.containsKey(node);
+	}
+
+	public boolean contains(Edge edge) {
+		return edgeCoords.containsKey(edge);
+	}
+
+	public static class Line {
+		public Line(Coordinate[] coordinates, boolean isReversed) {
+			this.coordinates = coordinates;
+			this.isReversed = isReversed;
+		}
+		public Coordinate[] coordinates;
+		public boolean isReversed;
+	}
+
+	public static class Coordinate {
+		public int x, y;
 	}
 }

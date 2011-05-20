@@ -34,23 +34,63 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.workflow;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import jp.digitalmuseum.utils.Position;
+public class Fork extends ControlNode {
+	private static final long serialVersionUID = 8421184101422231273L;
+	private Set<EdgeImpl> edges;
+	private Set<Node> nodesToGo;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+	public Fork(Node... outs) {
+		edges = new HashSet<EdgeImpl>();
+		nodesToGo = new HashSet<Node>();
+		for (Node out : outs) {
+			edges.add(new EdgeImpl(this, out));
+		}
+	}
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public EdgeImpl[] getEdges() {
+		EdgeImpl[] edgesArray = new EdgeImpl[0];
+		edgesArray = edges.toArray(edgesArray);
+		return edgesArray;
+	}
+
+	public Node[] getOutputs() {
+		Node[] outs = new Node[edges.size()];
+		int i = 0;
+		for (EdgeImpl edge : edges) {
+			outs[i ++] = edge.getDestination();
+		}
+		return outs;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	protected void onEnter() {
+		for (EdgeImpl edge : edges) {
+			nodesToGo.add(edge.getDestination());
+		}
+		isDone();
+	}
+
+	@Override
+	protected synchronized boolean isDone() {
+		Iterator<Node> nodeIterator = nodesToGo.iterator();
+		Node node;
+		while (nodeIterator.hasNext()) {
+			node = nodeIterator.next();
+			if (getWorkflow().start(node)) {
+				nodeIterator.remove();
+			}
+		}
+		return nodesToGo.isEmpty();
+	}
+
+	@Override
+	public String toString() {
+		return "Fork["+edges.size()+"]";
 	}
 }

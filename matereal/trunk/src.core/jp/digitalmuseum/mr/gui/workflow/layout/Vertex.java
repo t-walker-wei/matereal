@@ -34,23 +34,84 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow.layout;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import jp.digitalmuseum.utils.Position;
+import jp.digitalmuseum.mr.gui.workflow.layout.Layout.Coordinate;
+import jp.digitalmuseum.mr.workflow.Edge;
+import jp.digitalmuseum.mr.workflow.Node;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+public class Vertex extends LayerElement {
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	private Node node;
+	private Map<Vertex, Edge> children;
+	private Map<Vertex, Edge> parents;
+	private int width = 0;
+
+	public Vertex(Node node) {
+		this.node = node;
+		children = new HashMap<Vertex, Edge>();
+		parents = new HashMap<Vertex, Edge>();
+	}
+
+	public Node getNode() {
+		return node;
+	}
+
+	void linkChild(Vertex child, Edge edge) {
+		children.put(child, edge);
+		child.parents.put(this, edge);
+	}
+
+	Edge unlinkChild(Vertex child) {
+		Edge edge = children.remove(child);
+		if (edge != null) {
+			child.parents.remove(this);
+		}
+		return edge;
+	}
+
+	Set<Vertex> getParents() {
+		return new HashSet<Vertex>(parents.keySet());
+	}
+
+	public Set<Vertex> getChildren() {
+		return new HashSet<Vertex>(children.keySet());
+	}
+
+	public Map<Vertex, Edge> getChildrenEdges() {
+		return new HashMap<Vertex, Edge>(children);
+	}
+
+	boolean hasChildren() {
+		return children.size() > 0;
+	}
+
+	void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getWidth() {
+		return width;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	protected void appendString(StringBuilder sb) {
+		if (node != null) {
+			sb.append("vx-");
+			sb.append(node);
+		}
+		super.appendString(sb);
+	}
+
+	public Coordinate getCoord() {
+		Coordinate coord = new Coordinate();
+		coord.x = getX();
+		coord.y = getDepth();
+		return coord;
 	}
 }

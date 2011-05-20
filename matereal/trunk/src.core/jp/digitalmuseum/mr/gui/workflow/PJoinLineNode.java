@@ -34,23 +34,32 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow;
 
-import java.util.List;
+import java.awt.Color;
 
-import jp.digitalmuseum.utils.Position;
+import jp.digitalmuseum.mr.workflow.Edge;
+import jp.digitalmuseum.mr.workflow.Join;
+import jp.digitalmuseum.mr.workflow.Node;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+public class PJoinLineNode extends PLineNodeAbstractImpl {
+	private static final long serialVersionUID = 5862618628516003680L;
+	private static Color color = new Color(0, 0, 200);
+	private transient Edge edge;
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public PJoinLineNode(Edge edge) {
+		this.edge = edge;
 	}
 
-	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public Node getSource() {
+		return edge.getSource();
+	}
+
+	public Join getDestination() {
+		return (Join) edge.getDestination();
+	}
+
+	protected Color getDefaultStrokeColor() {
+		return color;
 	}
 }

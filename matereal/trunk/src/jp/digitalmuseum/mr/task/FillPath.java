@@ -54,10 +54,10 @@ public class FillPath extends TracePath {
 	}
 
 	@Override
-	protected void updateSubDiagram() {
+	protected void updateSubflow() {
 		path = getCleaningPath(path,
 				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubDiagram();
+		super.updateSubflow();
 	}
 
 	public static List<Position> getCleaningPath(List<Position> cleanArea, double robotSize) {

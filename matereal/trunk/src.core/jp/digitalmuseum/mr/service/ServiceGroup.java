@@ -50,10 +50,21 @@ import jp.digitalmuseum.utils.Array;
  */
 public class ServiceGroup extends ServiceAbstractImpl {
 	private static final long serialVersionUID = -813365521557471308L;
+	private static int instances = 0;
+	private int id;
 	private Array<Service> services;
 
 	public ServiceGroup() {
 		services = new Array<Service>();
+		id = ++ instances;
+	}
+
+	public String getName() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Service group (");
+		sb.append(id);
+		sb.append(")");
+		return sb.toString();
 	}
 
 	public ServiceGroup(Service... servicesArray) {

@@ -34,23 +34,68 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow.layout;
 
-import java.util.List;
 
-import jp.digitalmuseum.utils.Position;
+public class DummyVertex extends Vertex {
+	private Segment segment;
+	private boolean isHead;
+	private boolean isTail;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+	public DummyVertex() {
+		super(null);
+		this.segment = null;
+		this.isHead = false;
+		this.isTail = false;
+	}
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public DummyVertex(Segment segment, boolean isHead) {
+		super(null);
+		this.segment = segment;
+		this.isHead = isHead;
+		this.isTail = !isHead;
+	}
+
+	public boolean isHead() {
+		return isHead;
+	}
+
+	public boolean isTail() {
+		return isTail;
+	}
+
+	public Segment getSegment() {
+		return segment;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public int getX() {
+		if (segment == null) {
+			return super.getX();
+		} else {
+			return segment.getX();
+		}
+	}
+
+	@Override
+	public void setX(int x) {
+		if (segment == null) {
+			super.setX(x);
+		} else {
+			segment.setX(x);
+		}
+	}
+
+	@Override
+	protected void appendString(StringBuilder sb) {
+		sb.append("v");
+		if (isHead) {
+			sb.append("h");
+		} else if (isTail) {
+			sb.append("t");
+		} else {
+			sb.append("d");
+		}
+		super.appendString(sb);
 	}
 }

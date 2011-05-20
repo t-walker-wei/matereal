@@ -1,12 +1,12 @@
 import java.util.List;
 
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.task.EndCleaning;
 import jp.digitalmuseum.mr.task.FillPath;
 import jp.digitalmuseum.mr.task.Move;
 import jp.digitalmuseum.mr.task.MobileCleaningTask;
 import jp.digitalmuseum.mr.task.TracePathLoosely;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
 import jp.digitalmuseum.utils.Position;
 
 /**
@@ -16,7 +16,7 @@ import jp.digitalmuseum.utils.Position;
  * @author Jun KATO
  */
 public class LassoAndClean extends LassoAndFill {
-	private ActivityDiagram ad = null;
+	private Workflow ad = null;
 
 	public static void main(String[] args) {
 		new LassoAndClean();
@@ -25,13 +25,13 @@ public class LassoAndClean extends LassoAndFill {
 	@Override
 	protected synchronized void onPathSpecified(List<Position> path) {
 
-		// Stop the activity diagram if running.
+		// Stop the workflow graph if running.
 		if (ad != null && ad.isStarted()) {
 			ad.stop();
 		}
 
-		// Construct an activity diagram.
-		ad = new ActivityDiagram();
+		// Construct a workflow graph.
+		ad = new Workflow();
 
 		List<Position> cleaningPath = FillPath.getCleaningPath(path, robot
 				.getShape().getBounds().getWidth());

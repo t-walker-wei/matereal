@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.entity.ResourceMap;
 import jp.digitalmuseum.mr.entity.Robot;
@@ -56,6 +55,7 @@ import jp.digitalmuseum.mr.message.RobotEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
+import jp.digitalmuseum.mr.workflow.Workflow;
 
 /**
  * Abstract implementation of Task interface.<br />
@@ -69,7 +69,7 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 	private transient Queue<RobotEvent> robotEventQueue;
 	private transient RobotEventListener robotEventListener;
 	private ResourceMap resourceMap;
-	private ActivityDiagram subDiagram;
+	private Workflow subflow;
 	private boolean isStopping;
 
 	@Override
@@ -132,8 +132,8 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 			throw new IllegalStateException("This task ("+getName()+") is not assigned to a robot.");
 		}
 		super.start();
-		if (hasSubDiagram()) {
-			getSubDiagram().start();
+		if (hasSubflow()) {
+			getSubflow().start();
 		}
 	}
 
@@ -146,8 +146,8 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 			return;
 		}
 		isStopping = true;
-		if (hasSubDiagram()) {
-			getSubDiagram().stop();
+		if (hasSubflow()) {
+			getSubflow().stop();
 		}
 		super.stop();
 		receiveRobotEvent(false);
@@ -157,16 +157,16 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		isStopping = false;
 	}
 
-	protected void setSubDiagram(ActivityDiagram subDiagram) {
-		this.subDiagram = subDiagram;
+	protected void setSubflow(Workflow subflow) {
+		this.subflow = subflow;
 	}
 
-	public ActivityDiagram getSubDiagram() {
-		return subDiagram;
+	public Workflow getSubflow() {
+		return subflow;
 	}
 
-	public boolean hasSubDiagram() {
-		return subDiagram != null;
+	public boolean hasSubflow() {
+		return subflow != null;
 	}
 
 	/**

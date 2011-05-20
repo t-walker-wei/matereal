@@ -1,18 +1,18 @@
 package kettle;
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.Fork;
-import jp.digitalmuseum.mr.activity.Join;
-import jp.digitalmuseum.mr.activity.Node;
-import jp.digitalmuseum.mr.activity.TimeoutTransition;
-import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.activity.layout.SugiyamaLayouter;
+import jp.digitalmuseum.mr.gui.workflow.layout.SugiyamaLayouter;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
 import jp.digitalmuseum.mr.task.Push;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.Fork;
+import jp.digitalmuseum.mr.workflow.Join;
+import jp.digitalmuseum.mr.workflow.Node;
+import jp.digitalmuseum.mr.workflow.TimeoutTransition;
+import jp.digitalmuseum.mr.workflow.Transition;
 import jp.digitalmuseum.utils.Location;
 import kettle.task.Boil;
 import kettle.task.Pour;
@@ -39,7 +39,7 @@ public class LayoutTest {
 		Kettle kettle = new Kettle("Kettle");
 
 		// Entities and marker detector are already initialized.
-		ActivityDiagram ad = new ActivityDiagram();
+		Workflow ad = new Workflow();
 		Action push = new Action(robot, new Push(mug, hakoniwa.getPosition(kettle)));
 		Action boil = new Action(kettle, new Boil());
 		Action boil2 = new Action(kettle, new Boil());

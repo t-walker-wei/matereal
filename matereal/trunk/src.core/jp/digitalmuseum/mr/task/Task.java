@@ -38,10 +38,10 @@ package jp.digitalmuseum.mr.task;
 
 import java.util.List;
 
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.service.Service;
+import jp.digitalmuseum.mr.workflow.Workflow;
 
 /**
  * Task interface
@@ -80,12 +80,12 @@ public interface Task extends Service {
 	public Robot getAssignedRobot();
 
 	/**
-	 * @return Returns if this task is running an activity diagram inside.
+	 * @return Returns if this task is running a workflow graph inside.
 	 */
-	public boolean hasSubDiagram();
+	public boolean hasSubflow();
 
 	/**
-	 * @return Returns an activity diagram running inside this task.
+	 * @return Returns a workflow graph running inside this task.
 	 */
-	public ActivityDiagram getSubDiagram();
+	public Workflow getSubflow();
 }

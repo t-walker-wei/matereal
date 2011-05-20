@@ -3,16 +3,9 @@ package kettle;
 import javax.swing.SwingUtilities;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.Fork;
-import jp.digitalmuseum.mr.activity.Join;
-import jp.digitalmuseum.mr.activity.Node;
-import jp.digitalmuseum.mr.activity.TimeoutTransition;
-import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
+import jp.digitalmuseum.mr.gui.workflow.WorkflowViewPane;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
@@ -20,6 +13,13 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.task.Push;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.Fork;
+import jp.digitalmuseum.mr.workflow.Join;
+import jp.digitalmuseum.mr.workflow.Node;
+import jp.digitalmuseum.mr.workflow.TimeoutTransition;
+import jp.digitalmuseum.mr.workflow.Transition;
 import jp.digitalmuseum.utils.Location;
 import kettle.task.Boil;
 import kettle.task.Pour;
@@ -51,7 +51,7 @@ public class BringACupOfTea {
 		final Kettle kettle = new Kettle("Kettle");
 
 		// Entities and marker detector are already initialized.
-		final ActivityDiagram ad = new ActivityDiagram();
+		final Workflow ad = new Workflow();
 		Action push = new Action(robot, new Push(mug, hakoniwa.getPosition(kettle)));
 		Action boil = new Action(kettle, new Boil());
 		Action pour = new Action(kettle, new Pour());
@@ -67,10 +67,10 @@ public class BringACupOfTea {
 		ad.start();
 		// Hot water will be poured into the mug for five seconds.
 
-		// Show an activity diagram.
+		// Show a workflow graph.
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				ActivityDiagramPane pane = new ActivityDiagramPane(ad);
+				WorkflowViewPane pane = new WorkflowViewPane(ad);
 				final DisposeOnCloseFrame viewer = new DisposeOnCloseFrame(pane);
 				viewer.setFrameSize(640, 480);
 

@@ -38,12 +38,12 @@ package jp.digitalmuseum.mr.task;
 
 import java.util.List;
 
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.Node;
-import jp.digitalmuseum.mr.activity.ResourceContext;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.resource.CleanerBrushController;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.Node;
+import jp.digitalmuseum.mr.workflow.ResourceContext;
 
 public class MobileCleaningTask extends MobileTaskAbstractImpl {
 	private static final long serialVersionUID = 5254602118627672909L;
@@ -62,21 +62,21 @@ public class MobileCleaningTask extends MobileTaskAbstractImpl {
 
 	@Override
 	protected void onAssigned() {
-		ActivityDiagram subDiagram = new ActivityDiagram(
+		Workflow subflow = new Workflow(
 				new ResourceContext(this, getResourceMap()));
 		Action startCleaning = new Action(getAssignedRobot(), new StartCleaning());
 		Action endCleaning = new Action(getAssignedRobot(), new EndCleaning());
-		subDiagram.addInSerial(new Node[] {
+		subflow.addInSerial(new Node[] {
 				startCleaning,
 				new Action(getAssignedRobot(), mobileTask),
 				endCleaning
 		});
-		subDiagram.setInitialNode(startCleaning);
-		setSubDiagram(subDiagram);
+		subflow.setInitialNode(startCleaning);
+		setSubflow(subflow);
 	}
 
 	public void run() {
-		if (!getSubDiagram().isStarted()) {
+		if (!getSubflow().isStarted()) {
 			finish();
 		}
 	}

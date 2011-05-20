@@ -34,23 +34,59 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow;
 
-import java.util.List;
+import java.awt.BasicStroke;
+import java.awt.Color;
 
-import jp.digitalmuseum.utils.Position;
+import jp.digitalmuseum.mr.gui.workflow.layout.Layout.Coordinate;
+import jp.digitalmuseum.mr.workflow.Node;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+import edu.umd.cs.piccolo.activities.PActivity;
+import edu.umd.cs.piccolo.nodes.PPath;
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+public abstract class PNodeAbstractImpl extends PPath {
+	private static final long serialVersionUID = 3592199380497357141L;
+	private Node node;
+	private static final int width = 200;
+	private static final int height = 70;
+
+	public static int getAreaWidth() {
+		return width;
 	}
 
-	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public static int getAreaHeight() {
+		return height;
+	}
+
+	public PNodeAbstractImpl(Node node) {
+		this.node = node;
+		setPaint(Color.white);
+		setStrokePaint(Color.black);
+	}
+
+	void setAsInitialNode() {
+		setStroke(new BasicStroke(2f));
+	}
+
+	PActivity setPosition(Coordinate coord) {
+		int p = WorkflowViewCanvas.getPadding();
+		int w = WorkflowViewCanvas.getMarginX() + getAreaWidth();
+		int h = WorkflowViewCanvas.getMarginY() + getAreaHeight();
+		return animateToPositionScaleRotation(coord.y * w + p, coord.x * h + p, 1.0f, 0.0f, 200);
+	}
+
+	Node getNode() {
+		return node;
+	}
+
+	public void onEnter() {
+		setStrokePaint(Color.red);
+		repaint();
+	}
+
+	public void onLeave() {
+		setStrokePaint(Color.black);
+		repaint();
 	}
 }

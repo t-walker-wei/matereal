@@ -34,23 +34,76 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow.layout;
 
-import java.util.List;
+import java.util.Iterator;
 
-import jp.digitalmuseum.utils.Position;
+import jp.digitalmuseum.utils.Array;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+public class Layer implements Iterable<LayerElement>, Cloneable {
+	private Array<LayerElement> elements;
+	private int depth;
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public Layer(int depth) {
+		this.elements = new Array<LayerElement>();
+		setDepth(depth);
+	}
+
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
+
+	public int getDepth() {
+		return depth;
+	}
+
+	public void push(LayerElement element) {
+		elements.push(element);
+		element.setDepth(depth);
+	}
+
+	public LayerElement get(int i) {
+		return elements.get(i);
+	}
+
+	public boolean contains(LayerElement element) {
+		return elements.contains(element);
+	}
+
+	public int size() {
+		return elements.size();
+	}
+
+	public void clear() {
+		elements.clear();
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Layer ");
+		sb.append(depth);
+		sb.append(": [ ");
+		for (LayerElement e : this) {
+			e.appendString(sb);
+			sb.append(" ");
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	@Override
+	public Iterator<LayerElement> iterator() {
+		return elements.iterator();
+	}
+
+	public Layer clone() {
+		try {
+			Layer layer = (Layer) super.clone();
+			layer.elements = new Array<LayerElement>(elements);
+			return layer;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 }

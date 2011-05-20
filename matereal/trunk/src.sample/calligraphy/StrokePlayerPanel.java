@@ -22,11 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.Fork;
-import jp.digitalmuseum.mr.activity.Join;
-import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
 import jp.digitalmuseum.mr.resource.WheelsController;
@@ -35,6 +30,11 @@ import jp.digitalmuseum.mr.task.DrawPath;
 import jp.digitalmuseum.mr.task.Move;
 import jp.digitalmuseum.mr.task.Rotate;
 import jp.digitalmuseum.mr.task.Task;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.Fork;
+import jp.digitalmuseum.mr.workflow.Join;
+import jp.digitalmuseum.mr.workflow.Transition;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
 
@@ -48,7 +48,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 	private JCheckBox jStrokeCheckBox = null;
 	private transient CoordProvider imageProvider;
 	private transient PathsProvider pathProvider;
-	private transient ActivityDiagram ad;
+	private transient Workflow ad;
 	private transient Robot[] robots;
 	private transient Stroke stroke;  //  @jve:decl-index=0:
 	private transient List<Path> paths;
@@ -57,7 +57,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 	/**
 	 * This is the default constructor
 	 */
-	public StrokePlayerPanel(CoordProvider coordProvider, ActivityDiagram ad) {
+	public StrokePlayerPanel(CoordProvider coordProvider, Workflow ad) {
 		super();
 		this.imageProvider = coordProvider;
 		this.ad = ad;
@@ -109,7 +109,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 				return;
 			}
 
-			// Construct an activity diagram.
+			// Construct a workflow graph.
 			Action[] inits = new Action[forks];
 			Action[] tails = new Action[forks];
 			int offset = 0;
@@ -132,7 +132,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 						p.add(imageProvider.screenToReal(sp));
 					}
 
-					// Add nodes and transitions for the robot to the diagram.
+					// Add nodes and transitions for the robot to the graph.
 					Action head = new Action(robots[r], new Move(p.get(0)));
 					Action a = new Action(robots[r], new Rotate(p.get(1)));
 					Action b = new Action(robots[r], new DrawPath(p));

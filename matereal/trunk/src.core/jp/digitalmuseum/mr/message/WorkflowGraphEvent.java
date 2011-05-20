@@ -34,23 +34,56 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.message;
 
-import java.util.List;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.Node;
+import jp.digitalmuseum.mr.workflow.Transition;
 
-import jp.digitalmuseum.utils.Position;
+public class WorkflowGraphEvent extends Event {
+	static public enum STATUS {
+		NODE_ADDED, NODE_REMOVED, TRANSITION_ADDED, TRANSITION_REMOVED,
+		INSTANTIATED, INITIAL_NODE_SET, DISPOSED
+	}
+	private STATUS status;
+	private Node node;
+	private Transition transition;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
-
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public WorkflowGraphEvent(Workflow source, STATUS status) {
+		super(source);
+		this.status = status;
+	}
+	public WorkflowGraphEvent(Workflow source, STATUS status, Node node) {
+		this(source, status);
+		this.node = node;
+	}
+	public WorkflowGraphEvent(Workflow source, STATUS status, Transition transition) {
+		this(source, status);
+		this.transition = transition;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public Workflow getSource() {
+		return (Workflow) super.getSource();
+	}
+
+	public STATUS getStatus() {
+		return status;
+	}
+
+	public Node getAffectedNode() {
+		return node;
+	}
+
+	public Transition getAffectedTransition() {
+		return transition;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getSource().getName());
+		sb.append(" changed: ");
+		sb.append(status);
+		return sb.toString();
 	}
 }
