@@ -34,23 +34,50 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow;
 
-import java.util.List;
+import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.ControlNode;
+import jp.digitalmuseum.mr.workflow.Edge;
+import jp.digitalmuseum.mr.workflow.Fork;
+import jp.digitalmuseum.mr.workflow.Join;
+import jp.digitalmuseum.mr.workflow.Node;
+import jp.digitalmuseum.mr.workflow.Transition;
 
-import jp.digitalmuseum.utils.Position;
+public class PNodeFactory {
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
-
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public static PNodeAbstractImpl newNodeInstance(Node node) {
+		PNodeAbstractImpl pNodeAbstractImpl;
+		if (node instanceof Action) {
+			pNodeAbstractImpl = new PActionNode((Action) node);
+		} else if (node instanceof ControlNode) {
+			pNodeAbstractImpl = new PControlNode((ControlNode) node);
+		} else {
+			pNodeAbstractImpl = null;
+			if (node == null) {
+				System.err.println("No node provided.");
+			} else {
+				System.err.println("Invalid type node: "
+						+ node.getClass().getSimpleName());
+			}
+		}
+		return pNodeAbstractImpl;
 	}
 
-	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public static PLineNodeAbstractImpl newEdgeInstance(Edge edge) {
+		PLineNodeAbstractImpl pNodeAbstractImpl;
+		if (edge instanceof Transition) {
+			pNodeAbstractImpl = new PTransitionLineNode((Transition) edge);
+		} else if (edge.getSource() instanceof Fork) {
+			pNodeAbstractImpl = new PForkLineNode(edge);
+		} else if (edge.getDestination() instanceof Join) {
+			pNodeAbstractImpl = new PJoinLineNode(edge);
+		} else {
+			pNodeAbstractImpl = null;
+			Matereal.getInstance().getErrorStream().print("Invalid type edge: ");
+			Matereal.getInstance().getErrorStream().println(edge.getClass().getSimpleName());
+		}
+		return pNodeAbstractImpl;
 	}
 }

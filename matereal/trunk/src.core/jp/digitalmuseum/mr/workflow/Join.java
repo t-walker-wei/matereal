@@ -34,23 +34,71 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.workflow;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import jp.digitalmuseum.utils.Position;
+import jp.digitalmuseum.mr.message.WorkflowEvent;
+import jp.digitalmuseum.mr.message.WorkflowEvent.STATUS;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.EventListener;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+public class Join extends ControlNode implements EventListener {
+	private static final long serialVersionUID = -6755092474761544807L;
+	private Set<EdgeImpl> edges;
+	private Set<Node> nodesToWait;
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public Join(Node... ins) {
+		edges = new HashSet<EdgeImpl>();
+		nodesToWait = new HashSet<Node>();
+		for (Node in : ins) {
+			edges.add(new EdgeImpl(in, this));
+		}
+	}
+
+	public EdgeImpl[] getEdges() {
+		EdgeImpl[] edgesArray = new EdgeImpl[0];
+		edgesArray = edges.toArray(edgesArray);
+		return edgesArray;
+	}
+
+	public Node[] getInputs() {
+		Node[] inputs = new Node[edges.size()];
+		int i = 0;
+		for (EdgeImpl edge : edges) {
+			inputs[i ++] = edge.getSource();
+		}
+		return inputs;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	protected void onEnter() {
+		for (EdgeImpl edge : edges) {
+			Node node = edge.getSource();
+			nodesToWait.add(node);
+			node.addEventListener(this);
+		}
+	}
+
+	@Override
+	protected synchronized boolean isDone() {
+		return nodesToWait.isEmpty();
+	}
+
+	public void eventOccurred(Event e) {
+		if (e instanceof WorkflowEvent) {
+			WorkflowEvent ae = (WorkflowEvent) e;
+			if (ae.getStatus() == STATUS.LEFT) {
+				Node node = ae.getSource();
+				nodesToWait.remove(node);
+				node.removeEventListener(this);
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Join["+edges.size()+"]";
 	}
 }

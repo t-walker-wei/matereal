@@ -34,23 +34,39 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow;
 
-import java.util.List;
+import edu.umd.cs.piccolo.nodes.PText;
+import jp.digitalmuseum.mr.workflow.ControlNode;
+import jp.digitalmuseum.mr.workflow.Fork;
 
-import jp.digitalmuseum.utils.Position;
+public class PControlNode extends PNodeAbstractImpl {
+	private static final long serialVersionUID = -3824502669188344253L;
+	private static final int width = 3;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
-
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public static int getAreaWidth() {
+		return width;
 	}
 
-	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public PControlNode(ControlNode controlNode) {
+		super(controlNode);
+
+		PText pText = new PText();
+		pText.setText(controlNode.getClass().getSimpleName());
+		addChild(pText);
+
+		if (controlNode instanceof Fork) {
+			setPathToRectangle(
+					super.getAreaWidth() - width, 0,
+					width, super.getAreaHeight());
+			pText.setOffset(
+					super.getAreaWidth() - width - pText.getWidth() - 10, 0);
+		} else {
+			setPathToRectangle(
+					0, 0,
+					width, super.getAreaHeight());
+			pText.setOffset(
+					10 - width, 0);
+		}
 	}
 }

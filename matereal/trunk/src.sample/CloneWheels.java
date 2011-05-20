@@ -3,9 +3,6 @@
 import java.util.HashSet;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.TimeoutTransition;
 import jp.digitalmuseum.mr.entity.CloneWheelsRobot;
 import jp.digitalmuseum.mr.entity.MindstormsNXT;
 import jp.digitalmuseum.mr.entity.NetTansor;
@@ -18,6 +15,9 @@ import jp.digitalmuseum.mr.task.SpinLeft;
 import jp.digitalmuseum.mr.task.SpinRight;
 import jp.digitalmuseum.mr.task.Stop;
 import jp.digitalmuseum.mr.task.Task;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.TimeoutTransition;
 
 /**
  * Assign tasks to a virtual robot. The robot works as a proxy of five real robots.
@@ -53,7 +53,7 @@ public class CloneWheels {
 		};
 
 		// Connect tasks with timeout transitions.
-		ActivityDiagram ad = new ActivityDiagram();
+		Workflow ad = new Workflow();
 		Action action = null;
 		for (Task task : tasks) {
 			Action newAction = new Action(virtualRobot, task);

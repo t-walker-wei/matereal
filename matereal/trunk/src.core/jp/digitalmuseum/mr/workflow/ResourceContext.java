@@ -34,23 +34,25 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.workflow;
 
-import java.util.List;
+import jp.digitalmuseum.mr.entity.ResourceMap;
+import jp.digitalmuseum.mr.task.Task;
 
-import jp.digitalmuseum.utils.Position;
+public class ResourceContext {
+	private Task task;
+	private ResourceMap resourceMap;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
-
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public ResourceContext(Task task, ResourceMap resourceMap) {
+		this.task = task;
+		this.resourceMap = resourceMap;
 	}
 
-	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	Task getTask() {
+		return task;
+	}
+
+	ResourceMap getResources() {
+		return resourceMap;
 	}
 }

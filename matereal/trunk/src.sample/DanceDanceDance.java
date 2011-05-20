@@ -1,12 +1,6 @@
 import javax.swing.SwingUtilities;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.Fork;
-import jp.digitalmuseum.mr.activity.Join;
-import jp.digitalmuseum.mr.activity.TimeoutTransition;
-import jp.digitalmuseum.mr.activity.Transition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
@@ -15,10 +9,16 @@ import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
 import jp.digitalmuseum.mr.task.GoForward;
 import jp.digitalmuseum.mr.task.SpinLeft;
 import jp.digitalmuseum.mr.task.Stop;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.Fork;
+import jp.digitalmuseum.mr.workflow.Join;
+import jp.digitalmuseum.mr.workflow.TimeoutTransition;
+import jp.digitalmuseum.mr.workflow.Transition;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
- * Make 4 robots do the same things in parallel. Test of using an activity diagram.
+ * Make 4 robots do the same things in parallel. Test of using a workflow graph.
  *
  * @author Jun KATO
  */
@@ -35,9 +35,9 @@ public class DanceDanceDance {
 		hakoniwa = new Hakoniwa(640, 480);
 		hakoniwa.start();
 
-		// Construct an activity diagram.
+		// Construct a workflow graph.
 		final Robot[] robots = new Robot[4];
-		final ActivityDiagram ad = new ActivityDiagram();
+		final Workflow ad = new Workflow();
 		final Action[] initialNodes = new Action[robots.length];
 		final Action[] finalNodes = new Action[robots.length];
 		for (int i = 0; i < robots.length; i ++) {
@@ -74,7 +74,7 @@ public class DanceDanceDance {
 		ad.setInitialNode(fork);
 		ad.start();
 
-		// Make windows for showing an activity diagram and status of hakoniwa.
+		// Make windows for showing a workflow graph and status of hakoniwa.
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa)) {

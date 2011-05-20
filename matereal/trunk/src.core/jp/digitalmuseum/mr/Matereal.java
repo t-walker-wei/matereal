@@ -53,7 +53,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.UIManager;
 
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.Messages;
@@ -65,6 +64,7 @@ import jp.digitalmuseum.mr.message.ServiceEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
+import jp.digitalmuseum.mr.workflow.Workflow;
 import jp.digitalmuseum.utils.Array;
 
 /**
@@ -81,7 +81,7 @@ public final class Matereal implements EventProvider, EventListener {
 	private ScheduledExecutorService executor;
 	private Set<Entity> entities;
 	private List<Service> services;
-	private Set<ActivityDiagram> diagrams;
+	private Set<Workflow> workflows;
 	private PrintStream out;
 	private PrintStream err;
 	private Font defaultFont;
@@ -102,7 +102,7 @@ public final class Matereal implements EventProvider, EventListener {
 		executor = Executors.newScheduledThreadPool(DEFAULT_NUM_THREADS);
 		entities = new HashSet<Entity>();
 		services = new ArrayList<Service>();
-		diagrams = new HashSet<ActivityDiagram>();
+		workflows = new HashSet<Workflow>();
 		setLookAndFeel();
 	}
 
@@ -256,26 +256,26 @@ public final class Matereal implements EventProvider, EventListener {
 	}
 
 	/**
-	 * Called by ActivityDiagram constructor.
-	 * @param graph
-	 * @see jp.digitalmuseum.mr.activity.ActivityDiagram
+	 * Called by {@link Workflow} constructor.
+	 * @param workflow
+	 * @see jp.digitalmuseum.mr.workflow.Workflow
 	 */
-	public void registerGraph(ActivityDiagram graph) {
-		synchronized (diagrams) {
-			diagrams.add(graph);
-			graph.addEventListener(this);
+	public void registerWorkflow(Workflow workflow) {
+		synchronized (workflows) {
+			workflows.add(workflow);
+			workflow.addEventListener(this);
 		}
 	}
 
 	/**
-	 * Called by ActivityDiagram.dispose().
-	 * @param graph
+	 * Called by {@link Workflow#dispose()}.
+	 * @param workflow
 	 * @return Returns if unregistered successfully.
 	 */
-	public boolean unregisterGraph(ActivityDiagram graph) {
-		synchronized (diagrams) {
-			if (diagrams.remove(graph)) {
-				graph.removeEventListener(this);
+	public boolean unregisterWorkflow(Workflow workflow) {
+		synchronized (workflows) {
+			if (workflows.remove(workflow)) {
+				workflow.removeEventListener(this);
 				return true;
 			}
 			return false;
@@ -308,11 +308,11 @@ public final class Matereal implements EventProvider, EventListener {
 	}
 
 	/**
-	 * Get a list of activity diagrams.
+	 * Get a list of workflow graphs.
 	 */
-	public Set<ActivityDiagram> getGraphs() {
-		synchronized (diagrams) {
-			return new HashSet<ActivityDiagram>(diagrams);
+	public Set<Workflow> getWorkflows() {
+		synchronized (workflows) {
+			return new HashSet<Workflow>(workflows);
 		}
 	}
 

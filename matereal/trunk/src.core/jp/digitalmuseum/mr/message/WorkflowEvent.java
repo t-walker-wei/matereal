@@ -34,23 +34,36 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.message;
 
-import java.util.List;
+import jp.digitalmuseum.mr.workflow.Node;
 
-import jp.digitalmuseum.utils.Position;
+public class WorkflowEvent extends Event {
+	static public enum STATUS {
+		/** Transition from another node. */ ENTERED,
+		/** Transition to another node. */ LEFT
+	}
+	private STATUS status;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
-
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public WorkflowEvent(Node source, STATUS status) {
+		super(source);
+		this.status = status;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public Node getSource() {
+		return (Node) super.getSource();
+	}
+
+	public STATUS getStatus() {
+		return status;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getSource());
+		sb.append(" event occurred: ");
+		sb.append(status);
+		return sb.toString();
 	}
 }

@@ -39,9 +39,9 @@ package jp.digitalmuseum.mr.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.ResourceContext;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.ResourceContext;
 import jp.digitalmuseum.utils.Position;
 
 public class TracePath extends LocationBasedTaskAbstractImpl {
@@ -61,11 +61,11 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 
 	@Override
 	protected void onAssigned() {
-		updateSubDiagram();
+		updateSubflow();
 	}
 
 	public void run() {
-		if (!getSubDiagram().isStarted()) {
+		if (!getSubflow().isStarted()) {
 			finish();
 		}
 	}
@@ -113,9 +113,9 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 	public synchronized void updatePath(List<Position> path) {
 		this.path = new ArrayList<Position>(path);
 		if (isStarted()) {
-			getSubDiagram().stop();
-			updateSubDiagram();
-			getSubDiagram().start();
+			getSubflow().stop();
+			updateSubflow();
+			getSubflow().start();
 		}
 	}
 
@@ -123,8 +123,8 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 		return new ArrayList<Position>(path);
 	}
 
-	protected void updateSubDiagram() {
-		ActivityDiagram subDiagram = new ActivityDiagram(
+	protected void updateSubflow() {
+		Workflow subflow = new Workflow(
 				new ResourceContext(this, getResourceMap()));
 		actions = new Action[path.size()];
 		int i = 0;
@@ -135,8 +135,8 @@ public class TracePath extends LocationBasedTaskAbstractImpl {
 					allowedDistance : allowedInterimDistance);
 			actions[i ++] = new Action(getAssignedRobot(), move);
 		}
-		subDiagram.addInSerial(actions);
-		subDiagram.setInitialNode(actions[0]);
-		setSubDiagram(subDiagram);
+		subflow.addInSerial(actions);
+		subflow.setInitialNode(actions[0]);
+		setSubflow(subflow);
 	}
 }

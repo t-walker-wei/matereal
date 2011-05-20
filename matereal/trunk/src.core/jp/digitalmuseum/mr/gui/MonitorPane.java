@@ -43,7 +43,7 @@ import jp.digitalmuseum.mr.Matereal;
 public class MonitorPane extends JTabbedPane implements DisposableComponent {
 
 	private static final long serialVersionUID = 628084706596398147L;
-	private GraphMonitorPanel graphMonitorPanel = null;
+	private WorkflowMonitorPanel graphMonitorPanel = null;
 	private EntityMonitorPanel entityMonitorPanel = null;
 	private ServiceMonitorPanel serviceMonitorPanel = null;
 
@@ -78,9 +78,9 @@ public class MonitorPane extends JTabbedPane implements DisposableComponent {
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private GraphMonitorPanel getGraphMonitorPanel() {
+	private WorkflowMonitorPanel getGraphMonitorPanel() {
 		if (graphMonitorPanel  == null) {
-			graphMonitorPanel = new GraphMonitorPanel();
+			graphMonitorPanel = new WorkflowMonitorPanel();
 		}
 		return graphMonitorPanel;
 	}

@@ -1,9 +1,6 @@
 
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.TimeoutTransition;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
@@ -15,6 +12,9 @@ import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.message.LocationUpdateEvent;
 import jp.digitalmuseum.mr.task.GoForward;
 import jp.digitalmuseum.mr.task.Stop;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.TimeoutTransition;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
@@ -60,7 +60,7 @@ public class UseTaskOnHakoniwa implements EventListener {
 		Action a = new Action(robot, new GoForward());
 		Action b = new Action(robot, new Stop());
 
-		ActivityDiagram ad = new ActivityDiagram();
+		Workflow ad = new Workflow();
 		ad.add(a);
 		ad.add(b);
 		ad.setInitialNode(a);

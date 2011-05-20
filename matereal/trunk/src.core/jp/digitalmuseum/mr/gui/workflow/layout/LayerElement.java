@@ -34,23 +34,47 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow.layout;
 
-import java.util.List;
+public class LayerElement {
+	private int depth = 0;
+	private double measure;
+	private int x = 0;
 
-import jp.digitalmuseum.utils.Position;
+	void setDepth(int depth) {
+		this.depth = depth;
+	}
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+	int getDepth() {
+		return depth;
+	}
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	void setX(int x) {
+		this.x = x;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	void setMeasure(double measure) {
+		this.measure = measure;
+	}
+
+	double getMeasure() {
+		return measure;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		appendString(sb);
+		return sb.toString();
+	}
+
+	protected void appendString(StringBuilder sb) {
+		sb.append("(");
+		sb.append(String.format("%.3f", getMeasure()));
+		sb.append(")");
 	}
 }

@@ -53,7 +53,7 @@ public class resources extends PropertyResourceBundle {
 		"CoordProviderPanel.width=Width of the rectangle area:\n" +
 		"CoordProviderPanel.height=Height of the rectangle area:\n" +
 		"CoordProviderPanel.reset=Reset the rectangle\n" +
-		"MonitorPane.graphs=Activity graphs\n" +
+		"MonitorPane.graphs=Workflow graphs\n" +
 		"MonitorPane.entities=Robots and entities\n" +
 		"MonitorPane.services=Services\n" +
 		"GraphMonitorPanel.selectedGraph=Selected graph\n" +

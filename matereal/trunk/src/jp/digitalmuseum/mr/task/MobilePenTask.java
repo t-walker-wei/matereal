@@ -38,12 +38,12 @@ package jp.digitalmuseum.mr.task;
 
 import java.util.List;
 
-import jp.digitalmuseum.mr.activity.Action;
-import jp.digitalmuseum.mr.activity.ActivityDiagram;
-import jp.digitalmuseum.mr.activity.Node;
-import jp.digitalmuseum.mr.activity.ResourceContext;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.resource.PenController;
+import jp.digitalmuseum.mr.workflow.Action;
+import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.Node;
+import jp.digitalmuseum.mr.workflow.ResourceContext;
 
 public class MobilePenTask extends MobileTaskAbstractImpl {
 	private static final long serialVersionUID = 2947306000999075302L;
@@ -62,21 +62,21 @@ public class MobilePenTask extends MobileTaskAbstractImpl {
 
 	@Override
 	protected void onAssigned() {
-		ActivityDiagram subDiagram = new ActivityDiagram(
+		Workflow subflow = new Workflow(
 				new ResourceContext(this, getResourceMap()));
 		Action putPen = new Action(getAssignedRobot(), new PutPen());
 		Action endPen = new Action(getAssignedRobot(), new EndPen());
-		subDiagram.addInSerial(new Node[] {
+		subflow.addInSerial(new Node[] {
 				putPen,
 				new Action(getAssignedRobot(), mobileTask),
 				endPen
 		});
-		subDiagram.setInitialNode(putPen);
-		setSubDiagram(subDiagram);
+		subflow.setInitialNode(putPen);
+		setSubflow(subflow);
 	}
 
 	public void run() {
-		if (!getSubDiagram().isStarted()) {
+		if (!getSubflow().isStarted()) {
 			finish();
 		}
 	}

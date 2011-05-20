@@ -38,7 +38,7 @@ package jp.digitalmuseum.mr.task;
 
 import java.util.List;
 
-import jp.digitalmuseum.mr.activity.Transition;
+import jp.digitalmuseum.mr.workflow.Transition;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.Vector2D;
 
@@ -49,11 +49,11 @@ public class TracePathLoosely extends TracePath {
 		super(path);
 	}
 
-	protected void updateSubDiagram() {
-		super.updateSubDiagram();
+	protected void updateSubflow() {
+		super.updateSubflow();
 		for (int i = 0; i < actions.length - 1; i ++) {
 			final Position goal = ((Move) actions[i].getTask()).getDestination();
-			getSubDiagram().addTransition(
+			getSubflow().addTransition(
 					new Transition(actions[i], actions[i+1]) {
 				private static final long serialVersionUID = -8090374836293962317L;
 				private Vector2D initialVector;

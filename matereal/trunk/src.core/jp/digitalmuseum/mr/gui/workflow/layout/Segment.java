@@ -34,23 +34,38 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow.layout;
 
-import java.util.List;
 
-import jp.digitalmuseum.utils.Position;
+public class Segment extends LayerElement {
+	private DummyVertex head;
+	private DummyVertex tail;
+	private Container container;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+	public Segment() {
+		this.head = new DummyVertex(this, true);
+		this.tail = new DummyVertex(this, false);
+	}
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public DummyVertex getHead() {
+		return head;
+	}
+
+	public DummyVertex getTail() {
+		return tail;
+	}
+
+	void setContainer(Container container) {
+		this.container = container;
+	}
+
+	Container getContainer() {
+		return container;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	protected void appendString(StringBuilder sb) {
+		sb.append("sg");
+		super.appendString(sb);
 	}
 }

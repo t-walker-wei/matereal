@@ -34,23 +34,68 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.gui.workflow;
 
-import java.util.List;
+import java.awt.Color;
+import java.awt.geom.Point2D;
 
-import jp.digitalmuseum.utils.Position;
+import edu.umd.cs.piccolo.nodes.PText;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
+import jp.digitalmuseum.mr.workflow.Node;
+import jp.digitalmuseum.mr.workflow.TimeoutTransition;
+import jp.digitalmuseum.mr.workflow.Transition;
 
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+public class PTransitionLineNode extends PLineNodeAbstractImpl {
+	private static final long serialVersionUID = 5091941901786318920L;
+	private Transition transition;
+	private PText text;
+	private static Color color = new Color(100, 100, 100);
+
+	public PTransitionLineNode(Transition transition) {
+		this.transition = transition;
+		if (transition instanceof TimeoutTransition) {
+			long timeout = ((TimeoutTransition) transition).getTimeout();
+			text = new PText(String.format("%.1fs", (float)timeout/1000));
+			text.setFont(text.getFont().deriveFont(10f));
+			text.setConstrainWidthToTextWidth(true);
+			text.setPaint(Color.white);
+			addChild(text);
+		} else {
+			text = null;
+		}
+	}
+
+	public Transition getTransition() {
+		return transition;
+	}
+
+	public Node getSource() {
+		return transition.getSource();
+	}
+
+	public Node getDestination() {
+		return transition.getDestination();
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	protected void setLine(Point2D[] points) {
+		super.setLine(points);
+		if (text != null) {
+			Point2D start, end;
+			if (points.length == 2) {
+				start = points[0];
+				end = points[1];
+			} else {
+				start = points[1];
+				end = points[2];
+			}
+			text.setOffset(
+					(start.getX() + end.getX() - text.getWidth()) / 2,
+					(start.getY() + end.getY()) / 2 - text.getHeight() - 2);
+		}
+	}
+
+	protected Color getDefaultStrokeColor() {
+		return color;
 	}
 }

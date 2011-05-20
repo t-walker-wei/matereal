@@ -34,23 +34,23 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.workflow;
 
-import java.util.List;
+public class EdgeImpl implements Edge {
+	private static final long serialVersionUID = 873973476602139733L;
+	private Node source;
+	private Node destination;
 
-import jp.digitalmuseum.utils.Position;
-
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
-
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public EdgeImpl(Node source, Node destination) {
+		this.source = source;
+		this.destination = destination;
 	}
 
-	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	public Node getSource() {
+		return source;
+	}
+
+	public Node getDestination() {
+		return destination;
 	}
 }

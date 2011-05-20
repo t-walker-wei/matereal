@@ -34,23 +34,26 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.task;
+package jp.digitalmuseum.mr.workflow;
 
-import java.util.List;
+import jp.digitalmuseum.mr.workflow.Node;
+import jp.digitalmuseum.mr.workflow.Transition;
 
-import jp.digitalmuseum.utils.Position;
+public class TimeoutTransition extends Transition {
+	private static final long serialVersionUID = 969263044496168882L;
+	private long timeout;
 
-public class FillPathLoosely extends TracePathLoosely {
-	private static final long serialVersionUID = 5500676247437092750L;
-
-	public FillPathLoosely(List<Position> path) {
-		super(path);
+	public TimeoutTransition(Node source, Node destination, long timeout) {
+		super(source, destination);
+		this.timeout = timeout;
 	}
 
 	@Override
-	protected void updateSubflow() {
-		path = FillPath.getCleaningPath(path,
-				getAssignedRobot().getShape().getBounds().getWidth());
-		super.updateSubflow();
+	protected boolean guard() {
+		return getSource().getAliveTime() > timeout;
+	}
+
+	public long getTimeout() {
+		return timeout;
 	}
 }
