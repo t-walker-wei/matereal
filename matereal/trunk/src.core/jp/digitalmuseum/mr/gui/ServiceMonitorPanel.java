@@ -74,6 +74,7 @@ import java.awt.Rectangle;
 import javax.swing.border.SoftBevelBorder;
 import java.awt.CardLayout;
 import javax.swing.JSplitPane;
+import javax.swing.JButton;
 
 /**
  * Monitor panel for service and service groups.
@@ -87,7 +88,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private JSplitPane jSplitPane = null;
 
 	private JPanel jLeftPanel = null;
-	private JPanel jRightPanel = null;
+	private JPanel jRightViewPanel = null;
 
 	private JScrollPane jScrollPane = null;
 	private JTree jTree = null;
@@ -115,6 +116,14 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private transient Map<Service, JComponent> serviceComponents;
 
 	private JLabel jLabel1 = null;
+
+	private JButton instantiateButton = null;
+
+	private JPanel jRightPanel = null;
+
+	private JButton disposeButton = null;
+
+	private JPanel instantiatePanel = null;
 
 	/** Singleton constructor. */
 	public ServiceMonitorPanel() {
@@ -184,8 +193,8 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private JSplitPane getJSplitPane() {
 		if (jSplitPane == null) {
 			jSplitPane = new JSplitPane();
-			jSplitPane.setRightComponent(getJRightPanel());
 			jSplitPane.setLeftComponent(getJLeftPanel());
+			jSplitPane.setRightComponent(getJRightPanel());
 		}
 		return jSplitPane;
 	}
@@ -197,25 +206,44 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	 */
 	private JPanel getJLeftPanel() {
 		if (jLeftPanel == null) {
+			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+			gridBagConstraints12.gridx = 1;
+			gridBagConstraints12.anchor = GridBagConstraints.WEST;
+			gridBagConstraints12.weightx = 1.0D;
+			gridBagConstraints12.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints12.insets = new Insets(0, 0, 5, 5);
+			gridBagConstraints12.gridy = 1;
+			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
+			gridBagConstraints9.gridx = 0;
+			gridBagConstraints9.anchor = GridBagConstraints.WEST;
+			gridBagConstraints9.insets = new Insets(0, 5, 5, 3);
+			gridBagConstraints9.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints9.weightx = 0.0D;
+			gridBagConstraints9.gridy = 1;
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = GridBagConstraints.BOTH;
 			gridBagConstraints6.weighty = 1.0;
 			gridBagConstraints6.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints6.gridx = 0;
+			gridBagConstraints6.gridy = 0;
+			gridBagConstraints6.gridwidth = 2;
 			gridBagConstraints6.weightx = 1.0;
 			jLeftPanel = new JPanel();
 			jLeftPanel.setLayout(new GridBagLayout());
 			jLeftPanel.add(getJScrollPane(), gridBagConstraints6);
+			jLeftPanel.add(getInstantiateButton(), gridBagConstraints9);
+			jLeftPanel.add(getDisposeButton(), gridBagConstraints12);
 		}
 		return jLeftPanel;
 	}
 
 	/**
-	 * This method initializes jRightPanel
+	 * This method initializes jRightViewPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJRightPanel() {
-		if (jRightPanel == null) {
+	private JPanel getJRightViewPanel() {
+		if (jRightViewPanel == null) {
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = 0;
 			gridBagConstraints.gridy = 0;
@@ -237,14 +265,15 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			gridBagConstraints4.weightx = 1.0D;
 			gridBagConstraints4.weighty = 1.0D;
 			gridBagConstraints4.insets = new Insets(0, 5, 5, 5);
-			jRightPanel = new JPanel();
-			jRightPanel.setLayout(new GridBagLayout());
-			jRightPanel.setPreferredSize(new Dimension(320, 420));
-			jRightPanel.add(jSelectedServiceLabel, gridBagConstraints);
-			jRightPanel.add(getJServiceInformationPanel(), gridBagConstraints3);
-			jRightPanel.add(getJServicePanel(), gridBagConstraints4);
+			jRightViewPanel = new JPanel();
+			jRightViewPanel.setLayout(new GridBagLayout());
+			jRightViewPanel.setPreferredSize(new Dimension(320, 420));
+			jRightViewPanel.setName("jRightPanel");
+			jRightViewPanel.add(jSelectedServiceLabel, gridBagConstraints);
+			jRightViewPanel.add(getJServiceInformationPanel(), gridBagConstraints3);
+			jRightViewPanel.add(getJServicePanel(), gridBagConstraints4);
 		}
-		return jRightPanel;
+		return jRightViewPanel;
 	}
 
 	/**
@@ -507,5 +536,63 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 		// Remove from groupNodeMap
 		groupNodeMap.remove(serviceGroup);
+	}
+
+	/**
+	 * This method initializes instantiateButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getInstantiateButton() {
+		if (instantiateButton == null) {
+			instantiateButton = new JButton();
+			instantiateButton.setText("+");
+		}
+		return instantiateButton;
+	}
+
+	/**
+	 * This method initializes jRightPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getJRightPanel() {
+		if (jRightPanel == null) {
+			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+			gridBagConstraints10.gridx = -1;
+			gridBagConstraints10.gridy = -1;
+			jRightPanel = new JPanel();
+			jRightPanel.setLayout(new CardLayout());
+			jRightPanel.add(getJRightViewPanel(), getJRightViewPanel().getName());
+			jRightPanel.add(getInstantiatePanel(), getInstantiatePanel().getName());
+		}
+		return jRightPanel;
+	}
+
+	/**
+	 * This method initializes disposeButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getDisposeButton() {
+		if (disposeButton == null) {
+			disposeButton = new JButton();
+			disposeButton.setText("-");
+		}
+		return disposeButton;
+	}
+
+	/**
+	 * This method initializes instantiatePanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getInstantiatePanel() {
+		if (instantiatePanel == null) {
+			instantiatePanel = new JPanel();
+			instantiatePanel.setLayout(new GridBagLayout());
+			instantiatePanel.setName("instantiatePanel");
+		}
+		return instantiatePanel;
 	}
 }

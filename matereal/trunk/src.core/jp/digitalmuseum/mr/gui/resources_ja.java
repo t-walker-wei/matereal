@@ -46,6 +46,7 @@ public class resources_ja extends PropertyResourceBundle {
 
 	private final static String resourcesString =
 		"Matereal.fonts=ヒラギノ角ゴ Pro W3,Hiragino Kaku Gothic Pro,メイリオ,Meiryo,ＭＳ Ｐゴシック,MS UI Gothic\n" +
+		"Matereal.debugTitle=デバッグ ウィンドウ\n" +
 		"CoordProviderPanel.centimeter=[cm]\n" +
 		"CoordProviderPanel.apply=サイズの変更を適用\n" +
 		"CoordProviderPanel.errorDescWidth=矩形の幅を半角の数字で入力してください.\n" +
@@ -54,8 +55,11 @@ public class resources_ja extends PropertyResourceBundle {
 		"CoordProviderPanel.width=矩形の幅:\n" +
 		"CoordProviderPanel.height=矩形の高さ:\n" +
 		"CoordProviderPanel.reset=矩形のリセット\n" +
+		"MonitorPane.graphs=アクティビティ グラフ\n" +
 		"MonitorPane.entities=ロボットとその他の物体\n" +
 		"MonitorPane.services=サービス\n" +
+		"GraphMonitorPanel.selectedGraph=選択されたグラフ\n" +
+		"GraphMonitorPanel.nameOfSelectedGraph=選択されたグラフの名称.\n" +
 		"EntityMonitorPanel.selectedEntity=選択された物体\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=選択された物体の名称.\n" +
 		"EntityPanel.entityType=物体の種類\n" +

@@ -37,9 +37,10 @@
 package jp.digitalmuseum.mr.gui;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.message.EntityEvent;
-import jp.digitalmuseum.mr.message.EntityEvent.STATUS;
+import jp.digitalmuseum.mr.activity.ActivityDiagram;
+import jp.digitalmuseum.mr.gui.activity.ActivityDiagramPane;
+import jp.digitalmuseum.mr.message.ActivityDiagramEvent;
+import jp.digitalmuseum.mr.message.ActivityDiagramEvent.STATUS;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 
@@ -79,7 +80,7 @@ import javax.swing.JButton;
  *
  * @author Jun KATO
  */
-public class EntityMonitorPanel extends JPanel implements EventListener, TreeSelectionListener, Runnable, DisposableComponent {
+public class GraphMonitorPanel extends JPanel implements EventListener, TreeSelectionListener, Runnable, DisposableComponent {
 
 	private static final long serialVersionUID = 3317150753032501439L;
 
@@ -91,16 +92,16 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	private JScrollPane jScrollPane = null;
 	private JTree jTree = null;
 
-	private JLabel jSelectedEntityLabel = null;
-	private JPanel jEntityPanel = null;
+	private JLabel jSelectedGraphLabel = null;
+	private JPanel graphPanel = null;
 
 	/** Root node for jTree. */
 	private DefaultMutableTreeNode root;
 
 	/** Map of entities and their corresponding nodes. */
-	private transient Map<Entity, DefaultMutableTreeNode> entityNodeMap;
+	private transient Map<ActivityDiagram, DefaultMutableTreeNode> graphNodeMap;
 
-	private transient Map<Entity, JComponent> entityComponents;
+	private transient Map<ActivityDiagram, ActivityDiagramPane> graphComponents;
 
 	private JPanel jRightPanel = null;
 
@@ -109,12 +110,12 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	private JButton disposeButton = null;
 
 	/** Singleton constructor. */
-	public EntityMonitorPanel() {
+	public GraphMonitorPanel() {
 		super();
 
 		// Initialize hash maps.
-		entityNodeMap = new HashMap<Entity, DefaultMutableTreeNode>();
-		entityComponents = new HashMap<Entity, JComponent>();
+		graphNodeMap = new HashMap<ActivityDiagram, DefaultMutableTreeNode>();
+		graphComponents = new HashMap<ActivityDiagram, ActivityDiagramPane>();
 
 		// Root node of the tree view, used at getJTree() etc.
 		final Matereal matereal = Matereal.getInstance();
@@ -123,10 +124,10 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		// Initialize the monitor pane.
 		initialize();
 		Matereal.getInstance().addEventListener(this);
-		for (Entity entity : Matereal.getInstance().getEntities()) {
-			addEntity(entity);
+		for (ActivityDiagram graph : Matereal.getInstance().getGraphs()) {
+			addGraph(graph);
 		}
-		selectEntity(null);
+		selectGraph(null);
 	}
 
 	/**
@@ -142,23 +143,23 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		setPreferredSize(new Dimension(640, 420));
 		setLayout(new GridBagLayout());
 		setBounds(new Rectangle(0, 0, 480, 320));
-		jSelectedEntityLabel = new JLabel();
-		jSelectedEntityLabel.setText(Messages.getString("EntityMonitorPanel.selectedEntity")); //$NON-NLS-1$
-		jSelectedEntityLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
-		jSelectedEntityLabel.setToolTipText(Messages.getString("EntityMonitorPanel.nameOfSelectedEntity")); //$NON-NLS-1$
+		jSelectedGraphLabel = new JLabel();
+		jSelectedGraphLabel.setText(Messages.getString("GraphMonitorPanel.selectedGraph")); //$NON-NLS-1$
+		jSelectedGraphLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
+		jSelectedGraphLabel.setToolTipText(Messages.getString("GraphMonitorPanel.nameOfSelectedGraph")); //$NON-NLS-1$
 		this.add(getJSplitPane(), gridBagConstraints11);
 	}
 
 	public void dispose() {
 		Matereal.getInstance().removeEventListener(this);
-		for (JComponent serviceComponent : entityComponents.values()) {
+		for (JComponent serviceComponent : graphComponents.values()) {
 			if (serviceComponent != null) {
 				if (serviceComponent instanceof DisposableComponent) {
 					((DisposableComponent) serviceComponent).dispose();
 				}
 			}
 		}
-		entityComponents.clear();
+		graphComponents.clear();
 	}
 
 	/**
@@ -238,8 +239,8 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 			jRightViewPanel.setLayout(new GridBagLayout());
 			jRightViewPanel.setPreferredSize(new Dimension(320, 420));
 			jRightViewPanel.setName("jRightViewPanel");
-			jRightViewPanel.add(jSelectedEntityLabel, gridBagConstraints2);
-			jRightViewPanel.add(getJEntityPanel(), gridBagConstraints4);
+			jRightViewPanel.add(jSelectedGraphLabel, gridBagConstraints2);
+			jRightViewPanel.add(getGraphPanel(), gridBagConstraints4);
 		}
 		return jRightViewPanel;
 	}
@@ -279,18 +280,18 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	}
 
 	/**
-	 * This method initializes jEntityPanel
+	 * This method initializes graphPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJEntityPanel() {
-		if (jEntityPanel == null) {
-			jEntityPanel = new JPanel();
-			jEntityPanel.setPreferredSize(new Dimension(400, 420));
-			jEntityPanel.setLayout(new CardLayout());
-			jEntityPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
+	private JPanel getGraphPanel() {
+		if (graphPanel == null) {
+			graphPanel = new JPanel();
+			graphPanel.setPreferredSize(new Dimension(400, 420));
+			graphPanel.setLayout(new CardLayout());
+			graphPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
 		}
-		return jEntityPanel;
+		return graphPanel;
 	}
 
 	public void run() {
@@ -306,22 +307,22 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		}
 
 		Object nodeInfo = node.getUserObject();
-		if (nodeInfo instanceof Entity) {
-			selectEntity((Entity) nodeInfo);
+		if (nodeInfo instanceof ActivityDiagram) {
+			selectGraph((ActivityDiagram) nodeInfo);
 		}
 	}
 
 	public void eventOccurred(Event e) {
-		if (e instanceof EntityEvent) {
-			EntityEvent ee = (EntityEvent) e;
-			if (ee.getStatus() == STATUS.INSTANTIATED ||
-					ee.getStatus() == STATUS.DISPOSED) {
-				Entity entity = ee.getSource();
+		if (e instanceof ActivityDiagramEvent) {
+			ActivityDiagramEvent ade = (ActivityDiagramEvent) e;
+			if (ade.getStatus() == STATUS.INSTANTIATED ||
+					ade.getStatus() == STATUS.DISPOSED) {
+				ActivityDiagram entity = ade.getSource();
 
-				if (ee.getStatus() == STATUS.INSTANTIATED) {
-					addEntity(entity);
+				if (ade.getStatus() == STATUS.INSTANTIATED) {
+					addGraph(entity);
 				} else {
-					removeEntity(entity);
+					removeGraph(entity);
 				}
 
 				SwingUtilities.invokeLater(this);
@@ -329,50 +330,50 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		}
 	}
 
-	private void selectEntity(Entity entity) {
-		if (entity == null) {
-			jSelectedEntityLabel.setText(""); //$NON-NLS-1$
+	private void selectGraph(ActivityDiagram graph) {
+		if (graph == null) {
+			jSelectedGraphLabel.setText(""); //$NON-NLS-1$
 			return;
 		}
-		if (!entityComponents.containsKey(entity)) {
-			JComponent entityComponent = entity.getConfigurationComponent();
-			if (entityComponent != null) {
-				getJEntityPanel().add(entityComponent, String.valueOf(entity.hashCode()));
-				getJEntityPanel().validate();
-				entityComponents.put(entity, entityComponent);
+		if (!graphComponents.containsKey(graph)) {
+			ActivityDiagramPane graphComponent = graph.getConfigurationComponent();
+			if (graphComponent != null) {
+				getGraphPanel().add(graphComponent, String.valueOf(graph.hashCode()));
+				getGraphPanel().validate();
+				graphComponents.put(graph, graphComponent);
 			}
 		}
-		((CardLayout) getJEntityPanel().getLayout()).show(
-				getJEntityPanel(), String.valueOf(entity.hashCode()));
-		jSelectedEntityLabel.setText(entity.getName());
+		((CardLayout) getGraphPanel().getLayout()).show(
+				getGraphPanel(), String.valueOf(graph.hashCode()));
+		jSelectedGraphLabel.setText(graph.getName());
 	}
 
-	private void addEntity(Entity entity) {
-		if (entityNodeMap.containsKey(entity)) {
+	private void addGraph(ActivityDiagram graph) {
+		if (graphNodeMap.containsKey(graph)) {
 			return;
 		}
 
 		final DefaultMutableTreeNode node =
-				new DefaultMutableTreeNode(entity);
+				new DefaultMutableTreeNode(graph);
 		root.add(node);
-		entityNodeMap.put(entity, node);
+		graphNodeMap.put(graph, node);
 	}
 
-	private void removeEntity(Entity entity) {
+	private void removeGraph(ActivityDiagram graph) {
 
-		// Remove from the list view and entityNodeMap.
+		// Remove from the list view and graphNodeMap.
 		MutableTreeNode node;
 		node = root;
 		node.remove(
-				entityNodeMap.remove(entity));
+				graphNodeMap.remove(graph));
 
-		if (entityComponents.containsKey(entity)) {
-			JComponent entityComponent = entityComponents.get(entity);
-			getJEntityPanel().remove(entityComponent);
-			if (entityComponent instanceof DisposableComponent) {
-				((DisposableComponent) entityComponent).dispose();
+		if (graphComponents.containsKey(graph)) {
+			JComponent graphComponent = graphComponents.get(graph);
+			getGraphPanel().remove(graphComponent);
+			if (graphComponent instanceof DisposableComponent) {
+				((DisposableComponent) graphComponent).dispose();
 			}
-			entityComponents.remove(entity);
+			graphComponents.remove(graph);
 		}
 	}
 

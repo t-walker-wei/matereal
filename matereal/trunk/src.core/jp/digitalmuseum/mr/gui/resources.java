@@ -44,6 +44,7 @@ public class resources extends PropertyResourceBundle {
 
 	private final static String resourcesString =
 		"Matereal.fonts=Lucida Grande,MS UI Gothic\n" +
+		"Matereal.debugTitle=Debug window\n" +
 		"CoordProviderPanel.centimeter=[cm]\n" +
 		"CoordProviderPanel.apply=Apply change of the area size\n" +
 		"CoordProviderPanel.errorDescWidth=Please input numbers for the width.\n" +
@@ -52,9 +53,12 @@ public class resources extends PropertyResourceBundle {
 		"CoordProviderPanel.width=Width of the rectangle area:\n" +
 		"CoordProviderPanel.height=Height of the rectangle area:\n" +
 		"CoordProviderPanel.reset=Reset the rectangle\n" +
+		"MonitorPane.graphs=Activity graphs\n" +
 		"MonitorPane.entities=Robots and entities\n" +
 		"MonitorPane.services=Services\n" +
-		"EntityMonitorPanel.selectedEntity=Selected Entity\n" +
+		"GraphMonitorPanel.selectedGraph=Selected graph\n" +
+		"GraphMonitorPanel.nameOfSelectedGraph=Name of the selected graph.\n" +
+		"EntityMonitorPanel.selectedEntity=Selected entity\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=Name of the selected entity.\n" +
 		"EntityPanel.entityType=Entity type information\n" +
 		"RobotPanel.resources=Robot resources\n" +

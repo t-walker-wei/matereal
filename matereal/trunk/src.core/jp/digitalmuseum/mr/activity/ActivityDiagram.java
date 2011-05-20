@@ -339,4 +339,8 @@ public class ActivityDiagram extends Node {
 	boolean isEntered(Node node) {
 		return currentNodes.contains(node);
 	}
+
+	public ActivityDiagramPane getConfigurationComponent() {
+		return new ActivityDiagramPane(this);
+	}
 }
