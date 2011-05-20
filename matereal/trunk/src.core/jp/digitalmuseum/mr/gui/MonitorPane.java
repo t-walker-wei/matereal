@@ -38,6 +38,8 @@ package jp.digitalmuseum.mr.gui;
 
 import javax.swing.JTabbedPane;
 
+import jp.digitalmuseum.mr.Matereal;
+
 public class MonitorPane extends JTabbedPane implements DisposableComponent {
 
 	private static final long serialVersionUID = 628084706596398147L;
@@ -59,7 +61,7 @@ public class MonitorPane extends JTabbedPane implements DisposableComponent {
 	 */
 	private void initialize() {
 		this.setSize(300, 200);
-
+		this.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
 		this.addTab("Entities", null, getEntityMonitorPanel(), null);
 		this.addTab("Services", null, getServiceMonitorPanel(), null);
 	}

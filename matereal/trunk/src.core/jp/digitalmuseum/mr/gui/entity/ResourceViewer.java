@@ -34,7 +34,7 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui;
+package jp.digitalmuseum.mr.gui.entity;
 
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
@@ -42,8 +42,13 @@ import java.awt.BorderLayout;
 
 import javax.swing.JLabel;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Resource;
+import jp.digitalmuseum.mr.gui.DisposableComponent;
+import jp.digitalmuseum.mr.gui.Messages;
 import jp.digitalmuseum.mr.resource.Wheels;
+
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
@@ -54,7 +59,6 @@ public class ResourceViewer extends JPanel implements DisposableComponent {
 	private JLabel jClassTitleLabel = null;
 	private JLabel jClassLabel = null;
 	private JLabel jStatusTitleLabel = null;
-	private JLabel jStatusLabel = null;
 	private JPanel jStatusPanel = null;
 	private transient Resource resource;
 
@@ -92,6 +96,7 @@ public class ResourceViewer extends JPanel implements DisposableComponent {
 	 */
 	private JPanel getJInformationPanel() {
 		if (jInformationPanel == null) {
+			final Font defaultFont = Matereal.getInstance().getDefaultFont().deriveFont(12);
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.gridx = 1;
 			gridBagConstraints3.gridy = 1;
@@ -101,7 +106,7 @@ public class ResourceViewer extends JPanel implements DisposableComponent {
 			gridBagConstraints3.gridwidth = 3;
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridy = 1;
-			gridBagConstraints2.anchor = GridBagConstraints.WEST;
+			gridBagConstraints2.anchor = GridBagConstraints.NORTHWEST;
 			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
 			gridBagConstraints2.gridx = 0;
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
@@ -112,18 +117,18 @@ public class ResourceViewer extends JPanel implements DisposableComponent {
 			gridBagConstraints1.gridx = 1;
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridy = 0;
-			gridBagConstraints.anchor = GridBagConstraints.WEST;
+			gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
 			gridBagConstraints.weightx = 0.1D;
 			gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 			gridBagConstraints.gridx = 0;
-			jStatusLabel = new JLabel();
-			jStatusLabel.setText("JLabel");
 			jStatusTitleLabel = new JLabel();
-			jStatusTitleLabel.setText("Status:");
+			jStatusTitleLabel.setFont(defaultFont);
+			jStatusTitleLabel.setText(Messages.getString("ResourceViewer.status"));
 			jClassLabel = new JLabel();
-			jClassLabel.setText("JLabel");
+			jClassLabel.setFont(defaultFont);
 			jClassTitleLabel = new JLabel();
-			jClassTitleLabel.setText("Implementation:");
+			jClassTitleLabel.setFont(defaultFont);
+			jClassTitleLabel.setText(Messages.getString("ResourceViewer.implementation"));
 			jInformationPanel = new JPanel();
 			jInformationPanel.setLayout(new GridBagLayout());
 			jInformationPanel.add(jClassTitleLabel, gridBagConstraints);

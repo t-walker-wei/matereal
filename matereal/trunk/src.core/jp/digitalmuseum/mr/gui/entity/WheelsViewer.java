@@ -34,27 +34,29 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui;
+package jp.digitalmuseum.mr.gui.entity;
 
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
-import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 
+import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.gui.DisposableComponent;
+import jp.digitalmuseum.mr.gui.Messages;
+import jp.digitalmuseum.mr.gui.MeterPanel;
 import jp.digitalmuseum.mr.resource.DifferentialWheels;
 import jp.digitalmuseum.mr.resource.Wheels;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 public class WheelsViewer extends JPanel implements DisposableComponent {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel jStatusLabel = null;
-	private JPanel jStatusDetailPanel = null;
 	private JLabel jPowerLeftLabel = null;
 	private MeterPanel jPowerLeftMeter = null;
 	private JLabel jPowerRightLabel = null;
@@ -78,6 +80,7 @@ public class WheelsViewer extends JPanel implements DisposableComponent {
 				update();
 			}
 		};
+		update();
 		wheelsMonitor.start();
 	}
 
@@ -87,65 +90,54 @@ public class WheelsViewer extends JPanel implements DisposableComponent {
 	 * @return void
 	 */
 	private void initialize() {
-		GridLayout gridLayout2 = new GridLayout();
-		gridLayout2.setRows(2);
-		gridLayout2.setVgap(5);
-		gridLayout2.setColumns(1);
-		setLayout(gridLayout2);
+		final Font defaultFont = Matereal.getInstance().getDefaultFont().deriveFont(12);
+		GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
+		gridBagConstraints7.gridy = 2;
+		gridBagConstraints7.gridx = 1;
+		gridBagConstraints7.fill = GridBagConstraints.BOTH;
+		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
+		gridBagConstraints6.gridy = 2;
+		gridBagConstraints6.gridx = 0;
+		gridBagConstraints6.anchor = GridBagConstraints.WEST;
+		gridBagConstraints6.fill = GridBagConstraints.VERTICAL;
+		GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+		gridBagConstraints5.gridy = 1;
+		gridBagConstraints5.gridx = 1;
+		gridBagConstraints5.weightx = 0.9D;
+		gridBagConstraints5.fill = GridBagConstraints.BOTH;
+		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+		gridBagConstraints4.gridy = 1;
+		gridBagConstraints4.gridx = 0;
+		gridBagConstraints4.weightx = 0.1D;
+		gridBagConstraints4.anchor = GridBagConstraints.WEST;
+		gridBagConstraints4.fill = GridBagConstraints.VERTICAL;
+		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		gridBagConstraints1.gridy = 1;
+		gridBagConstraints1.gridx = 0;
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.gridwidth = 2;
+		gridBagConstraints.gridx = 0;
+		jPowerRightLabel = new JLabel();
+		jPowerRightLabel.setFont(defaultFont);
+		jPowerRightLabel.setText(Messages.getString("WheelsViewer.rightWheel"));
+		jPowerLeftLabel = new JLabel();
+		jPowerLeftLabel.setFont(defaultFont);
+		jPowerLeftLabel.setText(Messages.getString("WheelsViewer.leftWheel"));
 		jStatusLabel = new JLabel();
-		jStatusLabel.setText("JLabel");
-		add(jStatusLabel, null);
-		add(getJStatusDetailPanel(), null);
+		jStatusLabel.setFont(defaultFont.deriveFont(Font.BOLD));
+		setLayout(new GridBagLayout());
+		this.add(jStatusLabel, gridBagConstraints);
+		this.add(jPowerLeftLabel, gridBagConstraints4);
+		this.add(getJPowerLeftMeter(), gridBagConstraints5);
+		this.add(jPowerRightLabel, gridBagConstraints6);
+		this.add(getJPowerRightMeter(), gridBagConstraints7);
 	}
 
 	public void dispose() {
 		wheelsMonitor.stop();
-	}
-
-	/**
-	 * This method initializes jStatusDetailPanel
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getJStatusDetailPanel() {
-		if (jStatusDetailPanel == null) {
-			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			gridBagConstraints7.insets = new Insets(3, 3, 0, 0);
-			gridBagConstraints7.gridy = 1;
-			gridBagConstraints7.ipadx = 59;
-			gridBagConstraints7.ipady = 6;
-			gridBagConstraints7.fill = GridBagConstraints.BOTH;
-			gridBagConstraints7.gridx = 1;
-			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-			gridBagConstraints6.insets = new Insets(3, 0, 0, 2);
-			gridBagConstraints6.gridy = 1;
-			gridBagConstraints6.gridx = 0;
-			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			gridBagConstraints5.insets = new Insets(0, 3, 2, 0);
-			gridBagConstraints5.gridy = 0;
-			gridBagConstraints5.ipadx = 59;
-			gridBagConstraints5.ipady = 6;
-			gridBagConstraints5.weightx = 0.9D;
-			gridBagConstraints5.fill = GridBagConstraints.BOTH;
-			gridBagConstraints5.gridx = 1;
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.insets = new Insets(0, 0, 2, 2);
-			gridBagConstraints4.gridy = 0;
-			gridBagConstraints4.ipadx = 7;
-			gridBagConstraints4.weightx = 0.1D;
-			gridBagConstraints4.gridx = 0;
-			jPowerRightLabel = new JLabel();
-			jPowerRightLabel.setText("Right wheel:");
-			jPowerLeftLabel = new JLabel();
-			jPowerLeftLabel.setText("Left wheel:");
-			jStatusDetailPanel = new JPanel();
-			jStatusDetailPanel.setLayout(new GridBagLayout());
-			jStatusDetailPanel.add(jPowerLeftLabel, gridBagConstraints4);
-			jStatusDetailPanel.add(getJPowerLeftMeter(), gridBagConstraints5);
-			jStatusDetailPanel.add(jPowerRightLabel, gridBagConstraints6);
-			jStatusDetailPanel.add(getJPowerRightMeter(), gridBagConstraints7);
-		}
-		return jStatusDetailPanel;
 	}
 
 	/**

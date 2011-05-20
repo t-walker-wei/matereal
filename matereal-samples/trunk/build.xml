@@ -64,7 +64,7 @@
 	</target>
 
 	<!-- Update -->
-	<target name="update">
+	<target name="update" depends="matereal-version">
 
 		<copy file="../capture/${capture-jar.name}" todir="./lib/matereal/capture/" />
 		<copy file="../capture/README.txt" todir="./lib/matereal/capture/" />

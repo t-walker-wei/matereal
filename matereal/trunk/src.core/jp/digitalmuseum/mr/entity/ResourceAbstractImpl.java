@@ -43,7 +43,7 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import jp.digitalmuseum.mr.gui.ResourceViewer;
+import jp.digitalmuseum.mr.gui.entity.ResourceViewer;
 
 /**
  * Abstract implementation of Resource.<br />

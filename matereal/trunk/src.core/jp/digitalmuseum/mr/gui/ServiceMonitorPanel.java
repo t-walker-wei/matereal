@@ -44,6 +44,7 @@ import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTree;
@@ -154,10 +155,11 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		setBounds(new Rectangle(0, 0, 480, 320));
 		jSelectedServiceLabel = new JLabel();
 		jSelectedServiceLabel.setText(""); //$NON-NLS-1$
-		jSelectedServiceLabel.setFont(new Font("Dialog", Font.BOLD, 14)); //$NON-NLS-1$
+		jSelectedServiceLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
 		jSelectedServiceLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedService")); //$NON-NLS-1$
 		jServiceGroupLabel = new JLabel();
 		jServiceGroupLabel.setText(""); //$NON-NLS-1$
+		jServiceGroupLabel.setFont(Matereal.getInstance().getDefaultFont());
 		jServiceGroupLabel.setToolTipText(Messages.getString("MonitorPanel.nameOfSelectedServiceGroup")); //$NON-NLS-1$
 		this.add(getJSplitPane(), gridBagConstraints11);
 	}
@@ -270,6 +272,8 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		if (jTree == null) {
 			jTree = new JTree(root);
 			jTree.setSize(new Dimension(120, 420));
+			jTree.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+			jTree.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
 			jTree.getSelectionModel().setSelectionMode(
 					TreeSelectionModel.SINGLE_TREE_SELECTION);
 			jTree.addTreeSelectionListener(this);

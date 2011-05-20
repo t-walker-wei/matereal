@@ -43,6 +43,7 @@ import java.util.PropertyResourceBundle;
 public class resources extends PropertyResourceBundle {
 
 	private final static String resourcesString =
+		"Matereal.fonts=Lucida Grande,MS UI Gothic\n" +
 		"CoordProviderPanel.centimeter=[cm]\n" +
 		"CoordProviderPanel.apply=Apply change of the area size\n" +
 		"CoordProviderPanel.errorDescWidth=Please input numbers for the width.\n" +
@@ -55,6 +56,10 @@ public class resources extends PropertyResourceBundle {
 		"EntityMonitorPanel.nameOfSelectedEntity=Name of the selected entity.\n" +
 		"EntityPanel.entityType=Entity type information\n" +
 		"RobotPanel.resources=Robot resources\n" +
+		"ResourceViewer.implementation=Implementation:\n" +
+		"ResourceViewer.status=Status:\n" +
+		"WheelsViewer.rightWheel=Right wheel:\n" +
+		"WheelsViewer.leftWheel=Left wheel:\n" +
 		"MonitorPanel.nameOfSelectedService=Name of the selected service.\n" +
 		"MonitorPanel.nameOfSelectedServiceGroup=Name of the service group.\n" +
 		"MonitorPanel.serviceGroup=Service group:\n" +

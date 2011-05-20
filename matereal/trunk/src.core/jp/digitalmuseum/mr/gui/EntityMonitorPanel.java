@@ -43,6 +43,7 @@ import jp.digitalmuseum.mr.message.EntityEvent.STATUS;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTree;
@@ -136,7 +137,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		setBounds(new Rectangle(0, 0, 480, 320));
 		jSelectedEntityLabel = new JLabel();
 		jSelectedEntityLabel.setText(Messages.getString("EntityMonitorPanel.selectedEntity")); //$NON-NLS-1$
-		jSelectedEntityLabel.setFont(new Font("Dialog", Font.BOLD, 14)); //$NON-NLS-1$
+		jSelectedEntityLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
 		jSelectedEntityLabel.setToolTipText(Messages.getString("EntityMonitorPanel.nameOfSelectedEntity")); //$NON-NLS-1$
 		this.add(getJSplitPane(), gridBagConstraints11);
 	}
@@ -241,6 +242,8 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		if (jTree == null) {
 			jTree = new JTree(root);
 			jTree.setSize(new Dimension(120, 420));
+			jTree.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+			jTree.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
 			jTree.getSelectionModel().setSelectionMode(
 					TreeSelectionModel.SINGLE_TREE_SELECTION);
 			jTree.addTreeSelectionListener(this);
