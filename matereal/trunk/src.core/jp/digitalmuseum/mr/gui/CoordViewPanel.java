@@ -107,6 +107,7 @@ public class CoordViewPanel extends JPanel implements DisposableComponent {
 
 		// TODO speed up and offset bug fix
 		final Graphics2D g2 = (Graphics2D) g;
+		g2.setFont(Matereal.getInstance().getDefaultFont());
 		final int
 			width = getWidth(),
 			height = getHeight();

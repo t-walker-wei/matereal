@@ -46,6 +46,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.utils.GUIUtils;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -73,7 +74,6 @@ import java.awt.Stroke;
 
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
-import java.awt.Font;
 
 /**
  * Panel class for configuring CoordProvider.
@@ -254,9 +254,10 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 			FlowLayout flowLayout = new FlowLayout();
 			flowLayout.setVgap(0);
 			jRealXPostfixLabel = new JLabel();
+			jRealXPostfixLabel.setFont(Matereal.getInstance().getDefaultFont());
 			jRealXPostfixLabel.setText(Messages.getString("CoordProviderPanel.centimeter")); //$NON-NLS-1$
-			jRealXPostfixLabel.setFont(new Font("Dialog", Font.PLAIN, 12)); //$NON-NLS-1$
 			jRealXLabel = new JLabel();
+			jRealXLabel.setFont(Matereal.getInstance().getDefaultFont());
 			jRealXLabel.setText(Messages.getString("CoordProviderPanel.width")); //$NON-NLS-1$
 			jRealXLabel.setPreferredSize(new Dimension(180, 16));
 			jRealXPanel = new JPanel();
@@ -277,6 +278,7 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 	private JTextField getJRealXField() {
 		if (jRealXField == null) {
 			jRealXField = new JTextField();
+			jRealXField.setFont(Matereal.getInstance().getDefaultFont());
 			jRealXField.setPreferredSize(new Dimension(48, 20));
 		}
 		return jRealXField;
@@ -292,9 +294,10 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 			FlowLayout flowLayout = new FlowLayout();
 			flowLayout.setVgap(0);
 			jRealYPostfixLabel = new JLabel();
+			jRealYPostfixLabel.setFont(Matereal.getInstance().getDefaultFont());
 			jRealYPostfixLabel.setText(Messages.getString("CoordProviderPanel.centimeter")); //$NON-NLS-1$
-			jRealYPostfixLabel.setFont(new Font("Dialog", Font.PLAIN, 12)); //$NON-NLS-1$
 			jRealYLabel = new JLabel();
+			jRealYLabel.setFont(Matereal.getInstance().getDefaultFont());
 			jRealYLabel.setText(Messages.getString("CoordProviderPanel.height")); //$NON-NLS-1$
 			jRealYLabel.setPreferredSize(new Dimension(180, 16));
 			jRealYPanel = new JPanel();
@@ -314,6 +317,7 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 	private JTextField getJRealYField() {
 		if (jRealYField == null) {
 			jRealYField = new JTextField();
+			jRealYField.setFont(Matereal.getInstance().getDefaultFont());
 			jRealYField.setPreferredSize(new Dimension(48, 20));
 		}
 		return jRealYField;
@@ -327,8 +331,8 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 	private JButton getJResetButton() {
 		if (jResetButton == null) {
 			jResetButton = new JButton();
+			jResetButton.setFont(Matereal.getInstance().getDefaultFont());
 			jResetButton.setText(Messages.getString("CoordProviderPanel.reset")); //$NON-NLS-1$
-			jResetButton.setName("jResetButton"); //$NON-NLS-1$
 			jResetButton.setHorizontalAlignment(SwingConstants.RIGHT);
 			if (source instanceof HomographyCoordProvider) {
 				jResetButton.addActionListener(new ActionListener() {
@@ -353,7 +357,7 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 		if (jApplyButton == null) {
 			jApplyButton = new JButton();
 			jApplyButton.setHorizontalAlignment(SwingConstants.RIGHT);
-			jApplyButton.setName("jApplyButton"); //$NON-NLS-1$
+			jApplyButton.setFont(Matereal.getInstance().getDefaultFont());
 			jApplyButton.setText(Messages.getString("CoordProviderPanel.apply")); //$NON-NLS-1$
 			if (source instanceof HomographyCoordProvider) {
 				jApplyButton.addActionListener(new java.awt.event.ActionListener() {

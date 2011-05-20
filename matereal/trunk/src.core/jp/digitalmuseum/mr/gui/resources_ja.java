@@ -45,6 +45,7 @@ import jp.digitalmuseum.utils.StringResourceParser;
 public class resources_ja extends PropertyResourceBundle {
 
 	private final static String resourcesString =
+		"Matereal.fonts=ヒラギノ角ゴ Pro W3,Hiragino Kaku Gothic Pro,メイリオ,Meiryo,ＭＳ Ｐゴシック,MS UI Gothic\n" +
 		"CoordProviderPanel.centimeter=[cm]\n" +
 		"CoordProviderPanel.apply=サイズの変更を適用\n" +
 		"CoordProviderPanel.errorDescWidth=矩形の幅を半角の数字で入力してください.\n" +
@@ -57,6 +58,10 @@ public class resources_ja extends PropertyResourceBundle {
 		"EntityMonitorPanel.nameOfSelectedEntity=選択された物体の名称.\n" +
 		"EntityPanel.entityType=物体の種類\n" +
 		"RobotPanel.resources=ロボットの部品\n" +
+		"ResourceViewer.implementation=実装クラス:\n" +
+		"ResourceViewer.status=状態:\n" +
+		"WheelsViewer.rightWheel=右の車輪:\n" +
+		"WheelsViewer.leftWheel=左の車輪:\n" +
 		"MonitorPanel.nameOfSelectedService=選択されたサービスの名称.\n" +
 		"MonitorPanel.nameOfSelectedServiceGroup=サービスグループの名称.\n" +
 		"MonitorPanel.serviceGroup=サービスグループ:\n" +

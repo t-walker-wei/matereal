@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JComboBox;
 import java.awt.GridBagConstraints;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposableComponent;
 
@@ -114,6 +115,7 @@ public class RobotResourcePanel extends JPanel implements ActionListener, Dispos
 	private JComboBox getJComboBox() {
 		if (jComboBox == null) {
 			jComboBox = new JComboBox();
+			jComboBox.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
 			for (JComponent resourceComponent : resourceComponents) {
 				jComboBox.addItem(resourceComponent);
 			}

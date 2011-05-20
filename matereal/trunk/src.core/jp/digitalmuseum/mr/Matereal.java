@@ -36,6 +36,8 @@
  */
 package jp.digitalmuseum.mr;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +56,7 @@ import javax.swing.UIManager;
 import jp.digitalmuseum.mr.activity.ActivityDiagram;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
+import jp.digitalmuseum.mr.gui.Messages;
 import jp.digitalmuseum.mr.gui.MonitorPane;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -81,6 +84,7 @@ public final class Matereal implements EventProvider, EventListener {
 	private Set<ActivityDiagram> diagrams;
 	private PrintStream out;
 	private PrintStream err;
+	private Font defaultFont;
 	private DisposeOnCloseFrame debugFrame;
 	private boolean isDisposing = false;
 
@@ -477,6 +481,24 @@ public final class Matereal implements EventProvider, EventListener {
 		for (EventListener listener : listeners) {
 			listener.eventOccurred(e);
 		}
+	}
+
+	public Font getDefaultFont() {
+		if (defaultFont == null) {
+			final String[] candidates = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+			F: for (String fontName : Messages.getString("Matereal.fonts").split(",")) {
+				for (String candidate : candidates) {
+					if (candidate.equals(fontName)) {
+						defaultFont = new Font(fontName, Font.PLAIN, 13);
+						break F;
+					}
+				}
+			}
+			if (defaultFont == null) {
+				defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 13);
+			}
+		}
+		return defaultFont;
 	}
 
 	/**

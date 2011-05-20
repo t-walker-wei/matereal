@@ -35,13 +35,21 @@
 	<property name="matereal-dist.dir" value="dist/" />
 	<property name="matereal-lib.dir" value="lib/" />
 	<property name="matereal-jar.dir" value="${matereal-dist.dir}${matereal-lib.dir}" />
-	<property name="matereal-jar.name" value="matereal-${matereal.version}.jar" />
+	<property name="matereal-jar.basename" value="matereal-${matereal.version}" />
 	<property name="matereal-jar-utils.name" value="matereal-utils-${matereal.version}.jar" />
 
 	<!-- Zip file name -->
 	<property name="matereal-zip.name" value="matereal-${matereal.version}.zip" />
 
 	<!-- ****Targets**** -->
+
+	<target name="matereal-version">
+		<exec executable="svnversion" outputproperty="svnversion" failonerror="true">
+			<arg value="--no-newline" />
+				<arg value="../matereal/" />
+		</exec>
+		<property name="matereal-jar.name" value="${matereal-jar.basename}-b${svnversion}.jar" />
+	</target>
 
 	<!-- Zip -->
 	<target name="matereal-zip" depends="jar">
@@ -55,7 +63,7 @@
 	</target>
 
 	<!-- Jar -->
-	<target name="jar" depends="compile, extract">
+	<target name="jar" depends="compile, extract, matereal-version">
 		<mkdir dir="${matereal-jar.dir}" />
 		<jar jarfile="${matereal-jar.dir}${matereal-jar.name}">
 			<fileset dir="${matereal-classes.dir}" includes="**/*.class" />

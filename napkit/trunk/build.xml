@@ -9,9 +9,6 @@
 	<property name="napkit.version" value="1.1.0" />
 	<property name="mqoloader.version" value="1.0.0" />
 
-	<!-- Dependent class pathes -->
-	<property name="napkit-classpath" value="../matereal/${matereal-jar.dir}${matereal-jar.name};${capture};${connector};${jogl}" />
-
 	<!-- Source directory -->
 	<property name="napkit-src.dir" value="src" />
 
@@ -43,6 +40,11 @@
 	<property name="mqoloader-zip.name" value="mqoloader-${mqoloader.version}.zip" />
 
 	<!-- ****Targets**** -->
+
+	<!-- Dependent class paths -->
+	<target name="napkit-classpath" depends="matereal-version">
+		<property name="napkit-classpath" value="../matereal/${matereal-jar.dir}${matereal-jar.name};${capture};${connector};${jogl}" />
+	</target>
 
 	<!-- Zip -->
 	<target name="napkit-zip" depends="napkit-jar">
@@ -105,7 +107,7 @@
 	</target>
 
 	<!-- Compile -->
-	<target name="napkit-compile" depends="nyar-compile, napkit-extract">
+	<target name="napkit-compile" depends="napkit-classpath, nyar-compile, napkit-extract">
 		<mkdir dir="${napkit-classes.dir}" />
 		<javac srcdir="${napkit-src.dir}" destdir="${napkit-classes.dir}"
 				source="1.5"
@@ -130,7 +132,7 @@
 	</target>
 
 	<!-- Javadoc -->
-	<target name="napkit-javadoc" depends="napkit-extract">
+	<target name="napkit-javadoc" depends="napkit-classpath, napkit-extract">
 		<javadoc sourcepath="${napkit-src.dir};${nyar-src.dir}"
 			destdir="${napkit-javadoc.dir}"
 			packagenames="jp.digitalmuseum.*"

@@ -42,6 +42,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.Messages;
 
@@ -85,7 +86,7 @@ public class RobotPanel extends JPanel {
         gridBagConstraints2.weightx = 1.0D;
         gridBagConstraints2.weighty = 0.0D;
         jRobotLabel = new JLabel();
-		jRobotLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+		jRobotLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD)); //$NON-NLS-1$
         jRobotLabel.setText(Messages.getString("RobotPanel.resources"));
         GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
         gridBagConstraints1.gridx = 0;

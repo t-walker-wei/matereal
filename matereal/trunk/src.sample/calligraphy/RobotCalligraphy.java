@@ -29,8 +29,6 @@ public class RobotCalligraphy {
 
 	public RobotCalligraphy() {
 
-		Matereal.getInstance().showDebugFrame();
-
 		Matereal.getInstance().addEventListener(new EventListener() {
 
 			@Override
@@ -92,6 +90,8 @@ public class RobotCalligraphy {
 					}
 				});
 				wizardFrame.setTitle("Robot Caligraphy");
+
+				Matereal.getInstance().showDebugFrame();
 			}
 		});
 	}

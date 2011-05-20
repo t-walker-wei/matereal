@@ -42,6 +42,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.gui.Messages;
 
@@ -84,6 +85,7 @@ public class EntityPanel extends JPanel {
 		final Dimension d = new Dimension(320, 70);
 		jEntityTypeNameLabel.setMinimumSize(d);
 		jEntityTypeNameLabel.setPreferredSize(d);
+		jEntityTypeNameLabel.setFont(Matereal.getInstance().getDefaultFont());
         jEntityTypeNameLabel.setText(entity.getTypeName());
         GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
         gridBagConstraints2.fill = GridBagConstraints.BOTH;
@@ -94,7 +96,7 @@ public class EntityPanel extends JPanel {
         gridBagConstraints2.weighty = 0.0D;
         gridBagConstraints2.gridwidth = 2;
         jEntityTypeLabel = new JLabel();
-		jEntityTypeLabel.setFont(new Font("Dialog", Font.BOLD, 12)); //$NON-NLS-1$
+		jEntityTypeLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD));
         jEntityTypeLabel.setText(Messages.getString("EntityPanel.entityType"));
         GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
         gridBagConstraints1.gridx = 0;
