@@ -41,14 +41,31 @@
 	<!-- Zip file name -->
 	<property name="matereal-zip.name" value="matereal-${matereal.version}.zip" />
 
+	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+
 	<!-- ****Targets**** -->
 
+	<!-- Version string with Subversion revision -->
 	<target name="matereal-version">
 		<exec executable="svnversion" outputproperty="svnversion" failonerror="true">
 			<arg value="--no-newline" />
-				<arg value="../matereal/" />
+			<arg value="--committed" />
+			<arg value="../matereal/" />
 		</exec>
+		<propertyregex
+			property="svnversion"
+			override="true"
+			input="${svnversion}"
+			regexp=".*:"
+			replace="" />
+		<propertyregex
+			property="svnversion"
+			override="true"
+			input="${svnversion}"
+			regexp="[MS]"
+			replace="" />
 		<property name="matereal-jar.name" value="${matereal-jar.basename}-b${svnversion}.jar" />
+		<echo message="Jar file name: ${matereal-jar.name}" />
 	</target>
 
 	<!-- Zip -->

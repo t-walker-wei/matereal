@@ -62,8 +62,8 @@ public class MonitorPane extends JTabbedPane implements DisposableComponent {
 	private void initialize() {
 		this.setSize(300, 200);
 		this.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
-		this.addTab("Entities", null, getEntityMonitorPanel(), null);
-		this.addTab("Services", null, getServiceMonitorPanel(), null);
+		this.addTab(Messages.getString("MonitorPane.entities"), null, getEntityMonitorPanel(), null);
+		this.addTab(Messages.getString("MonitorPane.services"), null, getServiceMonitorPanel(), null);
 	}
 
 	public void dispose() {
