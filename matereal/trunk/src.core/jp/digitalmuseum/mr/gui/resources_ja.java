@@ -54,6 +54,8 @@ public class resources_ja extends PropertyResourceBundle {
 		"CoordProviderPanel.width=矩形の幅:\n" +
 		"CoordProviderPanel.height=矩形の高さ:\n" +
 		"CoordProviderPanel.reset=矩形のリセット\n" +
+		"MonitorPane.entities=ロボットとその他の物体\n" +
+		"MonitorPane.services=サービス\n" +
 		"EntityMonitorPanel.selectedEntity=選択された物体\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=選択された物体の名称.\n" +
 		"EntityPanel.entityType=物体の種類\n" +

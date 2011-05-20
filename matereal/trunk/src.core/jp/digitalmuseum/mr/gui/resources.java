@@ -52,6 +52,8 @@ public class resources extends PropertyResourceBundle {
 		"CoordProviderPanel.width=Width of the rectangle area:\n" +
 		"CoordProviderPanel.height=Height of the rectangle area:\n" +
 		"CoordProviderPanel.reset=Reset the rectangle\n" +
+		"MonitorPane.entities=Robots and entities\n" +
+		"MonitorPane.services=Services\n" +
 		"EntityMonitorPanel.selectedEntity=Selected Entity\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=Name of the selected entity.\n" +
 		"EntityPanel.entityType=Entity type information\n" +
