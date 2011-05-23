@@ -329,7 +329,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		}
 	}
 
-	private void selectEntity(Entity entity) {
+	public void selectEntity(Entity entity) {
 		if (entity == null) {
 			jSelectedEntityLabel.setText(""); //$NON-NLS-1$
 			return;
