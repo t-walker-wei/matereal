@@ -38,10 +38,29 @@ package jp.digitalmuseum.mr.gui;
 
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import javax.swing.JComboBox;
+import java.awt.Insets;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import java.awt.Font;
+
+import jp.digitalmuseum.mr.Matereal;
+import javax.swing.BorderFactory;
+import java.awt.SystemColor;
 
 public class EntityAddPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	private JLabel typeLabel = null;
+	private JComboBox typeComboBox = null;
+	private JLabel nameLabel = null;
+	private JTextField nameTextField = null;
+	private JPanel buttonPanel = null;
+	private JButton okButton = null;
+	private JButton cancelButton = null;
+	private JLabel entityAddLabel = null;
 
 	/**
 	 * This is the default constructor
@@ -53,12 +72,157 @@ public class EntityAddPanel extends JPanel {
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
+		Font defaultFont = Matereal.getInstance().getDefaultFont();
+		GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+		gridBagConstraints21.gridx = 0;
+		gridBagConstraints21.anchor = GridBagConstraints.EAST;
+		gridBagConstraints21.fill = GridBagConstraints.BOTH;
+		gridBagConstraints21.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints21.gridwidth = 2;
+		gridBagConstraints21.gridy = 0;
+		entityAddLabel = new JLabel();
+		entityAddLabel.setText("Add a new entity");
+		entityAddLabel.setFont(defaultFont.deriveFont(Font.BOLD, 14));
+		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+		gridBagConstraints11.gridx = 0;
+		gridBagConstraints11.anchor = GridBagConstraints.SOUTH;
+		gridBagConstraints11.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints11.gridwidth = 2;
+		gridBagConstraints11.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints11.weightx = 1.0D;
+		gridBagConstraints11.weighty = 1.0D;
+		gridBagConstraints11.gridy = 3;
+		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+		gridBagConstraints3.fill = GridBagConstraints.BOTH;
+		gridBagConstraints3.gridy = 2;
+		gridBagConstraints3.gridx = 1;
+		gridBagConstraints3.weighty = 0.0D;
+		gridBagConstraints3.weightx = 0.7D;
+		gridBagConstraints3.anchor = GridBagConstraints.WEST;
+		gridBagConstraints3.insets = new Insets(0, 0, 5, 5);
+		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+		gridBagConstraints2.gridy = 2;
+		gridBagConstraints2.gridx = 0;
+		gridBagConstraints2.weighty = 0.0D;
+		gridBagConstraints2.weightx = 0.3D;
+		gridBagConstraints2.fill = GridBagConstraints.BOTH;
+		gridBagConstraints2.anchor = GridBagConstraints.WEST;
+		gridBagConstraints2.insets = new Insets(0, 5, 5, 5);
+		nameLabel = new JLabel();
+		nameLabel.setFont(defaultFont);
+		nameLabel.setText("Name:");
+		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		gridBagConstraints1.fill = GridBagConstraints.BOTH;
+		gridBagConstraints1.gridy = 1;
+		gridBagConstraints1.gridx = 1;
+		gridBagConstraints1.weighty = 0.0;
+		gridBagConstraints1.weightx = 0.7;
+		gridBagConstraints1.insets = new Insets(0, 0, 5, 5);
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.gridy = 1;
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.weighty = 0.0D;
+		gridBagConstraints.weightx = 0.3D;
+		gridBagConstraints.insets = new Insets(0, 5, 5, 5);
+		typeLabel = new JLabel();
+		typeLabel.setFont(defaultFont);
+		typeLabel.setText("Entity type:");
 		this.setSize(300, 200);
 		this.setLayout(new GridBagLayout());
+		this.add(entityAddLabel, gridBagConstraints21);
+		this.add(typeLabel, gridBagConstraints);
+		this.add(getTypeComboBox(), gridBagConstraints1);
+		this.add(nameLabel, gridBagConstraints2);
+		this.add(getNameTextField(), gridBagConstraints3);
+		this.add(getButtonPanel(), gridBagConstraints11);
+	}
+
+	/**
+	 * This method initializes typeComboBox
+	 *
+	 * @return javax.swing.JComboBox
+	 */
+	private JComboBox getTypeComboBox() {
+		if (typeComboBox == null) {
+			typeComboBox = new JComboBox();
+			typeComboBox.setFont(Matereal.getInstance().getDefaultFont());
+		}
+		return typeComboBox;
+	}
+
+	/**
+	 * This method initializes nameTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
+	private JTextField getNameTextField() {
+		if (nameTextField == null) {
+			nameTextField = new JTextField();
+			nameTextField.setFont(Matereal.getInstance().getDefaultFont());
+		}
+		return nameTextField;
+	}
+
+	/**
+	 * This method initializes buttonPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getButtonPanel() {
+		if (buttonPanel == null) {
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.gridx = 1;
+			gridBagConstraints5.anchor = GridBagConstraints.SOUTH;
+			gridBagConstraints5.fill = GridBagConstraints.VERTICAL;
+			gridBagConstraints5.insets = new Insets(5, 5, 0, 0);
+			gridBagConstraints5.gridy = 0;
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.anchor = GridBagConstraints.EAST;
+			gridBagConstraints4.insets = new Insets(5, 0, 0, 0);
+			gridBagConstraints4.weightx = 1.0D;
+			gridBagConstraints4.fill = GridBagConstraints.NONE;
+			buttonPanel = new JPanel();
+			buttonPanel.setLayout(new GridBagLayout());
+			buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow));
+			buttonPanel.add(getOkButton(), gridBagConstraints4);
+			buttonPanel.add(getCancelButton(), gridBagConstraints5);
+		}
+		return buttonPanel;
+	}
+
+	/**
+	 * This method initializes okButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getOkButton() {
+		if (okButton == null) {
+			okButton = new JButton();
+			okButton.setFont(Matereal.getInstance().getDefaultFont());
+			okButton.setText("OK");
+		}
+		return okButton;
+	}
+
+	/**
+	 * This method initializes cancelButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getCancelButton() {
+		if (cancelButton == null) {
+			cancelButton = new JButton();
+			cancelButton.setFont(Matereal.getInstance().getDefaultFont());
+			cancelButton.setText("Cancel");
+		}
+		return cancelButton;
 	}
 
 }

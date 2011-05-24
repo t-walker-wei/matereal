@@ -46,6 +46,7 @@ import org.jbox2d.dynamics.Body;
 
 public interface HakoniwaEntity extends Entity {
 
+	public void setHakoniwa(Hakoniwa hakoniwa);
 	public Hakoniwa getHakoniwa();
 	public Color getColor();
 	public Body getBody();
