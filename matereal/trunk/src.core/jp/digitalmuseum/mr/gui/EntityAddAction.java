@@ -50,5 +50,6 @@ public class EntityAddAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		entityMonitorPanel.showAddPanel();
 	}
 }

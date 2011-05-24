@@ -85,14 +85,14 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 
 	private JSplitPane jSplitPane = null;
 
-	private JPanel jLeftPanel = null;
-	private JPanel jRightViewPanel = null;
+	private JPanel leftPanel = null;
+	private JPanel rightViewPanel = null;
 
 	private JScrollPane jScrollPane = null;
 	private JTree jTree = null;
 
-	private JLabel jSelectedEntityLabel = null;
-	private JPanel jEntityPanel = null;
+	private JLabel selectedEntityLabel = null;
+	private JPanel entityPanel = null;
 
 	/** Root node for jTree. */
 	private DefaultMutableTreeNode root;
@@ -102,11 +102,13 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 
 	private transient Map<Entity, JComponent> entityComponents;
 
-	private JPanel jRightPanel = null;
+	private JPanel rightPanel = null;
 
 	private JButton instantiateButton = null;
 
 	private JButton disposeButton = null;
+
+	private JPanel rightAddPanel = null;
 
 	/** Singleton constructor. */
 	public EntityMonitorPanel() {
@@ -126,7 +128,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		for (Entity entity : Matereal.getInstance().getEntities()) {
 			addEntity(entity);
 		}
-		selectEntity(null);
+		showEntity(null);
 	}
 
 	/**
@@ -142,10 +144,10 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		setPreferredSize(new Dimension(640, 420));
 		setLayout(new GridBagLayout());
 		setBounds(new Rectangle(0, 0, 480, 320));
-		jSelectedEntityLabel = new JLabel();
-		jSelectedEntityLabel.setText(Messages.getString("EntityMonitorPanel.selectedEntity")); //$NON-NLS-1$
-		jSelectedEntityLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
-		jSelectedEntityLabel.setToolTipText(Messages.getString("EntityMonitorPanel.nameOfSelectedEntity")); //$NON-NLS-1$
+		selectedEntityLabel = new JLabel();
+		selectedEntityLabel.setText(Messages.getString("EntityMonitorPanel.selectedEntity")); //$NON-NLS-1$
+		selectedEntityLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
+		selectedEntityLabel.setToolTipText(Messages.getString("EntityMonitorPanel.nameOfSelectedEntity")); //$NON-NLS-1$
 		this.add(getJSplitPane(), gridBagConstraints11);
 	}
 
@@ -169,19 +171,19 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	private JSplitPane getJSplitPane() {
 		if (jSplitPane == null) {
 			jSplitPane = new JSplitPane();
-			jSplitPane.setLeftComponent(getJLeftPanel());
-			jSplitPane.setRightComponent(getJRightPanel());
+			jSplitPane.setLeftComponent(getLeftPanel());
+			jSplitPane.setRightComponent(getRightPanel());
 		}
 		return jSplitPane;
 	}
 
 	/**
-	 * This method initializes jLeftPanel
+	 * This method initializes leftPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJLeftPanel() {
-		if (jLeftPanel == null) {
+	private JPanel getLeftPanel() {
+		if (leftPanel == null) {
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.gridx = 1;
 			gridBagConstraints12.anchor = GridBagConstraints.WEST;
@@ -204,22 +206,22 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 			gridBagConstraints6.gridx = 0;
 			gridBagConstraints6.gridy = 0;
 			gridBagConstraints6.weightx = 1.0;
-			jLeftPanel = new JPanel();
-			jLeftPanel.setLayout(new GridBagLayout());
-			jLeftPanel.add(getJScrollPane(), gridBagConstraints6);
-			jLeftPanel.add(getInstantiateButton(), gridBagConstraints9);
-			jLeftPanel.add(getDisposeButton(), gridBagConstraints12);
+			leftPanel = new JPanel();
+			leftPanel.setLayout(new GridBagLayout());
+			leftPanel.add(getJScrollPane(), gridBagConstraints6);
+			leftPanel.add(getInstantiateButton(), gridBagConstraints9);
+			leftPanel.add(getDisposeButton(), gridBagConstraints12);
 		}
-		return jLeftPanel;
+		return leftPanel;
 	}
 
 	/**
-	 * This method initializes jRightViewPanel
+	 * This method initializes rightViewPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJRightViewPanel() {
-		if (jRightViewPanel == null) {
+	private JPanel getRightViewPanel() {
+		if (rightViewPanel == null) {
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 0;
 			gridBagConstraints2.gridy = 1;
@@ -234,14 +236,13 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 			gridBagConstraints4.weightx = 1.0D;
 			gridBagConstraints4.weighty = 1.0D;
 			gridBagConstraints4.insets = new Insets(0, 5, 5, 5);
-			jRightViewPanel = new JPanel();
-			jRightViewPanel.setLayout(new GridBagLayout());
-			jRightViewPanel.setPreferredSize(new Dimension(320, 420));
-			jRightViewPanel.setName("jRightViewPanel");
-			jRightViewPanel.add(jSelectedEntityLabel, gridBagConstraints2);
-			jRightViewPanel.add(getJEntityPanel(), gridBagConstraints4);
+			rightViewPanel = new JPanel();
+			rightViewPanel.setLayout(new GridBagLayout());
+			rightViewPanel.setPreferredSize(new Dimension(320, 420));
+			rightViewPanel.add(selectedEntityLabel, gridBagConstraints2);
+			rightViewPanel.add(getEntityPanel(), gridBagConstraints4);
 		}
-		return jRightViewPanel;
+		return rightViewPanel;
 	}
 
 	/**
@@ -279,18 +280,18 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	}
 
 	/**
-	 * This method initializes jEntityPanel
+	 * This method initializes entityPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJEntityPanel() {
-		if (jEntityPanel == null) {
-			jEntityPanel = new JPanel();
-			jEntityPanel.setPreferredSize(new Dimension(400, 420));
-			jEntityPanel.setLayout(new CardLayout());
-			jEntityPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
+	private JPanel getEntityPanel() {
+		if (entityPanel == null) {
+			entityPanel = new JPanel();
+			entityPanel.setPreferredSize(new Dimension(400, 420));
+			entityPanel.setLayout(new CardLayout());
+			entityPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
 		}
-		return jEntityPanel;
+		return entityPanel;
 	}
 
 	public void run() {
@@ -307,7 +308,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 
 		Object nodeInfo = node.getUserObject();
 		if (nodeInfo instanceof Entity) {
-			selectEntity((Entity) nodeInfo);
+			showEntity((Entity) nodeInfo);
 		}
 	}
 
@@ -329,22 +330,29 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		}
 	}
 
-	public void selectEntity(Entity entity) {
+	public void showAddPanel() {
+		((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
+				String.valueOf(getRightAddPanel().hashCode()));
+	}
+
+	public void showEntity(Entity entity) {
 		if (entity == null) {
-			jSelectedEntityLabel.setText(""); //$NON-NLS-1$
+			((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
+					String.valueOf(getRightViewPanel().hashCode()));
+			selectedEntityLabel.setText(""); //$NON-NLS-1$
 			return;
 		}
 		if (!entityComponents.containsKey(entity)) {
 			JComponent entityComponent = entity.getConfigurationComponent();
 			if (entityComponent != null) {
-				getJEntityPanel().add(entityComponent, String.valueOf(entity.hashCode()));
-				getJEntityPanel().validate();
+				getEntityPanel().add(entityComponent, String.valueOf(entity.hashCode()));
+				getEntityPanel().validate();
 				entityComponents.put(entity, entityComponent);
 			}
 		}
-		((CardLayout) getJEntityPanel().getLayout()).show(
-				getJEntityPanel(), String.valueOf(entity.hashCode()));
-		jSelectedEntityLabel.setText(entity.getName());
+		((CardLayout) getEntityPanel().getLayout()).show(
+				getEntityPanel(), String.valueOf(entity.hashCode()));
+		selectedEntityLabel.setText(entity.getName());
 	}
 
 	private void addEntity(Entity entity) {
@@ -368,7 +376,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 
 		if (entityComponents.containsKey(entity)) {
 			JComponent entityComponent = entityComponents.get(entity);
-			getJEntityPanel().remove(entityComponent);
+			getEntityPanel().remove(entityComponent);
 			if (entityComponent instanceof DisposableComponent) {
 				((DisposableComponent) entityComponent).dispose();
 			}
@@ -377,20 +385,21 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	}
 
 	/**
-	 * This method initializes jRightPanel
+	 * This method initializes rightPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJRightPanel() {
-		if (jRightPanel == null) {
+	private JPanel getRightPanel() {
+		if (rightPanel == null) {
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = -1;
 			gridBagConstraints.gridy = -1;
-			jRightPanel = new JPanel();
-			jRightPanel.setLayout(new CardLayout());
-			jRightPanel.add(getJRightViewPanel(), getJRightViewPanel().getName());
+			rightPanel = new JPanel();
+			rightPanel.setLayout(new CardLayout());
+			rightPanel.add(getRightViewPanel(), String.valueOf(getRightViewPanel().hashCode()));
+			rightPanel.add(getRightAddPanel(), String.valueOf(getRightAddPanel().hashCode()));
 		}
-		return jRightPanel;
+		return rightPanel;
 	}
 
 	/**
@@ -401,6 +410,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	private JButton getDisposeButton() {
 		if (disposeButton == null) {
 			disposeButton = new JButton();
+			disposeButton.setFont(Matereal.getInstance().getDefaultFont());
 			disposeButton.setText("-");
 		}
 		return disposeButton;
@@ -414,8 +424,22 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	private JButton getInstantiateButton() {
 		if (instantiateButton == null) {
 			instantiateButton = new JButton();
+			instantiateButton.setAction(new EntityAddAction(this));
+			instantiateButton.setFont(Matereal.getInstance().getDefaultFont());
 			instantiateButton.setText("+");
 		}
 		return instantiateButton;
+	}
+
+	/**
+	 * This method initializes rightAddPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getRightAddPanel() {
+		if (rightAddPanel == null) {
+			rightAddPanel = new EntityAddPanel();
+		}
+		return rightAddPanel;
 	}
 }

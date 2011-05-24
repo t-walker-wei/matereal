@@ -85,6 +85,12 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 		hakoniwa.unregisterEntity(this);
 	}
 
+	public void setHakoniwa(Hakoniwa hakoniwa) {
+		this.hakoniwa.unregisterEntity(this);
+		hakoniwa.registerEntity(this);
+		this.hakoniwa = hakoniwa;
+	}
+
 	public Hakoniwa getHakoniwa() {
 		return hakoniwa;
 	}

@@ -38,6 +38,8 @@ package jp.digitalmuseum.mr;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,6 +53,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import jp.digitalmuseum.mr.entity.Entity;
@@ -106,6 +109,15 @@ public final class Matereal implements EventProvider, EventListener {
 		setLookAndFeel();
 	}
 
+	public static void main(String[] args) {
+		Matereal.getInstance().getDebugFrame().addWindowListener(
+				new WindowAdapter() {
+					public void windowClosed(WindowEvent e) {
+						Matereal.getInstance().dispose();
+					}
+		});
+	}
+
 	/**
 	 * Get the singleton instance of Matereal.
 	 * @return Returns the singleton instance of this class.
@@ -133,7 +145,7 @@ public final class Matereal implements EventProvider, EventListener {
 		this.err = err;
 	}
 
-	public void showDebugFrame() {
+	public JFrame getDebugFrame() {
 		if (debugFrame == null) {
 			MonitorPane monitor = new MonitorPane();
 			debugFrame = new DisposeOnCloseFrame(monitor) {
@@ -146,11 +158,7 @@ public final class Matereal implements EventProvider, EventListener {
 			};
 			debugFrame.setTitle(Messages.getString("Matereal.debugTitle"));
 		}
-		debugFrame.setVisible(true);
-	}
-
-	public void hideDebugFrame() {
-		debugFrame.setVisible(false);
+		return debugFrame;
 	}
 
 	public void disposeDebugFrame() {
@@ -158,6 +166,14 @@ public final class Matereal implements EventProvider, EventListener {
 			debugFrame.dispose();
 			debugFrame = null;
 		}
+	}
+
+	public void showDebugFrame() {
+		getDebugFrame().setVisible(true);
+	}
+
+	public void hideDebugFrame() {
+		getDebugFrame().setVisible(false);
 	}
 
 	public String getName() {
