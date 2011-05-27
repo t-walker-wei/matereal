@@ -37,6 +37,10 @@
 package jp.digitalmuseum.mr.message;
 
 public enum WorkflowStatus {
-	/** Transition from another node. */ ENTERED,
-	/** Transition to another node. */ LEFT
+	INSTANTIATED,
+	STARTED,
+	STOPPED,
+	PAUSED,
+	RESUMED,
+	DISPOSED
 }

@@ -46,8 +46,8 @@ import java.util.Set;
 import jp.digitalmuseum.mr.gui.DisposableComponent;
 import jp.digitalmuseum.mr.gui.workflow.layout.Layout;
 import jp.digitalmuseum.mr.gui.workflow.layout.SugiyamaLayouter;
+import jp.digitalmuseum.mr.message.WorkflowNodeEvent;
 import jp.digitalmuseum.mr.message.WorkflowUpdateEvent;
-import jp.digitalmuseum.mr.message.WorkflowEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.workflow.Workflow;
@@ -333,18 +333,18 @@ public class WorkflowViewCanvas extends PCanvas implements
 	private class WorkflowEventListener implements EventListener {
 		public void eventOccurred(Event e) {
 			if (e instanceof WorkflowUpdateEvent) {
-				WorkflowUpdateEvent ade = (WorkflowUpdateEvent) e;
-				switch (ade.getStatus()) {
+				WorkflowUpdateEvent wue = (WorkflowUpdateEvent) e;
+				switch (wue.getStatus()) {
 				case NODE_ADDED:
-					onNodeAdded(ade.getAffectedNode());
+					onNodeAdded(wue.getAffectedNode());
 					break;
 				case TRANSITION_ADDED:
 					break;
 				case NODE_REMOVED:
-					onNodeRemoved(ade.getAffectedNode());
+					onNodeRemoved(wue.getAffectedNode());
 					break;
 				case TRANSITION_REMOVED:
-					onTransitionRemoved(ade.getAffectedTransition());
+					onTransitionRemoved(wue.getAffectedTransition());
 					break;
 				case INITIAL_NODE_SET:
 					break;
@@ -356,14 +356,14 @@ public class WorkflowViewCanvas extends PCanvas implements
 
 	private class WorkflowNodeEventListener implements EventListener {
 		public void eventOccurred(Event e) {
-			if (e instanceof WorkflowEvent) {
-				WorkflowEvent ae = (WorkflowEvent) e;
-				switch (ae.getStatus()) {
+			if (e instanceof WorkflowNodeEvent) {
+				WorkflowNodeEvent wne = (WorkflowNodeEvent) e;
+				switch (wne.getStatus()) {
 				case ENTERED:
-					onEnter(ae.getSource());
+					onEnter(wne.getSource());
 					break;
 				case LEFT:
-					onLeave(ae.getSource());
+					onLeave(wne.getSource());
 					break;
 				}
 			}

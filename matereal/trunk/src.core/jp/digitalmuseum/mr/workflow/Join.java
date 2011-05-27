@@ -39,10 +39,10 @@ package jp.digitalmuseum.mr.workflow;
 import java.util.HashSet;
 import java.util.Set;
 
-import jp.digitalmuseum.mr.message.WorkflowEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.WorkflowStatus;
+import jp.digitalmuseum.mr.message.WorkflowNodeEvent;
+import jp.digitalmuseum.mr.message.WorkflowNodeStatus;
 
 public class Join extends ControlNode implements EventListener {
 	private static final long serialVersionUID = -6755092474761544807L;
@@ -87,10 +87,10 @@ public class Join extends ControlNode implements EventListener {
 	}
 
 	public void eventOccurred(Event e) {
-		if (e instanceof WorkflowEvent) {
-			WorkflowEvent ae = (WorkflowEvent) e;
-			if (ae.getStatus() == WorkflowStatus.LEFT) {
-				Node node = ae.getSource();
+		if (e instanceof WorkflowNodeEvent) {
+			WorkflowNodeEvent wne = (WorkflowNodeEvent) e;
+			if (wne.getStatus() == WorkflowNodeStatus.LEFT) {
+				Node node = wne.getSource();
 				nodesToWait.remove(node);
 				node.removeEventListener(this);
 			}

@@ -43,6 +43,8 @@ import javax.swing.JComponent;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.workflow.WorkflowViewPane;
+import jp.digitalmuseum.mr.message.WorkflowEvent;
+import jp.digitalmuseum.mr.message.WorkflowStatus;
 import jp.digitalmuseum.mr.message.WorkflowUpdateEvent;
 import jp.digitalmuseum.mr.message.WorkflowUpdateStatus;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
@@ -83,14 +85,14 @@ public class Workflow extends Node {
 		instances ++;
 		this.name = "Workflow graph (" + instances + ")";
 		Matereal.getInstance().registerWorkflow(this);
-		distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.INSTANTIATED));
+		distributeEvent(new WorkflowEvent(this, WorkflowStatus.INSTANTIATED));
 		isDisposed = false;
 	}
 
 	public synchronized void dispose() {
 		stop();
 		Matereal.getInstance().unregisterWorkflow(this);
-		distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.DISPOSED));
+		distributeEvent(new WorkflowEvent(this, WorkflowStatus.DISPOSED));
 		isDisposed = true;
 	}
 
@@ -221,8 +223,11 @@ public class Workflow extends Node {
 			throw new IllegalStateException("Initial node was failed to start.");
 		}
 		monitor.start();
-		enter();
 		isStarted = true;
+
+		// Distribute this event.
+		enter();
+		distributeEvent(new WorkflowEvent(this, WorkflowStatus.STARTED));
 	}
 
 	synchronized boolean start(Node node) {
@@ -245,7 +250,10 @@ public class Workflow extends Node {
 			monitor.stop();
 			isStarted = false;
 			isPaused = false;
+
+			// Distribute this event.
 			leave();
+			distributeEvent(new WorkflowEvent(this, WorkflowStatus.STOPPED));
 		}
 	}
 
@@ -266,6 +274,7 @@ public class Workflow extends Node {
 			}
 		}
 		isPaused = true;
+		distributeEvent(new WorkflowEvent(this, WorkflowStatus.PAUSED));
 	}
 
 	public synchronized void resume() {
@@ -276,6 +285,7 @@ public class Workflow extends Node {
 		}
 		monitor.resume();
 		isPaused = false;
+		distributeEvent(new WorkflowEvent(this, WorkflowStatus.RESUMED));
 	}
 
 	public synchronized boolean isDisposed() {

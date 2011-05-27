@@ -44,11 +44,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import jp.digitalmuseum.mr.message.WorkflowEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.EventProvider;
-import jp.digitalmuseum.mr.message.WorkflowStatus;
+import jp.digitalmuseum.mr.message.WorkflowNodeEvent;
+import jp.digitalmuseum.mr.message.WorkflowNodeStatus;
 import jp.digitalmuseum.utils.Array;
 
 public abstract class Node implements EventProvider, Serializable {
@@ -164,13 +164,13 @@ public abstract class Node implements EventProvider, Serializable {
 	final void enter() {
 		entranceDate = Calendar.getInstance().getTimeInMillis();
 		distributeEvent(
-				new WorkflowEvent(this, WorkflowStatus.ENTERED));
+				new WorkflowNodeEvent(this, WorkflowNodeStatus.ENTERED));
 		onEnter();
 	}
 
 	final void leave() {
 		distributeEvent(
-				new WorkflowEvent(this, WorkflowStatus.LEFT));
+				new WorkflowNodeEvent(this, WorkflowNodeStatus.LEFT));
 		onLeave();
 	}
 }

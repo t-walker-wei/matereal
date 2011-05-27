@@ -38,5 +38,5 @@ package jp.digitalmuseum.mr.message;
 
 public enum WorkflowUpdateStatus {
 	NODE_ADDED, NODE_REMOVED, TRANSITION_ADDED, TRANSITION_REMOVED,
-	INSTANTIATED, INITIAL_NODE_SET, DISPOSED
+	INITIAL_NODE_SET
 }
