@@ -87,10 +87,14 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 	private JSplitPane jSplitPane = null;
 
 	private JPanel jLeftPanel = null;
-	private JPanel jRightViewPanel = null;
 
+	private JPanel jRightViewPanel = null;
 	private JScrollPane jScrollPane = null;
 	private JTree jTree = null;
+	private JButton instantiateButton = null;
+	private JButton disposeButton = null;
+
+	private JPanel jRightPanel = null;
 
 	private JLabel jSelectedGraphLabel = null;
 	private JPanel graphPanel = null;
@@ -102,12 +106,6 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 	private transient Map<Workflow, DefaultMutableTreeNode> graphNodeMap;
 
 	private transient Map<Workflow, WorkflowViewPane> graphComponents;
-
-	private JPanel jRightPanel = null;
-
-	private JButton instantiateButton = null;
-
-	private JButton disposeButton = null;
 
 	/** Singleton constructor. */
 	public WorkflowMonitorPanel() {
@@ -402,6 +400,7 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 	private JButton getDisposeButton() {
 		if (disposeButton == null) {
 			disposeButton = new JButton();
+			disposeButton.setFont(Matereal.getInstance().getDefaultFont());
 			disposeButton.setText("-");
 		}
 		return disposeButton;
@@ -415,6 +414,7 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 	private JButton getInstantiateButton() {
 		if (instantiateButton == null) {
 			instantiateButton = new JButton();
+			instantiateButton.setFont(Matereal.getInstance().getDefaultFont());
 			instantiateButton.setText("+");
 		}
 		return instantiateButton;

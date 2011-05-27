@@ -40,16 +40,16 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-public class EntityAddAction extends AbstractAction {
+public class EntityDisposeAction extends AbstractAction {
 	private static final long serialVersionUID = -9133706415658354560L;
 	private EntityMonitorPanel entityMonitorPanel;
 
-	public EntityAddAction(EntityMonitorPanel entityMonitorPanel) {
+	public EntityDisposeAction(EntityMonitorPanel entityMonitorPanel) {
 		this.entityMonitorPanel = entityMonitorPanel;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		entityMonitorPanel.showAddPanel();
+		// entityMonitorPanel.disposeSelectedEntity();
 	}
 }
