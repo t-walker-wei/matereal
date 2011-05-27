@@ -46,6 +46,7 @@ import javax.swing.JComponent;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.entity.EntityPanel;
 import jp.digitalmuseum.mr.message.EntityEvent;
+import jp.digitalmuseum.mr.message.EntityStatus;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.utils.Array;
@@ -82,7 +83,7 @@ public class EntityImpl implements Entity {
 		// Distribute this event.
 		distributeEvent(
 				new EntityEvent(
-						this, EntityEvent.STATUS.INSTANTIATED));
+						this, EntityStatus.INSTANTIATED));
 	}
 
 	/**
@@ -95,7 +96,7 @@ public class EntityImpl implements Entity {
 			// Distribute this event.
 			distributeEvent(
 					new EntityEvent(
-							this, EntityEvent.STATUS.DISPOSED));
+							this, EntityStatus.DISPOSED));
 
 			matereal.unregisterEntity(this);
 		}

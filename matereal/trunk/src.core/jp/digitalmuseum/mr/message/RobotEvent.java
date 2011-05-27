@@ -40,7 +40,7 @@ import jp.digitalmuseum.mr.entity.Robot;
 
 public class RobotEvent extends EntityEvent {
 
-	public RobotEvent(Robot source, STATUS status) {
+	public RobotEvent(Robot source, EntityStatus status) {
 		super(source, status);
 	}
 }

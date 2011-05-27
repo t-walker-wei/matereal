@@ -39,18 +39,10 @@ package jp.digitalmuseum.mr.message;
 import jp.digitalmuseum.mr.service.Service;
 
 public class ServiceEvent extends Event {
-	static public enum STATUS {
-		STARTED,
-		STOPPED,
-		PAUSED,
-		RESUMED,
-		FINISHED,
-		DISPOSED
-	}
 	private Service source;
-	private STATUS status;
+	private ServiceStatus status;
 
-	public ServiceEvent(Service source, STATUS status) {
+	public ServiceEvent(Service source, ServiceStatus status) {
 		this.source = source;
 		this.status = status;
 	}
@@ -60,7 +52,7 @@ public class ServiceEvent extends Event {
 		return source;
 	}
 
-	public STATUS getStatus() {
+	public ServiceStatus getStatus() {
 		return status;
 	}
 

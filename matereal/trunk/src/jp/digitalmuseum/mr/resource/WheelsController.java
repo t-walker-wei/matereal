@@ -53,7 +53,7 @@ public interface WheelsController extends Wheels, ExclusiveResource {
 	public void goBackward();
 
 	/** Spin left/right. */
-	public void spin(SPIN direction);
+	public void spin(Spin direction);
 
 	/** Spin left. */
 	public void spinLeft();

@@ -39,13 +39,9 @@ package jp.digitalmuseum.mr.message;
 import jp.digitalmuseum.mr.workflow.Node;
 
 public class WorkflowEvent extends Event {
-	static public enum STATUS {
-		/** Transition from another node. */ ENTERED,
-		/** Transition to another node. */ LEFT
-	}
-	private STATUS status;
+	private WorkflowStatus status;
 
-	public WorkflowEvent(Node source, STATUS status) {
+	public WorkflowEvent(Node source, WorkflowStatus status) {
 		super(source);
 		this.status = status;
 	}
@@ -55,7 +51,7 @@ public class WorkflowEvent extends Event {
 		return (Node) super.getSource();
 	}
 
-	public STATUS getStatus() {
+	public WorkflowStatus getStatus() {
 		return status;
 	}
 

@@ -102,41 +102,41 @@ public class CloneWheelsRobot extends ProxyRobotAbstractImpl {
 
 	private class CloneWheels extends ProxyResourceAbstractImpl implements WheelsController {
 		private static final long serialVersionUID = -4046377720816462415L;
-		private STATUS status;
+		private WheelsStatus status;
 
 		public CloneWheels(ProxyRobotAbstractImpl robot) {
 			super(robot);
-			status = STATUS.STOP;
+			status = WheelsStatus.STOP;
 		}
 
-		public STATUS getStatus() {
+		public WheelsStatus getStatus() {
 			return status;
 		}
 		public void goBackward() {
-			status = STATUS.GO_BACKWARD;
+			status = WheelsStatus.GO_BACKWARD;
 			for (WheelsController wh : wheels) { wh.goBackward(); }
 		}
 		public void goForward() {
-			status = STATUS.GO_FORWARD;
+			status = WheelsStatus.GO_FORWARD;
 			for (WheelsController wh : wheels) { wh.goForward(); }
 		}
-		public void spin(SPIN direction) {
-			if (direction == SPIN.LEFT) {
+		public void spin(Spin direction) {
+			if (direction == Spin.LEFT) {
 				spinLeft();
 			} else {
 				spinRight();
 			}
 		}
 		public void spinLeft() {
-			status = STATUS.SPIN_LEFT;
+			status = WheelsStatus.SPIN_LEFT;
 			for (WheelsController wh : wheels) { wh.spinLeft(); }
 		}
 		public void spinRight() {
-			status = STATUS.SPIN_RIGHT;
+			status = WheelsStatus.SPIN_RIGHT;
 			for (WheelsController wh : wheels) { wh.spinRight(); }
 		}
 		public void stopWheels() {
-			status = STATUS.STOP;
+			status = WheelsStatus.STOP;
 			for (WheelsController wh : wheels) { wh.stopWheels(); }
 		}
 

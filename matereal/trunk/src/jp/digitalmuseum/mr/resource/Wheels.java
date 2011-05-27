@@ -42,16 +42,16 @@ import jp.digitalmuseum.mr.entity.Resource;
 public interface Wheels extends Resource {
 
 	/** Status of the wheels. */
-	public enum STATUS {
+	public enum WheelsStatus {
 		GO_BACKWARD, GO_FORWARD, SPIN_LEFT, SPIN_RIGHT, CURVE_LEFT, CURVE_RIGHT, STOP
 	}
 
 	/** Direction of spin. */
-	public enum SPIN {
+	public enum Spin {
 		LEFT, RIGHT
 	};
 
 	/** Get status of the wheels. */
-	public STATUS getStatus();
+	public WheelsStatus getStatus();
 
 }

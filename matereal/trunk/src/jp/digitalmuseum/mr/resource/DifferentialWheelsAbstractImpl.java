@@ -46,7 +46,7 @@ import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 public abstract class DifferentialWheelsAbstractImpl extends PhysicalResourceAbstractImpl
 		implements DifferentialWheelsController {
 	private static final long serialVersionUID = 4104568454137232520L;
-	private STATUS status;
+	private WheelsStatus status;
 	private int speed;
 	private int rotationSpeed;
 	private int innerSpeed;
@@ -66,7 +66,7 @@ public abstract class DifferentialWheelsAbstractImpl extends PhysicalResourceAbs
 	protected void initialize() {
 		speed = getRecommendedSpeed();
 		rotationSpeed = getRecommendedRotationSpeed();
-		status = STATUS.STOP;
+		status = WheelsStatus.STOP;
 	}
 
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -78,11 +78,11 @@ public abstract class DifferentialWheelsAbstractImpl extends PhysicalResourceAbs
 		stopWheels();
 	}
 
-	public STATUS getStatus() {
+	public WheelsStatus getStatus() {
 		return status;
 	}
 
-	protected void setStatus(STATUS status) {
+	protected void setStatus(WheelsStatus status) {
 		this.status = status;
 	}
 
@@ -121,54 +121,54 @@ public abstract class DifferentialWheelsAbstractImpl extends PhysicalResourceAbs
 	}
 
 	public void goForward() {
-		status = STATUS.GO_FORWARD;
+		status = WheelsStatus.GO_FORWARD;
 		controlWheels();
 	}
 
 	public void goBackward() {
-		status = STATUS.GO_BACKWARD;
+		status = WheelsStatus.GO_BACKWARD;
 		controlWheels();
 	}
 
-	public void spin(SPIN spin) {
-		status = spin == SPIN.LEFT ? STATUS.SPIN_LEFT :  STATUS.SPIN_RIGHT;
+	public void spin(Spin spin) {
+		status = spin == Spin.LEFT ? WheelsStatus.SPIN_LEFT :  WheelsStatus.SPIN_RIGHT;
 		controlWheels();
 	}
 
 	public void spinLeft() {
-		status = STATUS.SPIN_LEFT;
+		status = WheelsStatus.SPIN_LEFT;
 		controlWheels();
 	}
 
 	public void spinRight() {
-		status = STATUS.SPIN_RIGHT;
+		status = WheelsStatus.SPIN_RIGHT;
 		controlWheels();
 	}
 
-	public void curve(SPIN spin, int innerSpeed) {
-		status = spin == SPIN.LEFT ? STATUS.CURVE_LEFT : STATUS.CURVE_RIGHT;
+	public void curve(Spin spin, int innerSpeed) {
+		status = spin == Spin.LEFT ? WheelsStatus.CURVE_LEFT : WheelsStatus.CURVE_RIGHT;
 		this.innerSpeed = innerSpeed;
 		controlWheels();
 	}
 
 	public void curveLeft(int innerSpeed) {
-		status = STATUS.CURVE_LEFT;
+		status = WheelsStatus.CURVE_LEFT;
 		this.innerSpeed = innerSpeed;
 		controlWheels();
 	}
 
 	public void curveRight(int innerSpeed) {
-		status = STATUS.CURVE_RIGHT;
+		status = WheelsStatus.CURVE_RIGHT;
 		this.innerSpeed = innerSpeed;
 		controlWheels();
 	}
 
 	public void stopWheels() {
-		if (status != STATUS.STOP) {
+		if (status != WheelsStatus.STOP) {
 			doStopWheels();
 			leftPower = 0;
 			rightPower = 0;
-			status = STATUS.STOP;
+			status = WheelsStatus.STOP;
 		}
 	}
 
@@ -179,23 +179,23 @@ public abstract class DifferentialWheelsAbstractImpl extends PhysicalResourceAbs
 		}
 		if (leftPower == rightPower) {
 			if (leftPower == 0) {
-				status = STATUS.STOP;
+				status = WheelsStatus.STOP;
 			} else if (leftPower > 0) {
-				status = STATUS.GO_FORWARD;
+				status = WheelsStatus.GO_FORWARD;
 			} else {
-				status = STATUS.GO_BACKWARD;
+				status = WheelsStatus.GO_BACKWARD;
 			}
 		} else if (leftPower == -rightPower) {
 			if (leftPower > 0) {
-				status = STATUS.SPIN_RIGHT;
+				status = WheelsStatus.SPIN_RIGHT;
 			} else {
-				status = STATUS.SPIN_LEFT;
+				status = WheelsStatus.SPIN_LEFT;
 			}
 		} else {
 			if (leftPower > rightPower) {
-				status = STATUS.CURVE_RIGHT;
+				status = WheelsStatus.CURVE_RIGHT;
 			} else {
-				status = STATUS.CURVE_LEFT;
+				status = WheelsStatus.CURVE_LEFT;
 			}
 		};
 		return doDrive_(leftPower, rightPower);

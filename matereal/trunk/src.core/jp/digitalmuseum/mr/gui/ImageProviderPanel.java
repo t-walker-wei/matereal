@@ -46,7 +46,7 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.service.ImageProvider;
 import jp.digitalmuseum.utils.ScreenPosition;
 
@@ -73,7 +73,7 @@ public class ImageProviderPanel extends JPanel implements DisposableComponent {
 					image = source.getImage();
 					repaint();
 				} else if (e instanceof ServiceEvent) {
-					if (((ServiceEvent) e).getStatus() == STATUS.DISPOSED) {
+					if (((ServiceEvent) e).getStatus() == ServiceStatus.DISPOSED) {
 						dispose();
 					}
 				}

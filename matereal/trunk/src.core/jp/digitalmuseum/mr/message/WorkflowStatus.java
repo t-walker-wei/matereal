@@ -34,13 +34,9 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.resource;
+package jp.digitalmuseum.mr.message;
 
-import jp.digitalmuseum.mr.entity.Resource;
-
-
-public interface Pen extends Resource {
-	public enum PenStatus { UP, GOING_UP, DOWN, GOING_DOWN };
-
-	public PenStatus getStatus();
+public enum WorkflowStatus {
+	/** Transition from another node. */ ENTERED,
+	/** Transition to another node. */ LEFT
 }

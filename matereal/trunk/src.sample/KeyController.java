@@ -14,7 +14,7 @@ import jp.digitalmuseum.mr.gui.ImageProviderPanel;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
-import jp.digitalmuseum.mr.resource.Wheels.SPIN;
+import jp.digitalmuseum.mr.resource.Wheels.Spin;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 import jp.digitalmuseum.utils.Position;
@@ -26,13 +26,13 @@ import jp.digitalmuseum.utils.Position;
  * @author Jun KATO
  */
 public class KeyController {
-	private enum KEY { UP, DOWN, LEFT, RIGHT, ESC, NONE }
-	private KEY key;
+	private enum Key { UP, DOWN, LEFT, RIGHT, ESC, NONE }
+	private Key key;
 	private static final boolean DEBUG = true;
 	private final DrawableFrame drawableFrame;
 	private DisposeOnCloseFrame hakoniwaFrame;
 	private DifferentialWheelsController wheels;
-	private SPIN spin;
+	private Spin spin;
 	private int speed;
 	private int innerSpeed;
 
@@ -51,7 +51,7 @@ public class KeyController {
 		}
 		wheels = robot.requestResource(DifferentialWheelsController.class, this);
 
-		key = KEY.NONE;
+		key = Key.NONE;
 		spin = null;
 		speed = 0;
 		innerSpeed = 100;
@@ -84,9 +84,9 @@ public class KeyController {
 				g.drawString("Pow.left", getFrameWidth()/2-100, getFrameHeight()/2+70);
 				g.drawString("Pow.right", getFrameWidth()/2+90, getFrameHeight()/2+70);
 				fillRect(g, getFrameWidth()/2-99, getFrameHeight()/2, 9, -(
-						spin == SPIN.LEFT ? speed*innerSpeed/100 : speed)/2);
+						spin == Spin.LEFT ? speed*innerSpeed/100 : speed)/2);
 				fillRect(g, getFrameWidth()/2+91, getFrameHeight()/2, 9, -(
-						spin == SPIN.RIGHT ? speed*innerSpeed/100 : speed)/2);
+						spin == Spin.RIGHT ? speed*innerSpeed/100 : speed)/2);
 			}
 			private void fillRect(Graphics2D g, int x, int y, int width, int height) {
 				g.fillRect(
@@ -104,30 +104,30 @@ public class KeyController {
 				switch (e.getKeyCode()) {
 				case KeyEvent.VK_UP:
 				case KeyEvent.VK_KP_UP:
-					key = KEY.UP;
+					key = Key.UP;
 					break;
 				case KeyEvent.VK_DOWN:
 				case KeyEvent.VK_KP_DOWN:
-					key = KEY.DOWN;
+					key = Key.DOWN;
 					break;
 				case KeyEvent.VK_LEFT:
 				case KeyEvent.VK_KP_LEFT:
-					key = KEY.LEFT;
+					key = Key.LEFT;
 					break;
 				case KeyEvent.VK_RIGHT:
 				case KeyEvent.VK_KP_RIGHT:
-					key = KEY.RIGHT;
+					key = Key.RIGHT;
 					break;
 				case KeyEvent.VK_ESCAPE:
 				default:
-					key = KEY.ESC;
+					key = Key.ESC;
 					break;
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				key = KEY.NONE;
+				key = Key.NONE;
 			}
 		});
 
@@ -228,7 +228,7 @@ public class KeyController {
 
 	private void turnLeft() {
 		if (spin == null) {
-			spin = SPIN.LEFT;
+			spin = Spin.LEFT;
 			innerSpeed = 90;
 		} else {
 			switch (spin) {
@@ -247,7 +247,7 @@ public class KeyController {
 
 	private void turnRight() {
 		if (spin == null) {
-			spin = SPIN.RIGHT;
+			spin = Spin.RIGHT;
 			innerSpeed = 90;
 		} else {
 			switch (spin) {

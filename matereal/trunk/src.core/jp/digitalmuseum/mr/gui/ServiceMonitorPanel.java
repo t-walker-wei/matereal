@@ -40,7 +40,7 @@ import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
 
@@ -409,18 +409,18 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	public void eventOccurred(Event e) {
 		if (e instanceof ServiceEvent) {
 			ServiceEvent se = (ServiceEvent) e;
-			if (se.getStatus() == STATUS.STARTED ||
-					se.getStatus() == STATUS.STOPPED) {
+			if (se.getStatus() == ServiceStatus.STARTED ||
+					se.getStatus() == ServiceStatus.STOPPED) {
 				Service service = se.getSource();
 
 				if (service instanceof ServiceGroup) {
-					if (se.getStatus() == STATUS.STARTED) {
+					if (se.getStatus() == ServiceStatus.STARTED) {
 						addServiceGroup((ServiceGroup) service);
 					} else {
 						removeServiceGroup((ServiceGroup) service);
 					}
 				} else {
-					if (se.getStatus() == STATUS.STARTED) {
+					if (se.getStatus() == ServiceStatus.STARTED) {
 						serviceGroupMap.put(service, service.getServiceGroup());
 						updateService(service);
 					} else {

@@ -46,6 +46,7 @@ import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.utils.Array;
 
@@ -165,7 +166,7 @@ public abstract class ServiceAbstractImpl implements Service {
 		Matereal.getInstance().registerService(this);
 		distributeEvent(
 				new ServiceEvent(
-						this, ServiceEvent.STATUS.STARTED));
+						this, ServiceStatus.STARTED));
 	}
 
 	synchronized public void stop() {
@@ -192,7 +193,7 @@ public abstract class ServiceAbstractImpl implements Service {
 		distributeEvent(
 				new ServiceEvent(
 						ServiceAbstractImpl.this,
-						ServiceEvent.STATUS.STOPPED));
+						ServiceStatus.STOPPED));
 	}
 
 	public synchronized void pause() {
@@ -216,7 +217,7 @@ public abstract class ServiceAbstractImpl implements Service {
 		distributeEvent(
 				new ServiceEvent(
 						ServiceAbstractImpl.this,
-						ServiceEvent.STATUS.PAUSED));
+						ServiceStatus.PAUSED));
 
 		if (serviceGroup != null &&
 				!serviceGroup.isPaused()) {
@@ -240,7 +241,7 @@ public abstract class ServiceAbstractImpl implements Service {
 		distributeEvent(
 				new ServiceEvent(
 						ServiceAbstractImpl.this,
-						ServiceEvent.STATUS.RESUMED));
+						ServiceStatus.RESUMED));
 	}
 
 	private void startRunning() {

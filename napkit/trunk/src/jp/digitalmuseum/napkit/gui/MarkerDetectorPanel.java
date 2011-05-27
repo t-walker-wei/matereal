@@ -50,8 +50,8 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.LocationUpdateEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
-import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.service.ImageProvider;
 import jp.digitalmuseum.mr.service.MarkerDetector;
 import jp.digitalmuseum.utils.ScreenRectangle;
@@ -182,7 +182,7 @@ public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 									markerDetector.getImageProvider().getImage();
 					getJPreviewPanel().repaint();
 				} else if (e instanceof ServiceEvent) {
-					if (((ServiceEvent) e).getStatus() == STATUS.DISPOSED) {
+					if (((ServiceEvent) e).getStatus() == ServiceStatus.DISPOSED) {
 						dispose();
 					}
 				} else if (e instanceof ServiceUpdateEvent) {

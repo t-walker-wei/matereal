@@ -26,14 +26,14 @@ import javax.imageio.ImageWriter;
  * @author Jun KATO
  */
 public class ImageCodec {
-	static public enum CODEC {
+	static public enum Codec {
 		JPEG("jpg"),
 		PNG("png");
 		private final String text;
-		private CODEC(String text) { this.text = text; }
+		private Codec(String text) { this.text = text; }
 		public String toString() { return this.text; }
 	}
-	static public final String DEFAULT_CODEC = CODEC.JPEG.toString();
+	static public final String DEFAULT_CODEC = Codec.JPEG.toString();
 	static public final float DEFAULT_QUALITY = 0.5f;
 	static private final int[] bgrBands = new int[] { 2, 1, 0 };
 	static private final ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_3BYTE_BGR);

@@ -44,8 +44,8 @@ import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
-import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
 import jp.digitalmuseum.mr.workflow.Action;
 
 import edu.umd.cs.piccolo.nodes.PPath;
@@ -61,7 +61,7 @@ public class PActionNode extends PNodeAbstractImpl {
 			public void eventOccurred(Event e) {
 				if (e instanceof ServiceEvent) {
 					ServiceEvent se = (ServiceEvent) e;
-					if (se.getStatus() == STATUS.DISPOSED) {
+					if (se.getStatus() == ServiceStatus.DISPOSED) {
 						se.getSource().removeEventListener(this);
 					}
 				} else if (e instanceof ServiceUpdateEvent) {

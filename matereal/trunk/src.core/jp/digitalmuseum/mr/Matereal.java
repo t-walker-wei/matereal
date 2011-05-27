@@ -64,7 +64,7 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.EventProvider;
 import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.mr.workflow.Workflow;
@@ -492,7 +492,7 @@ public final class Matereal implements EventProvider, EventListener {
 	@Override
 	public void eventOccurred(Event e) {
 		if (e instanceof ServiceEvent &&
-				((ServiceEvent) e).getStatus() == STATUS.STOPPED) {
+				((ServiceEvent) e).getStatus() == ServiceStatus.STOPPED) {
 			e.getSource().removeEventListener(this);
 		}
 		for (EventListener listener : listeners) {

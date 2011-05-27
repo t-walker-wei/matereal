@@ -39,7 +39,7 @@ package jp.digitalmuseum.mr.gui;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.message.EntityEvent;
-import jp.digitalmuseum.mr.message.EntityEvent.STATUS;
+import jp.digitalmuseum.mr.message.EntityStatus;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 
@@ -315,11 +315,11 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	public void eventOccurred(Event e) {
 		if (e instanceof EntityEvent) {
 			EntityEvent ee = (EntityEvent) e;
-			if (ee.getStatus() == STATUS.INSTANTIATED ||
-					ee.getStatus() == STATUS.DISPOSED) {
+			if (ee.getStatus() == EntityStatus.INSTANTIATED ||
+					ee.getStatus() == EntityStatus.DISPOSED) {
 				Entity entity = ee.getSource();
 
-				if (ee.getStatus() == STATUS.INSTANTIATED) {
+				if (ee.getStatus() == EntityStatus.INSTANTIATED) {
 					addEntity(entity);
 				} else {
 					removeEntity(entity);
