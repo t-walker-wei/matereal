@@ -56,6 +56,8 @@ public interface Entity extends EventProvider, Serializable {
 	 */
 	public void dispose();
 
+	public boolean isDisposed();
+
 	/**
 	 * Set name of this entity.
 	 * @param name

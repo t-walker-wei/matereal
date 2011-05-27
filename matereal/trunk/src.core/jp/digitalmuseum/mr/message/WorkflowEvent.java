@@ -58,7 +58,7 @@ public class WorkflowEvent extends Event {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getSource());
-		sb.append(" event occurred: ");
+		sb.append(" status changed: ");
 		sb.append(status);
 		return sb.toString();
 	}

@@ -63,7 +63,9 @@ public class Capture extends TaskAbstractImpl implements ImageProvider {
 		initialize();
 	}
 
-	private void initialize() {
+	@Override
+	protected void initialize() {
+		super.initialize();
 		listeners = new Array<ImageListener>();
 	}
 

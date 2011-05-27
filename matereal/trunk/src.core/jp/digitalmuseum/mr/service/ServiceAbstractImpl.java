@@ -66,6 +66,7 @@ public abstract class ServiceAbstractImpl implements Service {
 	private long interval;
 	private boolean isStarted;
 	private boolean isPaused;
+	private boolean isDisposed;
 
 	public ServiceAbstractImpl() {
 		initialize();
@@ -84,11 +85,28 @@ public abstract class ServiceAbstractImpl implements Service {
 		}
 	}
 
-	private void initialize() {
+	protected void initialize() {
 		listeners = new Array<EventListener>();
 		interval = DEFAULT_INTERVAL;
 		isStarted = false;
 		isPaused = false;
+		isDisposed = false;
+		Matereal.getInstance().registerService(this);
+		distributeEvent(
+				new ServiceEvent(
+						this, ServiceStatus.INSTANTIATED));
+	}
+
+	public void dispose() {
+		if (isStarted()) {
+			stop();
+		}
+		if (!isDisposed() && !Matereal.getInstance().isDisposing()) {
+			distributeEvent(new ServiceEvent(this, ServiceStatus.DISPOSED));
+			Matereal.getInstance().unregisterService(this);
+			listeners.clear();
+		}
+		isDisposed = true;
 	}
 
 	final public synchronized void setInterval(long interval) {
@@ -163,7 +181,6 @@ public abstract class ServiceAbstractImpl implements Service {
 		}
 
 		// Distribute this event.
-		Matereal.getInstance().registerService(this);
 		distributeEvent(
 				new ServiceEvent(
 						this, ServiceStatus.STARTED));
@@ -187,9 +204,6 @@ public abstract class ServiceAbstractImpl implements Service {
 		birthDate = 0;
 
 		// Distribute this event.
-		if (!Matereal.getInstance().isDisposing()) {
-			Matereal.getInstance().unregisterService(this);
-		}
 		distributeEvent(
 				new ServiceEvent(
 						ServiceAbstractImpl.this,
@@ -274,6 +288,10 @@ public abstract class ServiceAbstractImpl implements Service {
 		return isPaused;
 	}
 
+	public synchronized boolean isDisposed() {
+		return isDisposed;
+	}
+
 	public synchronized long getAliveTime() {
 		return birthDate > 0 ? System.currentTimeMillis() - birthDate : -1;
 	}
@@ -288,7 +306,15 @@ public abstract class ServiceAbstractImpl implements Service {
 
 	@Override
 	public String toString() {
-		return getName();
+		try {
+			String name = getName();
+			if (name != null) {
+				return name;
+			}
+		} catch (Exception e) {
+			// Do nothing.
+		}
+		return getClass().getSimpleName();
 	}
 
 // Event related methods.

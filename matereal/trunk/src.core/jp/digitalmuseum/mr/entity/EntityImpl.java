@@ -62,6 +62,8 @@ public class EntityImpl implements Entity {
 	/** Shape of this entity. */
 	private Shape shape;
 
+	private boolean isDisposed;
+
 	public EntityImpl() {
 		initialize();
 	}
@@ -76,8 +78,9 @@ public class EntityImpl implements Entity {
 		initialize();
 	}
 
-	private void initialize() {
+	protected void initialize() {
 		listeners = new Array<EventListener>();
+		isDisposed = false;
 		Matereal.getInstance().registerEntity(this);
 
 		// Distribute this event.
@@ -86,20 +89,20 @@ public class EntityImpl implements Entity {
 						this, EntityStatus.INSTANTIATED));
 	}
 
+	public boolean isDisposed() {
+		return isDisposed;
+	}
+
 	/**
 	 * @see Entity#dispose()
 	 */
 	public void dispose() {
-		Matereal matereal = Matereal.getInstance();
-		if (!matereal.isDisposing()) {
-
-			// Distribute this event.
-			distributeEvent(
-					new EntityEvent(
-							this, EntityStatus.DISPOSED));
-
-			matereal.unregisterEntity(this);
+		if (!isDisposed() && !Matereal.getInstance().isDisposing()) {
+			distributeEvent(new EntityEvent(this, EntityStatus.DISPOSED));
+			Matereal.getInstance().unregisterEntity(this);
+			listeners.clear();
 		}
+		isDisposed = true;
 	}
 
 	/**
@@ -163,8 +166,17 @@ public class EntityImpl implements Entity {
 
 	@Override
 	public String toString() {
+		StringBuilder sb = new StringBuilder();
 		final String name = getName();
-		return name == null ? getTypeName() : name;
+		if (name == null) {
+			sb.append(getTypeName());
+		} else {
+			sb.append(name);
+			sb.append(" (");
+			sb.append(getTypeName());
+			sb.append(")");
+		}
+		return sb.toString();
 	}
 
 	public JComponent getConfigurationComponent() {

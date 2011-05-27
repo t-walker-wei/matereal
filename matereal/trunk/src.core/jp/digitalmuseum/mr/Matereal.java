@@ -196,7 +196,7 @@ public final class Matereal implements EventProvider, EventListener {
 		out.println("--Shutting down matereal.");
 		synchronized (services) {
 			for (Service service : services) {
-				service.stop();
+				service.dispose();
 			}
 			services.clear();
 		}
@@ -205,6 +205,12 @@ public final class Matereal implements EventProvider, EventListener {
 				entity.dispose();
 			}
 			entities.clear();
+		}
+		synchronized (workflows) {
+			for (Workflow workflow : workflows) {
+				workflow.dispose();
+			}
+			workflows.clear();
 		}
 		executor.shutdownNow();
 		out.print("--THANK YOU. GOOD ");

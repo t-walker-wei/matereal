@@ -64,30 +64,27 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 	private Shape shape;
 
 	public Noopy() {
-		initialize();
+		super();
 	}
 
 	public Noopy(String connectionString) {
 		super(connectionString);
-		initialize();
 	}
 
 	public Noopy(String connectionString, String name) {
 		super(connectionString, name);
-		initialize();
 	}
 
 	public Noopy(Connector connector) {
 		super(connector);
-		initialize();
 	}
 
 	public Noopy(Connector connector, String name) {
 		super(connector, name);
-		initialize();
 	}
 
-	private void initialize() {
+	@Override
+	protected void initialize() {
 		setTypeName("Noopy");
 		instances ++;
 		if (getName() == null) {
@@ -98,6 +95,7 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 				-WIDTH/2 , -HEIGHT/2,
 				WIDTH/2, HEIGHT/2,
 				3, 3);
+		super.initialize();
 	}
 
 	@Override

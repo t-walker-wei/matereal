@@ -89,13 +89,13 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 	private ImageProvider subImageProvider;
 	private NapCameraRelation cameraRelation;
 
-	public String getName() {
-		return SERVICE_NAME;
+	public MarkerDetector() {
+		super();
+		markerEntityMap = new HashMap<NapMarker, Entity>();
 	}
 
-	public MarkerDetector() {
-		markerEntityMap = new HashMap<NapMarker, Entity>();
-		initialize();
+	public String getName() {
+		return SERVICE_NAME;
 	}
 
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -103,7 +103,8 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		initialize();
 	}
 
-	private void initialize() {
+	protected void initialize() {
+		super.initialize();
 
 		detector = new NapMarkerDetectorImpl();
 		entityResultMap = new HashMap<Entity, NapDetectionResult>();

@@ -37,6 +37,7 @@
 package jp.digitalmuseum.mr.message;
 
 public enum ServiceStatus {
+	INSTANTIATED,
 	STARTED,
 	STOPPED,
 	PAUSED,

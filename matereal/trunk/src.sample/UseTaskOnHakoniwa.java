@@ -34,7 +34,6 @@ public class UseTaskOnHakoniwa implements EventListener {
 	 */
 	public UseTaskOnHakoniwa() {
 
-
 		Matereal.getInstance().addEventListener(new EventListener() {
 
 			@Override

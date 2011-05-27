@@ -66,6 +66,8 @@ public interface Service extends Runnable, EventProvider, Serializable {
 	 */
 	public void start(ServiceGroup serviceGroup);
 
+	public void dispose();
+
 	/**
 	 * Pause this service. When paused, run() won't be called till resume() is called.
 	 *
@@ -89,14 +91,19 @@ public interface Service extends Runnable, EventProvider, Serializable {
 	public void stop();
 
 	/**
-	 * @return Returns if this service is started on a service group.
+	 * @return Returns whether this service is started or not.
 	 */
 	public boolean isStarted();
 
 	/**
-	 * @return Returns if this service is paused.
+	 * @return Returns whether this service is paused or not.
 	 */
 	public boolean isPaused();
+
+	/**
+	 * @return Returns whether this service is disposed or not.
+	 */
+	public boolean isDisposed();
 
 	/**
 	 * Set duration of one cycle in milliseconds.

@@ -67,36 +67,34 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	private MindstormsNXTDifferentialWheels dw;
 
 	public MindstormsNXT() {
-		initialize();
+		super();
 	}
 
 	public MindstormsNXT(String connectionString) {
 		super(connectionString);
-		initialize();
 	}
 
 	public MindstormsNXT(String connectionString, String name) {
 		super(connectionString, name);
-		initialize();
 	}
 
 	public MindstormsNXT(Connector connector) {
 		super(connector);
-		initialize();
 	}
 
 	public MindstormsNXT(Connector connector, String name) {
 		super(connector, name);
-		initialize();
 	}
 
-	private void initialize() {
+	@Override
+	protected void initialize() {
 		setTypeName("LEGO MindstormsNXT");
 		instances ++;
 		if (getName() == null) {
 			setName(getTypeName()+" ("+instances+")");
 		}
 		dw = new MindstormsNXTDifferentialWheels(this);
+		super.initialize();
 	}
 
 	@Override

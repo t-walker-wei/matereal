@@ -92,7 +92,8 @@ public class NetTansor extends PhysicalRobotAbstractImpl {
 		initialize();
 	}
 
-	private void initialize() {
+	@Override
+	protected void initialize() {
 		setTypeName("NetTansor");
 		instances ++;
 		if (getName() == null) {
@@ -101,6 +102,7 @@ public class NetTansor extends PhysicalRobotAbstractImpl {
 		driver = new NetTansorDriver(this);
 		camera = new NetTansorHeadmountedCamera(this);
 		shape = new Ellipse2D.Double(-RADIUS, -RADIUS, RADIUS*2, RADIUS*2);
+		super.initialize();
 	}
 
 	@Override

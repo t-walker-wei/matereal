@@ -141,6 +141,7 @@ public class Hakoniwa extends ServiceAbstractImpl implements LocationProvider, S
 	}
 
 	public Hakoniwa(int width, int height) {
+		super();
 		initialize(width, height);
 	}
 
