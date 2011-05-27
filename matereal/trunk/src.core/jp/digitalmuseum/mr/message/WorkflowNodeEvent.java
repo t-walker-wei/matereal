@@ -36,22 +36,22 @@
  */
 package jp.digitalmuseum.mr.message;
 
-import jp.digitalmuseum.mr.workflow.Workflow;
+import jp.digitalmuseum.mr.workflow.Node;
 
-public class WorkflowEvent extends Event {
-	private WorkflowStatus status;
+public class WorkflowNodeEvent extends Event {
+	private WorkflowNodeStatus status;
 
-	public WorkflowEvent(Workflow source, WorkflowStatus status) {
+	public WorkflowNodeEvent(Node source, WorkflowNodeStatus status) {
 		super(source);
 		this.status = status;
 	}
 
 	@Override
-	public Workflow getSource() {
-		return (Workflow) super.getSource();
+	public Node getSource() {
+		return (Node) super.getSource();
 	}
 
-	public WorkflowStatus getStatus() {
+	public WorkflowNodeStatus getStatus() {
 		return status;
 	}
 
