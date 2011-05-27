@@ -73,7 +73,6 @@ public class Workflow extends Node {
 		nodes = new HashSet<Node>();
 		transitions = new HashSet<Transition>();
 		currentNodes = new Array<Node>();
-		monitor = new TransitionMonitor();
 		isStarted = false;
 		isPaused = false;
 		isDone = false;
@@ -84,15 +83,22 @@ public class Workflow extends Node {
 		}
 		instances ++;
 		this.name = "Workflow graph (" + instances + ")";
+		monitor = new TransitionMonitor();
 		Matereal.getInstance().registerWorkflow(this);
 		distributeEvent(new WorkflowEvent(this, WorkflowStatus.INSTANTIATED));
 		isDisposed = false;
 	}
 
 	public synchronized void dispose() {
-		stop();
-		Matereal.getInstance().unregisterWorkflow(this);
-		distributeEvent(new WorkflowEvent(this, WorkflowStatus.DISPOSED));
+		if (isStarted()) {
+			stop();
+		}
+		if (!isDisposed() && !Matereal.getInstance().isDisposing()) {
+			distributeEvent(new WorkflowEvent(this, WorkflowStatus.DISPOSED));
+			Matereal.getInstance().unregisterWorkflow(this);
+			clear();
+			listeners.clear();
+		}
 		isDisposed = true;
 	}
 
@@ -209,6 +215,15 @@ public class Workflow extends Node {
 		transitions.addAll(this.transitions);
 	}
 
+	public synchronized void clear() {
+		for (Transition transition : getTransitions()) {
+			removeTransition(transition);
+		}
+		for (Node node : getNodes()) {
+			remove(node);
+		}
+	}
+
 	/**
 	 * @throws IllegalStateException
 	 */
@@ -300,8 +315,18 @@ public class Workflow extends Node {
 		return isPaused;
 	}
 
+	@Override
+	protected boolean isAllowedEntry() {
+		return !isStarted() && !isDisposed();
+	}
+
 	protected synchronized boolean isDone() {
 		return isDone;
+	}
+
+	@Override
+	protected void onEnter() {
+		start();
 	}
 
 	private class TransitionMonitor extends ServiceAbstractImpl {

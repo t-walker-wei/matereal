@@ -83,7 +83,6 @@ public class HakoniwaRobotWithCleanerBrush extends HakoniwaRobot {
 
 	public HakoniwaRobotWithCleanerBrush(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
 		super(name, x, y, rotation, hakoniwa);
-		initialize();
 	}
 
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -91,9 +90,10 @@ public class HakoniwaRobotWithCleanerBrush extends HakoniwaRobot {
 		initialize();
 	}
 
-	private void initialize() {
+	protected void initialize() {
 		cleanerBrush = new HakoniwaRobotCleanerBrush();
 		screenPosition  = new ScreenPosition();
+		super.initialize();
 	}
 
 	@Override

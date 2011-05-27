@@ -85,7 +85,6 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 
 	public HakoniwaRobotWithPen(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
 		super(name, x, y, rotation, hakoniwa);
-		initialize();
 	}
 
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -93,9 +92,10 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 		initialize();
 	}
 
-	private void initialize() {
+	protected void initialize() {
 		pen = new HakoniwaRobotPen();
 		screenPosition = new ScreenPosition();
+		super.initialize();
 	}
 
 	@Override

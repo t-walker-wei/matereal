@@ -61,30 +61,27 @@ public class Mini extends PhysicalRobotAbstractImpl {
 	private Shape shape;
 
 	public Mini() {
-		initialize();
+		super();
 	}
 
 	public Mini(String connectionString) {
 		super(connectionString);
-		initialize();
 	}
 
 	public Mini(String connectionString, String name) {
 		super(connectionString, name);
-		initialize();
 	}
 
 	public Mini(Connector connector) {
 		super(connector);
-		initialize();
 	}
 
 	public Mini(Connector connector, String name) {
 		super(connector, name);
-		initialize();
 	}
 
-	private void initialize() {
+	@Override
+	protected void initialize() {
 		setTypeName("Mini");
 		instances ++;
 		if (getName() == null) {

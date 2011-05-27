@@ -56,7 +56,7 @@ public abstract class Node implements EventProvider, Serializable {
 	private long entranceDate;
 	private Workflow workflow;
 	private Set<Transition> transitions;
-	private transient Array<EventListener> listeners;
+	protected transient Array<EventListener> listeners;
 
 	public Node() {
 		transitions = new HashSet<Transition>();

@@ -61,16 +61,16 @@ public class DrawPath extends VectorFieldTask {
 	private transient Vector2D v;
 
 	public DrawPath(List<Position> path) {
-		this.path = new ArrayList<Position>(path);
-		initialize();
+		initialize(new ArrayList<Position>(path));
 	}
 
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		ois.defaultReadObject();
-		initialize();
+		initialize(path);
 	}
 
-	private void initialize() {
+	private void initialize(List<Position> path) {
+		this.path = path;
 		currentGoalIndex = 0;
 		currentGoal = path.get(currentGoalIndex ++);
 		nextGoal = new Position();

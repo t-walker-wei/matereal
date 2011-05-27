@@ -54,7 +54,7 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 	private Hakoniwa hakoniwa;
 
 	public HakoniwaEntityAbstractImpl() {
-		initialize();
+		initialize(null);
 	}
 
 	public HakoniwaEntityAbstractImpl(Hakoniwa hakoniwa) {
@@ -63,7 +63,7 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 
 	public HakoniwaEntityAbstractImpl(String name) {
 		super(name);
-		initialize();
+		initialize(null);
 	}
 
 	public HakoniwaEntityAbstractImpl(String name, Hakoniwa hakoniwa) {
@@ -71,11 +71,10 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 		initialize(hakoniwa);
 	}
 
-	private void initialize() {
-		initialize(Matereal.getInstance().lookForService(Hakoniwa.class));
-	}
-
 	private void initialize(Hakoniwa hakoniwa) {
+		if (hakoniwa == null) {
+			hakoniwa = Matereal.getInstance().lookForService(Hakoniwa.class);
+		}
 		this.hakoniwa = hakoniwa;
 	}
 

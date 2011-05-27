@@ -127,6 +127,9 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 
 	public HakoniwaRobot(double x, double y, double rotation, Hakoniwa hakoniwa) {
 		super();
+		if (hakoniwa == null) {
+			hakoniwa = Matereal.getInstance().lookForService(Hakoniwa.class);
+		}
 		this.hakoniwa = hakoniwa;
 		initialize(x, y, rotation);
 	}
@@ -164,11 +167,14 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 	}
 
 	public HakoniwaRobot(String name, double x, double y, double rotation) {
-		this(name, x, y, rotation, Matereal.getInstance().lookForService(Hakoniwa.class));
+		this(name, x, y, rotation, null);
 	}
 
 	public HakoniwaRobot(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
 		super(name);
+		if (hakoniwa == null) {
+			hakoniwa = Matereal.getInstance().lookForService(Hakoniwa.class);
+		}
 		this.hakoniwa = hakoniwa;
 		initialize(x, y, rotation);
 	}

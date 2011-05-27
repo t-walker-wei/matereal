@@ -66,30 +66,27 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 	private Shape shape;
 
 	public Roomba() {
-		initialize();
+		super();
 	}
 
 	public Roomba(String connectionString) {
 		super(connectionString);
-		initialize();
 	}
 
 	public Roomba(String connectionString, String name) {
 		super(connectionString, name);
-		initialize();
 	}
 
 	public Roomba(Connector connector) {
 		super(connector);
-		initialize();
 	}
 
 	public Roomba(Connector connector, String name) {
 		super(connector, name);
-		initialize();
 	}
 
-	private void initialize() {
+	@Override
+	protected void initialize() {
 		setTypeName("Roomba");
 		instances ++;
 		if (getName() == null) {
@@ -98,6 +95,7 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		driver = new RoombaDriver(this);
 		cleaner = new RoombaCleanerBrush(this);
 		shape = new Ellipse2D.Double(-RADIUS, -RADIUS, RADIUS*2, RADIUS*2);
+		super.initialize();
 	}
 
 

@@ -77,17 +77,13 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		return this.getClass().getSimpleName();
 	}
 
-	public TaskAbstractImpl() {
-		super();
-		initialize();
-	}
-
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 		ois.defaultReadObject();
 		initialize();
 	}
 
-	private void initialize() {
+	protected void initialize() {
+		super.initialize();
 		robotEventQueue = new LinkedList<RobotEvent>();
 		robotEventListener = new RobotEventListener();
 	}
