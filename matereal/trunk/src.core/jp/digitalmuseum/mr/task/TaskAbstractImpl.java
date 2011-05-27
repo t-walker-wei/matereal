@@ -53,7 +53,7 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.RobotEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 import jp.digitalmuseum.mr.workflow.Workflow;
 
@@ -188,7 +188,7 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		if (!isStopping) {
 			stop();
 		}
-		distributeEvent(new ServiceEvent(this, STATUS.FINISHED));
+		distributeEvent(new ServiceEvent(this, ServiceStatus.FINISHED));
 	}
 
 	/**

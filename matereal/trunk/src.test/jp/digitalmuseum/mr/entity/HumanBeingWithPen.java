@@ -55,16 +55,16 @@ public class HumanBeingWithPen extends HumanBeing {
 		return rs;
 	}
 
-	public Pen.STATUS getStatusOfPen() {
+	public Pen.PenStatus getStatusOfPen() {
 		return humanPen.getStatus();
 	}
 
 	public static class HumanPen extends ResourceAbstractImpl implements Pen {
-		private STATUS penStatus;
+		private PenStatus penStatus;
 
 		protected HumanPen(HumanBeingWithPen robot) {
 			super(robot);
-			penStatus = STATUS.UP;
+			penStatus = PenStatus.UP;
 		}
 
 		protected void dispose() {
@@ -72,15 +72,15 @@ public class HumanBeingWithPen extends HumanBeing {
 		}
 
 		public void endPen() {
-			penStatus = STATUS.UP;
+			penStatus = PenStatus.UP;
 		}
 
-		public STATUS getStatus() {
+		public PenStatus getStatus() {
 			return penStatus;
 		}
 
 		public void putPen() {
-			penStatus = STATUS.DOWN;
+			penStatus = PenStatus.DOWN;
 		}
 	}
 }

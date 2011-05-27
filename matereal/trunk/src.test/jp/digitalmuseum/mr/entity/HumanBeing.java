@@ -63,7 +63,7 @@ public class HumanBeing extends RobotAbstractImpl {
 		return rs;
 	}
 
-	public WheelsController.STATUS getStatusOfLegs() {
+	public WheelsController.WheelsStatus getStatusOfLegs() {
 		return humanLegs.getStatus();
 	}
 
@@ -72,31 +72,31 @@ public class HumanBeing extends RobotAbstractImpl {
 	}
 
 	public static class HumanLegs extends ResourceAbstractImpl implements WheelsController {
-		STATUS status;
+		WheelsStatus status;
 
 		protected HumanLegs(HumanBeing robot) {
 			super(robot);
-			status = STATUS.STOP;
+			status = WheelsStatus.STOP;
 		}
 
 		protected void dispose() {
 			stopWheels();
 		}
 
-		public STATUS getStatus() {
+		public WheelsStatus getStatus() {
 			return status;
 		}
 
 		public void goBackward() {
-			status = STATUS.GO_BACKWARD;
+			status = WheelsStatus.GO_BACKWARD;
 		}
 
 		public void goForward() {
-			status = STATUS.GO_FORWARD;
+			status = WheelsStatus.GO_FORWARD;
 		}
 
-		public void spin(SPIN direction) {
-			if (direction == SPIN.LEFT) {
+		public void spin(Spin direction) {
+			if (direction == Spin.LEFT) {
 				spinLeft();
 			} else {
 				spinRight();
@@ -104,15 +104,15 @@ public class HumanBeing extends RobotAbstractImpl {
 		}
 
 		public void spinLeft() {
-			status = STATUS.SPIN_LEFT;
+			status = WheelsStatus.SPIN_LEFT;
 		}
 
 		public void spinRight() {
-			status = STATUS.SPIN_RIGHT;
+			status = WheelsStatus.SPIN_RIGHT;
 		}
 
 		public void stopWheels() {
-			status = STATUS.STOP;
+			status = WheelsStatus.STOP;
 		}
 	}
 

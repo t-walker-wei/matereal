@@ -38,10 +38,10 @@ package jp.digitalmuseum.mr.gui;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.workflow.WorkflowViewPane;
-import jp.digitalmuseum.mr.message.WorkflowGraphEvent;
-import jp.digitalmuseum.mr.message.WorkflowGraphEvent.STATUS;
+import jp.digitalmuseum.mr.message.WorkflowUpdateEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
+import jp.digitalmuseum.mr.message.WorkflowUpdateStatus;
 import jp.digitalmuseum.mr.workflow.Workflow;
 
 import javax.swing.BorderFactory;
@@ -313,13 +313,13 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 	}
 
 	public void eventOccurred(Event e) {
-		if (e instanceof WorkflowGraphEvent) {
-			WorkflowGraphEvent ade = (WorkflowGraphEvent) e;
-			if (ade.getStatus() == STATUS.INSTANTIATED ||
-					ade.getStatus() == STATUS.DISPOSED) {
+		if (e instanceof WorkflowUpdateEvent) {
+			WorkflowUpdateEvent ade = (WorkflowUpdateEvent) e;
+			if (ade.getStatus() == WorkflowUpdateStatus.INSTANTIATED ||
+					ade.getStatus() == WorkflowUpdateStatus.DISPOSED) {
 				Workflow entity = ade.getSource();
 
-				if (ade.getStatus() == STATUS.INSTANTIATED) {
+				if (ade.getStatus() == WorkflowUpdateStatus.INSTANTIATED) {
 					addGraph(entity);
 				} else {
 					removeGraph(entity);

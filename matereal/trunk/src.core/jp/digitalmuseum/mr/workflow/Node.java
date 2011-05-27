@@ -48,7 +48,7 @@ import jp.digitalmuseum.mr.message.WorkflowEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.EventProvider;
-import jp.digitalmuseum.mr.message.WorkflowEvent.STATUS;
+import jp.digitalmuseum.mr.message.WorkflowStatus;
 import jp.digitalmuseum.utils.Array;
 
 public abstract class Node implements EventProvider, Serializable {
@@ -164,13 +164,13 @@ public abstract class Node implements EventProvider, Serializable {
 	final void enter() {
 		entranceDate = Calendar.getInstance().getTimeInMillis();
 		distributeEvent(
-				new WorkflowEvent(this, STATUS.ENTERED));
+				new WorkflowEvent(this, WorkflowStatus.ENTERED));
 		onEnter();
 	}
 
 	final void leave() {
 		distributeEvent(
-				new WorkflowEvent(this, STATUS.LEFT));
+				new WorkflowEvent(this, WorkflowStatus.LEFT));
 		onLeave();
 	}
 }

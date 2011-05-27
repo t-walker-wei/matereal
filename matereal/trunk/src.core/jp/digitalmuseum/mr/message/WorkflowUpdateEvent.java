@@ -40,24 +40,20 @@ import jp.digitalmuseum.mr.workflow.Workflow;
 import jp.digitalmuseum.mr.workflow.Node;
 import jp.digitalmuseum.mr.workflow.Transition;
 
-public class WorkflowGraphEvent extends Event {
-	static public enum STATUS {
-		NODE_ADDED, NODE_REMOVED, TRANSITION_ADDED, TRANSITION_REMOVED,
-		INSTANTIATED, INITIAL_NODE_SET, DISPOSED
-	}
-	private STATUS status;
+public class WorkflowUpdateEvent extends Event {
+	private WorkflowUpdateStatus status;
 	private Node node;
 	private Transition transition;
 
-	public WorkflowGraphEvent(Workflow source, STATUS status) {
+	public WorkflowUpdateEvent(Workflow source, WorkflowUpdateStatus status) {
 		super(source);
 		this.status = status;
 	}
-	public WorkflowGraphEvent(Workflow source, STATUS status, Node node) {
+	public WorkflowUpdateEvent(Workflow source, WorkflowUpdateStatus status, Node node) {
 		this(source, status);
 		this.node = node;
 	}
-	public WorkflowGraphEvent(Workflow source, STATUS status, Transition transition) {
+	public WorkflowUpdateEvent(Workflow source, WorkflowUpdateStatus status, Transition transition) {
 		this(source, status);
 		this.transition = transition;
 	}
@@ -67,7 +63,7 @@ public class WorkflowGraphEvent extends Event {
 		return (Workflow) super.getSource();
 	}
 
-	public STATUS getStatus() {
+	public WorkflowUpdateStatus getStatus() {
 		return status;
 	}
 

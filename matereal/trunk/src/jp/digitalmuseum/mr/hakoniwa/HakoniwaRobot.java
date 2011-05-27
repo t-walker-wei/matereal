@@ -56,7 +56,7 @@ import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.entity.RobotAbstractImpl;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
-import jp.digitalmuseum.mr.resource.Wheels.STATUS;
+import jp.digitalmuseum.mr.resource.Wheels.WheelsStatus;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 
@@ -245,26 +245,26 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		final float angle = body.getAngle();
 		final float ex = MathUtils.cos(angle);
 		final float ey = MathUtils.sin(angle);
-		if (wheels.status == STATUS.CURVE_LEFT ||
-				wheels.status == STATUS.CURVE_RIGHT) {
+		if (wheels.status == WheelsStatus.CURVE_LEFT ||
+				wheels.status == WheelsStatus.CURVE_RIGHT) {
 			final float f = DEFAULT_FORCE * wheels.rotationSpeed * (100+wheels.innerSpeed) / 20000;
 			force.x = f * ex;
 			force.y = f * ey;
 			body.applyForce(force, body.getPosition());
 
-			final float torque = (wheels.status == STATUS.CURVE_LEFT ?
+			final float torque = (wheels.status == WheelsStatus.CURVE_LEFT ?
 							DEFAULT_TORQUE : -DEFAULT_TORQUE) *
 					wheels.rotationSpeed * (100-wheels.innerSpeed) / 20000;
 			body.applyTorque(torque);
 		}
-		else if (wheels.status == STATUS.GO_FORWARD ||
-				wheels.status == STATUS.GO_BACKWARD) {
+		else if (wheels.status == WheelsStatus.GO_FORWARD ||
+				wheels.status == WheelsStatus.GO_BACKWARD) {
 			// Acceleration in [m/s^2] and force in [N].
 			/*
 				final float a = 1f;
 				final float f = body.getMass() * (status.equals(STATUS.GO_FORWARD) ? a : -a);
 			 */
-			final float f = (wheels.status == STATUS.GO_FORWARD ?
+			final float f = (wheels.status == WheelsStatus.GO_FORWARD ?
 							DEFAULT_FORCE : -DEFAULT_FORCE) *
 					wheels.speed / 100;
 
@@ -285,11 +285,11 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 				force.y -= tmp * v.y;
 			 */
 		}
-		else if (wheels.status == STATUS.SPIN_LEFT ||
-				wheels.status == STATUS.SPIN_RIGHT) {
+		else if (wheels.status == WheelsStatus.SPIN_LEFT ||
+				wheels.status == WheelsStatus.SPIN_RIGHT) {
 
 			// Apply motor power. [Nm]
-			final float torque = (wheels.status == STATUS.SPIN_LEFT ?
+			final float torque = (wheels.status == WheelsStatus.SPIN_LEFT ?
 							DEFAULT_TORQUE : -DEFAULT_TORQUE) *
 					wheels.rotationSpeed * (100-wheels.innerSpeed) / 20000;
 			body.applyTorque(torque);
@@ -344,7 +344,7 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		private static final long serialVersionUID = 4609377279740403081L;
 		private final static int DEFAULT_SPEED = 50;
 		private final static int DEFAULT_ROTATION_SPEED = 50;
-		private STATUS status;
+		private WheelsStatus status;
 		private int speed;
 		private int rotationSpeed;
 		private int innerSpeed;
@@ -362,7 +362,7 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		private void initialize() {
 			speed = DEFAULT_SPEED;
 			rotationSpeed = DEFAULT_ROTATION_SPEED;
-			status = STATUS.STOP;
+			status = WheelsStatus.STOP;
 		}
 
 		@Override
@@ -370,7 +370,7 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 			stopWheels();
 		}
 
-		public STATUS getStatus() {
+		public WheelsStatus getStatus() {
 			return status;
 		}
 
@@ -443,15 +443,15 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		}
 
 		public void goBackward() {
-			status = STATUS.GO_BACKWARD;
+			status = WheelsStatus.GO_BACKWARD;
 		}
 
 		public void goForward() {
-			status = STATUS.GO_FORWARD;
+			status = WheelsStatus.GO_FORWARD;
 		}
 
-		public void spin(SPIN direction) {
-			if (direction == SPIN.LEFT) {
+		public void spin(Spin direction) {
+			if (direction == Spin.LEFT) {
 				spinLeft();
 			} else {
 				spinRight();
@@ -459,17 +459,17 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		}
 
 		public void spinLeft() {
-			status = STATUS.SPIN_LEFT;
+			status = WheelsStatus.SPIN_LEFT;
 			innerSpeed = -100;
 		}
 
 		public void spinRight() {
-			status = STATUS.SPIN_RIGHT;
+			status = WheelsStatus.SPIN_RIGHT;
 			innerSpeed = -100;
 		}
 
-		public void curve(SPIN direction, int innerSpeed) {
-			if (direction == SPIN.LEFT) {
+		public void curve(Spin direction, int innerSpeed) {
+			if (direction == Spin.LEFT) {
 				curveLeft(innerSpeed);
 			} else {
 				curveRight(innerSpeed);
@@ -477,17 +477,17 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 		}
 
 		public void curveLeft(int innerSpeed) {
-			status = STATUS.CURVE_LEFT;
+			status = WheelsStatus.CURVE_LEFT;
 			this.innerSpeed = innerSpeed;
 		}
 
 		public void curveRight(int innerSpeed) {
-			status = STATUS.CURVE_RIGHT;
+			status = WheelsStatus.CURVE_RIGHT;
 			this.innerSpeed = innerSpeed;
 		}
 
 		public void stopWheels() {
-			status = STATUS.STOP;
+			status = WheelsStatus.STOP;
 		}
 
 		public boolean drive(int leftPower, int rightPower) {
@@ -497,31 +497,31 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 			}
 			if (leftPower == rightPower) {
 				if (leftPower == 0) {
-					status = STATUS.STOP;
+					status = WheelsStatus.STOP;
 				} else if (leftPower > 0) {
 					speed = leftPower;
-					status = STATUS.GO_FORWARD;
+					status = WheelsStatus.GO_FORWARD;
 				} else {
 					speed = rightPower;
-					status = STATUS.GO_BACKWARD;
+					status = WheelsStatus.GO_BACKWARD;
 				}
 			} else if (leftPower == -rightPower) {
 				if (leftPower > 0) {
 					rotationSpeed = leftPower;
-					status = STATUS.SPIN_RIGHT;
+					status = WheelsStatus.SPIN_RIGHT;
 				} else {
 					rotationSpeed = rightPower;
-					status = STATUS.SPIN_LEFT;
+					status = WheelsStatus.SPIN_LEFT;
 				}
 			} else {
 				if (leftPower > rightPower) {
 					rotationSpeed = leftPower;
 					innerSpeed = 100*rightPower/leftPower;
-					status = STATUS.CURVE_RIGHT;
+					status = WheelsStatus.CURVE_RIGHT;
 				} else {
 					rotationSpeed = rightPower;
 					innerSpeed = 100*leftPower/rightPower;
-					status = STATUS.CURVE_LEFT;
+					status = WheelsStatus.CURVE_LEFT;
 				}
 			}
 			return true;

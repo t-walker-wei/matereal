@@ -40,7 +40,7 @@ import java.util.List;
 
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.resource.PenController;
-import jp.digitalmuseum.mr.resource.Pen.STATUS;
+import jp.digitalmuseum.mr.resource.Pen.PenStatus;
 import jp.digitalmuseum.mr.task.TaskAbstractImpl;
 
 public class EndPen extends TaskAbstractImpl {
@@ -70,7 +70,7 @@ public class EndPen extends TaskAbstractImpl {
 	}
 
 	public void run() {
-		if (pen != null && pen.getStatus() == STATUS.UP) {
+		if (pen != null && pen.getStatus() == PenStatus.UP) {
 			finish();
 		}
 	}

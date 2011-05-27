@@ -47,7 +47,7 @@ import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceEvent.STATUS;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.task.Task;
 
 public class Action extends Node implements EventListener, Serializable {
@@ -148,7 +148,7 @@ public class Action extends Node implements EventListener, Serializable {
 		if (e.getSource() == task) {
 			if (e instanceof ServiceEvent) {
 				ServiceEvent se = (ServiceEvent) e;
-				if (se.getStatus() == STATUS.STOPPED) {
+				if (se.getStatus() == ServiceStatus.STOPPED) {
 					isDone = true;
 				}
 			}

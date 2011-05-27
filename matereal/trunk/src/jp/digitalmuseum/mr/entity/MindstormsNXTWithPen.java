@@ -87,7 +87,7 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 
 	public static class MindstormsNXTPen extends PhysicalResourceAbstractImpl implements PenController {
 		private static final long serialVersionUID = -5728192484061964775L;
-		private STATUS status;
+		private PenStatus status;
 		private byte penPort = A;
 		private byte power = 100;
 		private int tachoLimit = 180;
@@ -122,14 +122,14 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 		}
 
 		private void initialize() {
-			status = STATUS.UP;
+			status = PenStatus.UP;
 		}
 
 		protected void onFree() {
 			// endPen();
 		}
 
-		public synchronized STATUS getStatus() {
+		public synchronized PenStatus getStatus() {
 			return status;
 		}
 
@@ -142,7 +142,7 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 		}
 
 		public synchronized void endPen() {
-			if (status == STATUS.DOWN) {
+			if (status == PenStatus.DOWN) {
 				if (isWatchingState()) {
 					finishWatchingState();
 				}
@@ -151,13 +151,13 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 						REGULATION_MODE_IDLE, 0,
 						MOTOR_RUN_STATE_RUNNING, tachoLimit,
 						getConnector());
-				status = STATUS.GOING_UP;
+				status = PenStatus.GOING_UP;
 				startWatchingState();
 			}
 		}
 
 		public synchronized void putPen() {
-			if (status == STATUS.UP) {
+			if (status == PenStatus.UP) {
 				if (isWatchingState()) {
 					finishWatchingState();
 				}
@@ -166,7 +166,7 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 						REGULATION_MODE_IDLE, 0,
 						MOTOR_RUN_STATE_RUNNING, tachoLimit,
 						getConnector());
-				status = STATUS.GOING_DOWN;
+				status = PenStatus.GOING_DOWN;
 				startWatchingState();
 			}
 		}
@@ -181,10 +181,10 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 
 		private synchronized void finishWatchingState() {
 			stateWatcher.stop();
-			if (status == STATUS.GOING_DOWN) {
-				status = STATUS.DOWN;
-			} else if (status == STATUS.GOING_UP) {
-				status = STATUS.UP;
+			if (status == PenStatus.GOING_DOWN) {
+				status = PenStatus.DOWN;
+			} else if (status == PenStatus.GOING_UP) {
+				status = PenStatus.UP;
 			}
 		}
 	}

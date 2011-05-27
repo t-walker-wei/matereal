@@ -40,14 +40,10 @@ import jp.digitalmuseum.mr.entity.Entity;
 
 public class EntityEvent extends Event {
 
-	static public enum STATUS {
-		INSTANTIATED,
-		DISPOSED
-	}
 	private Entity source;
-	private STATUS status;
+	private EntityStatus status;
 
-	public EntityEvent(Entity source, STATUS status) {
+	public EntityEvent(Entity source, EntityStatus status) {
 		this.source = source;
 		this.status = status;
 	}
@@ -57,7 +53,7 @@ public class EntityEvent extends Event {
 		return source;
 	}
 
-	public STATUS getStatus() {
+	public EntityStatus getStatus() {
 		return status;
 	}
 

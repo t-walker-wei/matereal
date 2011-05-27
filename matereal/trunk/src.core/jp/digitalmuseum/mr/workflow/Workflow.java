@@ -43,8 +43,8 @@ import javax.swing.JComponent;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.workflow.WorkflowViewPane;
-import jp.digitalmuseum.mr.message.WorkflowGraphEvent;
-import jp.digitalmuseum.mr.message.WorkflowGraphEvent.STATUS;
+import jp.digitalmuseum.mr.message.WorkflowUpdateEvent;
+import jp.digitalmuseum.mr.message.WorkflowUpdateStatus;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 import jp.digitalmuseum.utils.Array;
 
@@ -83,14 +83,14 @@ public class Workflow extends Node {
 		instances ++;
 		this.name = "Workflow graph (" + instances + ")";
 		Matereal.getInstance().registerWorkflow(this);
-		distributeEvent(new WorkflowGraphEvent(this, STATUS.INSTANTIATED));
+		distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.INSTANTIATED));
 		isDisposed = false;
 	}
 
 	public synchronized void dispose() {
 		stop();
 		Matereal.getInstance().unregisterWorkflow(this);
-		distributeEvent(new WorkflowGraphEvent(this, STATUS.DISPOSED));
+		distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.DISPOSED));
 		isDisposed = true;
 	}
 
@@ -119,7 +119,7 @@ public class Workflow extends Node {
 			add(node);
 		}
 		this.initialNode = node;
-		distributeEvent(new WorkflowGraphEvent(this, STATUS.INITIAL_NODE_SET, node));
+		distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.INITIAL_NODE_SET, node));
 	}
 
 	public synchronized Node getInitialNode() {
@@ -129,7 +129,7 @@ public class Workflow extends Node {
 	public synchronized void add(Node node) {
 		nodes.add(node);
 		node.setWorkflow(this);
-		distributeEvent(new WorkflowGraphEvent(this, STATUS.NODE_ADDED, node));
+		distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.NODE_ADDED, node));
 	}
 
 	public synchronized void add(Node... nodes) {
@@ -156,7 +156,7 @@ public class Workflow extends Node {
 			}
 			node.setWorkflow(null);
 			removeRelatedTransitions(node);
-			distributeEvent(new WorkflowGraphEvent(this, STATUS.NODE_REMOVED, node));
+			distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.NODE_REMOVED, node));
 			return true;
 		}
 		return false;
@@ -175,14 +175,14 @@ public class Workflow extends Node {
 		Node source = transition.getSource();
 		source.addTransition(transition);
 		transitions.add(transition);
-		distributeEvent(new WorkflowGraphEvent(this, STATUS.TRANSITION_ADDED, transition));
+		distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.TRANSITION_ADDED, transition));
 	}
 
 	public synchronized boolean removeTransition(Transition transition) {
 		Node source = transition.getSource();
 		if (source.removeTransition(transition)) {
 			transitions.remove(transition);
-			distributeEvent(new WorkflowGraphEvent(this, STATUS.TRANSITION_ADDED, transition));
+			distributeEvent(new WorkflowUpdateEvent(this, WorkflowUpdateStatus.TRANSITION_ADDED, transition));
 			return true;
 		}
 		return false;

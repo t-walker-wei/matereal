@@ -46,7 +46,7 @@ import java.util.Set;
 import jp.digitalmuseum.mr.gui.DisposableComponent;
 import jp.digitalmuseum.mr.gui.workflow.layout.Layout;
 import jp.digitalmuseum.mr.gui.workflow.layout.SugiyamaLayouter;
-import jp.digitalmuseum.mr.message.WorkflowGraphEvent;
+import jp.digitalmuseum.mr.message.WorkflowUpdateEvent;
 import jp.digitalmuseum.mr.message.WorkflowEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
@@ -332,8 +332,8 @@ public class WorkflowViewCanvas extends PCanvas implements
 
 	private class WorkflowEventListener implements EventListener {
 		public void eventOccurred(Event e) {
-			if (e instanceof WorkflowGraphEvent) {
-				WorkflowGraphEvent ade = (WorkflowGraphEvent) e;
+			if (e instanceof WorkflowUpdateEvent) {
+				WorkflowUpdateEvent ade = (WorkflowUpdateEvent) e;
 				switch (ade.getStatus()) {
 				case NODE_ADDED:
 					onNodeAdded(ade.getAffectedNode());

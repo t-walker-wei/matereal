@@ -48,7 +48,7 @@ public interface DifferentialWheelsController extends DifferentialWheels, Wheels
 	public boolean setRotationSpeed(int rotationSpeed);
 
 	/** Go forward and rotate left/right. */
-	public void curve(SPIN direction, int innerSpeed);
+	public void curve(Spin direction, int innerSpeed);
 
 	/** Go forward and rotate left. */
 	public void curveLeft(int innerSpeed);

@@ -46,7 +46,7 @@ import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 public abstract class WheelsAbstractImpl extends PhysicalResourceAbstractImpl implements
 		WheelsController {
 	private static final long serialVersionUID = 7215831625357912590L;
-	private STATUS status;
+	private WheelsStatus status;
 
 	public WheelsAbstractImpl(PhysicalRobotAbstractImpl robot) {
 		super(robot);
@@ -65,7 +65,7 @@ public abstract class WheelsAbstractImpl extends PhysicalResourceAbstractImpl im
 	}
 
 	private void initialize() {
-		status = STATUS.STOP;
+		status = WheelsStatus.STOP;
 	}
 
 	@Override
@@ -74,21 +74,21 @@ public abstract class WheelsAbstractImpl extends PhysicalResourceAbstractImpl im
 	}
 
 	public void goForward() {
-		if (status != STATUS.GO_FORWARD) {
+		if (status != WheelsStatus.GO_FORWARD) {
 			doGoForward();
-			status = STATUS.GO_FORWARD;
+			status = WheelsStatus.GO_FORWARD;
 		}
 	}
 
 	public void goBackward() {
-		if (status != STATUS.GO_BACKWARD) {
+		if (status != WheelsStatus.GO_BACKWARD) {
 			doGoBackward();
-			status = STATUS.GO_BACKWARD;
+			status = WheelsStatus.GO_BACKWARD;
 		}
 	}
 
-	public void spin(SPIN direction) {
-		if (direction.equals(SPIN.LEFT)) {
+	public void spin(Spin direction) {
+		if (direction.equals(Spin.LEFT)) {
 			spinLeft();
 		} else {
 			spinRight();
@@ -96,27 +96,27 @@ public abstract class WheelsAbstractImpl extends PhysicalResourceAbstractImpl im
 	}
 
 	public void spinLeft() {
-		if (status != STATUS.SPIN_LEFT) {
+		if (status != WheelsStatus.SPIN_LEFT) {
 			doSpinLeft();
-			status = STATUS.SPIN_LEFT;
+			status = WheelsStatus.SPIN_LEFT;
 		}
 	}
 
 	public void spinRight() {
-		if (status != STATUS.SPIN_RIGHT) {
+		if (status != WheelsStatus.SPIN_RIGHT) {
 			doSpinRight();
-			status = STATUS.SPIN_RIGHT;
+			status = WheelsStatus.SPIN_RIGHT;
 		}
 	}
 
 	public void stopWheels() {
-		if (status != STATUS.STOP) {
+		if (status != WheelsStatus.STOP) {
 			doStopWheels();
-			status = STATUS.STOP;
+			status = WheelsStatus.STOP;
 		}
 	}
 
-	public STATUS getStatus() {
+	public WheelsStatus getStatus() {
 		return status;
 	}
 

@@ -46,7 +46,7 @@ import java.util.List;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.resource.PenController;
-import jp.digitalmuseum.mr.resource.Pen.STATUS;
+import jp.digitalmuseum.mr.resource.Pen.PenStatus;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
@@ -124,7 +124,7 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 	@Override
 	public void preStep() {
 		super.preStep();
-		if (pen != null && pen.status == STATUS.DOWN) {
+		if (pen != null && pen.status == PenStatus.DOWN) {
 			final Hakoniwa hakoniwa = getHakoniwa();
 			Graphics2D g2 = hakoniwa.createBackgroundGraphics();
 			g2.setRenderingHint(
@@ -144,7 +144,7 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 
 	protected static class HakoniwaRobotPen extends ResourceAbstractImpl implements PenController {
 		private static final long serialVersionUID = 7309774293086967156L;
-		private transient STATUS status;
+		private transient PenStatus status;
 		private Color color;
 		private int radius;
 
@@ -160,7 +160,7 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 		}
 
 		private void initialize() {
-			status = STATUS.UP;
+			status = PenStatus.UP;
 		}
 
 		@Override
@@ -168,7 +168,7 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 			// Do nothing.
 		}
 
-		public STATUS getStatus() {
+		public PenStatus getStatus() {
 			return status;
 		}
 
@@ -189,11 +189,11 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 		}
 
 		public void endPen() {
-			status = STATUS.UP;
+			status = PenStatus.UP;
 		}
 
 		public void putPen() {
-			status = STATUS.DOWN;
+			status = PenStatus.DOWN;
 		}
 	}
 

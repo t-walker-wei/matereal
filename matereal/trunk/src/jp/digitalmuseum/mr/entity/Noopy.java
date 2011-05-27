@@ -168,7 +168,7 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 	 */
 	public static class NoopyPen extends PhysicalResourceAbstractImpl implements Pen {
 		private static final long serialVersionUID = 529214318121894129L;
-		private STATUS penStatus;
+		private PenStatus penStatus;
 
 		public NoopyPen(Noopy noopy) {
 			super(noopy);
@@ -181,7 +181,7 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 		}
 
 		private void initialize() {
-			penStatus = STATUS.UP;
+			penStatus = PenStatus.UP;
 		}
 
 		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -195,20 +195,20 @@ public class Noopy extends PhysicalRobotAbstractImpl {
 		}
 
 		public void putPen() {
-			if (penStatus == STATUS.UP) {
+			if (penStatus == PenStatus.UP) {
 				getConnector().write("u");
-				penStatus = Pen.STATUS.DOWN;
+				penStatus = Pen.PenStatus.DOWN;
 			}
 		}
 
 		public void endPen() {
-			if (penStatus == STATUS.DOWN) {
+			if (penStatus == PenStatus.DOWN) {
 				getConnector().write("v");
-				penStatus = Pen.STATUS.UP;
+				penStatus = Pen.PenStatus.UP;
 			}
 		}
 
-		public STATUS getStatus() {
+		public PenStatus getStatus() {
 			return penStatus;
 		}
 	}

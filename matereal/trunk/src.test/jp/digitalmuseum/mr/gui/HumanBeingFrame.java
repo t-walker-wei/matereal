@@ -98,7 +98,7 @@ public class HumanBeingFrame extends DrawableFrame {
 				final int x = (getFrameWidth()-imagePen.getWidth())/2;
 				final int baseY = 45 + (imageGoForward == null ? 0 : imageGoForward.getHeight());
 				int offsetY = ((HumanBeingWithPen) robot).getStatusOfPen()
-						== Pen.STATUS.DOWN ? 20 : 0;
+						== Pen.PenStatus.DOWN ? 20 : 0;
 				g.drawImage(imagePen,
 						x,
 						baseY + offsetY, null);
