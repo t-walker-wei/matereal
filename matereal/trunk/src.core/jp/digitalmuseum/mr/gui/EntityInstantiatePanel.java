@@ -50,7 +50,7 @@ import jp.digitalmuseum.mr.Matereal;
 import javax.swing.BorderFactory;
 import java.awt.SystemColor;
 
-public class EntityAddPanel extends JPanel {
+public class EntityInstantiatePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel typeLabel = null;
@@ -65,7 +65,7 @@ public class EntityAddPanel extends JPanel {
 	/**
 	 * This is the default constructor
 	 */
-	public EntityAddPanel() {
+	public EntityInstantiatePanel() {
 		super();
 		initialize();
 	}

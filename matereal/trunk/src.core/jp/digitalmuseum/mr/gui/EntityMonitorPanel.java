@@ -71,8 +71,12 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import javax.swing.border.SoftBevelBorder;
 import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JSplitPane;
 import javax.swing.JButton;
+import javax.swing.JTextField;
 
 /**
  * Monitor panel for entities.
@@ -86,13 +90,30 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	private JSplitPane jSplitPane = null;
 
 	private JPanel leftPanel = null;
-	private JPanel rightViewPanel = null;
 
 	private JScrollPane jScrollPane = null;
 	private JTree jTree = null;
+	private JButton instantiateButton = null;
+	private JButton disposeButton = null;
 
-	private JLabel selectedEntityLabel = null;
+	private JPanel rightPanel = null;
+
+	private JPanel rightViewPanel = null;
+
+	private JPanel entityNamePanel = null;
+
+	private JPanel entityNameShowPanel = null;
+	private JLabel entityNameLabel = null;
+	private JButton entityNameEditButton = null;
+
+	private JPanel entityNameEditPanel = null;
+	private JTextField entityNameTextField = null;
+	private JButton entityNameEditOkButton = null;
+	private JButton entityNameEditCancelButton = null;
+
 	private JPanel entityPanel = null;
+
+	private JPanel rightInstantiatePanel = null;
 
 	/** Root node for jTree. */
 	private DefaultMutableTreeNode root;
@@ -102,13 +123,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 
 	private transient Map<Entity, JComponent> entityComponents;
 
-	private JPanel rightPanel = null;
-
-	private JButton instantiateButton = null;
-
-	private JButton disposeButton = null;
-
-	private JPanel rightAddPanel = null;
+	private transient Entity selectedEntity;
 
 	/** Singleton constructor. */
 	public EntityMonitorPanel() {
@@ -144,10 +159,11 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		setPreferredSize(new Dimension(640, 420));
 		setLayout(new GridBagLayout());
 		setBounds(new Rectangle(0, 0, 480, 320));
-		selectedEntityLabel = new JLabel();
-		selectedEntityLabel.setText(Messages.getString("EntityMonitorPanel.selectedEntity")); //$NON-NLS-1$
-		selectedEntityLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
-		selectedEntityLabel.setToolTipText(Messages.getString("EntityMonitorPanel.nameOfSelectedEntity")); //$NON-NLS-1$
+		entityNameLabel = new JLabel();
+		entityNameLabel.setText(Messages.getString("EntityMonitorPanel.selectedEntity")); //$NON-NLS-1$
+		entityNameLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
+		entityNameLabel.setName("entityNameLabel");
+		entityNameLabel.setToolTipText(Messages.getString("EntityMonitorPanel.nameOfSelectedEntity")); //$NON-NLS-1$
 		this.add(getJSplitPane(), gridBagConstraints11);
 	}
 
@@ -161,6 +177,99 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 			}
 		}
 		entityComponents.clear();
+	}
+
+	public void run() {
+		((DefaultTreeModel) getJTree().getModel()).reload();
+	}
+
+	public void valueChanged(TreeSelectionEvent e) {
+		final JTree tree = getJTree();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+				tree.getLastSelectedPathComponent();
+		if (node == null) {
+			return;
+		}
+
+		Object nodeInfo = node.getUserObject();
+		if (nodeInfo instanceof Entity) {
+			showEntity((Entity) nodeInfo);
+		}
+	}
+
+	public void eventOccurred(Event e) {
+		if (e instanceof EntityEvent) {
+			EntityEvent ee = (EntityEvent) e;
+			if (ee.getStatus() == EntityStatus.INSTANTIATED ||
+					ee.getStatus() == EntityStatus.DISPOSED) {
+				Entity entity = ee.getSource();
+
+				if (ee.getStatus() == EntityStatus.INSTANTIATED) {
+					addEntity(entity);
+				} else {
+					removeEntity(entity);
+				}
+
+				SwingUtilities.invokeLater(this);
+			}
+		}
+	}
+
+	void showInstantiatePanel() {
+		((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
+				String.valueOf(getRightInstantiatePanel().hashCode()));
+	}
+
+	public void showEntity(Entity entity) {
+		if (entity == null) {
+			((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
+					String.valueOf(getRightViewPanel().hashCode()));
+			entityNameLabel.setText(""); //$NON-NLS-1$
+			return;
+		}
+		if (!entityComponents.containsKey(entity)) {
+			JComponent entityComponent = entity.getConfigurationComponent();
+			if (entityComponent != null) {
+				getEntityPanel().add(entityComponent, String.valueOf(entity.hashCode()));
+				getEntityPanel().validate();
+				entityComponents.put(entity, entityComponent);
+			}
+		}
+		((CardLayout) getEntityPanel().getLayout()).show(
+				getEntityPanel(), String.valueOf(entity.hashCode()));
+		entityNameLabel.setText(entity.getName());
+		entityNameTextField.setText(entity.getName());
+		entityNameEditButton.setVisible(true);
+		selectedEntity = entity;
+	}
+
+	void addEntity(Entity entity) {
+		if (entityNodeMap.containsKey(entity)) {
+			return;
+		}
+
+		final DefaultMutableTreeNode node =
+				new DefaultMutableTreeNode(entity);
+		root.add(node);
+		entityNodeMap.put(entity, node);
+	}
+
+	void removeEntity(Entity entity) {
+
+		// Remove from the list view and entityNodeMap.
+		MutableTreeNode node;
+		node = root;
+		node.remove(
+				entityNodeMap.remove(entity));
+
+		if (entityComponents.containsKey(entity)) {
+			JComponent entityComponent = entityComponents.get(entity);
+			getEntityPanel().remove(entityComponent);
+			if (entityComponent instanceof DisposableComponent) {
+				((DisposableComponent) entityComponent).dispose();
+			}
+			entityComponents.remove(entity);
+		}
 	}
 
 	/**
@@ -216,36 +325,6 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	}
 
 	/**
-	 * This method initializes rightViewPanel
-	 *
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getRightViewPanel() {
-		if (rightViewPanel == null) {
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.gridy = 1;
-			gridBagConstraints2.fill = GridBagConstraints.BOTH;
-			gridBagConstraints2.weightx = 1.0D;
-			gridBagConstraints2.weighty = 0.0D;
-			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.gridy = 3;
-			gridBagConstraints4.fill = GridBagConstraints.BOTH;
-			gridBagConstraints4.weightx = 1.0D;
-			gridBagConstraints4.weighty = 1.0D;
-			gridBagConstraints4.insets = new Insets(0, 5, 5, 5);
-			rightViewPanel = new JPanel();
-			rightViewPanel.setLayout(new GridBagLayout());
-			rightViewPanel.setPreferredSize(new Dimension(320, 420));
-			rightViewPanel.add(selectedEntityLabel, gridBagConstraints2);
-			rightViewPanel.add(getEntityPanel(), gridBagConstraints4);
-		}
-		return rightViewPanel;
-	}
-
-	/**
 	 * This method initializes jScrollPane
 	 *
 	 * @return javax.swing.JScrollPane
@@ -280,108 +359,33 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	}
 
 	/**
-	 * This method initializes entityPanel
+	 * This method initializes instantiateButton
 	 *
-	 * @return javax.swing.JPanel
+	 * @return javax.swing.JButton
 	 */
-	private JPanel getEntityPanel() {
-		if (entityPanel == null) {
-			entityPanel = new JPanel();
-			entityPanel.setPreferredSize(new Dimension(400, 420));
-			entityPanel.setLayout(new CardLayout());
-			entityPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
+	private JButton getInstantiateButton() {
+		if (instantiateButton == null) {
+			instantiateButton = new JButton();
+			instantiateButton.setAction(new EntityInstantiateAction(this));
+			instantiateButton.setFont(Matereal.getInstance().getDefaultFont());
+			instantiateButton.setText("+");
 		}
-		return entityPanel;
+		return instantiateButton;
 	}
 
-	public void run() {
-		((DefaultTreeModel) getJTree().getModel()).reload();
-	}
-
-	public void valueChanged(TreeSelectionEvent e) {
-		final JTree tree = getJTree();
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-				tree.getLastSelectedPathComponent();
-		if (node == null) {
-			return;
+	/**
+	 * This method initializes disposeButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getDisposeButton() {
+		if (disposeButton == null) {
+			disposeButton = new JButton();
+			disposeButton.setAction(new EntityDisposeAction(this));
+			disposeButton.setFont(Matereal.getInstance().getDefaultFont());
+			disposeButton.setText("-");
 		}
-
-		Object nodeInfo = node.getUserObject();
-		if (nodeInfo instanceof Entity) {
-			showEntity((Entity) nodeInfo);
-		}
-	}
-
-	public void eventOccurred(Event e) {
-		if (e instanceof EntityEvent) {
-			EntityEvent ee = (EntityEvent) e;
-			if (ee.getStatus() == EntityStatus.INSTANTIATED ||
-					ee.getStatus() == EntityStatus.DISPOSED) {
-				Entity entity = ee.getSource();
-
-				if (ee.getStatus() == EntityStatus.INSTANTIATED) {
-					addEntity(entity);
-				} else {
-					removeEntity(entity);
-				}
-
-				SwingUtilities.invokeLater(this);
-			}
-		}
-	}
-
-	public void showAddPanel() {
-		((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
-				String.valueOf(getRightAddPanel().hashCode()));
-	}
-
-	public void showEntity(Entity entity) {
-		if (entity == null) {
-			((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
-					String.valueOf(getRightViewPanel().hashCode()));
-			selectedEntityLabel.setText(""); //$NON-NLS-1$
-			return;
-		}
-		if (!entityComponents.containsKey(entity)) {
-			JComponent entityComponent = entity.getConfigurationComponent();
-			if (entityComponent != null) {
-				getEntityPanel().add(entityComponent, String.valueOf(entity.hashCode()));
-				getEntityPanel().validate();
-				entityComponents.put(entity, entityComponent);
-			}
-		}
-		((CardLayout) getEntityPanel().getLayout()).show(
-				getEntityPanel(), String.valueOf(entity.hashCode()));
-		selectedEntityLabel.setText(entity.getName());
-	}
-
-	private void addEntity(Entity entity) {
-		if (entityNodeMap.containsKey(entity)) {
-			return;
-		}
-
-		final DefaultMutableTreeNode node =
-				new DefaultMutableTreeNode(entity);
-		root.add(node);
-		entityNodeMap.put(entity, node);
-	}
-
-	private void removeEntity(Entity entity) {
-
-		// Remove from the list view and entityNodeMap.
-		MutableTreeNode node;
-		node = root;
-		node.remove(
-				entityNodeMap.remove(entity));
-
-		if (entityComponents.containsKey(entity)) {
-			JComponent entityComponent = entityComponents.get(entity);
-			getEntityPanel().remove(entityComponent);
-			if (entityComponent instanceof DisposableComponent) {
-				((DisposableComponent) entityComponent).dispose();
-			}
-			entityComponents.remove(entity);
-		}
+		return disposeButton;
 	}
 
 	/**
@@ -397,49 +401,231 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 			rightPanel = new JPanel();
 			rightPanel.setLayout(new CardLayout());
 			rightPanel.add(getRightViewPanel(), String.valueOf(getRightViewPanel().hashCode()));
-			rightPanel.add(getRightAddPanel(), String.valueOf(getRightAddPanel().hashCode()));
+			rightPanel.add(getRightInstantiatePanel(), String.valueOf(getRightInstantiatePanel().hashCode()));
 		}
 		return rightPanel;
 	}
 
 	/**
-	 * This method initializes disposeButton
-	 *
-	 * @return javax.swing.JButton
-	 */
-	private JButton getDisposeButton() {
-		if (disposeButton == null) {
-			disposeButton = new JButton();
-			disposeButton.setFont(Matereal.getInstance().getDefaultFont());
-			disposeButton.setText("-");
-		}
-		return disposeButton;
-	}
-
-	/**
-	 * This method initializes instantiateButton
-	 *
-	 * @return javax.swing.JButton
-	 */
-	private JButton getInstantiateButton() {
-		if (instantiateButton == null) {
-			instantiateButton = new JButton();
-			instantiateButton.setAction(new EntityAddAction(this));
-			instantiateButton.setFont(Matereal.getInstance().getDefaultFont());
-			instantiateButton.setText("+");
-		}
-		return instantiateButton;
-	}
-
-	/**
-	 * This method initializes rightAddPanel
+	 * This method initializes rightViewPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getRightAddPanel() {
-		if (rightAddPanel == null) {
-			rightAddPanel = new EntityAddPanel();
+	private JPanel getRightViewPanel() {
+		if (rightViewPanel == null) {
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.anchor = GridBagConstraints.WEST;
+			gridBagConstraints1.gridx = 0;
+			gridBagConstraints1.gridy = 0;
+			gridBagConstraints1.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints1.fill = GridBagConstraints.BOTH;
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			gridBagConstraints2.gridx = -1;
+			gridBagConstraints2.gridy = -1;
+			gridBagConstraints2.fill = GridBagConstraints.BOTH;
+			gridBagConstraints2.weightx = 1.0D;
+			gridBagConstraints2.weighty = 0.0D;
+			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.gridx = 0;
+			gridBagConstraints4.gridy = 3;
+			gridBagConstraints4.fill = GridBagConstraints.BOTH;
+			gridBagConstraints4.weightx = 1.0D;
+			gridBagConstraints4.weighty = 1.0D;
+			gridBagConstraints4.insets = new Insets(0, 5, 5, 5);
+			rightViewPanel = new JPanel();
+			rightViewPanel.setLayout(new GridBagLayout());
+			rightViewPanel.setPreferredSize(new Dimension(320, 420));
+			rightViewPanel.add(getEntityNamePanel(), gridBagConstraints1);
+			rightViewPanel.add(getEntityPanel(), gridBagConstraints4);
 		}
-		return rightAddPanel;
+		return rightViewPanel;
+	}
+
+	/**
+	 * This method initializes entityPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getEntityPanel() {
+		if (entityPanel == null) {
+			entityPanel = new JPanel();
+			entityPanel.setPreferredSize(new Dimension(400, 420));
+			entityPanel.setLayout(new CardLayout());
+			entityPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
+		}
+		return entityPanel;
+	}
+
+	/**
+	 * This method initializes rightInstantiatePanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getRightInstantiatePanel() {
+		if (rightInstantiatePanel == null) {
+			rightInstantiatePanel = new EntityInstantiatePanel();
+		}
+		return rightInstantiatePanel;
+	}
+
+	/**
+	 * This method initializes entityNamePanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getEntityNamePanel() {
+		if (entityNamePanel == null) {
+			entityNamePanel = new JPanel();
+			entityNamePanel.setLayout(new CardLayout());
+			entityNamePanel.add(getEntityNameShowPanel(), getEntityNameShowPanel().getName());
+			entityNamePanel.add(getEntityNameEditPanel(), getEntityNameEditPanel().getName());
+		}
+		return entityNamePanel;
+	}
+
+	/**
+	 * This method initializes entityNameShowPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getEntityNameShowPanel() {
+		if (entityNameShowPanel == null) {
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.anchor = GridBagConstraints.EAST;
+			gridBagConstraints5.gridx = 1;
+			gridBagConstraints5.gridy = 0;
+			gridBagConstraints5.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints5.weightx = 0.0D;
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			gridBagConstraints3.anchor = GridBagConstraints.WEST;
+			gridBagConstraints3.gridy = 0;
+			gridBagConstraints3.fill = GridBagConstraints.BOTH;
+			gridBagConstraints3.weightx = 1.0D;
+			gridBagConstraints3.gridx = 0;
+			entityNameShowPanel = new JPanel();
+			entityNameShowPanel.setLayout(new GridBagLayout());
+			entityNameShowPanel.setName("entityNameShowPanel");
+			entityNameShowPanel.add(entityNameLabel, gridBagConstraints3);
+			entityNameShowPanel.add(getEntityNameEditButton(), gridBagConstraints5);
+		}
+		return entityNameShowPanel;
+	}
+
+	/**
+	 * This method initializes entityNameEditButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getEntityNameEditButton() {
+		if (entityNameEditButton == null) {
+			entityNameEditButton = new JButton();
+			entityNameEditButton.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
+			entityNameEditButton.setText("Edit");
+			entityNameEditButton.setVisible(false);
+			entityNameEditButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((CardLayout) getEntityNamePanel().getLayout()).show(
+							getEntityNamePanel(),
+							getEntityNameEditPanel().getName());
+				}
+			});
+		}
+		return entityNameEditButton;
+	}
+
+	/**
+	 * This method initializes entityNameEditPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getEntityNameEditPanel() {
+		if (entityNameEditPanel == null) {
+			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+			gridBagConstraints10.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints10.gridx = 1;
+			gridBagConstraints10.gridy = 0;
+			gridBagConstraints10.anchor = GridBagConstraints.EAST;
+			gridBagConstraints10.weightx = 0.0D;
+			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
+			gridBagConstraints8.gridx = 2;
+			gridBagConstraints8.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints8.weightx = 0.0D;
+			gridBagConstraints8.anchor = GridBagConstraints.EAST;
+			gridBagConstraints8.gridy = 0;
+			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
+			gridBagConstraints7.fill = GridBagConstraints.BOTH;
+			gridBagConstraints7.gridy = 0;
+			gridBagConstraints7.weightx = 1.0;
+			gridBagConstraints7.anchor = GridBagConstraints.WEST;
+			gridBagConstraints7.gridx = 0;
+			entityNameEditPanel = new JPanel();
+			entityNameEditPanel.setLayout(new GridBagLayout());
+			entityNameEditPanel.setName("entityNameEditPanel");
+			entityNameEditPanel.add(getEntityNameTextField(), gridBagConstraints7);
+			entityNameEditPanel.add(getEntityNameEditOkButton(), gridBagConstraints10);
+			entityNameEditPanel.add(getEntityNameEditCancelButton(), gridBagConstraints8);
+		}
+		return entityNameEditPanel;
+	}
+
+	/**
+	 * This method initializes entityNameTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
+	private JTextField getEntityNameTextField() {
+		if (entityNameTextField == null) {
+			entityNameTextField = new JTextField();
+			entityNameTextField.setFont(Matereal.getInstance().getDefaultFont());
+		}
+		return entityNameTextField;
+	}
+
+	/**
+	 * This method initializes entityNameEditOkButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getEntityNameEditOkButton() {
+		if (entityNameEditOkButton == null) {
+			entityNameEditOkButton = new JButton();
+			entityNameEditOkButton.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
+			entityNameEditOkButton.setText("OK");
+			entityNameEditOkButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					selectedEntity.setName(getEntityNameTextField().getText());
+					entityNameLabel.setText(selectedEntity.getName());
+
+					((CardLayout) getEntityNamePanel().getLayout()).show(
+							getEntityNamePanel(),
+							getEntityNameShowPanel().getName());
+				}
+			});
+		}
+		return entityNameEditOkButton;
+	}
+
+	/**
+	 * This method initializes entityNameEditCancelButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getEntityNameEditCancelButton() {
+		if (entityNameEditCancelButton == null) {
+			entityNameEditCancelButton = new JButton();
+			entityNameEditCancelButton.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
+			entityNameEditCancelButton.setText("Cancel");
+			entityNameEditCancelButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((CardLayout) getEntityNamePanel().getLayout()).show(
+							getEntityNamePanel(),
+							getEntityNameShowPanel().getName());
+				}
+			});
+
+		}
+		return entityNameEditCancelButton;
 	}
 }
