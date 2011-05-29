@@ -43,6 +43,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.utils.Location;
+import jp.digitalmuseum.utils.Position;
+
 import org.jbox2d.collision.shapes.CircleDef;
 import org.jbox2d.collision.shapes.ShapeDef;
 import org.jbox2d.common.Vec2;
@@ -63,25 +67,150 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 
 	private Color color = Color.blue;
 
-	public HakoniwaCylinder(String name, double x, double y, double angle) {
-		this(name, null, x, y, angle);
+	public HakoniwaCylinder() {
+		this(Matereal.getInstance().lookForService(Hakoniwa.class));
 	}
 
-	public HakoniwaCylinder(String name, Color color, double x, double y, double angle) {
-		this(name, color, x, y, angle, RADIUS);
+	public HakoniwaCylinder(Hakoniwa hakoniwa) {
+		this(hakoniwa.getWidth()/2.0, hakoniwa.getHeight()/2.0, hakoniwa);
 	}
 
-	public HakoniwaCylinder(String name, double x, double y, double angle, double radius) {
-		this(name, null, x, y, angle, radius);
+	public HakoniwaCylinder(Location location) {
+		this(location.getX(), location.getY(), location.getRotation());
 	}
 
-	public HakoniwaCylinder(String name, Color color, double x, double y, double angle, double radius) {
-		this(name, color, x, y, angle, radius, WEIGHT);
+	public HakoniwaCylinder(Location location, Hakoniwa hakoniwa) {
+		this(location.getX(), location.getY(), location.getRotation(), hakoniwa);
 	}
 
-	public HakoniwaCylinder(String name, Color color, double x, double y, double angle, double radius, double weight) {
-		super(name);
-		initialize(color, x, y, angle, radius, weight);
+	public HakoniwaCylinder(Position position) {
+		this(position.getX(), position.getY());
+	}
+
+	public HakoniwaCylinder(Position position, Hakoniwa hakoniwa) {
+		this(position.getX(), position.getY(), 0, hakoniwa);
+	}
+
+	public HakoniwaCylinder(double x, double y) {
+		this(x, y, 0);
+	}
+
+	public HakoniwaCylinder(double x, double y, Hakoniwa hakoniwa) {
+		this(x, y, 0, hakoniwa);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation) {
+		this(x, y, rotation, Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, Hakoniwa hakoniwa) {
+		this(x, y, rotation, null, hakoniwa);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, Color color) {
+		this(x, y, rotation, color, null);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, Color color, Hakoniwa hakoniwa) {
+		this(x, y, rotation, RADIUS, color, hakoniwa);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, double radius) {
+		this(x, y, rotation, radius, null, null);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, double radius, Hakoniwa hakoniwa) {
+		this(x, y, rotation, radius, null, hakoniwa);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, double radius, Color color) {
+		this(x, y, rotation, radius, color, null);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, double radius, Color color, Hakoniwa hakoniwa) {
+		this(x, y, rotation, radius, WEIGHT, color, hakoniwa);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, double radius, double weight, Color color) {
+		this(x, y, rotation, radius, weight, color, null);
+	}
+
+	public HakoniwaCylinder(double x, double y, double rotation, double radius, double weight, Color color, Hakoniwa hakoniwa) {
+		super(hakoniwa);
+		initialize(color, x, y, rotation, radius, weight);
+	}
+
+	public HakoniwaCylinder(String name) {
+		this(name, Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	public HakoniwaCylinder(String name, Hakoniwa hakoniwa) {
+		this(name, hakoniwa.getWidth()/2.0, hakoniwa.getHeight()/2.0, hakoniwa);
+	}
+
+	public HakoniwaCylinder(String name, Location location) {
+		this(name, location.getX(), location.getY(), location.getRotation());
+	}
+
+	public HakoniwaCylinder(String name, Location location, Hakoniwa hakoniwa) {
+		this(name, location.getX(), location.getY(), location.getRotation(), hakoniwa);
+	}
+
+	public HakoniwaCylinder(String name, Position position) {
+		this(name, position.getX(), position.getY());
+	}
+
+	public HakoniwaCylinder(String name, Position position, Hakoniwa hakoniwa) {
+		this(name, position.getX(), position.getY(), 0, hakoniwa);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y) {
+		this(name, x, y, 0);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, Hakoniwa hakoniwa) {
+		this(name, x, y, 0, hakoniwa);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation) {
+		this(name, x, y, rotation, Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
+		this(name, x, y, rotation, null, hakoniwa);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, Color color) {
+		this(name, x, y, rotation, color, null);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, Color color, Hakoniwa hakoniwa) {
+		this(name, x, y, rotation, RADIUS, color, hakoniwa);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, double radius) {
+		this(name, x, y, rotation, radius, null, null);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, double radius, Hakoniwa hakoniwa) {
+		this(name, x, y, rotation, radius, null, hakoniwa);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, double radius, Color color) {
+		this(name, x, y, rotation, radius, color, null);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, double radius, Color color, Hakoniwa hakoniwa) {
+		this(name, x, y, rotation, radius, WEIGHT, color, hakoniwa);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, double radius, double weight, Color color) {
+		this(name, x, y, rotation, radius, weight, color, null);
+	}
+
+	public HakoniwaCylinder(String name, double x, double y, double rotation, double radius, double weight, Color color, Hakoniwa hakoniwa) {
+		super(name, hakoniwa);
+		initialize(color, x, y, rotation, radius, weight);
 	}
 
 	private void writeObject(ObjectOutputStream oos) throws IOException {

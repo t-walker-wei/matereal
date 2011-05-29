@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.resource.CleanerBrushController;
 import jp.digitalmuseum.utils.Location;
@@ -54,31 +53,84 @@ public class HakoniwaRobotWithCleanerBrush extends HakoniwaRobot {
 	private static final long serialVersionUID = -2267090199931536404L;
 	public static final int DEFAULT_PEN_RADIUS = 20;
 	public static final Color DEFAULT_PEN_COLOR = Color.cyan;
+
 	private transient HakoniwaRobotCleanerBrush cleanerBrush;
 	private transient ScreenPosition screenPosition;
 
+	public HakoniwaRobotWithCleanerBrush() {
+		super();
+	}
+
+	public HakoniwaRobotWithCleanerBrush(Hakoniwa hakoniwa) {
+		super(hakoniwa);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(Location location) {
+		super(location);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(Position position) {
+		super(position);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(Location location, Hakoniwa hakoniwa) {
+		super(location, hakoniwa);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(Position position, Hakoniwa hakoniwa) {
+		super(position, hakoniwa);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(double x, double y) {
+		super(x, y);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(double x, double y, Hakoniwa hakoniwa) {
+		super(x, y, hakoniwa);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(double x, double y, double rotation) {
+		super(x, y, rotation);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(double x, double y, double rotation, Hakoniwa hakoniwa) {
+		super(x, y, rotation, hakoniwa);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(String name) {
+		super(name);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(String name, Hakoniwa hakoniwa) {
+		super(name, hakoniwa);
+	}
+
 	public HakoniwaRobotWithCleanerBrush(String name, Location location) {
-		this(name, location.getX(), location.getY(), location.getRotation());
+		super(name, location);
 	}
 
 	public HakoniwaRobotWithCleanerBrush(String name, Position position) {
-		this(name, position.getX(), position.getY());
+		super(name, position);
 	}
 
 	public HakoniwaRobotWithCleanerBrush(String name, Location location, Hakoniwa hakoniwa) {
-		this(name, location.getX(), location.getY(), location.getRotation(), hakoniwa);
+		super(name, location, hakoniwa);
 	}
 
 	public HakoniwaRobotWithCleanerBrush(String name, Position position, Hakoniwa hakoniwa) {
-		this(name, position.getX(), position.getY(), 0, hakoniwa);
+		super(name, position, hakoniwa);
 	}
 
 	public HakoniwaRobotWithCleanerBrush(String name, double x, double y) {
-		this(name, x, y, 0);
+		super(name, x, y);
+	}
+
+	public HakoniwaRobotWithCleanerBrush(String name, double x, double y, Hakoniwa hakoniwa) {
+		super(name, x, y, hakoniwa);
 	}
 
 	public HakoniwaRobotWithCleanerBrush(String name, double x, double y, double rotation) {
-		this(name, x, y, rotation, Matereal.getInstance().lookForService(Hakoniwa.class));
+		super(name, x, y, rotation);
 	}
 
 	public HakoniwaRobotWithCleanerBrush(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {

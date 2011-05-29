@@ -44,12 +44,12 @@ public class PhysicalCylinder extends PhysicalEntityAbstractImpl {
 	public final static double DEFAULT_RADIUS = 5;
 	private Shape shape;
 
-	public PhysicalCylinder(double radius) {
-		shape = new Ellipse2D.Double(-radius,-radius,radius*2,radius*2);
-	}
-
 	public PhysicalCylinder() {
 		this(DEFAULT_RADIUS);
+	}
+
+	public PhysicalCylinder(double radius) {
+		shape = new Ellipse2D.Double(-radius,-radius,radius*2,radius*2);
 	}
 
 	public PhysicalCylinder(String name) {
@@ -57,7 +57,7 @@ public class PhysicalCylinder extends PhysicalEntityAbstractImpl {
 		setName(name);
 	}
 
-	public PhysicalCylinder(String name, double radius) {
+	public PhysicalCylinder(double radius, String name) {
 		this(radius);
 		setName(name);
 	}

@@ -48,7 +48,7 @@ public class Kettle extends HakoniwaRobot {
 	private static final long serialVersionUID = -1044123032265398208L;
 
 	public Kettle(String name) {
-		setName(name);
+		super(name);
 	}
 
 	protected List<ResourceAbstractImpl> getResources() {

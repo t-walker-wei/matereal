@@ -39,10 +39,10 @@ package jp.digitalmuseum.mr.hakoniwa;
 import java.awt.Color;
 
 import jp.digitalmuseum.mr.entity.Entity;
-
+import jp.digitalmuseum.utils.Location;
+import jp.digitalmuseum.utils.Position;
 
 import org.jbox2d.dynamics.Body;
-
 
 public interface HakoniwaEntity extends Entity {
 
@@ -51,4 +51,20 @@ public interface HakoniwaEntity extends Entity {
 	public Color getColor();
 	public Body getBody();
 	public void preStep();
+
+	public Location getLocation();
+	public void getLocationOut(Location location);
+	public Position getPosition();
+	public void getPositionOut(Position position);
+	public double getX();
+	public double getY();
+	public double getRotation();
+
+	public void setLocation(Location location);
+	public void setLocation(double x, double y, double rotation);
+	public void setPosition(Position position);
+	public void setPosition(double x, double y);
+	public void setX(double x);
+	public void setY(double y);
+	public void setRotation(double rotation);
 }

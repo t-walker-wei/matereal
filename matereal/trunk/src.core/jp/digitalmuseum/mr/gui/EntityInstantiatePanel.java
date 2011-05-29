@@ -40,21 +40,25 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
-import javax.swing.JComboBox;
 import java.awt.Insets;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.Font;
 
 import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.entity.Entity;
+import jp.digitalmuseum.mr.gui.entity.EntityTypeComboBox;
+
 import javax.swing.BorderFactory;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class EntityInstantiatePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel typeLabel = null;
-	private JComboBox typeComboBox = null;
+	private EntityTypeComboBox typeComboBox = null;
 	private JLabel nameLabel = null;
 	private JTextField nameTextField = null;
 	private JPanel buttonPanel = null;
@@ -62,11 +66,14 @@ public class EntityInstantiatePanel extends JPanel {
 	private JButton cancelButton = null;
 	private JLabel entityAddLabel = null;
 
+	private transient EntityMonitorPanel entityMonitorPanel;
+
 	/**
 	 * This is the default constructor
 	 */
-	public EntityInstantiatePanel() {
+	public EntityInstantiatePanel(EntityMonitorPanel entityMonitorPanel) {
 		super();
+		this.entityMonitorPanel = entityMonitorPanel;
 		initialize();
 	}
 
@@ -149,9 +156,9 @@ public class EntityInstantiatePanel extends JPanel {
 	 *
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getTypeComboBox() {
+	private EntityTypeComboBox getTypeComboBox() {
 		if (typeComboBox == null) {
-			typeComboBox = new JComboBox();
+			typeComboBox = new EntityTypeComboBox();
 			typeComboBox.setFont(Matereal.getInstance().getDefaultFont());
 		}
 		return typeComboBox;
@@ -207,6 +214,15 @@ public class EntityInstantiatePanel extends JPanel {
 			okButton = new JButton();
 			okButton.setFont(Matereal.getInstance().getDefaultFont());
 			okButton.setText("OK");
+			okButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Entity entity = getTypeComboBox().newEntityInstance();
+					if (entity != null) {
+						entity.setName(getNameTextField().getText());
+						entityMonitorPanel.showEntity(entity);
+					}
+				}
+			});
 		}
 		return okButton;
 	}
@@ -221,6 +237,12 @@ public class EntityInstantiatePanel extends JPanel {
 			cancelButton = new JButton();
 			cancelButton.setFont(Matereal.getInstance().getDefaultFont());
 			cancelButton.setText("Cancel");
+			cancelButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					entityMonitorPanel.showEntity(
+							entityMonitorPanel.getSelectedEntity());
+				}
+			});
 		}
 		return cancelButton;
 	}

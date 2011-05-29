@@ -62,6 +62,7 @@ public class resources extends PropertyResourceBundle {
 		"EntityMonitorPanel.nameOfSelectedEntity=Name of the selected entity.\n" +
 		"EntityPanel.entityType=Entity type information\n" +
 		"RobotPanel.resources=Robot resources\n" +
+		"PhysicalRobotPanel.connector=Connector\n" +
 		"ResourceViewer.implementation=Implementation:\n" +
 		"ResourceViewer.status=Status:\n" +
 		"WheelsViewer.rightWheel=Right wheel:\n" +

@@ -207,6 +207,7 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 	public void dispose() {
 		super.dispose();
 		hakoniwa.unregisterEntity(this);
+		hakoniwa.getWorld().destroyBody(getBody());
 	}
 
 	private void initialize(double x, double y, double rotation) {
@@ -312,6 +313,10 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 
 	public void setHakoniwa(Hakoniwa hakoniwa) {
 		this.hakoniwa.unregisterEntity(this);
+		this.hakoniwa.getWorld().destroyBody(getBody());
+
+		// TODO write re-initialization code.
+
 		hakoniwa.registerEntity(this);
 		this.hakoniwa = hakoniwa;
 	}
@@ -338,6 +343,74 @@ public class HakoniwaRobot extends RobotAbstractImpl implements HakoniwaEntity {
 
 	public Body getBody() {
 		return body;
+	}
+
+	public Location getLocation() {
+		Location location = new Location();
+		getLocationOut(location);
+		return location;
+	}
+
+	public void getLocationOut(Location location) {
+		final Vec2 position = getBody().getPosition();
+		location.setLocation(
+				(double) (position.x*100),
+				(double) (position.y*100),
+				(double) getBody().getAngle());
+	}
+
+	public Position getPosition() {
+		Position position = new Position();
+		getPositionOut(position);
+		return position;
+	}
+
+	public void getPositionOut(Position position) {
+		final Vec2 vec2 = getBody().getPosition();
+		position.set(
+				(double) (vec2.x*100),
+				(double) (vec2.y*100));
+	}
+
+	public double getX() {
+		return getBody().getPosition().x;
+	}
+
+	public double getY() {
+		return getBody().getPosition().y;
+	}
+
+	public double getRotation() {
+		return getBody().getAngle();
+	}
+
+	public void setPosition(Position position) {
+		setPosition(position.getX(), position.getY());
+	}
+
+	public void setPosition(double x, double y) {
+		setLocation(x, y, getRotation());
+	}
+
+	public void setLocation(Location location) {
+		setLocation(location.getX(), location.getY(), location.getRotation());
+	}
+
+	public void setLocation(double x, double y, double rotation) {
+		Vec2 position = new Vec2((float) (x/100), (float) (y/100));
+		getBody().setXForm(position, (float) rotation);
+	}
+
+	public void setX(double x) {
+		setPosition(x, getY());
+	}
+
+	public void setY(double y) {
+		setPosition(getX(), y);
+	}
+
+	public void setRotation(double rotation) {
+		setLocation(getX(), getY(), rotation);
 	}
 
 	/**

@@ -123,7 +123,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 
 	private transient Map<Entity, JComponent> entityComponents;
 
-	private transient Entity selectedEntity;
+	private transient Entity selectedEntity;  //  @jve:decl-index=0:
 
 	/** Singleton constructor. */
 	public EntityMonitorPanel() {
@@ -215,16 +215,19 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		}
 	}
 
+	public Entity getSelectedEntity() {
+		return selectedEntity;
+	}
+
 	void showInstantiatePanel() {
 		((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
 				String.valueOf(getRightInstantiatePanel().hashCode()));
 	}
 
 	public void showEntity(Entity entity) {
+		((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
+				String.valueOf(getRightViewPanel().hashCode()));
 		if (entity == null) {
-			((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
-					String.valueOf(getRightViewPanel().hashCode()));
-			entityNameLabel.setText(""); //$NON-NLS-1$
 			return;
 		}
 		if (!entityComponents.containsKey(entity)) {
@@ -464,7 +467,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 	 */
 	private JPanel getRightInstantiatePanel() {
 		if (rightInstantiatePanel == null) {
-			rightInstantiatePanel = new EntityInstantiatePanel();
+			rightInstantiatePanel = new EntityInstantiatePanel(this);
 		}
 		return rightInstantiatePanel;
 	}
@@ -594,6 +597,8 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 			entityNameEditOkButton.setText("OK");
 			entityNameEditOkButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+
+					Entity selectedEntity = getSelectedEntity();
 
 					selectedEntity.setName(getEntityNameTextField().getText());
 					entityNameLabel.setText(selectedEntity.getName());
