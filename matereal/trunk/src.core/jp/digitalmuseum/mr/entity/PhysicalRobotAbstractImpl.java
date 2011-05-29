@@ -36,8 +36,11 @@
  */
 package jp.digitalmuseum.mr.entity;
 
+import javax.swing.JComponent;
+
 import jp.digitalmuseum.connector.Connector;
 import jp.digitalmuseum.connector.ConnectorFactory;
+import jp.digitalmuseum.mr.gui.entity.PhysicalRobotPanel;
 
 public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implements PhysicalRobot {
 	private static final long serialVersionUID = 2914683592930955216L;
@@ -95,5 +98,10 @@ public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implem
 		if (connector != null) {
 			connector.disconnect();
 		}
+	}
+
+	@Override
+	public JComponent getConfigurationComponent() {
+		return new PhysicalRobotPanel(this);
 	}
 }

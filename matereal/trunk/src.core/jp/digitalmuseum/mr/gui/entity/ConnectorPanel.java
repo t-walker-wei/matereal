@@ -34,37 +34,31 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.entity;
+package jp.digitalmuseum.mr.gui.entity;
 
-import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
+import java.awt.GridBagLayout;
+import javax.swing.JPanel;
 
-public class PhysicalBox extends PhysicalEntityAbstractImpl {
-	private static final long serialVersionUID = 6822030829874476161L;
-	public final static double DEFAULT_WIDTH = 8;
-	public final static double DEFAULT_HEIGHT = 6;
-	private Shape shape;
+public class ConnectorPanel extends JPanel {
 
-	public PhysicalBox() {
-		this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * This is the default constructor
+	 */
+	public ConnectorPanel() {
+		super();
+		initialize();
 	}
 
-	public PhysicalBox(double width, double height) {
-		shape = new Rectangle2D.Double(-width/2, -height/2, width, height);
+	/**
+	 * This method initializes this
+	 * 
+	 * @return void
+	 */
+	private void initialize() {
+		this.setSize(300, 200);
+		this.setLayout(new GridBagLayout());
 	}
 
-	public PhysicalBox(String name) {
-		this();
-		setName(name);
-	}
-
-	public PhysicalBox(double width, double height, String name) {
-		this(width, height);
-		setName(name);
-	}
-
-	@Override
-	public Shape getShape() {
-		return shape;
-	}
 }

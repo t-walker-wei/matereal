@@ -64,6 +64,7 @@ public class resources_ja extends PropertyResourceBundle {
 		"EntityMonitorPanel.nameOfSelectedEntity=選択された物体の名称.\n" +
 		"EntityPanel.entityType=物体の種類\n" +
 		"RobotPanel.resources=ロボットの部品\n" +
+		"PhysicalRobotPanel.connector=コネクタ\n" +
 		"ResourceViewer.implementation=実装クラス:\n" +
 		"ResourceViewer.status=状態:\n" +
 		"WheelsViewer.rightWheel=右の車輪:\n" +

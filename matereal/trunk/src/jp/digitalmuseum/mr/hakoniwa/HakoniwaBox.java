@@ -43,14 +43,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.utils.Location;
+import jp.digitalmuseum.utils.Position;
+
 
 import org.jbox2d.collision.shapes.PolygonDef;
-import org.jbox2d.collision.shapes.ShapeDef;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.World;
-
 
 public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 	private static final long serialVersionUID = -1083652973569308258L;
@@ -60,31 +59,154 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 	final private static double WIDTH = 40;
 	final private static double HEIGHT = 30;
 
-	private transient Body body;
-	private transient ShapeDef sd;
-	private transient java.awt.Shape shape;
+	private transient Shape shape;
 
 	private Color color = Color.blue;
 
-	public HakoniwaBox(String name, double x, double y, double angle) {
-		this(name, null, x, y, angle);
+	public HakoniwaBox() {
+		this(Matereal.getInstance().lookForService(Hakoniwa.class));
 	}
 
-	public HakoniwaBox(String name, Color color, double x, double y, double angle) {
-		this(name, color, x, y, angle, WIDTH, HEIGHT);
+	public HakoniwaBox(Hakoniwa hakoniwa) {
+		this(hakoniwa.getWidth()/2.0, hakoniwa.getHeight()/2.0, hakoniwa);
 	}
 
-	public HakoniwaBox(String name, double x, double y, double angle, double width, double height) {
-		this(name, null, x, y, angle, width, height);
+	public HakoniwaBox(Location location) {
+		this(location.getX(), location.getY(), location.getRotation());
 	}
 
-	public HakoniwaBox(String name, Color color, double x, double y, double angle, double width, double height) {
-		this(name, color, x, y, angle, width, height, WEIGHT);
+	public HakoniwaBox(Location location, Hakoniwa hakoniwa) {
+		this(location.getX(), location.getY(), location.getRotation(), hakoniwa);
 	}
 
-	public HakoniwaBox(String name, Color color, double x, double y, double angle, double width, double height, double weight) {
-		super(name);
-		initialize(color, x, y, angle, width, height, weight);
+	public HakoniwaBox(Position position) {
+		this(position.getX(), position.getY());
+	}
+
+	public HakoniwaBox(Position position, Hakoniwa hakoniwa) {
+		this(position.getX(), position.getY(), 0, hakoniwa);
+	}
+
+	public HakoniwaBox(double x, double y) {
+		this(x, y, 0);
+	}
+
+	public HakoniwaBox(double x, double y, Hakoniwa hakoniwa) {
+		this(x, y, 0, hakoniwa);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation) {
+		this(x, y, rotation, Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, Hakoniwa hakoniwa) {
+		this(x, y, rotation, null, hakoniwa);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, Color color) {
+		this(x, y, rotation, color, null);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, Color color, Hakoniwa hakoniwa) {
+		this(x, y, rotation, WIDTH, HEIGHT, color, hakoniwa);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, double width, double height) {
+		this(x, y, rotation, width, height, null, null);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, double width, double height, Hakoniwa hakoniwa) {
+		this(x, y, rotation, width, height, null, hakoniwa);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, double width, double height, Color color) {
+		this(x, y, rotation, width, height, color, null);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, double width, double height, Color color, Hakoniwa hakoniwa) {
+		this(x, y, rotation, width, height, WEIGHT, color, hakoniwa);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, double width, double height, double weight, Color color) {
+		this(x, y, rotation, width, height, weight, color, null);
+	}
+
+	public HakoniwaBox(double x, double y, double rotation, double width, double height, double weight, Color color, Hakoniwa hakoniwa) {
+		super(hakoniwa);
+		initialize(color, x, y, rotation, width, height, weight);
+	}
+
+	public HakoniwaBox(String name) {
+		this(name, Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	public HakoniwaBox(String name, Hakoniwa hakoniwa) {
+		this(name, hakoniwa.getWidth()/2.0, hakoniwa.getHeight()/2.0, hakoniwa);
+	}
+
+	public HakoniwaBox(String name, Location location) {
+		this(name, location.getX(), location.getY(), location.getRotation());
+	}
+
+	public HakoniwaBox(String name, Location location, Hakoniwa hakoniwa) {
+		this(name, location.getX(), location.getY(), location.getRotation(), hakoniwa);
+	}
+
+	public HakoniwaBox(String name, Position position) {
+		this(name, position.getX(), position.getY());
+	}
+
+	public HakoniwaBox(String name, Position position, Hakoniwa hakoniwa) {
+		this(name, position.getX(), position.getY(), 0, hakoniwa);
+	}
+
+	public HakoniwaBox(String name, double x, double y) {
+		this(name, x, y, 0);
+	}
+
+	public HakoniwaBox(String name, double x, double y, Hakoniwa hakoniwa) {
+		this(name, x, y, 0, hakoniwa);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation) {
+		this(name, x, y, rotation, Matereal.getInstance().lookForService(Hakoniwa.class));
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
+		this(name, x, y, rotation, null, hakoniwa);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, Color color) {
+		this(name, x, y, rotation, color, null);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, Color color, Hakoniwa hakoniwa) {
+		this(name, x, y, rotation, WIDTH, HEIGHT, color, hakoniwa);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, double width, double height) {
+		this(name, x, y, rotation, width, height, null, null);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, double width, double height, Hakoniwa hakoniwa) {
+		this(name, x, y, rotation, width, height, null, hakoniwa);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, double width, double height, Color color) {
+		this(name, x, y, rotation, width, height, color, null);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, double width, double height, Color color, Hakoniwa hakoniwa) {
+		this(name, x, y, rotation, width, height, WEIGHT, color, hakoniwa);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, double width, double height, double weight, Color color) {
+		this(name, x, y, rotation, width, height, weight, color, null);
+	}
+
+	public HakoniwaBox(String name, double x, double y, double rotation, double width, double height, double weight, Color color, Hakoniwa hakoniwa) {
+		super(name, hakoniwa);
+		initialize(color, x, y, rotation, width, height, weight);
 	}
 
 	private void writeObject(ObjectOutputStream oos) throws IOException {
@@ -98,7 +220,7 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 		Rectangle2D bounds = shape.getBounds2D();
 		float width = (float) bounds.getWidth();
 		float height = (float) bounds.getHeight();
-		float weight = sd.density * width * height;
+		float weight = getShapeDef().density * width * height;
 
 		oos.writeObject(new float[] {
 			x, y, angle, width, height, weight
@@ -119,7 +241,7 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 		initialize(null, x, y, angle, width, height, weight);
 	}
 
-	private void initialize(Color color, double x, double y, double angle, double width, double height, double weight) {
+	private void initialize(Color color, double x, double y, double rotation, double width, double height, double weight) {
 
 		if (color != null) {
 			setColor(color);
@@ -130,29 +252,13 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 		pd.restitution = RESTITUTION;
 		pd.density = (float) (weight / (width * height));
 		pd.friction = FRICTION;
-		sd = pd;
 
-		final BodyDef bd = new BodyDef();
-		bd.position = new Vec2();
-		bd.position.x = (float) (x/100);
-		bd.position.y = (float) (y/100);
-		bd.angle = (float) angle;
-
-		final Hakoniwa hakoniwa = getHakoniwa();
-		synchronized (hakoniwa) {
-			final World world = getHakoniwa().getWorld();
-			body = world.createBody(bd);
-			body.createShape(sd);
-			body.setMassFromShapes();
-			body.m_userData = this;
-		}
-
+		initialize(x, y, rotation, pd);
 		shape = new Rectangle2D.Double(-width/2, -height/2, width, height);
-		getHakoniwa().registerEntity(this);
 	}
 
-	public Body getBody() {
-		return body;
+	public Shape getShape() {
+		return shape;
 	}
 
 	public void setColor(Color color) {
@@ -165,9 +271,5 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 
 	public void preStep() {
 		// Do nothing.
-	}
-
-	public Shape getShape() {
-		return shape;
 	}
 }

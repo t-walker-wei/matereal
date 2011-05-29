@@ -54,7 +54,7 @@ public class RobotPanel extends JPanel {
 	private static final long serialVersionUID = -1601581324059426126L;
 	private RobotResourcePanel robotResourcePanel = null;
 	private transient Robot robot;
-	private JLabel jRobotLabel = null;
+	private JLabel resourceLabel = null;
 	private JPanel entityPanel = null;
 
 	/**
@@ -85,9 +85,9 @@ public class RobotPanel extends JPanel {
         gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
         gridBagConstraints2.weightx = 1.0D;
         gridBagConstraints2.weighty = 0.0D;
-        jRobotLabel = new JLabel();
-		jRobotLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD)); //$NON-NLS-1$
-        jRobotLabel.setText(Messages.getString("RobotPanel.resources"));
+        resourceLabel = new JLabel();
+		resourceLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD)); //$NON-NLS-1$
+        resourceLabel.setText(Messages.getString("RobotPanel.resources"));
         GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
         gridBagConstraints1.gridx = 0;
         gridBagConstraints1.gridy = 2;
@@ -97,7 +97,7 @@ public class RobotPanel extends JPanel {
         gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
         this.setLayout(new GridBagLayout());
         this.add(getEntityPanel(), gridBagConstraints);
-        this.add(jRobotLabel, gridBagConstraints2);
+        this.add(resourceLabel, gridBagConstraints2);
         this.add(getRobotResourcePanel(), gridBagConstraints1);
 	}
 

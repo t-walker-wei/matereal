@@ -140,6 +140,9 @@ public class BringItHere {
 				}
 				Entity entity = getClickedEntity(x, y);
 				if (entity != null && entity != robot) {
+					if (push != null) {
+						push.stop();
+					}
 					push = new Push(entity, hakoniwa.screenToReal(goal));
 					if (push.assign(robot)) push.start();
 				}

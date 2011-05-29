@@ -36,10 +36,16 @@
  */
 package jp.digitalmuseum.mr.hakoniwa;
 
+import org.jbox2d.collision.shapes.ShapeDef;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.World;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.EntityImpl;
+import jp.digitalmuseum.utils.Location;
+import jp.digitalmuseum.utils.Position;
 
 /**
  * Abstract implementation of HakoniwaEntity.<br />
@@ -52,6 +58,11 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 
 	/** Hakoniwa */
 	private Hakoniwa hakoniwa;
+
+	/** Shape definition for Box2D */
+	private ShapeDef sd;
+
+	private Body body;
 
 	public HakoniwaEntityAbstractImpl() {
 		initialize(null);
@@ -72,34 +83,126 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 	}
 
 	private void initialize(Hakoniwa hakoniwa) {
+		this.hakoniwa = hakoniwa;
+	}
+
+	protected void initialize(double x, double y, double rotation, ShapeDef sd) {
+
 		if (hakoniwa == null) {
 			hakoniwa = Matereal.getInstance().lookForService(Hakoniwa.class);
 		}
-		this.hakoniwa = hakoniwa;
+
+		final BodyDef bd = new BodyDef();
+		bd.position = new Vec2();
+		bd.position.x = (float) (x/100);
+		bd.position.y = (float) (y/100);
+		bd.angle = (float) rotation;
+
+		this.sd = sd;
+
+		synchronized (hakoniwa) {
+			final World world = hakoniwa.getWorld();
+			body = world.createBody(bd);
+			body.createShape(sd);
+			body.setMassFromShapes();
+			body.m_userData = this;
+		}
+
+		hakoniwa.registerEntity(this);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
 		hakoniwa.unregisterEntity(this);
+		hakoniwa.getWorld().destroyBody(getBody());
 	}
 
 	public void setHakoniwa(Hakoniwa hakoniwa) {
+		Location location = getLocation();
 		this.hakoniwa.unregisterEntity(this);
-		hakoniwa.registerEntity(this);
+		this.hakoniwa.getWorld().destroyBody(getBody());
 		this.hakoniwa = hakoniwa;
+		initialize(location.getX(), location.getY(), location.getRotation(), sd);
 	}
 
 	public Hakoniwa getHakoniwa() {
 		return hakoniwa;
 	}
 
+	public Body getBody() {
+		return body;
+	}
+
+	protected ShapeDef getShapeDef() {
+		return sd;
+	}
+
+	public Location getLocation() {
+		Location location = new Location();
+		getLocationOut(location);
+		return location;
+	}
+
+	public void getLocationOut(Location location) {
+		final Vec2 position = getBody().getPosition();
+		location.setLocation(
+				(double) (position.x*100),
+				(double) (position.y*100),
+				(double) getBody().getAngle());
+	}
+
+	public Position getPosition() {
+		Position position = new Position();
+		getPositionOut(position);
+		return position;
+	}
+
+	public void getPositionOut(Position position) {
+		final Vec2 vec2 = getBody().getPosition();
+		position.set(
+				(double) (vec2.x*100),
+				(double) (vec2.y*100));
+	}
+
+	public double getX() {
+		return getBody().getPosition().x;
+	}
+
+	public double getY() {
+		return getBody().getPosition().y;
+	}
+
+	public double getRotation() {
+		return getBody().getAngle();
+	}
+
+	public void setPosition(Position position) {
+		setPosition(position.getX(), position.getY());
+	}
+
 	public void setPosition(double x, double y) {
-		setLocation(x, y, getBody().getAngle());
+		setLocation(x, y, getRotation());
+	}
+
+	public void setLocation(Location location) {
+		setLocation(location.getX(), location.getY(), location.getRotation());
 	}
 
 	public void setLocation(double x, double y, double rotation) {
 		Vec2 position = new Vec2((float) (x/100), (float) (y/100));
 		getBody().setXForm(position, (float) rotation);
+	}
+
+	public void setX(double x) {
+		setPosition(x, getY());
+	}
+
+	public void setY(double y) {
+		setPosition(getX(), y);
+	}
+
+	public void setRotation(double rotation) {
+		setLocation(getX(), getY(), rotation);
 	}
 }

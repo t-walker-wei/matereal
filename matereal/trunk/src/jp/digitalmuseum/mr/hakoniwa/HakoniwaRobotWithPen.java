@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
 import jp.digitalmuseum.mr.resource.PenController;
 import jp.digitalmuseum.mr.resource.Pen.PenStatus;
@@ -59,28 +58,81 @@ public class HakoniwaRobotWithPen extends HakoniwaRobot {
 	private transient HakoniwaRobotPen pen;
 	private transient ScreenPosition screenPosition;
 
+
+	public HakoniwaRobotWithPen() {
+		super();
+	}
+
+	public HakoniwaRobotWithPen(Hakoniwa hakoniwa) {
+		super(hakoniwa);
+	}
+
+	public HakoniwaRobotWithPen(Location location) {
+		super(location);
+	}
+
+	public HakoniwaRobotWithPen(Position position) {
+		super(position);
+	}
+
+	public HakoniwaRobotWithPen(Location location, Hakoniwa hakoniwa) {
+		super(location, hakoniwa);
+	}
+
+	public HakoniwaRobotWithPen(Position position, Hakoniwa hakoniwa) {
+		super(position, hakoniwa);
+	}
+
+	public HakoniwaRobotWithPen(double x, double y) {
+		super(x, y);
+	}
+
+	public HakoniwaRobotWithPen(double x, double y, Hakoniwa hakoniwa) {
+		super(x, y, hakoniwa);
+	}
+
+	public HakoniwaRobotWithPen(double x, double y, double rotation) {
+		super(x, y, rotation);
+	}
+
+	public HakoniwaRobotWithPen(double x, double y, double rotation, Hakoniwa hakoniwa) {
+		super(x, y, rotation, hakoniwa);
+	}
+
+	public HakoniwaRobotWithPen(String name) {
+		super(name);
+	}
+
+	public HakoniwaRobotWithPen(String name, Hakoniwa hakoniwa) {
+		super(name, hakoniwa);
+	}
+
 	public HakoniwaRobotWithPen(String name, Location location) {
-		this(name, location.getX(), location.getY(), location.getRotation());
+		super(name, location);
 	}
 
 	public HakoniwaRobotWithPen(String name, Position position) {
-		this(name, position.getX(), position.getY());
+		super(name, position);
 	}
 
 	public HakoniwaRobotWithPen(String name, Location location, Hakoniwa hakoniwa) {
-		this(name, location.getX(), location.getY(), location.getRotation(), hakoniwa);
+		super(name, location, hakoniwa);
 	}
 
 	public HakoniwaRobotWithPen(String name, Position position, Hakoniwa hakoniwa) {
-		this(name, position.getX(), position.getY(), 0, hakoniwa);
+		super(name, position, hakoniwa);
 	}
 
 	public HakoniwaRobotWithPen(String name, double x, double y) {
-		this(name, x, y, 0);
+		super(name, x, y);
+	}
+
+	public HakoniwaRobotWithPen(String name, double x, double y, Hakoniwa hakoniwa) {
+		super(name, x, y, hakoniwa);
 	}
 
 	public HakoniwaRobotWithPen(String name, double x, double y, double rotation) {
-		this(name, x, y, rotation, Matereal.getInstance().lookForService(Hakoniwa.class));
+		super(name, x, y, rotation);
 	}
 
 	public HakoniwaRobotWithPen(String name, double x, double y, double rotation, Hakoniwa hakoniwa) {
