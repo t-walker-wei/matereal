@@ -34,35 +34,27 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.entity;
+package jp.digitalmuseum.mr.message;
 
-import java.awt.GridBagLayout;
-import javax.swing.JPanel;
+import jp.digitalmuseum.mr.entity.Robot;
 
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
+public class RobotUpdateEvent extends UpdateEvent {
 
-public class ConnectorPanel extends JPanel {
-
-	private static final long serialVersionUID = -2319312498174759887L;
-	private transient PhysicalRobot physicalRobot;
-
-	/**
-	 * This is the default constructor
-	 */
-	public ConnectorPanel(PhysicalRobot physicalRobot) {
-		super();
-		this.physicalRobot = physicalRobot;
-		initialize();
+	public RobotUpdateEvent(Robot robot) {
+		super(robot);
+	}
+	public RobotUpdateEvent(Robot robot, String parameter, Object value) {
+		super(robot, parameter, value);
 	}
 
-	/**
-	 * This method initializes this
-	 *
-	 * @return void
-	 */
-	private void initialize() {
-		this.setSize(300, 200);
-		this.setLayout(new GridBagLayout());
+	@Override
+	public Robot getSource() {
+		return (Robot) super.getSource();
 	}
 
+	@Override
+	protected String getStringHeader() {
+		return "Robot updated: " +
+				getSource().getName();
+	}
 }

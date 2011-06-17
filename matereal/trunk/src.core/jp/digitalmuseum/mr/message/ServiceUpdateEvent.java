@@ -38,19 +38,13 @@ package jp.digitalmuseum.mr.message;
 
 import jp.digitalmuseum.mr.service.Service;
 
-public class ServiceUpdateEvent extends Event {
-	private String parameter;
-	private Object value;
+public class ServiceUpdateEvent extends UpdateEvent {
 
 	public ServiceUpdateEvent(Service service) {
 		super(service);
-		this.parameter = null;
-		this.value = null;
 	}
 	public ServiceUpdateEvent(Service service, String parameter, Object value) {
-		super(service);
-		this.parameter = parameter;
-		this.value = value;
+		super(service, parameter, value);
 	}
 
 	@Override
@@ -58,24 +52,9 @@ public class ServiceUpdateEvent extends Event {
 		return (Service) super.getSource();
 	}
 
-	public String getParameter() {
-		return parameter;
-	}
-
-	public Object getValue() {
-		return value;
-	}
-
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Service updated: ");
-		sb.append(getSource().getName());
-		sb.append(" (");
-		sb.append(getParameter());
-		sb.append(" -> ");
-		sb.append(getValue());
-		sb.append(")");
-		return sb.toString();
+	protected String getStringHeader() {
+		return "Service updated: " +
+				getSource().getName();
 	}
 }

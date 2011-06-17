@@ -41,6 +41,7 @@ import javax.swing.JComponent;
 import jp.digitalmuseum.connector.Connector;
 import jp.digitalmuseum.connector.ConnectorFactory;
 import jp.digitalmuseum.mr.gui.entity.PhysicalRobotPanel;
+import jp.digitalmuseum.mr.message.RobotUpdateEvent;
 
 public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implements PhysicalRobot {
 	private static final long serialVersionUID = 2914683592930955216L;
@@ -74,7 +75,10 @@ public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implem
 	 * Bind a connector to this robot.
 	 */
 	final public void setConnector(Connector connector) {
-		this.connector = connector;
+		if (this.connector != connector) {
+			this.connector = connector;
+			distributeEvent(new RobotUpdateEvent(this, "connector", connector));
+		}
 	}
 
 	/**

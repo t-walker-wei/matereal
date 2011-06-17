@@ -53,18 +53,19 @@ public class PhysicalRobotPanel extends JPanel {
 
 	private static final long serialVersionUID = -1601581324059426126L;
 	private RobotResourcePanel robotResourcePanel = null;
-	private transient PhysicalRobot robot;
+	private transient PhysicalRobot physicalRobot;
 	private JLabel resourceLabel = null;
 	private JPanel entityPanel = null;
 	private JLabel connectorLabel = null;
+	private ConnectorPanel connectorPanel = null;
 
 	/**
 	 * This method initializes
 	 *
 	 */
-	public PhysicalRobotPanel(PhysicalRobot robot) {
+	public PhysicalRobotPanel(PhysicalRobot physicalRobot) {
 		super();
-		this.robot = robot;
+		this.physicalRobot = physicalRobot;
 		initialize();
 	}
 
@@ -73,6 +74,11 @@ public class PhysicalRobotPanel extends JPanel {
 	 *
 	 */
 	private void initialize() {
+        GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+        gridBagConstraints11.gridx = 0;
+        gridBagConstraints11.anchor = GridBagConstraints.WEST;
+        gridBagConstraints11.insets = new Insets(5, 5, 5, 5);
+        gridBagConstraints11.gridy = 1;
         connectorLabel = new JLabel();
         connectorLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD));
         connectorLabel.setText(Messages.getString("PhysicalRobotPanel.connector"));
@@ -85,23 +91,25 @@ public class PhysicalRobotPanel extends JPanel {
         GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
         gridBagConstraints2.fill = GridBagConstraints.BOTH;
         gridBagConstraints2.gridx = 0;
-        gridBagConstraints2.gridy = 1;
+        gridBagConstraints2.gridy = 2;
         gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
         gridBagConstraints2.weightx = 1.0D;
+        gridBagConstraints2.anchor = GridBagConstraints.WEST;
         gridBagConstraints2.weighty = 0.0D;
         resourceLabel = new JLabel();
 		resourceLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD)); //$NON-NLS-1$
         resourceLabel.setText(Messages.getString("RobotPanel.resources"));
         GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
         gridBagConstraints1.gridx = 0;
-        gridBagConstraints1.gridy = 2;
+        gridBagConstraints1.gridy = 3;
         gridBagConstraints1.insets = new Insets(0, 5, 5, 0);
         gridBagConstraints1.weighty = 1.0D;
         gridBagConstraints1.anchor = GridBagConstraints.NORTHWEST;
         gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
         this.setLayout(new GridBagLayout());
         this.add(getEntityPanel(), gridBagConstraints);
-        this.add(connectorLabel, new GridBagConstraints());
+        this.add(connectorLabel, gridBagConstraints11);
+        this.add(getConnectorPanel(), new GridBagConstraints());
         this.add(resourceLabel, gridBagConstraints2);
         this.add(getRobotResourcePanel(), gridBagConstraints1);
 	}
@@ -113,7 +121,7 @@ public class PhysicalRobotPanel extends JPanel {
 	 */
 	private RobotResourcePanel getRobotResourcePanel() {
 		if (robotResourcePanel == null) {
-			robotResourcePanel = new RobotResourcePanel(robot);
+			robotResourcePanel = new RobotResourcePanel(physicalRobot);
 		}
 		return robotResourcePanel;
 	}
@@ -125,9 +133,21 @@ public class PhysicalRobotPanel extends JPanel {
 	 */
 	private JPanel getEntityPanel() {
 		if (entityPanel == null) {
-			entityPanel = new EntityPanel(robot);
+			entityPanel = new EntityPanel(physicalRobot);
 		}
 		return entityPanel;
+	}
+
+	/**
+	 * This method initializes connectorPanel
+	 *
+	 */
+	private ConnectorPanel getConnectorPanel() {
+		if (connectorPanel == null) {
+			connectorPanel = new ConnectorPanel(physicalRobot);
+			connectorPanel.setLayout(new GridBagLayout());
+		}
+		return connectorPanel;
 	}
 
 }

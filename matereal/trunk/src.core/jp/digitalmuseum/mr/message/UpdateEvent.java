@@ -34,35 +34,42 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui.entity;
+package jp.digitalmuseum.mr.message;
 
-import java.awt.GridBagLayout;
-import javax.swing.JPanel;
+public abstract class UpdateEvent extends Event {
+	private String parameter;
+	private Object value;
 
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
-
-public class ConnectorPanel extends JPanel {
-
-	private static final long serialVersionUID = -2319312498174759887L;
-	private transient PhysicalRobot physicalRobot;
-
-	/**
-	 * This is the default constructor
-	 */
-	public ConnectorPanel(PhysicalRobot physicalRobot) {
-		super();
-		this.physicalRobot = physicalRobot;
-		initialize();
+	public UpdateEvent(EventProvider eventProvider) {
+		super(eventProvider);
+		this.parameter = null;
+		this.value = null;
+	}
+	public UpdateEvent(EventProvider eventProvider, String parameter, Object value) {
+		super(eventProvider);
+		this.parameter = parameter;
+		this.value = value;
 	}
 
-	/**
-	 * This method initializes this
-	 *
-	 * @return void
-	 */
-	private void initialize() {
-		this.setSize(300, 200);
-		this.setLayout(new GridBagLayout());
+	public String getParameter() {
+		return parameter;
 	}
 
+	public Object getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getStringHeader());
+		sb.append(" (");
+		sb.append(getParameter());
+		sb.append(" -> ");
+		sb.append(getValue());
+		sb.append(")");
+		return sb.toString();
+	}
+
+	protected abstract String getStringHeader();
 }
