@@ -4,8 +4,10 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 
+import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.entity.MindstormsNXT;
 import jp.digitalmuseum.mr.entity.Noopy;
-import jp.digitalmuseum.mr.entity.Robot;
+import jp.digitalmuseum.mr.entity.PhysicalRobot;
 import jp.digitalmuseum.mr.resource.WheelsController;
 
 /**
@@ -22,7 +24,7 @@ public class SimpleButtonController extends JFrame {
 	private JButton jLeftButton = null;
 	private JButton jBackwardButton = null;
 
-	private transient Robot robot;
+	private transient PhysicalRobot robot;
 	private transient WheelsController wheels;
 
 	public static void main(String[] args) {
@@ -34,8 +36,14 @@ public class SimpleButtonController extends JFrame {
 	 */
 	public SimpleButtonController() {
 		super();
-		robot = new Noopy("btspp://00043E3A6FC8");
+
+		Matereal.getInstance().showDebugFrame();
+
+		robot = new MindstormsNXT("btspp://00165305B308");
+		robot.connect();
+
 		wheels = robot.requestResource(WheelsController.class, this);
+
 		initialize();
 		setVisible(true);
 	}

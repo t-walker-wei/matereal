@@ -38,9 +38,25 @@ package jp.digitalmuseum.mr.message;
 
 import jp.digitalmuseum.mr.entity.Robot;
 
-public class RobotEvent extends EntityEvent {
+public class RobotEvent extends Event {
+	private String message;
 
-	public RobotEvent(Robot source, EntityStatus status) {
-		super(source, status);
+	public RobotEvent(Robot source) {
+		super(source);
+		this.message = null;
+	}
+
+	public RobotEvent(Robot source, String message) {
+		super(source);
+		this.message = message;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	@Override
+	public Robot getSource() {
+		return (Robot) super.getSource();
 	}
 }

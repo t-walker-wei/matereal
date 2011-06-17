@@ -58,10 +58,14 @@ public class EntityShapePanel extends JPanel {
 	}
 
 	private void initialize() {
-		Rectangle2D bounds = shape.getBounds2D();
-		double w = bounds.getWidth();
-		double h = bounds.getHeight();
-		zoom = w > 0 && h > 0 ? (w < h ? 60 / h : 60 / w) : 1;
+		if (shape == null) {
+			zoom = 1;
+		} else {
+			Rectangle2D bounds = shape.getBounds2D();
+			double w = bounds.getWidth();
+			double h = bounds.getHeight();
+			zoom = w > 0 && h > 0 ? (w < h ? 60 / h : 60 / w) : 1;
+		}
 	}
 
 	@Override
@@ -74,9 +78,11 @@ public class EntityShapePanel extends JPanel {
 		g2.fillRect(x + 1, y + 1, 68, 68);
 		g2.setColor(getForeground());
 		g2.drawRect(x, y, 69, 69);
-		g2.translate(x + 35, y + 35);
-		g2.scale(zoom, zoom);
-		g2.draw(shape);
+		if (shape != null) {
+			g2.translate(x + 35, y + 35);
+			g2.scale(zoom, zoom);
+			g2.draw(shape);
+		}
 		g2.setTransform(af);
 	}
 }
