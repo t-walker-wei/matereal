@@ -48,11 +48,7 @@ import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 
 import org.jbox2d.collision.shapes.CircleDef;
-import org.jbox2d.collision.shapes.ShapeDef;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.World;
 
 public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 	private static final long serialVersionUID = 7085381442084030550L;
@@ -61,9 +57,7 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 	final private static float WEIGHT = 0.8f;
 	final private static float RADIUS = 35f;
 
-	private transient Body body;
-	private transient ShapeDef sd;
-	private transient java.awt.Shape shape;
+	private transient Shape shape;
 
 	private Color color = Color.blue;
 
@@ -221,8 +215,9 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 		float y = position.y * 100;
 		float angle = getBody().getAngle();
 
-		float radius = ((CircleDef) sd).radius * 100;
-		float weight = (float) (sd.density * radius * radius * Math.PI);
+		CircleDef cd = (CircleDef) getShapeDef();
+		float radius = cd.radius * 100;
+		float weight = (float) (cd.density * radius * radius * Math.PI);
 
 		oos.writeObject(new float[] {
 			x, y, angle, radius, weight
@@ -242,7 +237,7 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 		initialize(null, x, y, angle, radius, weight);
 	}
 
-	private void initialize(Color color, double x, double y, double angle, double radius, double weight) {
+	private void initialize(Color color, double x, double y, double rotation, double radius, double weight) {
 
 		if (color != null) {
 			setColor(color);
@@ -253,29 +248,9 @@ public class HakoniwaCylinder extends HakoniwaEntityAbstractImpl {
 		cd.restitution = RESTITUTION;
 		cd.density = (float) (weight / (radius * radius * Math.PI));
 		cd.friction = FRICTION;
-		sd = cd;
-
-		final BodyDef bd = new BodyDef();
-		bd.position = new Vec2();
-		bd.position.x = (float) (x/100);
-		bd.position.y = (float) (y/100);
-		bd.angle = (float) angle;
-
-		final Hakoniwa hakoniwa = getHakoniwa();
-		synchronized (hakoniwa) {
-			final World world = getHakoniwa().getWorld();
-			body = world.createBody(bd);
-			body.createShape(sd);
-			body.setMassFromShapes();
-			body.m_userData = this;
-		}
 
 		shape = new Ellipse2D.Double(-radius, -radius, radius*2, radius*2);
-		getHakoniwa().registerEntity(this);
-	}
-
-	public Body getBody() {
-		return body;
+		initialize(x, y, rotation, cd);
 	}
 
 	public void setColor(Color color) {

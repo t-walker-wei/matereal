@@ -86,6 +86,14 @@ public abstract class HakoniwaEntityAbstractImpl extends EntityImpl implements H
 		this.hakoniwa = hakoniwa;
 	}
 
+	/**
+	 * Subclasses must call this method at the end of its initialization.
+	 *
+	 * @param x x-coordinate
+	 * @param y y-coordinate
+	 * @param rotation rotation
+	 * @param sd Shape definition
+	 */
 	protected void initialize(double x, double y, double rotation, ShapeDef sd) {
 
 		if (hakoniwa == null) {

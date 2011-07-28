@@ -1,5 +1,3 @@
-
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
@@ -7,7 +5,9 @@ import java.awt.event.KeyEvent;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.MindstormsNXT;
+import jp.digitalmuseum.mr.entity.PhysicalRobot;
 import jp.digitalmuseum.mr.entity.Robot;
+import jp.digitalmuseum.mr.entity.Roomba;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.DrawableFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
@@ -28,7 +28,7 @@ import jp.digitalmuseum.utils.Position;
 public class KeyController {
 	private enum Key { UP, DOWN, LEFT, RIGHT, ESC, NONE }
 	private Key key;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false; //true;
 	private final DrawableFrame drawableFrame;
 	private DisposeOnCloseFrame hakoniwaFrame;
 	private DifferentialWheelsController wheels;
@@ -47,7 +47,10 @@ public class KeyController {
 		if (DEBUG) {
 			robot = initHakoniwa();
 		} else {
-			robot = new MindstormsNXT("btspp://00165305B308");
+			// PhysicalRobot physicalRobot = new Roomba("btspp://00066600D69A");
+			PhysicalRobot physicalRobot = new MindstormsNXT("btspp://00165305B308");
+			physicalRobot.connect();
+			robot = physicalRobot;
 		}
 		wheels = robot.requestResource(DifferentialWheelsController.class, this);
 
