@@ -246,7 +246,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		selectedEntity = entity;
 	}
 
-	void addEntity(Entity entity) {
+	private void addEntity(Entity entity) {
 		if (entityNodeMap.containsKey(entity)) {
 			return;
 		}
@@ -257,7 +257,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		entityNodeMap.put(entity, node);
 	}
 
-	void removeEntity(Entity entity) {
+	private void removeEntity(Entity entity) {
 
 		// Remove from the list view and entityNodeMap.
 		MutableTreeNode node;

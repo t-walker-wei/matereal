@@ -122,6 +122,8 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 	private transient Map<Service, JComponent> serviceComponents;
 
+	private transient Service selectedService;
+
 	/** Singleton constructor. */
 	public ServiceMonitorPanel() {
 		super();
@@ -143,7 +145,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			serviceGroupMap.put(service, service.getServiceGroup());
 			updateService(service);
 		}
-		selectService(null);
+		showService(null);
 	}
 
 	/**
@@ -196,7 +198,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 		Object nodeInfo = node.getUserObject();
 		if (nodeInfo instanceof Service) {
-			selectService((Service) nodeInfo);
+			showService((Service) nodeInfo);
 		}
 	}
 
@@ -227,7 +229,16 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		}
 	}
 
-	private void selectService(Service service) {
+	public Service getSelectedService() {
+		return selectedService;
+	}
+
+	void showInstantiatePanel() {
+		((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
+				String.valueOf(getRightInstantiatePanel().hashCode()));
+	}
+
+	public void showService(Service service) {
 		if (service == null) {
 			selectedServiceLabel.setText("-"); //$NON-NLS-1$
 			jLabel3.setText("-"); //$NON-NLS-1$
@@ -246,6 +257,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		selectedServiceLabel.setText(service.toString());
 		jLabel3.setText(String.valueOf(service.getInterval()));
 		selectServiceGroup(service.getServiceGroup());
+		selectedService = service;
 	}
 
 	private void updateService(Service service) {
@@ -426,6 +438,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private JButton getInstantiateButton() {
 		if (instantiateButton == null) {
 			instantiateButton = new JButton();
+			instantiateButton.setAction(new ServiceInstantiateAction(this));
 			instantiateButton.setFont(Matereal.getInstance().getDefaultFont());
 			instantiateButton.setText("+");
 		}
@@ -458,8 +471,8 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			gridBagConstraints10.gridy = -1;
 			rightPanel = new JPanel();
 			rightPanel.setLayout(new CardLayout());
-			rightPanel.add(getRightViewPanel(), getRightViewPanel().getName());
-			rightPanel.add(getRightInstantiatePanel(), getRightInstantiatePanel().getName());
+			rightPanel.add(getRightViewPanel(), String.valueOf(getRightViewPanel().hashCode()));
+			rightPanel.add(getRightInstantiatePanel(), String.valueOf(getRightInstantiatePanel().hashCode()));
 		}
 		return rightPanel;
 	}
@@ -588,9 +601,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	 */
 	private JPanel getRightInstantiatePanel() {
 		if (rightInstantiatePanel == null) {
-			rightInstantiatePanel = new JPanel();
-			rightInstantiatePanel.setLayout(new GridBagLayout());
-			rightInstantiatePanel.setName("instantiatePanel");
+			rightInstantiatePanel = new ServiceInstantiatePanel(this);
 		}
 		return rightInstantiatePanel;
 	}

@@ -41,39 +41,36 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.Font;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.gui.entity.EntityTypeComboBox;
+import jp.digitalmuseum.mr.gui.service.ServiceTypeComboBox;
+import jp.digitalmuseum.mr.service.Service;
 
 import javax.swing.BorderFactory;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class EntityInstantiatePanel extends JPanel {
+public class ServiceInstantiatePanel extends JPanel {
 
-	private static final long serialVersionUID = -3862466161865975258L;
+	private static final long serialVersionUID = 8537365036037693120L;
 	private JLabel typeLabel = null;
-	private EntityTypeComboBox typeComboBox = null;
-	private JLabel nameLabel = null;
-	private JTextField nameTextField = null;
+	private ServiceTypeComboBox typeComboBox = null;
 	private JPanel buttonPanel = null;
 	private JButton okButton = null;
 	private JButton cancelButton = null;
 	private JLabel entityAddLabel = null;
 
-	private transient EntityMonitorPanel entityMonitorPanel;
+	private transient ServiceMonitorPanel serviceMonitorPanel;
 
 	/**
 	 * This is the default constructor
 	 */
-	public EntityInstantiatePanel(EntityMonitorPanel entityMonitorPanel) {
+	public ServiceInstantiatePanel(ServiceMonitorPanel serviceMonitorPanel) {
 		super();
-		this.entityMonitorPanel = entityMonitorPanel;
+		this.serviceMonitorPanel = serviceMonitorPanel;
 		initialize();
 	}
 
@@ -92,7 +89,7 @@ public class EntityInstantiatePanel extends JPanel {
 		gridBagConstraints21.gridwidth = 2;
 		gridBagConstraints21.gridy = 0;
 		entityAddLabel = new JLabel();
-		entityAddLabel.setText("Add a new entity");
+		entityAddLabel.setText("Add a new service");
 		entityAddLabel.setFont(defaultFont.deriveFont(Font.BOLD, 14));
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.gridx = 0;
@@ -103,25 +100,6 @@ public class EntityInstantiatePanel extends JPanel {
 		gridBagConstraints11.weightx = 1.0D;
 		gridBagConstraints11.weighty = 1.0D;
 		gridBagConstraints11.gridy = 3;
-		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-		gridBagConstraints3.fill = GridBagConstraints.BOTH;
-		gridBagConstraints3.gridy = 2;
-		gridBagConstraints3.gridx = 1;
-		gridBagConstraints3.weighty = 0.0D;
-		gridBagConstraints3.weightx = 0.7D;
-		gridBagConstraints3.anchor = GridBagConstraints.WEST;
-		gridBagConstraints3.insets = new Insets(0, 0, 5, 5);
-		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-		gridBagConstraints2.gridy = 2;
-		gridBagConstraints2.gridx = 0;
-		gridBagConstraints2.weighty = 0.0D;
-		gridBagConstraints2.weightx = 0.3D;
-		gridBagConstraints2.fill = GridBagConstraints.BOTH;
-		gridBagConstraints2.anchor = GridBagConstraints.WEST;
-		gridBagConstraints2.insets = new Insets(0, 5, 5, 5);
-		nameLabel = new JLabel();
-		nameLabel.setFont(defaultFont);
-		nameLabel.setText("Name:");
 		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 		gridBagConstraints1.fill = GridBagConstraints.BOTH;
 		gridBagConstraints1.gridy = 1;
@@ -140,14 +118,12 @@ public class EntityInstantiatePanel extends JPanel {
 		gridBagConstraints.insets = new Insets(0, 5, 5, 5);
 		typeLabel = new JLabel();
 		typeLabel.setFont(defaultFont);
-		typeLabel.setText("Entity type:");
+		typeLabel.setText("Service type:");
 		this.setSize(300, 200);
 		this.setLayout(new GridBagLayout());
 		this.add(entityAddLabel, gridBagConstraints21);
 		this.add(typeLabel, gridBagConstraints);
 		this.add(getTypeComboBox(), gridBagConstraints1);
-		this.add(nameLabel, gridBagConstraints2);
-		this.add(getNameTextField(), gridBagConstraints3);
 		this.add(getButtonPanel(), gridBagConstraints11);
 	}
 
@@ -156,25 +132,12 @@ public class EntityInstantiatePanel extends JPanel {
 	 *
 	 * @return javax.swing.JComboBox
 	 */
-	private EntityTypeComboBox getTypeComboBox() {
+	private ServiceTypeComboBox getTypeComboBox() {
 		if (typeComboBox == null) {
-			typeComboBox = new EntityTypeComboBox();
+			typeComboBox = new ServiceTypeComboBox();
 			typeComboBox.setFont(Matereal.getInstance().getDefaultFont());
 		}
 		return typeComboBox;
-	}
-
-	/**
-	 * This method initializes nameTextField
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getNameTextField() {
-		if (nameTextField == null) {
-			nameTextField = new JTextField();
-			nameTextField.setFont(Matereal.getInstance().getDefaultFont());
-		}
-		return nameTextField;
 	}
 
 	/**
@@ -216,13 +179,9 @@ public class EntityInstantiatePanel extends JPanel {
 			okButton.setText("OK");
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Entity entity = getTypeComboBox().newEntityInstance();
-					if (entity != null) {
-						String name = getNameTextField().getText();
-						if (name != null && name.length() > 0) {
-							entity.setName(name);
-						}
-						entityMonitorPanel.showEntity(entity);
+					Service service = getTypeComboBox().newServiceInstance();
+					if (service != null) {
+						serviceMonitorPanel.showService(service);
 					}
 				}
 			});
@@ -242,8 +201,8 @@ public class EntityInstantiatePanel extends JPanel {
 			cancelButton.setText("Cancel");
 			cancelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					entityMonitorPanel.showEntity(
-							entityMonitorPanel.getSelectedEntity());
+					serviceMonitorPanel.showService(
+							serviceMonitorPanel.getSelectedService());
 				}
 			});
 		}
