@@ -253,8 +253,8 @@ public class HakoniwaBox extends HakoniwaEntityAbstractImpl {
 		pd.density = (float) (weight / (width * height));
 		pd.friction = FRICTION;
 
-		initialize(x, y, rotation, pd);
 		shape = new Rectangle2D.Double(-width/2, -height/2, width, height);
+		initialize(x, y, rotation, pd);
 	}
 
 	public Shape getShape() {

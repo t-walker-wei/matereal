@@ -4,7 +4,9 @@ import java.awt.event.KeyEvent;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Noopy;
+import jp.digitalmuseum.mr.entity.PhysicalRobot;
 import jp.digitalmuseum.mr.entity.Robot;
+import jp.digitalmuseum.mr.entity.Roomba;
 import jp.digitalmuseum.mr.gui.DrawableFrame;
 import jp.digitalmuseum.mr.resource.WheelsController;
 
@@ -15,7 +17,7 @@ import jp.digitalmuseum.mr.resource.WheelsController;
  */
 public class SimpleKeyController {
 	private final DrawableFrame drawableFrame;
-	private final Robot robot;
+	private final PhysicalRobot robot;
 	private final WheelsController wheels;
 
 	public static void main(String[] args) {
@@ -24,7 +26,9 @@ public class SimpleKeyController {
 
 	public SimpleKeyController() {
 		super();
-		robot = new Noopy("btspp://00043E3A6561");
+
+		robot = new Roomba("btspp://00066600D69A");
+		robot.connect();
 		wheels = robot.requestResource(WheelsController.class, this);
 
 		drawableFrame = new DrawableFrame() {

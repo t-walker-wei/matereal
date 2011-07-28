@@ -216,13 +216,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 			initialize();
 		}
 
-		@Override
-		protected void initialize() {
-			super.initialize();
-			start();
-			control();
-		}
-
 		protected void onFree() {
 			stopWheels();
 			power();
@@ -333,6 +326,10 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void clean() {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			}
 			getConnector().write(R_CLEAN);
 			wait(20);
 			mode = RoombaMode.PASSIVE;
@@ -346,6 +343,10 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void max() {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			}
 			getConnector().write(R_MAX);
 			wait(20);
 			mode = RoombaMode.PASSIVE;
@@ -359,6 +360,10 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void spot() {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			}
 			getConnector().write(R_SPOT);
 			wait(20);
 			mode = RoombaMode.PASSIVE;
@@ -372,6 +377,10 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void seekDock() {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			}
 			getConnector().write(R_SEEKDOCK);
 			wait(20);
 			mode = RoombaMode.PASSIVE;
@@ -385,9 +394,11 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void power() {
-			getConnector().write(R_POWER);
-			wait(20);
-			mode = RoombaMode.UNKNOWN;
+			if (mode != RoombaMode.UNKNOWN) {
+				getConnector().write(R_POWER);
+				wait(20);
+				mode = RoombaMode.UNKNOWN;
+			}
 		}
 
 		/**
@@ -414,8 +425,13 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param radius
 		 */
 		public void drive_(int velocity, int radius) {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			} else 	if (mode.equals(RoombaMode.PASSIVE)) {
+				safe();
+			}
 			// System.out.println("drive:"+velocity+","+radius);
-			if (mode.equals(RoombaMode.PASSIVE)) { safe(); }
 			getConnector().write(new byte[] {
 				(byte) R_DRIVE,
 				/** v upper 8 bits */ (byte) (velocity >> 8),
@@ -431,7 +447,7 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * independently. It takes four data bytes, which are interpreted as two 16-bit signed values using two’s
 		 * complement. The first two bytes specify the velocity of the right wheel in millimeters per second (mm/s),
 		 * with the high byte sent first. The next two bytes specify the velocity of the left wheel, in the same
-	 	 * format. A positive velocity makes that wheel drive forward, while a negative velocity makes it drive
+		 * format. A positive velocity makes that wheel drive forward, while a negative velocity makes it drive
 		 * backward.
 		 * <ul>
 		 * 	<li>Available in modes: Safe or Full</li>
@@ -443,8 +459,13 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param rightVelocity
 		 */
 		public void driveDirect(int leftVelocity, int rightVelocity) {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			} else 	if (mode.equals(RoombaMode.PASSIVE)) {
+				safe();
+			}
 			// System.out.println("drive:"+velocity+","+radius);
-			if (mode.equals(RoombaMode.PASSIVE)) { safe(); }
 			getConnector().write(new byte[] {
 				(byte) R_DRIVEDIRECT,
 				/** vr upper 8 bits */ (byte) (rightVelocity >> 8),
@@ -484,7 +505,12 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param mainBrushOutward Outward or inward
 		 */
 		public void motors(boolean vacuum, boolean sideBrush, boolean sideBrushClockwise, boolean mainBrush, boolean mainBrushOutward) {
-			if (mode.equals(RoombaMode.PASSIVE)) { safe(); }
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			} else if (mode.equals(RoombaMode.PASSIVE)) {
+				safe();
+			}
 			getConnector().write(R_MOTORS);
 			getConnector().write((byte) (
 					(mainBrushOutward?		16:0) +
@@ -510,7 +536,12 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param cleanOrPowerIntensity 0-255
 		 */
 		public void lightLED(boolean home, boolean spot, boolean checkRobot, boolean debris, int cleanOrPowerColor, int cleanOrPowerIntensity) {
-			if (mode.equals(RoombaMode.PASSIVE)) { safe(); }
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			} else if (mode.equals(RoombaMode.PASSIVE)) {
+				safe();
+			}
 			getConnector().write(R_MOTORS);
 			getConnector().write((byte) (
 					(checkRobot?	8:0) +
@@ -532,7 +563,12 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void lightDigitLED(char c0, char c1, char c2, char c3) {
-			if (mode.equals(RoombaMode.PASSIVE)) { safe(); }
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			} else if (mode.equals(RoombaMode.PASSIVE)) {
+				safe();
+			}
 			getConnector().write(R_DIGITLED);
 			getConnector().write(c0);
 			getConnector().write(c1);
@@ -574,6 +610,10 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @see Song
 		 */
 		public void song(int index, Song song) {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			}
 			final Connector connector = getConnector();
 			connector.write(R_SONG);
 			connector.write(index);
@@ -596,7 +636,12 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param index 0-4
 		 */
 		public void play(int index) {
-			if (mode.equals(RoombaMode.PASSIVE)) { safe(); }
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+				control();
+			} else if (mode.equals(RoombaMode.PASSIVE)) {
+				safe();
+			}
 			getConnector().write(R_PLAY);
 			getConnector().write(index);
 			wait(20);
@@ -735,22 +780,13 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		}
 
 		public void endCleaning() {
-			startRoombaIfNeeded();
 			roomba.driver.motors(false);
 			isWorking = false;
 		}
 
 		public void startCleaning() {
-			startRoombaIfNeeded();
 			roomba.driver.motors(true);
 			isWorking = true;
-		}
-
-		private void startRoombaIfNeeded() {
-			if (roomba.driver.mode == RoombaMode.UNKNOWN) {
-				roomba.driver.start();
-				roomba.driver.control();
-			}
 		}
 	}
 }
