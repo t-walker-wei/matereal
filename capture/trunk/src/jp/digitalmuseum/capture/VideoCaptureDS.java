@@ -337,6 +337,7 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		// Stop capturing.
 		try {
 			capture.stop();
+			capture.dispose();
 			capture = null;
 		} catch (Exception e) {
 			// All exception can be ignored because nothing can be done.
