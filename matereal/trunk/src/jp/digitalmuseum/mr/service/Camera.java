@@ -78,6 +78,7 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 	/** Image updated flag. */
 	private boolean imageUpdated;
 
+	private String name = null;
 	private Array<ImageListener> listeners;
 
 	public Camera() {
@@ -119,8 +120,20 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 		listeners = new Array<ImageListener>();
 	}
 
+	@Override
 	public String getName() {
-		return capture.getName();
+		String newName;
+		try {
+			newName = capture.getName();
+		} catch (Exception e) {
+			newName = super.getName();
+		}
+		if (name == null ||
+				!name.equals(newName)) {
+			name = newName;
+			distributeEvent(new ServiceUpdateEvent(this, "name", name));
+		}
+		return name;
 	}
 
 	public byte[] getImageData() {
@@ -253,6 +266,7 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 		} catch (Exception e) {
 			// If an error occurred starting capture,
 			// simply throw an exception and do not start this service.
+			e.printStackTrace();
 			throw new IllegalStateException(e);
 		}
 	}

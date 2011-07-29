@@ -152,7 +152,7 @@ public class Array<T> implements Iterable<T>, Serializable {
 		}
 		elements[-- validSize] = null;
 		for (ArrayIterator it : iterators) {
-			if (it.counter >= index) {
+			if (it.counter > index) {
 				it.counter --;
 			}
 		}

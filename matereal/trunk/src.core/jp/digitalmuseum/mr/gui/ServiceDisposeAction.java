@@ -34,27 +34,27 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.message;
+package jp.digitalmuseum.mr.gui;
 
-import jp.digitalmuseum.mr.entity.Robot;
+import java.awt.event.ActionEvent;
 
-public class RobotUpdateEvent extends EntityUpdateEvent {
+import javax.swing.AbstractAction;
 
-	public RobotUpdateEvent(Robot robot) {
-		super(robot);
-	}
-	public RobotUpdateEvent(Robot robot, String parameter, Object value) {
-		super(robot, parameter, value);
-	}
+import jp.digitalmuseum.mr.service.Service;
 
-	@Override
-	public Robot getSource() {
-		return (Robot) super.getSource();
+public class ServiceDisposeAction extends AbstractAction {
+	private static final long serialVersionUID = 405768985786774484L;
+	private ServiceMonitorPanel serviceMonitorPanel;
+
+	public ServiceDisposeAction(ServiceMonitorPanel serviceMonitorPanel) {
+		this.serviceMonitorPanel = serviceMonitorPanel;
 	}
 
 	@Override
-	protected String getStringHeader() {
-		return "Robot updated: " +
-				getSource().getName();
+	public void actionPerformed(ActionEvent e) {
+		Service service = serviceMonitorPanel.getSelectedService();
+		if (service != null) {
+			service.dispose();
+		}
 	}
 }

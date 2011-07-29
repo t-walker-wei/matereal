@@ -41,6 +41,7 @@ import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ServiceEvent;
 import jp.digitalmuseum.mr.message.ServiceStatus;
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
 
@@ -97,7 +98,10 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private JPanel rightPanel = null;
 
 	private JPanel rightViewPanel = null;
+	private JPanel selectedServicePanel = null;
 	private JLabel selectedServiceLabel = null;
+	private JButton startServiceButton = null;
+	private JButton stopServiceButton = null;
 	private JPanel serviceInformationPanel = null;
 	private JLabel jLabel = null;
 	private JLabel jLabel3 = null;
@@ -122,7 +126,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 	private transient Map<Service, JComponent> serviceComponents;
 
-	private transient Service selectedService;
+	private transient Service selectedService;  //  @jve:decl-index=0:
 
 	/** Singleton constructor. */
 	public ServiceMonitorPanel() {
@@ -186,6 +190,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 	public void run() {
 		((DefaultTreeModel) getJTree().getModel()).reload();
+		updateServiceButtons();
 	}
 
 	public void valueChanged(TreeSelectionEvent e) {
@@ -205,26 +210,50 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	public void eventOccurred(Event e) {
 		if (e instanceof ServiceEvent) {
 			ServiceEvent se = (ServiceEvent) e;
-			if (se.getStatus() == ServiceStatus.STARTED ||
-					se.getStatus() == ServiceStatus.STOPPED) {
+			if (se.getStatus() == ServiceStatus.INSTANTIATED ||
+					se.getStatus() == ServiceStatus.DISPOSED) {
 				Service service = se.getSource();
 
 				if (service instanceof ServiceGroup) {
-					if (se.getStatus() == ServiceStatus.STARTED) {
+					if (se.getStatus() == ServiceStatus.INSTANTIATED) {
 						addServiceGroup((ServiceGroup) service);
 					} else {
 						removeServiceGroup((ServiceGroup) service);
 					}
 				} else {
-					if (se.getStatus() == ServiceStatus.STARTED) {
+					if (se.getStatus() == ServiceStatus.INSTANTIATED) {
 						serviceGroupMap.put(service, service.getServiceGroup());
 						updateService(service);
 					} else {
 						removeService(service);
+						showService(null);
 					}
 				}
 
 				SwingUtilities.invokeLater(this);
+			}
+
+			else if (se.getStatus() == ServiceStatus.STARTED ||
+					se.getStatus() == ServiceStatus.STOPPED) {
+				Service service = se.getSource();
+
+				if (!(service instanceof ServiceGroup)) {
+					if (se.getStatus() == ServiceStatus.STARTED) {
+						serviceGroupMap.put(service, service.getServiceGroup());
+						updateService(service);
+					}
+				}
+
+				SwingUtilities.invokeLater(this);
+			}
+		}
+		else if (e instanceof ServiceUpdateEvent) {
+			ServiceUpdateEvent sue = (ServiceUpdateEvent) e;
+			if (selectedService == e.getSource() &&
+					"name".equals(sue.getParameter())) {
+				if (selectedServiceLabel != null) {
+					selectedServiceLabel.setText(sue.getValue().toString());
+				}
 			}
 		}
 	}
@@ -239,9 +268,12 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	}
 
 	public void showService(Service service) {
+		((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
+				String.valueOf(getRightViewPanel().hashCode()));
 		if (service == null) {
 			selectedServiceLabel.setText("-"); //$NON-NLS-1$
 			jLabel3.setText("-"); //$NON-NLS-1$
+			selectedService = null;
 			return;
 		}
 		if (!serviceComponents.containsKey(service)) {
@@ -254,10 +286,25 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		}
 		((CardLayout) getServicePanel().getLayout()).show(
 				getServicePanel(), String.valueOf(service.hashCode()));
-		selectedServiceLabel.setText(service.toString());
+		selectedServiceLabel.setText(service.getName());
 		jLabel3.setText(String.valueOf(service.getInterval()));
 		selectServiceGroup(service.getServiceGroup());
 		selectedService = service;
+		updateServiceButtons();
+	}
+
+	private void updateServiceButtons() {
+		Service selectedService = getSelectedService();
+		if (selectedService == null || selectedService.isDisposed()) {
+			getStartServiceButton().setEnabled(false);
+			getStopServiceButton().setEnabled(false);
+		} else if (selectedService.isStarted()) {
+			getStartServiceButton().setEnabled(false);
+			getStopServiceButton().setEnabled(true);
+		} else {
+			getStartServiceButton().setEnabled(true);
+			getStopServiceButton().setEnabled(false);
+		}
 	}
 
 	private void updateService(Service service) {
@@ -299,6 +346,10 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			}
 			serviceComponents.remove(service);
 		}
+
+		if (service == selectedService) {
+			showService(null);
+		}
 	}
 
 	private void removeServiceFromView(Service service) {
@@ -310,8 +361,10 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		} else {
 			node = groupNodeMap.get(service.getServiceGroup());
 		}
-		node.remove(
-				serviceNodeMap.remove(service));
+
+		if (serviceNodeMap.containsKey(service)) {
+			node.remove(serviceNodeMap.remove(service));
+		}
 	}
 
 	private void selectServiceGroup(ServiceGroup serviceGroup) {
@@ -453,6 +506,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	private JButton getDisposeButton() {
 		if (disposeButton == null) {
 			disposeButton = new JButton();
+			disposeButton.setAction(new ServiceDisposeAction(this));
 			disposeButton.setFont(Matereal.getInstance().getDefaultFont());
 			disposeButton.setText("-");
 		}
@@ -484,13 +538,11 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 	 */
 	private JPanel getRightViewPanel() {
 		if (rightViewPanel == null) {
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.gridx = 0;
-			gridBagConstraints.gridy = 0;
-			gridBagConstraints.fill = GridBagConstraints.BOTH;
-			gridBagConstraints.weightx = 1.0D;
-			gridBagConstraints.weighty = 0.0D;
-			gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+			GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
+			gridBagConstraints14.gridx = 0;
+			gridBagConstraints14.fill = GridBagConstraints.BOTH;
+			gridBagConstraints14.insets = new Insets(5, 5, 5, 5);
+			gridBagConstraints14.gridy = 0;
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.gridx = 0;
 			gridBagConstraints3.gridy = 2;
@@ -509,7 +561,7 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			rightViewPanel.setLayout(new GridBagLayout());
 			rightViewPanel.setPreferredSize(new Dimension(320, 420));
 			rightViewPanel.setName("jRightPanel");
-			rightViewPanel.add(selectedServiceLabel, gridBagConstraints);
+			rightViewPanel.add(getSelectedServicePanel(), gridBagConstraints14);
 			rightViewPanel.add(getServiceInformationPanel(), gridBagConstraints3);
 			rightViewPanel.add(getServicePanel(), gridBagConstraints4);
 		}
@@ -589,7 +641,6 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			servicePanel.setPreferredSize(new Dimension(400, 420));
 			servicePanel.setLayout(new CardLayout());
 			servicePanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
-
 		}
 		return servicePanel;
 	}
@@ -604,5 +655,72 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			rightInstantiatePanel = new ServiceInstantiatePanel(this);
 		}
 		return rightInstantiatePanel;
+	}
+
+	/**
+	 * This method initializes selectedServicePanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getSelectedServicePanel() {
+		if (selectedServicePanel == null) {
+			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+			gridBagConstraints21.weightx = 0.0D;
+			gridBagConstraints21.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints21.gridx = 2;
+			gridBagConstraints21.gridy = 0;
+			gridBagConstraints21.fill = GridBagConstraints.BOTH;
+			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+			gridBagConstraints13.weightx = 0.0D;
+			gridBagConstraints13.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints13.gridx = 1;
+			gridBagConstraints13.gridy = 0;
+			gridBagConstraints13.fill = GridBagConstraints.BOTH;
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.fill = GridBagConstraints.BOTH;
+			gridBagConstraints.gridx = 0;
+			gridBagConstraints.gridy = 0;
+			gridBagConstraints.weightx = 1.0D;
+			gridBagConstraints.weighty = 0.0D;
+			gridBagConstraints.insets = new Insets(0, 0, 0, 0);
+			selectedServicePanel = new JPanel();
+			selectedServicePanel.setLayout(new GridBagLayout());
+			selectedServicePanel.add(selectedServiceLabel, gridBagConstraints);
+			selectedServicePanel.add(getStartServiceButton(), gridBagConstraints13);
+			selectedServicePanel.add(getStopServiceButton(), gridBagConstraints21);
+		}
+		return selectedServicePanel;
+	}
+
+	/**
+	 * This method initializes jStartServiceButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getStartServiceButton() {
+		if (startServiceButton == null) {
+			startServiceButton = new JButton();
+			startServiceButton.setAction(new ServiceStartAction(this));
+			startServiceButton.setText(Messages.getString("ServiceMonitorPanel.startIcon"));
+			startServiceButton.setToolTipText(Messages.getString("ServiceMonitorPanel.start"));
+			startServiceButton.setEnabled(false);
+		}
+		return startServiceButton;
+	}
+
+	/**
+	 * This method initializes stopServiceButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getStopServiceButton() {
+		if (stopServiceButton == null) {
+			stopServiceButton = new JButton();
+			stopServiceButton.setAction(new ServiceStopAction(this));
+			stopServiceButton.setText(Messages.getString("ServiceMonitorPanel.stopIcon"));
+			stopServiceButton.setToolTipText(Messages.getString("ServiceMonitorPanel.stop"));
+			stopServiceButton.setEnabled(false);
+		}
+		return stopServiceButton;
 	}
 }

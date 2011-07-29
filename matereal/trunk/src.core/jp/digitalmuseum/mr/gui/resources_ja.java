@@ -58,10 +58,10 @@ public class resources_ja extends PropertyResourceBundle {
 		"MonitorPane.graphs=ワークフロー グラフ\n" +
 		"MonitorPane.entities=ロボットとその他の物体\n" +
 		"MonitorPane.services=サービス\n" +
-		"GraphMonitorPanel.selectedGraph=選択されたグラフ\n" +
-		"GraphMonitorPanel.nameOfSelectedGraph=選択されたグラフの名称.\n" +
-		"EntityMonitorPanel.selectedEntity=選択された物体\n" +
+		"EntityMonitorPanel.selectedEntity=-\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=選択された物体の名称.\n" +
+		"EntityMonitorPanel.ok=OK\n" +
+		"EntityMonitorPanel.cancel=キャンセル\n" +
 		"EntityPanel.entityType=物体の種類\n" +
 		"RobotPanel.resources=ロボットの部品\n" +
 		"PhysicalRobotPanel.connector=コネクタ\n" +
@@ -73,7 +73,13 @@ public class resources_ja extends PropertyResourceBundle {
 		"MonitorPanel.nameOfSelectedServiceGroup=サービスグループの名称.\n" +
 		"MonitorPanel.serviceGroup=サービスグループ:\n" +
 		"MonitorPanel.interval=実行間隔:\n" +
-		"MonitorPanel.millisecond=[ms]";
+		"MonitorPanel.millisecond=[ms]\n" +
+		"ServiceMonitorPanel.start=開始\n" +
+		"ServiceMonitorPanel.startIcon=○\n" +
+		"ServiceMonitorPanel.stop=停止\n" +
+		"ServiceMonitorPanel.stopIcon=□\n" +
+		"GraphMonitorPanel.selectedGraph=-\n" +
+		"GraphMonitorPanel.nameOfSelectedGraph=選択されたグラフの名称.\n";
 
 	public resources_ja() throws IOException {
 		super(new ByteArrayInputStream(
