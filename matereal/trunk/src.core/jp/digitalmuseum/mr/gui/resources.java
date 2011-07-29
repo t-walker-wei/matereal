@@ -56,10 +56,10 @@ public class resources extends PropertyResourceBundle {
 		"MonitorPane.graphs=Workflow graphs\n" +
 		"MonitorPane.entities=Robots and entities\n" +
 		"MonitorPane.services=Services\n" +
-		"GraphMonitorPanel.selectedGraph=Selected graph\n" +
-		"GraphMonitorPanel.nameOfSelectedGraph=Name of the selected graph.\n" +
-		"EntityMonitorPanel.selectedEntity=Selected entity\n" +
+		"EntityMonitorPanel.selectedEntity=-\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=Name of the selected entity.\n" +
+		"EntityMonitorPanel.ok=OK\n" +
+		"EntityMonitorPanel.cancel=Cancel\n" +
 		"EntityPanel.entityType=Entity type information\n" +
 		"RobotPanel.resources=Robot resources\n" +
 		"PhysicalRobotPanel.connector=Connector\n" +
@@ -71,7 +71,13 @@ public class resources extends PropertyResourceBundle {
 		"MonitorPanel.nameOfSelectedServiceGroup=Name of the service group.\n" +
 		"MonitorPanel.serviceGroup=Service group:\n" +
 		"MonitorPanel.interval=Interval:\n" +
-		"MonitorPanel.millisecond=[ms]";
+		"MonitorPanel.millisecond=[ms]\n" +
+		"ServiceMonitorPanel.start=Start\n" +
+		"ServiceMonitorPanel.startIcon=o\n" +
+		"ServiceMonitorPanel.stop=Stop\n" +
+		"ServiceMonitorPanel.stopIcon=x\n" +
+		"GraphMonitorPanel.selectedGraph=-\n" +
+		"GraphMonitorPanel.nameOfSelectedGraph=Name of the selected graph.\n";
 
 	public resources() throws IOException {
 		super(new ByteArrayInputStream(resourcesString.getBytes()));

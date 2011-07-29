@@ -63,8 +63,6 @@ import jp.digitalmuseum.mr.gui.MonitorPane;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.EventProvider;
-import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.mr.workflow.Workflow;
@@ -252,7 +250,7 @@ public final class Matereal implements EventProvider, EventListener {
 	}
 
 	/**
-	 * Called by {@link Service#start()}.
+	 * Called by {@link Service#initialize()}.
 	 *
 	 * @param service
 	 */
@@ -266,14 +264,18 @@ public final class Matereal implements EventProvider, EventListener {
 	}
 
 	/**
-	 * Called by {@link Service#stop()}.
+	 * Called by {@link Service#dispose()}.
 	 *
 	 * @param service
 	 * @return Returns if unregistered successfully.
 	 */
 	public boolean unregisterService(Service service) {
 		synchronized (services) {
-			return services.remove(service);
+			if (services.remove(service)) {
+				service.removeEventListener(this);
+				return true;
+			}
+			return false;
 		}
 	}
 
@@ -420,6 +422,10 @@ public final class Matereal implements EventProvider, EventListener {
 		return null;
 	}
 
+	public Future<?> submit(Runnable task) {
+		return executor.submit(task);
+	}
+
 	public Canceller scheduleAtFixedRate(final Runnable runnable, final long interval) {
 		final Canceller canceller = new Canceller();
 		executor.submit(new Runnable() {
@@ -497,10 +503,6 @@ public final class Matereal implements EventProvider, EventListener {
 
 	@Override
 	public void eventOccurred(Event e) {
-		if (e instanceof ServiceEvent &&
-				((ServiceEvent) e).getStatus() == ServiceStatus.STOPPED) {
-			e.getSource().removeEventListener(this);
-		}
 		for (EventListener listener : listeners) {
 			listener.eventOccurred(e);
 		}

@@ -36,25 +36,25 @@
  */
 package jp.digitalmuseum.mr.message;
 
-import jp.digitalmuseum.mr.entity.Robot;
+import jp.digitalmuseum.mr.entity.Entity;
 
-public class RobotUpdateEvent extends EntityUpdateEvent {
+public class EntityUpdateEvent extends UpdateEvent {
 
-	public RobotUpdateEvent(Robot robot) {
-		super(robot);
+	public EntityUpdateEvent(Entity entity) {
+		super(entity);
 	}
-	public RobotUpdateEvent(Robot robot, String parameter, Object value) {
-		super(robot, parameter, value);
+	public EntityUpdateEvent(Entity entity, String parameter, Object value) {
+		super(entity, parameter, value);
 	}
 
 	@Override
-	public Robot getSource() {
-		return (Robot) super.getSource();
+	public Entity getSource() {
+		return (Entity) super.getSource();
 	}
 
 	@Override
 	protected String getStringHeader() {
-		return "Robot updated: " +
+		return "Entity updated: " +
 				getSource().getName();
 	}
 }

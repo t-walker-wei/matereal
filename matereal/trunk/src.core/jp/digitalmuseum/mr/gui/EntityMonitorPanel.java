@@ -40,6 +40,7 @@ import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.message.EntityEvent;
 import jp.digitalmuseum.mr.message.EntityStatus;
+import jp.digitalmuseum.mr.message.EntityUpdateEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 
@@ -213,6 +214,17 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 				SwingUtilities.invokeLater(this);
 			}
 		}
+		else if (e instanceof EntityUpdateEvent) {
+			EntityUpdateEvent eue = (EntityUpdateEvent) e;
+			if (selectedEntity == eue.getSource() &&
+					"name".equals(eue.getParameter())) {
+				String name = eue.getValue().toString();
+				if (entityNameLabel != null) {
+					entityNameLabel.setText(name);
+				}
+				getEntityNameTextField().setText(name);
+			}
+		}
 	}
 
 	public Entity getSelectedEntity() {
@@ -228,6 +240,9 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		((CardLayout) getRightPanel().getLayout()).show(getRightPanel(),
 				String.valueOf(getRightViewPanel().hashCode()));
 		if (entity == null) {
+			entityNameLabel.setText(Messages.getString("EntityMonitorPanel.selectedEntity")); //$NON-NLS-1$
+			entityNameEditButton.setVisible(false);
+			selectedEntity = null;
 			return;
 		}
 		if (!entityComponents.containsKey(entity)) {
@@ -272,6 +287,10 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 				((DisposableComponent) entityComponent).dispose();
 			}
 			entityComponents.remove(entity);
+		}
+
+		if (entity == selectedEntity) {
+			showEntity(null);
 		}
 	}
 
@@ -594,7 +613,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		if (entityNameEditOkButton == null) {
 			entityNameEditOkButton = new JButton();
 			entityNameEditOkButton.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
-			entityNameEditOkButton.setText("OK");
+			entityNameEditOkButton.setText(Messages.getString("EntityMonitorPanel.ok"));
 			entityNameEditOkButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
@@ -621,7 +640,7 @@ public class EntityMonitorPanel extends JPanel implements EventListener, TreeSel
 		if (entityNameEditCancelButton == null) {
 			entityNameEditCancelButton = new JButton();
 			entityNameEditCancelButton.setFont(Matereal.getInstance().getDefaultFont().deriveFont(12));
-			entityNameEditCancelButton.setText("Cancel");
+			entityNameEditCancelButton.setText(Messages.getString("EntityMonitorPanel.cancel"));
 			entityNameEditCancelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					((CardLayout) getEntityNamePanel().getLayout()).show(

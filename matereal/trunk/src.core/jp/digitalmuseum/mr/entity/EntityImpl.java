@@ -47,6 +47,7 @@ import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.entity.EntityPanel;
 import jp.digitalmuseum.mr.message.EntityEvent;
 import jp.digitalmuseum.mr.message.EntityStatus;
+import jp.digitalmuseum.mr.message.EntityUpdateEvent;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.utils.Array;
@@ -154,6 +155,9 @@ public class EntityImpl implements Entity {
 	 */
 	final public void setName(String name) {
 		this.name = name;
+		if (listeners != null) {
+			distributeEvent(new EntityUpdateEvent(this, "name", name));
+		}
 	}
 
 	final public String getName() {

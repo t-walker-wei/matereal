@@ -40,6 +40,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import jp.digitalmuseum.mr.entity.Entity;
+
 public class EntityDisposeAction extends AbstractAction {
 	private static final long serialVersionUID = -9133706415658354560L;
 	private EntityMonitorPanel entityMonitorPanel;
@@ -50,6 +52,9 @@ public class EntityDisposeAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// entityMonitorPanel.disposeSelectedEntity();
+		Entity entity = entityMonitorPanel.getSelectedEntity();
+		if (entity != null) {
+			entity.dispose();
+		}
 	}
 }

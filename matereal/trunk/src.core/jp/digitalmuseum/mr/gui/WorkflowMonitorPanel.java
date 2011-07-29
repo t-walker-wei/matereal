@@ -86,34 +86,39 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 
 	private JSplitPane jSplitPane = null;
 
-	private JPanel jLeftPanel = null;
+	private JPanel leftPanel = null;
 
-	private JPanel jRightViewPanel = null;
 	private JScrollPane jScrollPane = null;
 	private JTree jTree = null;
 	private JButton instantiateButton = null;
 	private JButton disposeButton = null;
 
-	private JPanel jRightPanel = null;
+	private JPanel rightPanel = null;
 
-	private JLabel jSelectedGraphLabel = null;
-	private JPanel graphPanel = null;
+	private JPanel rightViewPanel = null;
+	private JPanel selectedWorkflowPanel = null;
+	private JLabel selectedWorkflowLabel = null;
+	private JButton startWorkflowButton = null;
+	private JButton stopWorkflowButton = null;
+	private JPanel workflowPanel = null;
 
 	/** Root node for jTree. */
 	private DefaultMutableTreeNode root;
 
 	/** Map of entities and their corresponding nodes. */
-	private transient Map<Workflow, DefaultMutableTreeNode> graphNodeMap;
+	private transient Map<Workflow, DefaultMutableTreeNode> workflowNodeMap;
 
-	private transient Map<Workflow, WorkflowViewPane> graphComponents;
+	private transient Map<Workflow, WorkflowViewPane> workflowComponents;
+
+	private transient Workflow selectedWorkflow;  //  @jve:decl-index=0:
 
 	/** Singleton constructor. */
 	public WorkflowMonitorPanel() {
 		super();
 
 		// Initialize hash maps.
-		graphNodeMap = new HashMap<Workflow, DefaultMutableTreeNode>();
-		graphComponents = new HashMap<Workflow, WorkflowViewPane>();
+		workflowNodeMap = new HashMap<Workflow, DefaultMutableTreeNode>();
+		workflowComponents = new HashMap<Workflow, WorkflowViewPane>();
 
 		// Root node of the tree view, used at getJTree() etc.
 		final Matereal matereal = Matereal.getInstance();
@@ -125,7 +130,7 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 		for (Workflow graph : Matereal.getInstance().getWorkflows()) {
 			addGraph(graph);
 		}
-		selectGraph(null);
+		showWorkflow(null);
 	}
 
 	/**
@@ -141,23 +146,23 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 		setPreferredSize(new Dimension(640, 420));
 		setLayout(new GridBagLayout());
 		setBounds(new Rectangle(0, 0, 480, 320));
-		jSelectedGraphLabel = new JLabel();
-		jSelectedGraphLabel.setText(Messages.getString("GraphMonitorPanel.selectedGraph")); //$NON-NLS-1$
-		jSelectedGraphLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
-		jSelectedGraphLabel.setToolTipText(Messages.getString("GraphMonitorPanel.nameOfSelectedGraph")); //$NON-NLS-1$
+		selectedWorkflowLabel = new JLabel();
+		selectedWorkflowLabel.setText(Messages.getString("GraphMonitorPanel.selectedGraph")); //$NON-NLS-1$
+		selectedWorkflowLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD, 14));
+		selectedWorkflowLabel.setToolTipText(Messages.getString("GraphMonitorPanel.nameOfSelectedGraph")); //$NON-NLS-1$
 		this.add(getJSplitPane(), gridBagConstraints11);
 	}
 
 	public void dispose() {
 		Matereal.getInstance().removeEventListener(this);
-		for (JComponent serviceComponent : graphComponents.values()) {
+		for (JComponent serviceComponent : workflowComponents.values()) {
 			if (serviceComponent != null) {
 				if (serviceComponent instanceof DisposableComponent) {
 					((DisposableComponent) serviceComponent).dispose();
 				}
 			}
 		}
-		graphComponents.clear();
+		workflowComponents.clear();
 	}
 
 	/**
@@ -168,19 +173,19 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 	private JSplitPane getJSplitPane() {
 		if (jSplitPane == null) {
 			jSplitPane = new JSplitPane();
-			jSplitPane.setLeftComponent(getJLeftPanel());
-			jSplitPane.setRightComponent(getJRightPanel());
+			jSplitPane.setLeftComponent(getLeftPanel());
+			jSplitPane.setRightComponent(getRightPanel());
 		}
 		return jSplitPane;
 	}
 
 	/**
-	 * This method initializes jLeftPanel
+	 * This method initializes leftPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJLeftPanel() {
-		if (jLeftPanel == null) {
+	private JPanel getLeftPanel() {
+		if (leftPanel == null) {
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			gridBagConstraints12.gridx = 1;
 			gridBagConstraints12.anchor = GridBagConstraints.WEST;
@@ -203,44 +208,44 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 			gridBagConstraints6.gridx = 0;
 			gridBagConstraints6.gridy = 0;
 			gridBagConstraints6.weightx = 1.0;
-			jLeftPanel = new JPanel();
-			jLeftPanel.setLayout(new GridBagLayout());
-			jLeftPanel.add(getJScrollPane(), gridBagConstraints6);
-			jLeftPanel.add(getInstantiateButton(), gridBagConstraints9);
-			jLeftPanel.add(getDisposeButton(), gridBagConstraints12);
+			leftPanel = new JPanel();
+			leftPanel.setLayout(new GridBagLayout());
+			leftPanel.add(getJScrollPane(), gridBagConstraints6);
+			leftPanel.add(getInstantiateButton(), gridBagConstraints9);
+			leftPanel.add(getDisposeButton(), gridBagConstraints12);
 		}
-		return jLeftPanel;
+		return leftPanel;
 	}
 
 	/**
-	 * This method initializes jRightViewPanel
+	 * This method initializes rightViewPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJRightViewPanel() {
-		if (jRightViewPanel == null) {
+	private JPanel getRightViewPanel() {
+		if (rightViewPanel == null) {
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.gridy = 1;
+			gridBagConstraints2.gridy = 0;
 			gridBagConstraints2.fill = GridBagConstraints.BOTH;
 			gridBagConstraints2.weightx = 1.0D;
 			gridBagConstraints2.weighty = 0.0D;
 			gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.gridy = 3;
+			gridBagConstraints4.gridy = 1;
 			gridBagConstraints4.fill = GridBagConstraints.BOTH;
 			gridBagConstraints4.weightx = 1.0D;
 			gridBagConstraints4.weighty = 1.0D;
 			gridBagConstraints4.insets = new Insets(0, 5, 5, 5);
-			jRightViewPanel = new JPanel();
-			jRightViewPanel.setLayout(new GridBagLayout());
-			jRightViewPanel.setPreferredSize(new Dimension(320, 420));
-			jRightViewPanel.setName("jRightViewPanel");
-			jRightViewPanel.add(jSelectedGraphLabel, gridBagConstraints2);
-			jRightViewPanel.add(getGraphPanel(), gridBagConstraints4);
+			rightViewPanel = new JPanel();
+			rightViewPanel.setLayout(new GridBagLayout());
+			rightViewPanel.setPreferredSize(new Dimension(320, 420));
+			rightViewPanel.setName("jRightViewPanel");
+			rightViewPanel.add(getSelectedWorkflowPanel(), gridBagConstraints2);
+			rightViewPanel.add(getWorkflowPanel(), gridBagConstraints4);
 		}
-		return jRightViewPanel;
+		return rightViewPanel;
 	}
 
 	/**
@@ -278,22 +283,23 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 	}
 
 	/**
-	 * This method initializes graphPanel
+	 * This method initializes workflowPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getGraphPanel() {
-		if (graphPanel == null) {
-			graphPanel = new JPanel();
-			graphPanel.setPreferredSize(new Dimension(400, 420));
-			graphPanel.setLayout(new CardLayout());
-			graphPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
+	private JPanel getWorkflowPanel() {
+		if (workflowPanel == null) {
+			workflowPanel = new JPanel();
+			workflowPanel.setPreferredSize(new Dimension(400, 420));
+			workflowPanel.setLayout(new CardLayout());
+			workflowPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
 		}
-		return graphPanel;
+		return workflowPanel;
 	}
 
 	public void run() {
 		((DefaultTreeModel) getJTree().getModel()).reload();
+		updateWorkflowButtons();
 	}
 
 	public void valueChanged(TreeSelectionEvent e) {
@@ -306,7 +312,7 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 
 		Object nodeInfo = node.getUserObject();
 		if (nodeInfo instanceof Workflow) {
-			selectGraph((Workflow) nodeInfo);
+			showWorkflow((Workflow) nodeInfo);
 		}
 	}
 
@@ -324,37 +330,62 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 				}
 
 				SwingUtilities.invokeLater(this);
+			} else if (we.getStatus() == WorkflowStatus.STARTED ||
+					we.getStatus() == WorkflowStatus.STOPPED) {
+				SwingUtilities.invokeLater(this);
 			}
 		}
 	}
 
-	private void selectGraph(Workflow graph) {
-		if (graph == null) {
-			jSelectedGraphLabel.setText(""); //$NON-NLS-1$
+	public Workflow getSelectedWorkflow() {
+		return selectedWorkflow;
+	}
+
+	public void showWorkflow(Workflow workflow) {
+		if (workflow == null) {
+			selectedWorkflowLabel.setText(""); //$NON-NLS-1$
+			selectedWorkflow = null;
 			return;
 		}
-		if (!graphComponents.containsKey(graph)) {
-			WorkflowViewPane graphComponent = graph.getConfigurationComponent();
-			if (graphComponent != null) {
-				getGraphPanel().add(graphComponent, String.valueOf(graph.hashCode()));
-				getGraphPanel().validate();
-				graphComponents.put(graph, graphComponent);
+		if (!workflowComponents.containsKey(workflow)) {
+			WorkflowViewPane workflowComponent = workflow.getConfigurationComponent();
+			if (workflowComponent != null) {
+				getWorkflowPanel().add(workflowComponent, String.valueOf(workflow.hashCode()));
+				getWorkflowPanel().validate();
+				workflowComponents.put(workflow, workflowComponent);
 			}
 		}
-		((CardLayout) getGraphPanel().getLayout()).show(
-				getGraphPanel(), String.valueOf(graph.hashCode()));
-		jSelectedGraphLabel.setText(graph.getName());
+		((CardLayout) getWorkflowPanel().getLayout()).show(
+				getWorkflowPanel(), String.valueOf(workflow.hashCode()));
+		selectedWorkflowLabel.setText(workflow.getName());
+		selectedWorkflow = workflow;
+		updateWorkflowButtons();
 	}
 
+	private void updateWorkflowButtons() {
+		Workflow selectedWorkflow = getSelectedWorkflow();
+		if (selectedWorkflow == null || selectedWorkflow.isDisposed()) {
+			getStartWorkflowButton().setEnabled(false);
+			getStopWorkflowButton().setEnabled(false);
+		} else if (selectedWorkflow.isStarted()) {
+			getStartWorkflowButton().setEnabled(false);
+			getStopWorkflowButton().setEnabled(true);
+		} else {
+			getStartWorkflowButton().setEnabled(true);
+			getStopWorkflowButton().setEnabled(false);
+		}
+	}
+
+
 	private void addGraph(Workflow graph) {
-		if (graphNodeMap.containsKey(graph)) {
+		if (workflowNodeMap.containsKey(graph)) {
 			return;
 		}
 
 		final DefaultMutableTreeNode node =
 				new DefaultMutableTreeNode(graph);
 		root.add(node);
-		graphNodeMap.put(graph, node);
+		workflowNodeMap.put(graph, node);
 	}
 
 	private void removeGraph(Workflow graph) {
@@ -363,33 +394,33 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 		MutableTreeNode node;
 		node = root;
 		node.remove(
-				graphNodeMap.remove(graph));
+				workflowNodeMap.remove(graph));
 
-		if (graphComponents.containsKey(graph)) {
-			JComponent graphComponent = graphComponents.get(graph);
-			getGraphPanel().remove(graphComponent);
-			if (graphComponent instanceof DisposableComponent) {
-				((DisposableComponent) graphComponent).dispose();
+		if (workflowComponents.containsKey(graph)) {
+			JComponent workflowComponent = workflowComponents.get(graph);
+			getWorkflowPanel().remove(workflowComponent);
+			if (workflowComponent instanceof DisposableComponent) {
+				((DisposableComponent) workflowComponent).dispose();
 			}
-			graphComponents.remove(graph);
+			workflowComponents.remove(graph);
 		}
 	}
 
 	/**
-	 * This method initializes jRightPanel
+	 * This method initializes rightPanel
 	 *
 	 * @return javax.swing.JPanel
 	 */
-	private JPanel getJRightPanel() {
-		if (jRightPanel == null) {
+	private JPanel getRightPanel() {
+		if (rightPanel == null) {
 			GridBagConstraints gridBagConstraints = new GridBagConstraints();
 			gridBagConstraints.gridx = -1;
 			gridBagConstraints.gridy = -1;
-			jRightPanel = new JPanel();
-			jRightPanel.setLayout(new CardLayout());
-			jRightPanel.add(getJRightViewPanel(), getJRightViewPanel().getName());
+			rightPanel = new JPanel();
+			rightPanel.setLayout(new CardLayout());
+			rightPanel.add(getRightViewPanel(), getRightViewPanel().getName());
 		}
-		return jRightPanel;
+		return rightPanel;
 	}
 
 	/**
@@ -400,6 +431,7 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 	private JButton getDisposeButton() {
 		if (disposeButton == null) {
 			disposeButton = new JButton();
+			disposeButton.setAction(new WorkflowDisposeAction(this));
 			disposeButton.setFont(Matereal.getInstance().getDefaultFont());
 			disposeButton.setText("-");
 		}
@@ -415,8 +447,76 @@ public class WorkflowMonitorPanel extends JPanel implements EventListener, TreeS
 		if (instantiateButton == null) {
 			instantiateButton = new JButton();
 			instantiateButton.setFont(Matereal.getInstance().getDefaultFont());
+			instantiateButton.setEnabled(false);
 			instantiateButton.setText("+");
 		}
 		return instantiateButton;
+	}
+
+	/**
+	 * This method initializes selectedWorkflowPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getSelectedWorkflowPanel() {
+		if (selectedWorkflowPanel == null) {
+			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
+			gridBagConstraints21.weightx = 0.0D;
+			gridBagConstraints21.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints21.gridx = 2;
+			gridBagConstraints21.gridy = 0;
+			gridBagConstraints21.fill = GridBagConstraints.BOTH;
+			GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
+			gridBagConstraints13.weightx = 0.0D;
+			gridBagConstraints13.insets = new Insets(0, 5, 0, 0);
+			gridBagConstraints13.gridx = 1;
+			gridBagConstraints13.gridy = 0;
+			gridBagConstraints13.fill = GridBagConstraints.BOTH;
+			GridBagConstraints gridBagConstraints = new GridBagConstraints();
+			gridBagConstraints.fill = GridBagConstraints.BOTH;
+			gridBagConstraints.gridx = 0;
+			gridBagConstraints.gridy = 0;
+			gridBagConstraints.weightx = 1.0D;
+			gridBagConstraints.weighty = 0.0D;
+			gridBagConstraints.insets = new Insets(0, 0, 0, 0);
+			selectedWorkflowPanel = new JPanel();
+			selectedWorkflowPanel.setLayout(new GridBagLayout());
+			selectedWorkflowPanel.add(selectedWorkflowLabel, gridBagConstraints);
+			selectedWorkflowPanel.add(getStartWorkflowButton(), gridBagConstraints13);
+			selectedWorkflowPanel.add(getStopWorkflowButton(), gridBagConstraints21);
+		}
+		return selectedWorkflowPanel;
+	}
+
+	/**
+	 * This method initializes jStartServiceButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getStartWorkflowButton() {
+		if (startWorkflowButton == null) {
+			startWorkflowButton = new JButton();
+			startWorkflowButton.setAction(new WorkflowStartAction(this));
+			startWorkflowButton.setText(Messages.getString("ServiceMonitorPanel.startIcon"));
+			startWorkflowButton.setToolTipText(Messages.getString("ServiceMonitorPanel.start"));
+			startWorkflowButton.setEnabled(false);
+		}
+		return startWorkflowButton;
+	}
+
+	/**
+	 * This method initializes stopWorkflowButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getStopWorkflowButton() {
+		if (stopWorkflowButton == null) {
+			stopWorkflowButton = new JButton();
+			stopWorkflowButton.setAction(new WorkflowStopAction(this));
+			stopWorkflowButton.setText(Messages.getString("ServiceMonitorPanel.stopIcon"));
+			stopWorkflowButton.setToolTipText(Messages.getString("ServiceMonitorPanel.stop"));
+			stopWorkflowButton.setEnabled(false);
+		}
+		return stopWorkflowButton;
 	}
 }
