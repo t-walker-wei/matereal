@@ -48,7 +48,6 @@ public class EntityInstantiateAction extends AbstractAction {
 		this.entityMonitorPanel = entityMonitorPanel;
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		entityMonitorPanel.showInstantiatePanel();
 	}

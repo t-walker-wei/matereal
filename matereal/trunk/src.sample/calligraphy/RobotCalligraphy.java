@@ -31,7 +31,6 @@ public class RobotCalligraphy {
 
 		Matereal.getInstance().addEventListener(new EventListener() {
 
-			@Override
 			public void eventOccurred(Event e) {
 				if (e instanceof ImageUpdateEvent ||
 						e instanceof LocationUpdateEvent) {

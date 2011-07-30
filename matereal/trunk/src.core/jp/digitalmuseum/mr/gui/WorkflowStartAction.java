@@ -50,7 +50,6 @@ public class WorkflowStartAction extends AbstractAction {
 		this.workflowMonitorPanel = workflowMonitorPanel;
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		Workflow workflow = workflowMonitorPanel.getSelectedWorkflow();
 		if (workflow != null) {

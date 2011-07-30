@@ -59,7 +59,6 @@ public interface Robot extends Entity, EventProvider, Serializable {
 	/**
 	 * Get a name of the type of this robot.
 	 */
-	@Override
 	public String getTypeName();
 
 	/**

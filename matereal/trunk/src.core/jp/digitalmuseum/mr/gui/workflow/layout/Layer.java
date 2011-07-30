@@ -92,7 +92,6 @@ public class Layer implements Iterable<LayerElement>, Cloneable {
 		return sb.toString();
 	}
 
-	@Override
 	public Iterator<LayerElement> iterator() {
 		return elements.iterator();
 	}

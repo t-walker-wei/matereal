@@ -141,7 +141,6 @@ public class RobotResourcePanel extends JPanel implements ActionListener, Dispos
 		return resourcePanel;
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e == null || e.getSource() != getJComboBox()) {
 			return;

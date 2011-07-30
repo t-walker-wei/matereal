@@ -48,7 +48,6 @@ public class ServiceInstantiateAction extends AbstractAction {
 		this.serviceMonitorPanel = serviceMonitorPanel;
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		serviceMonitorPanel.showInstantiatePanel();
 	}

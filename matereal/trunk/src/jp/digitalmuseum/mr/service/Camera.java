@@ -315,4 +315,8 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 			return listeners.remove(listener);
 		}
 	}
+
+	public static String[] queryIdentifiers() {
+		return new VideoCaptureFactoryImpl().queryIdentifiers();
+	}
 }
