@@ -39,7 +39,6 @@ public class UseTask implements EventListener {
 		ad.addEventListener(this);
 	}
 
-	@Override
 	public void eventOccurred(Event e) {
 		Matereal.getInstance().dispose();
 	}

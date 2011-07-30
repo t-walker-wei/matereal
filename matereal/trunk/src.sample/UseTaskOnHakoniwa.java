@@ -36,7 +36,6 @@ public class UseTaskOnHakoniwa implements EventListener {
 
 		Matereal.getInstance().addEventListener(new EventListener() {
 
-			@Override
 			public void eventOccurred(Event e) {
 				if (e instanceof ImageUpdateEvent ||
 						e instanceof LocationUpdateEvent) {
@@ -69,7 +68,6 @@ public class UseTaskOnHakoniwa implements EventListener {
 		ad.addEventListener(this);
 	}
 
-	@Override
 	public void eventOccurred(Event e) {
 		frame.dispose();
 		Matereal.getInstance().dispose();

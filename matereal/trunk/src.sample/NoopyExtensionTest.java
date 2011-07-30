@@ -1,3 +1,7 @@
+import jp.digitalmuseum.mr.entity.Noopy2;
+import jp.digitalmuseum.mr.entity.Noopy2.Accelerometer;
+import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
+
 /*
  * PROJECT: matereal at http://mr.digitalmuseum.jp/
  * ----------------------------------------------------------------------------
@@ -34,26 +38,26 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.gui;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-
-import jp.digitalmuseum.mr.service.Service;
-
-public class ServiceStopAction extends AbstractAction {
-	private static final long serialVersionUID = 745368592165617311L;
-	private ServiceMonitorPanel serviceMonitorPanel;
-
-	public ServiceStopAction(ServiceMonitorPanel serviceMonitorPanel) {
-		this.serviceMonitorPanel = serviceMonitorPanel;
+public class NoopyExtensionTest {
+	public static void main(String[] args) {
+		new NoopyExtensionTest();
 	}
+	public NoopyExtensionTest() {
+		Noopy2 noopy = new Noopy2("btspp://646E6C00DCA3");
+		noopy.addExtension(Accelerometer.class);
+		noopy.connect();
 
-	public void actionPerformed(ActionEvent e) {
-		Service service = serviceMonitorPanel.getSelectedService();
-		if (service != null) {
-			service.stop();
-		}
+		final Accelerometer meter = noopy.requestResource(Accelerometer.class, this);
+		final int[] acc = new int[3];
+		new ServiceAbstractImpl() {
+			private static final long serialVersionUID = 1362165137454861528L;
+			public void run() {
+				meter.readValues(acc);
+				System.out.print(acc[0] + "\t");
+				System.out.print(acc[1] + "\t");
+				System.out.println(acc[2]);
+			}
+		}.start();
 	}
 }

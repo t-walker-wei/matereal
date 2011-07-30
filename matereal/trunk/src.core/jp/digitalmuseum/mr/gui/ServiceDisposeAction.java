@@ -50,7 +50,6 @@ public class ServiceDisposeAction extends AbstractAction {
 		this.serviceMonitorPanel = serviceMonitorPanel;
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		Service service = serviceMonitorPanel.getSelectedService();
 		if (service != null) {

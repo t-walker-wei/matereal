@@ -50,7 +50,6 @@ public class EntityDisposeAction extends AbstractAction {
 		this.entityMonitorPanel = entityMonitorPanel;
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		Entity entity = entityMonitorPanel.getSelectedEntity();
 		if (entity != null) {
