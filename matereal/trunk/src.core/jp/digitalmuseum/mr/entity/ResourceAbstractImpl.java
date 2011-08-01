@@ -74,7 +74,7 @@ public abstract class ResourceAbstractImpl implements Resource {
 	/**
 	 * @return Returns a robot to which this resource belongs.
 	 */
-	final public RobotAbstractImpl getRobot() {
+	public RobotAbstractImpl getRobot() {
 		return robot;
 	}
 

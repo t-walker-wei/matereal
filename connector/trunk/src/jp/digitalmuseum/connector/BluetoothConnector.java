@@ -160,12 +160,14 @@ public final class BluetoothConnector extends ConnectorAbstractImpl {
 	@Override
 	public void disconnect() {
 		super.disconnect();
-		try {
-			streamConnection.close();
-		} catch (IOException e) {
-			// Do nothing.
+		if (streamConnection != null) {
+			try {
+					streamConnection.close();
+			} catch (IOException e) {
+				// Do nothing.
+			}
+			streamConnection = null;
 		}
-		streamConnection = null;
 	}
 
 	public boolean isConnected() {
