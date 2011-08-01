@@ -1,3 +1,4 @@
+package marker.robot;
 import java.awt.BasicStroke;
 
 import java.awt.AlphaComposite;
@@ -11,10 +12,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
+import marker.MarkerInfo;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.entity.Mini;
 import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalBox;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
@@ -28,7 +29,6 @@ import jp.digitalmuseum.mr.task.Push;
 import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.mr.task.VectorFieldTask;
 import jp.digitalmuseum.napkit.NapDetectionResult;
-import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
 import jp.digitalmuseum.utils.Array;
 import jp.digitalmuseum.utils.Position;
@@ -57,7 +57,7 @@ public class BringItHere {
 		final String identifier = (String) JOptionPane.showInputDialog(null,
 				"Select a device to capture images.", "Device list",
 				JOptionPane.QUESTION_MESSAGE, null,
-				new VideoCaptureFactoryImpl().queryIdentifiers(), null);
+				Camera.queryIdentifiers(), null);
 		if ((identifier != null) && (identifier.length() > 0)) {
 			camera = new Camera(identifier);
 		} else {
@@ -69,7 +69,6 @@ public class BringItHere {
 
 		// Run a marker detector.
 		detector = new MarkerDetector();
-		detector.loadCameraParameter("calib_qcam.dat");
 		detector.setImageProvider(camera);
 		detector.start();
 
@@ -78,13 +77,13 @@ public class BringItHere {
 				detector));
 
 		// Initialize a robot.
-		final Noopy2 robot = new Noopy2("btspp://646E6C00DCB2");
+		final Noopy2 robot = RobotInfo.getRobot();
 
 		// Initialize boxes.
 		final Entity[] entities = new Entity[1];
 		entities[0] = new PhysicalBox(10, 8, "Milk chocolate");
-		detector.addMarker(new NapMarker("markers\\4x4_48.patt", 5.5), entities[0]);
-		detector.addMarker(new NapMarker("markers\\4x4_45.patt", 5.5), robot);
+		detector.addMarker(MarkerInfo.getEntityMarker(), entities[0]);
+		detector.addMarker(MarkerInfo.getRobotMarker(), robot);
 
 		// Show detection results in real-time.
 		final ImageProviderPanel panel = new ImageProviderPanel(camera) {

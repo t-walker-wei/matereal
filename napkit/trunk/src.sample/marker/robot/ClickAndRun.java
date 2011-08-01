@@ -1,3 +1,4 @@
+package marker.robot;
 import java.awt.BasicStroke;
 
 import java.awt.Color;
@@ -9,9 +10,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Mini;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
@@ -44,14 +43,14 @@ public class ClickAndRun {
 		goal.setNotFound(true);
 
 		// Initialize a robot.
-		final Robot robot = new Mini("Mini", "btspp://000666015818");
+		final Robot robot = RobotInfo.getRobot();
 
 		// Run a camera.
 		// Let users select a device to capture images.
 		String identifier = (String) JOptionPane.showInputDialog(null,
 				"Select a device to capture images.", "Device list",
 				JOptionPane.QUESTION_MESSAGE, null,
-				new VideoCaptureFactoryImpl().queryIdentifiers(), null);
+				Camera.queryIdentifiers(), null);
 		if (identifier == null  || identifier.length() <= 0) {
 			return;
 		}
@@ -61,7 +60,8 @@ public class ClickAndRun {
 
 		// Run a marker detector.
 		final MarkerDetector detector = new MarkerDetector();
-		detector.addMarker(new NapMarker("markers\\4x4_907.patt", 5.5), robot);
+		detector.addMarker(new NapMarker("markers\\4x4_48.patt", 5.5), robot);
+		detector.setImageProvider(camera);
 		detector.start();
 
 		// Show a configuration window.

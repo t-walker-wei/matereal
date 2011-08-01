@@ -1,3 +1,4 @@
+package marker;
 import javax.swing.JFrame;
 
 import jp.digitalmuseum.mr.Matereal;
@@ -31,10 +32,11 @@ public class DetectMarkerPosition {
 
 		// Run a marker detector.
 		final MarkerDetector detector = new MarkerDetector();
+		detector.setImageProvider(camera);
 		detector.start();
 
 		// Detect a marker.
-		final NapMarker marker = new NapMarker("markers\\4x4_78.patt", 120);
+		final NapMarker marker = MarkerInfo.getEntityMarker();
 		detector.addMarker(marker);
 
 		// Print position of the marker.

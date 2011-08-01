@@ -5,7 +5,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
@@ -47,7 +46,7 @@ public class KeyController {
 		if (DEBUG) {
 			robot = initHakoniwa();
 		} else {
-			PhysicalRobot physicalRobot = new Noopy2("btspp://646E6C00DCB2");
+			PhysicalRobot physicalRobot = RobotInfo.getRobot();
 			physicalRobot.connect();
 			robot = physicalRobot;
 		}

@@ -1,6 +1,5 @@
 package robot;
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.resource.WheelsController;
 
@@ -13,7 +12,7 @@ public class GoForward {
 
 	public static void main(String[] args) {
 
-		Robot robot = new Noopy2("btspp://646E6C00DCA3");
+		Robot robot = RobotInfo.getRobot();
 
 		WheelsController wheels = robot.requestResource(WheelsController.class, GoForward.class);
 		wheels.goForward();
