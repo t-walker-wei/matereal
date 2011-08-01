@@ -1,4 +1,4 @@
-package calligraphy;
+package hakoniwa.calligraphy;
 
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;

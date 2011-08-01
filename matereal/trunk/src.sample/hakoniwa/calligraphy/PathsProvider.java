@@ -1,4 +1,4 @@
-package calligraphy;
+package hakoniwa.calligraphy;
 
 import java.util.List;
 

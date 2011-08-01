@@ -1,3 +1,4 @@
+package robot;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;

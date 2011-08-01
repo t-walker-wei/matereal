@@ -1,3 +1,4 @@
+package robot;
 import javax.swing.SwingUtilities;
 import javax.swing.JPanel;
 import javax.swing.JFrame;

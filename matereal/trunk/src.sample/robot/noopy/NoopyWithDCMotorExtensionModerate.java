@@ -1,3 +1,4 @@
+package robot.noopy;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

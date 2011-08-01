@@ -206,6 +206,80 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 		return count < 10;
 	}
 
+	/**
+	 * Wheels of Noopy.
+	 *
+	 * @author Jun KATO
+	 * @see Noopy2
+	 */
+	public static class NoopyWheels extends DifferentialWheelsAbstractImpl {
+		private static final long serialVersionUID = 6183145475982755979L;
+
+		public NoopyWheels(Noopy2 noopy) {
+			super(noopy);
+		}
+
+		public NoopyWheels(Connector connector) {
+			super(connector);
+		}
+
+		@Override
+		protected void onFree() {
+			stopWheels();
+		}
+
+		protected boolean doStopWheels() {
+			boolean success =
+					getRobot().writeCommand("!BRK000") != null;
+			if (success) {
+				success &=
+					getRobot().writeCommand("!STP000") != null;
+			}
+			return success;
+		}
+
+		@Override
+		public int getRecommendedSpeed() {
+			return 50;
+		}
+
+		@Override
+		public int getRecommendedRotationSpeed() {
+			return 30;
+		}
+
+		@Override
+		protected boolean doDrive(int leftPower, int rightPower) {
+			leftPower = leftPower * 255 / 100;
+			rightPower = rightPower * 255 / 100;
+			if (leftPower == 0) {
+				getRobot().writeCommand("!DC2BRK");
+				getRobot().writeCommand("!DC2STP");
+			} else if (leftPower > 0) {
+				getRobot().writeCommand(String.format("!SPG%03d", leftPower));
+				getRobot().writeCommand("!DC2CCW");
+			} else {
+				getRobot().writeCommand(String.format("!SPG%03d", -leftPower));
+				getRobot().writeCommand("!DC2CLW");
+			}
+			if (rightPower == 0) {
+				getRobot().writeCommand("!DC1BRK");
+				getRobot().writeCommand("!DC1STP");
+			} else 	if (rightPower > 0) {
+				getRobot().writeCommand(String.format("!SPG%03d", rightPower));
+				getRobot().writeCommand("!DC1CLW");
+			} else {
+				getRobot().writeCommand(String.format("!SPG%03d", -rightPower));
+				getRobot().writeCommand("!DC1CCW");
+			}
+			return true;
+		}
+
+		public Noopy2 getRobot() {
+			return (Noopy2) super.getRobot();
+		}
+	}
+
 	public static class NoopyExtension extends PhysicalResourceAbstractImpl {
 		private static final long serialVersionUID = -7122759624061405292L;
 		private Port port;
@@ -528,80 +602,6 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 
 		public int getSpeed() {
 			return speed;
-		}
-	}
-
-	/**
-	 * Wheels of Noopy.
-	 *
-	 * @author Jun KATO
-	 * @see Noopy2
-	 */
-	public static class NoopyWheels extends DifferentialWheelsAbstractImpl {
-		private static final long serialVersionUID = 6183145475982755979L;
-
-		public NoopyWheels(Noopy2 noopy) {
-			super(noopy);
-		}
-
-		public NoopyWheels(Connector connector) {
-			super(connector);
-		}
-
-		@Override
-		protected void onFree() {
-			stopWheels();
-		}
-
-		protected boolean doStopWheels() {
-			boolean success =
-					getRobot().writeCommand("!BRK000") != null;
-			if (success) {
-				success &=
-					getRobot().writeCommand("!STP000") != null;
-			}
-			return success;
-		}
-
-		@Override
-		public int getRecommendedSpeed() {
-			return 50;
-		}
-
-		@Override
-		public int getRecommendedRotationSpeed() {
-			return 30;
-		}
-
-		@Override
-		protected boolean doDrive(int leftPower, int rightPower) {
-			leftPower = leftPower * 255 / 100;
-			rightPower = rightPower * 255 / 100;
-			if (leftPower == 0) {
-				getRobot().writeCommand("!DC2BRK");
-				getRobot().writeCommand("!DC2STP");
-			} else if (leftPower > 0) {
-				getRobot().writeCommand(String.format("!SPG%03d", leftPower));
-				getRobot().writeCommand("!DC2CCW");
-			} else {
-				getRobot().writeCommand(String.format("!SPG%03d", -leftPower));
-				getRobot().writeCommand("!DC2CLW");
-			}
-			if (rightPower == 0) {
-				getRobot().writeCommand("!DC1BRK");
-				getRobot().writeCommand("!DC1STP");
-			} else 	if (rightPower > 0) {
-				getRobot().writeCommand(String.format("!SPG%03d", rightPower));
-				getRobot().writeCommand("!DC1CLW");
-			} else {
-				getRobot().writeCommand(String.format("!SPG%03d", -rightPower));
-				getRobot().writeCommand("!DC1CCW");
-			}
-			return true;
-		}
-
-		public Noopy2 getRobot() {
-			return (Noopy2) super.getRobot();
 		}
 	}
 }

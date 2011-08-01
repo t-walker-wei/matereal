@@ -51,6 +51,8 @@ public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements
 		MobileTask {
 	private static final long serialVersionUID = -9218644881209179648L;
 	private transient WheelsController w;
+	private Integer rotationSpeed = null;
+	private Integer speed = null;
 
 	/**
 	 * @return Returns a set of required interfaces (including Wheels) for this
@@ -66,6 +68,14 @@ public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements
 	@Override
 	protected void onAssigned() {
 		w = (WheelsController) getResourceMap().get(WheelsController.class);
+		if (w instanceof DifferentialWheelsController) {
+			if (speed != null) {
+				((DifferentialWheelsController) w).setSpeed(speed);
+			}
+			if (rotationSpeed != null) {
+				((DifferentialWheelsController) w).setRotationSpeed(rotationSpeed);
+			}
+		}
 	}
 
 	@Override
@@ -98,7 +108,8 @@ public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements
 			return ((DifferentialWheelsController) getWheels())
 					.setSpeed(speed);
 		}
-		return false;
+		this.speed = speed;
+		return true;
 	}
 
 	public int getSpeed() {
@@ -114,7 +125,8 @@ public abstract class MobileTaskAbstractImpl extends TaskAbstractImpl implements
 			return ((DifferentialWheelsController) getWheels())
 					.setRotationSpeed(speed);
 		}
-		return false;
+		this.rotationSpeed = speed;
+		return true;
 	}
 
 	public int getRotationSpeed() {

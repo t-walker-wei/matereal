@@ -60,54 +60,57 @@ public class ClickAndRunVisualizedP5 extends PApplet {
 	}
 
 	public void setup() {
-		  // 箱庭の準備
-		  hako = new Hakoniwa(640, 480);
-		  hako.start();
 
-		  // ベクトル場描画の準備
-		  painter = new VectorFieldPainter(hako);
+		// 箱庭の準備
+		hako = new Hakoniwa(640, 480);
+		hako.start();
 
-		  // 箱庭を表示する準備
-		  hakoImage = new MrImage(hako.getWidth(), hako.getHeight());
+		// ベクトル場描画の準備
+		painter = new VectorFieldPainter(hako);
 
-		  // 箱庭にロボットを置く
-		  robot = new MobileRobot(new HakoniwaRobot("Test bot"));
+		// 箱庭を表示する準備
+		hakoImage = new MrImage(hako.getWidth(), hako.getHeight());
 
-		  // 画面の大きさを箱庭に合わせる
-		  size(hako.getWidth(), hako.getHeight());
+		// 箱庭にロボットを置く
+		robot = new MobileRobot(new HakoniwaRobot("Test bot"));
+
+		// 画面の大きさを箱庭に合わせる
+		size(hako.getWidth(), hako.getHeight());
 	}
 
 	public void draw() {
-		  // 箱庭がらみの描画を始める
-		  Graphics2D g2 = hakoImage.beginDraw();
-		  hakoImage.clear();
 
-		    // 箱庭の様子を表示する
-		    hako.drawImage(g2);
-		  
-		    // ベクトル場を描画する
-		    g2.setColor(Color.blue);
-		    painter.setVectorTask((VectorFieldTask) robot.getTask());
-		    painter.paint(g2);
+		// 箱庭がらみの描画を始める
+		Graphics2D g2 = hakoImage.beginDraw();
+		hakoImage.clear();
 
-		  // 描いた内容を表示する
-		  hakoImage.endDraw();
-		  image(hakoImage, 0, 0);
+			// 箱庭の様子を表示する
+			hako.drawImage(g2);
 
-		  // ロボットが目指しているゴールを表示する
-		  Position goal = robot.getGoal();
-		  if (goal != null) {
-		    strokeWeight(5);
-		    stroke(0);
-		    int x = goal.getScreenX();
-		    int y = goal.getScreenY();
-		    line(x-5, y-5, x+5, y+5);
-		    line(x-5, y+5, x+5, y-5);
-		  }
+			// ベクトル場を描画する
+			g2.setColor(Color.blue);
+			painter.setVectorTask((VectorFieldTask) robot.getTask());
+			painter.paint(g2);
+
+		// 描いた内容を表示する
+		hakoImage.endDraw();
+		image(hakoImage, 0, 0);
+
+		// ロボットが目指しているゴールを表示する
+		Position goal = robot.getGoal();
+		if (goal != null) {
+			strokeWeight(5);
+			stroke(0);
+			int x = goal.getScreenX();
+			int y = goal.getScreenY();
+			line(x-5, y-5, x+5, y+5);
+			line(x-5, y+5, x+5, y-5);
+		}
 	}
 
 	public void mouseClicked() {
-		  // クリックされたらロボットにゴールを指示する
-		  robot.moveTo(mouseX, mouseY);
+
+		// クリックされたらロボットにゴールを指示する
+		robot.moveTo(mouseX, mouseY);
 	}
 }
