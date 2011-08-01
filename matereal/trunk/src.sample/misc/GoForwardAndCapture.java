@@ -1,3 +1,4 @@
+package misc;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.NetTansor;
 import jp.digitalmuseum.mr.entity.Robot;

@@ -1,3 +1,4 @@
+package hakoniwa;
 import java.util.List;
 
 import jp.digitalmuseum.mr.task.EndCleaning;
@@ -16,7 +17,7 @@ import jp.digitalmuseum.utils.Position;
  * @author Jun KATO
  */
 public class LassoAndClean extends LassoAndFill {
-	private Workflow ad = null;
+	private Workflow workflow = null;
 
 	public static void main(String[] args) {
 		new LassoAndClean();
@@ -26,12 +27,12 @@ public class LassoAndClean extends LassoAndFill {
 	protected synchronized void onPathSpecified(List<Position> path) {
 
 		// Stop the workflow graph if running.
-		if (ad != null && ad.isStarted()) {
-			ad.stop();
+		if (workflow != null && workflow.isStarted()) {
+			workflow.stop();
 		}
 
 		// Construct a workflow graph.
-		ad = new Workflow();
+		workflow = new Workflow();
 
 		List<Position> cleaningPath = FillPath.getCleaningPath(path, robot
 				.getShape().getBounds().getWidth());
@@ -57,8 +58,8 @@ public class LassoAndClean extends LassoAndFill {
 			// Go along the cleaning path to clean inside the cleaning area.
 			new Action(robot, new MobileCleaningTask(new TracePathLoosely(cleaningPath)))
 		};
-		ad.addInSerial(actions);
-		ad.setInitialNode(actions[0]);
-		ad.start();
+		workflow.addInSerial(actions);
+		workflow.setInitialNode(actions[0]);
+		workflow.start();
 	}
 }

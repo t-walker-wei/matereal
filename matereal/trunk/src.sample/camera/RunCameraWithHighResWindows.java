@@ -1,3 +1,4 @@
+package camera;
 
 
 import javax.swing.JOptionPane;

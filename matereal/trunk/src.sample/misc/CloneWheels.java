@@ -1,3 +1,4 @@
+package misc;
 
 
 import java.util.HashSet;
@@ -53,17 +54,17 @@ public class CloneWheels {
 		};
 
 		// Connect tasks with timeout transitions.
-		Workflow ad = new Workflow();
+		Workflow workflow = new Workflow();
 		Action action = null;
 		for (Task task : tasks) {
 			Action newAction = new Action(virtualRobot, task);
-			ad.add(new Action(virtualRobot, task));
+			workflow.add(new Action(virtualRobot, task));
 			if (action != null) {
-				ad.addTransition(new TimeoutTransition(action, newAction, 1000));
+				workflow.addTransition(new TimeoutTransition(action, newAction, 1000));
 			}
 			action = newAction;
 		}
-		ad.start();
+		workflow.start();
 	}
 
 	public void dispose() {

@@ -1,20 +1,19 @@
-
-
+package hakoniwa;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.task.GoForward;
+import jp.digitalmuseum.mr.resource.WheelsController;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
- * Assign one task to a robot. Get the robot to go forward for 7 seconds.
+ * Go forward for 7 seconds and stop.
  *
  * @author Jun KATO
  */
-public class UseTaskToGoForward {
+public class GoForward {
 
 	public static void main(String[] args) {
 
@@ -34,20 +33,20 @@ public class UseTaskToGoForward {
 		frame.setResizable(false);
 		frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
 
-		// Connect to a robot. Instantiate a task.
+		// Connect to a robot. Acquire resource.
 		Robot robot = new HakoniwaRobot("Hakobot",
 				hakoniwa.screenToReal(new ScreenPosition(320, 240)));
-		GoForward goForward = new GoForward();
+		WheelsController wheels = robot.requestResource(WheelsController.class, GoForward.class);
 
-		// Assign the task to the robot.
-		if (goForward.assign(robot)) {
-			goForward.start();
-			try {
-				Thread.sleep(7000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			goForward.stop();
+		// Go forward for 7 seconds.
+		wheels.goForward();
+		try {
+			Thread.sleep(7000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			wheels.stopWheels();
+			robot.freeResource(wheels, GoForward.class);
 		}
 	}
 }

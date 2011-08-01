@@ -1,27 +1,33 @@
+package camera;
+
+
+import javax.swing.JFrame;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.*;
 import jp.digitalmuseum.mr.service.Camera;
 
 /**
- * Run a camera service to capture images.
+ * Run a camera and show its configuration window.
  *
  * @author Jun KATO
  */
-public class RunCamera {
+public class ConfigureCamera {
 
 	public static void main(String[] args) {
-		new RunCamera();
+		new ConfigureCamera();
 	}
 
-	public RunCamera() {
+	public ConfigureCamera() {
 
 		// Run a camera.
-		Camera camera = new Camera();
+		final Camera camera = new Camera();
+		camera.setSize(320, 240);
 		camera.start();
 
-		// Make and show a window for showing captured image.
-		DisposeOnCloseFrame frame = new DisposeOnCloseFrame(
-				new ImageProviderPanel(camera)) {
+		// Show a configuration window.
+		final JFrame frame = new DisposeOnCloseFrame(
+				new CoordProviderPanel(camera)) {
 			private static final long serialVersionUID = 1L;
 
 			@Override public void dispose() {
@@ -31,6 +37,6 @@ public class RunCamera {
 				Matereal.getInstance().dispose();
 			}
 		};
-		frame.setFrameSize(camera.getWidth(), camera.getHeight());
+		frame.setSize(500,410);
 	}
 }

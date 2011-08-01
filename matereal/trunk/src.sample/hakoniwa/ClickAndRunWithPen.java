@@ -1,3 +1,4 @@
+package hakoniwa;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -8,62 +9,65 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.gui.utils.VectorFieldPainter;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
+import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.resource.Wheels;
 import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.task.Follow;
+import jp.digitalmuseum.mr.task.MobilePenTask;
 import jp.digitalmuseum.mr.task.Move;
 import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.VectorFieldTask;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
- * Click to navigate one robot. The other robot will follow him.
- * Test of assigning tasks to robots.
+ * Click to navigate a robot without collision.
+ * Test of assigning multiple vector fields to a robot.
  *
  * @author Jun KATO
  */
-public class ClickAndFollow {
+public class ClickAndRunWithPen {
 	private Hakoniwa hakoniwa;
-	private VectorFieldTask follow;
+	private Task moveWithPen = null;
 	private ScreenPosition goal = null;
 
 	public static void main(String[] args) {
-		new ClickAndFollow();
+		new ClickAndRunWithPen();
 	}
 
-	public ClickAndFollow() {
+	public ClickAndRunWithPen() {
 
 		// Run hakoniwa.
 		hakoniwa = new Hakoniwa();
 		hakoniwa.start();
 
-		final Robot followee;
-		final Robot follower;
-		followee = new HakoniwaRobotWithPen("followee", new Location(hakoniwa.getRealWidth()/2 - 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
-		follower = new HakoniwaRobotWithPen("follower", new Location(hakoniwa.getRealWidth()/2 + 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
+		final Robot robot;
+		robot = new HakoniwaRobotWithPen("robot", new Location(hakoniwa.getRealWidth()/2 - 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
 
-		follow = new Follow(followee);
-		follow.assign(follower);
-		follow.start();
+		Entity[] entities = new Entity[5];
+		final double x = hakoniwa.getRealWidth()/2;
+		final double y = hakoniwa.getRealHeight()/2;
+		final double r = 240;
+		for (int i = 0; i < entities.length; i ++) {
+			double theta = Math.PI*i/(entities.length-1);
+			entities[i] = new HakoniwaCylinder(
+					"Cylinder "+i,
+					x + Math.cos(theta) * r,
+					y - Math.sin(theta) * r,
+					theta,
+					20);
+		}
 
 		// Make a window for showing captured image.
 		final DrawableFrame frame = new DrawableFrame() {
 			private static final long serialVersionUID = 1L;
-			private transient final VectorFieldPainter vectorFieldPainter =
-				new VectorFieldPainter(hakoniwa);
 			private transient final Stroke stroke =
 				new BasicStroke(5);
-			private transient final AlphaComposite alphaComp =
-				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f);
 			private transient final AlphaComposite alphaComp2 =
 				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .7f);
 
@@ -74,15 +78,12 @@ public class ClickAndFollow {
 
 			@Override
 			public void paint2D(Graphics2D g) {
-				final Task task = followee.getAssignedTask(WheelsController.class);
+				final Task task = robot.getAssignedTask(WheelsController.class);
 				g.setColor(Color.white);
 				g.fillRect(0, 0, getFrameWidth(), getFrameHeight());
 				final Composite comp = g.getComposite();
 
 				// Draw vectors.
-				g.setComposite(alphaComp);
-				g.setColor(Color.red);
-				vectorFieldPainter.paint(follow, g);
 				g.setComposite(alphaComp2);
 				g.setColor(Color.black);
 				g.fillRect(0, 0, getFrameWidth(), 35);
@@ -126,11 +127,13 @@ public class ClickAndFollow {
 				int x = e.getX(), y = e.getY();
 				goal = new ScreenPosition(x, y);
 
-				Task task = followee.getAssignedTask(Wheels.class);
-				if (task != null) task.stop();
+				if (moveWithPen != null &&
+						moveWithPen.isStarted()) {
+					moveWithPen.stop();
+				}
 
-				Move move = new Move(hakoniwa.screenToReal(goal));
-				if (move.assign(followee)) move.start();
+				moveWithPen = new MobilePenTask(new Move(hakoniwa.screenToReal(goal)));
+				if (moveWithPen.assign(robot)) moveWithPen.start();
 			}
 		});
 

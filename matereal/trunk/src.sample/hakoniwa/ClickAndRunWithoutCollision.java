@@ -1,3 +1,4 @@
+package hakoniwa;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -11,16 +12,19 @@ import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.*;
+import jp.digitalmuseum.mr.gui.utils.VectorFieldPainter;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
+import jp.digitalmuseum.mr.resource.Wheels;
 import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.task.MobilePenTask;
 import jp.digitalmuseum.mr.task.Move;
 import jp.digitalmuseum.mr.task.Task;
+import jp.digitalmuseum.mr.task.VectorFieldTask;
+import jp.digitalmuseum.mr.vectorfield.CollisionAvoidanceField;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.ScreenPosition;
 
@@ -30,23 +34,23 @@ import jp.digitalmuseum.utils.ScreenPosition;
  *
  * @author Jun KATO
  */
-public class ClickAndRunWithPen {
+public class ClickAndRunWithoutCollision {
 	private Hakoniwa hakoniwa;
-	private Task moveWithPen = null;
+	private VectorFieldTask moveWithCollisionAvoidance = null;
 	private ScreenPosition goal = null;
 
 	public static void main(String[] args) {
-		new ClickAndRunWithPen();
+		new ClickAndRunWithoutCollision();
 	}
 
-	public ClickAndRunWithPen() {
+	public ClickAndRunWithoutCollision() {
 
 		// Run hakoniwa.
 		hakoniwa = new Hakoniwa();
 		hakoniwa.start();
 
 		final Robot robot;
-		robot = new HakoniwaRobotWithPen("robot", new Location(hakoniwa.getRealWidth()/2 - 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
+		robot = new HakoniwaRobotWithPen("My robot", new Location(hakoniwa.getRealWidth()/2 - 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
 
 		Entity[] entities = new Entity[5];
 		final double x = hakoniwa.getRealWidth()/2;
@@ -65,8 +69,12 @@ public class ClickAndRunWithPen {
 		// Make a window for showing captured image.
 		final DrawableFrame frame = new DrawableFrame() {
 			private static final long serialVersionUID = 1L;
+			private transient final VectorFieldPainter vectorFieldPainter =
+				new VectorFieldPainter(hakoniwa);
 			private transient final Stroke stroke =
 				new BasicStroke(5);
+			private transient final AlphaComposite alphaComp =
+				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f);
 			private transient final AlphaComposite alphaComp2 =
 				AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .7f);
 
@@ -83,6 +91,9 @@ public class ClickAndRunWithPen {
 				final Composite comp = g.getComposite();
 
 				// Draw vectors.
+				g.setComposite(alphaComp);
+				g.setColor(Color.red);
+				vectorFieldPainter.paint(moveWithCollisionAvoidance, g);
 				g.setComposite(alphaComp2);
 				g.setColor(Color.black);
 				g.fillRect(0, 0, getFrameWidth(), 35);
@@ -126,13 +137,12 @@ public class ClickAndRunWithPen {
 				int x = e.getX(), y = e.getY();
 				goal = new ScreenPosition(x, y);
 
-				if (moveWithPen != null &&
-						moveWithPen.isStarted()) {
-					moveWithPen.stop();
-				}
+				Task task = robot.getAssignedTask(Wheels.class);
+				if (task != null) task.stop();
 
-				moveWithPen = new MobilePenTask(new Move(hakoniwa.screenToReal(goal)));
-				if (moveWithPen.assign(robot)) moveWithPen.start();
+				moveWithCollisionAvoidance = new Move(hakoniwa.screenToReal(goal));
+				moveWithCollisionAvoidance.add(new CollisionAvoidanceField(robot));
+				if (moveWithCollisionAvoidance.assign(robot)) moveWithCollisionAvoidance.start();
 			}
 		});
 

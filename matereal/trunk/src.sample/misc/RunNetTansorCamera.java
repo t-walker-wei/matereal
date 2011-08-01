@@ -1,3 +1,4 @@
+package misc;
 import java.awt.image.BufferedImage;
 
 import jp.digitalmuseum.mr.Matereal;
