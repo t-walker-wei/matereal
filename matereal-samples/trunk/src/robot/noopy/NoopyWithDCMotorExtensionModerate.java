@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
+import robot.RobotInfo;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.Noopy2.DCMotorController.Command;
@@ -34,7 +36,7 @@ public class NoopyWithDCMotorExtensionModerate {
 		super();
 
 		// ロボット初期化
-		robot = new Noopy2("btspp://646E6C00DCB2");
+		robot = RobotInfo.getRobot();
 		robot.addExtension(DCMotorController.class, Port.DC3);
 		robot.connect();
 

@@ -146,7 +146,6 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 		initialize();
 		Matereal.getInstance().addEventListener(this);
 		for (Service service : Matereal.getInstance().getServices()) {
-			serviceGroupMap.put(service, service.getServiceGroup());
 			updateService(service);
 		}
 		showService(null);
@@ -222,7 +221,6 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 					}
 				} else {
 					if (se.getStatus() == ServiceStatus.INSTANTIATED) {
-						serviceGroupMap.put(service, service.getServiceGroup());
 						updateService(service);
 					} else {
 						removeService(service);
@@ -239,7 +237,6 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 				if (!(service instanceof ServiceGroup)) {
 					if (se.getStatus() == ServiceStatus.STARTED) {
-						serviceGroupMap.put(service, service.getServiceGroup());
 						updateService(service);
 					}
 				}
@@ -316,9 +313,9 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			removeServiceFromView(service);
 		}
 
-		final DefaultMutableTreeNode node =
+		DefaultMutableTreeNode node =
 				new DefaultMutableTreeNode(service);
-		final ServiceGroup serviceGroup = serviceGroupMap.get(service);
+		ServiceGroup serviceGroup = service.getServiceGroup();
 		if (serviceGroup == null) {
 			root.add(node);
 		} else {
@@ -328,6 +325,8 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 			}
 			root.add(node);
 		}
+
+		serviceGroupMap.put(service, serviceGroup);
 		serviceNodeMap.put(service, node);
 	}
 
@@ -354,17 +353,18 @@ public class ServiceMonitorPanel extends JPanel implements EventListener, TreeSe
 
 	private void removeServiceFromView(Service service) {
 
-		// Remove from the list view and serviceNodeMap.
-		MutableTreeNode node;
-		if (service.getServiceGroup() == null) {
-			node = root;
-		} else {
-			node = groupNodeMap.get(service.getServiceGroup());
+		if (!serviceNodeMap.containsKey(service)) {
+			return;
 		}
 
-		if (serviceNodeMap.containsKey(service)) {
-			node.remove(serviceNodeMap.remove(service));
+		ServiceGroup serviceGroup = serviceGroupMap.get(service);
+		MutableTreeNode node;
+		if (serviceGroup == null) {
+			node = root;
+		} else {
+			node = groupNodeMap.get(serviceGroup);
 		}
+		node.remove(serviceNodeMap.remove(service));
 	}
 
 	private void selectServiceGroup(ServiceGroup serviceGroup) {

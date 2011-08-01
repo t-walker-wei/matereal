@@ -140,7 +140,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 			initCube();
 		}
 		gl.glPushMatrix();
-		gl.glTranslatef(0.0f, 0.0f, 0.5f);
+		gl.glTranslatef(0.0f, 0.0f, 0.05f);
 		gl.glDisable(GL.GL_LIGHTING);
 		gl.glCallList(polyList);
 		gl.glPopMatrix();
@@ -148,7 +148,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 
 	private void initCube() {
 
-		float fSize = 0.5f;
+		float fSize = 0.05f;
 		int f, i;
 		float[][] cubeVertices = new float[][] {
 			{  1.0f,  1.0f,  1.0f },
