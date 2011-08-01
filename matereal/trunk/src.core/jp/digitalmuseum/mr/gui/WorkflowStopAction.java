@@ -40,6 +40,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.workflow.Workflow;
 
 public class WorkflowStopAction extends AbstractAction {
@@ -51,9 +52,13 @@ public class WorkflowStopAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		Workflow workflow = workflowMonitorPanel.getSelectedWorkflow();
+		final Workflow workflow = workflowMonitorPanel.getSelectedWorkflow();
 		if (workflow != null) {
-			workflow.stop();
+			Matereal.getInstance().submit(new Runnable() {
+				public void run() {
+					workflow.stop();
+				}
+			});
 		}
 	}
 }

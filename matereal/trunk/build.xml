@@ -5,7 +5,7 @@
 	<import file="../connector/build.xml"/>
 
 	<!-- ****Properties**** -->
-	<property name="matereal.version" value="1.1.0" />
+	<property name="matereal.version" value="2.1.0" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture" value="../capture/${capture-jar.name}" />
@@ -13,11 +13,11 @@
 	<property name="bluecove" value="../connector/${connector-bluecove}" />
 	<property name="rxtxlib" value="../connector/${connector-rxtxlib}" />
 	<property name="jbox2d" value="../matereal/lib/jbox2d/JBox2D-2.0.1-b250-Library.jar" />
-	<property name="piccolo2d" value="../matereal/lib/piccolo/piccolo2d-core-1.3.jar;../matereal/lib/piccolo/piccolo2d-extras-1.3.jar" />
-	<property name="piccolo2d-list" value="piccolo2d-core-1.3.jar piccolo2d-extras-1.3.jar" />
+	<property name="piccolo2d" value="../matereal/lib/piccolo/piccolo2d-core-1.3.jar" />
+	<property name="piccolo2d-extras" value="../matereal/lib/piccolo/piccolo2d-extras-1.3.jar" />
 	<property name="jogl" value="../matereal/lib/jogl-1.1.1a/jogl.jar;../matereal/lib/jogl-1.1.1a/gluegen-rt.jar" />
 	<property name="p5" value="../matereal/lib/p5/core.jar" />
-	<property name="matereal-classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${piccolo2d};${jogl};${p5}" />
+	<property name="matereal-classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${piccolo2d};${piccolo2d-extras};${jogl};${p5}" />
 
 	<!-- Source directory -->
 	<property name="matereal-src.dir" value="src" />
@@ -41,7 +41,11 @@
 	<!-- Zip file name -->
 	<property name="matereal-zip.name" value="matereal-${matereal.version}.zip" />
 
-	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="../matereal/lib/ant-contrib/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
 
 	<!-- ****Targets**** -->
 
@@ -84,7 +88,8 @@
 		<mkdir dir="${matereal-jar.dir}" />
 		<jar jarfile="${matereal-jar.dir}${matereal-jar.name}">
 			<fileset dir="${matereal-classes.dir}" includes="**/*.class" />
-			<!-- <fileset dir="${src.dir}" includes="**/*.java **/*.properties" /> -->
+			<fileset dir="${matereal-src.dir}" includes="**/*.java **/*.properties" />
+			<fileset dir="${matereal-src-core.dir}" includes="**/*.java **/*.properties" />
 		</jar>
 	</target>
 
@@ -92,7 +97,8 @@
 	<target name="jar-utils" depends="compile">
 		<jar jarfile="${matereal-jar.dir}${matereal-jar-utils.name}">
 			<fileset dir="${matereal-classes.dir}" includes="jp/digitalmuseum/utils/*.class" />
-			<!-- <fileset dir="${src.dir}" includes="jp/digitalmuseum/utils/*.java" /> -->
+			<fileset dir="${matereal-src.dir}" includes="jp/digitalmuseum/utils/*.java" />
+			<fileset dir="${matereal-src-core.dir}" includes="jp/digitalmuseum/utils/*.java" />
 		</jar>
 	</target>
 
@@ -115,6 +121,8 @@
 				<include name="**/*.html" />
 			</patternset>
 		</unjar>
+		<unjar src="${piccolo2d}" dest="${matereal-classes.dir}" />
+		<unjar src="${piccolo2d-extras}" dest="${matereal-classes.dir}" />
 	</target>
 
 	<!-- Javadoc -->

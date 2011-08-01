@@ -40,7 +40,6 @@ import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,8 +48,8 @@ import jp.digitalmuseum.connector.Connector;
 import jp.digitalmuseum.mr.entity.PhysicalResourceAbstractImpl;
 import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
+import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
 import jp.digitalmuseum.mr.resource.Pen;
-import jp.digitalmuseum.mr.resource.WheelsAbstractImpl;
 
 /**
  * Noopy, a prototype robot.
@@ -96,8 +95,8 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 		}
 		wheels = new NoopyWheels(this);
 		shape = new RoundRectangle2D.Double(
-				-WIDTH/2 , -HEIGHT/2,
-				WIDTH/2, HEIGHT/2,
+				-WIDTH/2, -HEIGHT/2,
+				WIDTH, HEIGHT,
 				3, 3);
 		extensions = new HashSet<NoopyExtension>();
 		super.initialize();
@@ -166,7 +165,7 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 	 * @author Jun KATO
 	 * @see Noopy2
 	 */
-	public static class NoopyWheels extends WheelsAbstractImpl {
+	public static class NoopyWheels extends DifferentialWheelsAbstractImpl {
 		private static final long serialVersionUID = 6183145475982755979L;
 
 		public NoopyWheels(Noopy2 noopy) {
@@ -182,29 +181,46 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 			stopWheels();
 		}
 
-		protected void doGoForward() {
-			getConnector().write("!DC1CCW");
-			getConnector().write("!DC2CCW");
+		protected boolean doStopWheels() {
+			return getConnector().write("!BRK000")
+				&& getConnector().write("!STP000");
 		}
 
-		protected void doGoBackward() {
-			getConnector().write("!DC1CLW");
-			getConnector().write("!DC2CLW");
+		@Override
+		public int getRecommendedSpeed() {
+			return 50;
 		}
 
-		protected void doSpinLeft() {
-			getConnector().write("!DC1CLW");
-			getConnector().write("!DC2CCW");
+		@Override
+		public int getRecommendedRotationSpeed() {
+			return 30;
 		}
 
-		protected void doSpinRight() {
-			getConnector().write("!DC1CCW");
-			getConnector().write("!DC2CLW");
-		}
-
-		protected void doStopWheels() {
-			getConnector().write("!DC1STP");
-			getConnector().write("!DC2STP");
+		@Override
+		protected boolean doDrive(int leftPower, int rightPower) {
+			leftPower = leftPower * 255 / 100;
+			rightPower = rightPower * 255 / 100;
+			if (leftPower == 0) {
+				getConnector().write("!DC2BRK");
+				getConnector().write("!DC2STP");
+			} else if (leftPower > 0) {
+				getConnector().write(String.format("!SPG%03d", leftPower));
+				getConnector().write("!DC2CCW");
+			} else {
+				getConnector().write(String.format("!SPG%03d", -leftPower));
+				getConnector().write("!DC2CLW");
+			}
+			if (rightPower == 0) {
+				getConnector().write("!DC1BRK");
+				getConnector().write("!DC1STP");
+			} else 	if (rightPower > 0) {
+				getConnector().write(String.format("!SPG%03d", rightPower));
+				getConnector().write("!DC1CLW");
+			} else {
+				getConnector().write(String.format("!SPG%03d", -rightPower));
+				getConnector().write("!DC1CCW");
+			}
+			return true;
 		}
 	}
 

@@ -44,7 +44,7 @@
 	<target name="connector-jar" depends="connector-compile">
 		<jar jarfile="${connector-jar.name}">
 			<fileset dir="${connector-classes.dir}" includes="**/*.class" />
-			<!-- <fileset dir="${connector-src.dir}" includes="**/*.java **/*.properties" /> -->
+			<fileset dir="${connector-src.dir}" includes="**/*.java **/*.properties" />
 		</jar>
 	</target>
 

@@ -163,123 +163,91 @@ public abstract class ServiceAbstractImpl implements Service {
 		start();
 	}
 
-	public void start() {
-		Matereal.getInstance().submit(new Runnable() {
-			public void run() {
-				synchronized(ServiceAbstractImpl.this) {
-					if (isStarted()) {
-						return;
-					}
-					isStarted = true;
+	public synchronized void start() {
+		if (isStarted()) {
+			return;
+		}
+		isStarted = true;
 
-					// Save the date of birth.
-					birthDate = System.currentTimeMillis();
+		// Save the date of birth.
+		birthDate = System.currentTimeMillis();
 
-					// Start running this service.
-					onStart();
-					if (serviceGroup == null) {
-						startRunning();
-					} else if (!serviceGroup.isStarted()) {
-						serviceGroup.start();
-					}
+		// Start running this service.
+		onStart();
+		if (serviceGroup == null) {
+			startRunning();
+		} else if (!serviceGroup.isStarted()) {
+			serviceGroup.start();
+		}
 
-					// Distribute this event.
-					distributeEvent(
-							new ServiceEvent(
-									ServiceAbstractImpl.this, ServiceStatus.STARTED));
-				}
-			}
-		});
+		// Distribute this event.
+		distributeEvent(new ServiceEvent(ServiceAbstractImpl.this,
+				ServiceStatus.STARTED));
 	}
 
 	synchronized public void stop() {
-		Matereal.getInstance().submit(new Runnable() {
-			public void run() {
-				synchronized(ServiceAbstractImpl.this) {
-					if (!isStarted()) {
-						return;
-					}
-					isStarted = false;
+		if (!isStarted()) {
+			return;
+		}
+		isStarted = false;
 
-					// Stop running this service.
-					if (serviceGroup == null) {
-						stopRunning();
-					} else if (serviceGroup.isStarted()) {
-						serviceGroup.stop();
-					}
-					onStop();
+		// Stop running this service.
+		if (serviceGroup == null) {
+			stopRunning();
+		} else if (serviceGroup.isStarted()) {
+			serviceGroup.stop();
+		}
+		onStop();
 
-					// Reset the born time of this service.
-					birthDate = 0;
+		// Reset the born time of this service.
+		birthDate = 0;
 
-					// Distribute this event.
-					distributeEvent(
-							new ServiceEvent(
-									ServiceAbstractImpl.this,
-									ServiceStatus.STOPPED));
-				}
-			}
-		});
+		// Distribute this event.
+		distributeEvent(new ServiceEvent(ServiceAbstractImpl.this,
+				ServiceStatus.STOPPED));
 	}
 
 	public synchronized void pause() {
-		Matereal.getInstance().submit(new Runnable() {
-			public void run() {
-				synchronized(ServiceAbstractImpl.this) {
-					if (!isStarted() || isPaused()) {
-						return;
-					}
+		if (!isStarted() || isPaused()) {
+			return;
+		}
 
-					// Stop running this service.
-					if (serviceGroup == null) {
-						stopRunning();
-					} else {
-						if (!serviceGroup.isPaused()) {
-							serviceGroup.pause();
-							return;
-						}
-					}
-
-					// Distribute this event.
-					isPaused = true;
-					onPause();
-					distributeEvent(
-							new ServiceEvent(
-									ServiceAbstractImpl.this,
-									ServiceStatus.PAUSED));
-
-					if (serviceGroup != null &&
-							!serviceGroup.isPaused()) {
-						serviceGroup.pause();
-					}
-				}
+		// Stop running this service.
+		if (serviceGroup == null) {
+			stopRunning();
+		} else {
+			if (!serviceGroup.isPaused()) {
+				serviceGroup.pause();
+				return;
 			}
-		});
+		}
+
+		// Distribute this event.
+		isPaused = true;
+		onPause();
+		distributeEvent(new ServiceEvent(ServiceAbstractImpl.this,
+				ServiceStatus.PAUSED));
+
+		if (serviceGroup != null && !serviceGroup.isPaused()) {
+			serviceGroup.pause();
+		}
 	}
 
 	public synchronized void resume() {
-		Matereal.getInstance().submit(new Runnable() {
-			public void run() {
-				synchronized(ServiceAbstractImpl.this) {
-					if (!isStarted()) {
-						return;
-					}
+		if (!isStarted()) {
+			return;
+		}
 
-					// Resume running this service.
-					onResume();
-					if (serviceGroup == null) {
-						startRunning();
-					}
+		// Resume running this service.
+		onResume();
+		if (serviceGroup == null) {
+			startRunning();
+		}
 
-					// Distribute this event.
-					isPaused = false;
-					distributeEvent(
-							new ServiceEvent(
-									ServiceAbstractImpl.this,
-									ServiceStatus.RESUMED));
-				}
-			}
-		});
+		// Distribute this event.
+		isPaused = false;
+		distributeEvent(new ServiceEvent(ServiceAbstractImpl.this,
+				ServiceStatus.RESUMED));
 	}
 
 	private void startRunning() {

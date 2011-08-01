@@ -54,6 +54,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import jp.digitalmuseum.mr.entity.Entity;
@@ -145,33 +146,71 @@ public final class Matereal implements EventProvider, EventListener {
 
 	public JFrame getDebugFrame() {
 		if (debugFrame == null) {
-			MonitorPane monitor = new MonitorPane();
-			debugFrame = new DisposeOnCloseFrame(monitor) {
-				private static final long serialVersionUID = -3861483678329980836L;
-				@Override
-				public void dispose() {
-					super.dispose();
-					Matereal.this.debugFrame = null;
+			while (!invokeAndWait(new Runnable() {
+				public void run() {
+					MonitorPane monitor = new MonitorPane();
+					debugFrame = new DisposeOnCloseFrame(monitor) {
+						private static final long serialVersionUID = -3861483678329980836L;
+
+						@Override
+						public void dispose() {
+							super.dispose();
+							Matereal.this.debugFrame = null;
+						}
+					};
+					debugFrame.setTitle(Messages.getString("Matereal.debugTitle"));
 				}
-			};
-			debugFrame.setTitle(Messages.getString("Matereal.debugTitle"));
+			}));
 		}
 		return debugFrame;
 	}
 
 	public void disposeDebugFrame() {
 		if (debugFrame != null) {
-			debugFrame.dispose();
-			debugFrame = null;
+			invokeLater(new Runnable() {
+				public void run() {
+					debugFrame.dispose();
+					debugFrame = null;
+				}
+			});
 		}
 	}
 
 	public void showDebugFrame() {
-		getDebugFrame().setVisible(true);
+		invokeLater(new Runnable() {
+			public void run() {
+				getDebugFrame().setVisible(true);
+			}
+		});
 	}
 
 	public void hideDebugFrame() {
-		getDebugFrame().setVisible(false);
+		invokeLater(new Runnable() {
+			public void run() {
+				getDebugFrame().setVisible(false);
+			}
+		});
+	}
+
+	protected void invokeLater(Runnable runnable) {
+		if (SwingUtilities.isEventDispatchThread()) {
+			runnable.run();
+		} else {
+			SwingUtilities.invokeLater(runnable);
+		}
+	}
+
+	protected boolean invokeAndWait(Runnable runnable) {
+		if (SwingUtilities.isEventDispatchThread()) {
+			runnable.run();
+		} else {
+			try {
+				SwingUtilities.invokeAndWait(runnable);
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public String getName() {

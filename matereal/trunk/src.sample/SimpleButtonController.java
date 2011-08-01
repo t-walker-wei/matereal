@@ -5,10 +5,8 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.MindstormsNXT;
-import jp.digitalmuseum.mr.entity.Noopy;
+import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.entity.Roomba;
 import jp.digitalmuseum.mr.resource.WheelsController;
 
 /**
@@ -40,8 +38,7 @@ public class SimpleButtonController extends JFrame {
 
 		Matereal.getInstance().showDebugFrame();
 
-		robot = new Roomba("btspp://00066600D69A");
-		// robot = new MindstormsNXT("btspp://00165305B308");
+		robot = new Noopy2("btspp://646E6C00DCB2");
 		robot.connect();
 
 		wheels = robot.requestResource(WheelsController.class, this);

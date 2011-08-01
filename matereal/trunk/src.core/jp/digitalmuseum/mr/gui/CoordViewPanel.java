@@ -96,13 +96,13 @@ public class CoordViewPanel extends JPanel implements DisposableComponent {
 	}
 
 	public void dispose() {
-		source.removeEventListener(eventListener);
 		setEnabled(false);
+		source.removeEventListener(eventListener);
 		source = null;
 	}
 
 	@Override
-    public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		// TODO speed up and offset bug fix

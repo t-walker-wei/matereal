@@ -39,6 +39,7 @@ package jp.digitalmuseum.mr.gui;
 import javax.swing.JTabbedPane;
 
 import jp.digitalmuseum.mr.Matereal;
+import javax.swing.JPanel;
 
 public class MonitorPane extends JTabbedPane implements DisposableComponent {
 
@@ -46,6 +47,7 @@ public class MonitorPane extends JTabbedPane implements DisposableComponent {
 	private WorkflowMonitorPanel graphMonitorPanel = null;
 	private EntityMonitorPanel entityMonitorPanel = null;
 	private ServiceMonitorPanel serviceMonitorPanel = null;
+	private JPanel bluetoothPanel = null;
 
 	/**
 	 * This is the default constructor
@@ -66,6 +68,7 @@ public class MonitorPane extends JTabbedPane implements DisposableComponent {
 		this.addTab(Messages.getString("MonitorPane.entities"), null, getEntityMonitorPanel(), null);
 		this.addTab(Messages.getString("MonitorPane.services"), null, getServiceMonitorPanel(), null);
 		this.addTab(Messages.getString("MonitorPane.graphs"), null, getGraphMonitorPanel(), null);
+		this.addTab(Messages.getString("MonitorPane.bluetooth"), null, getBluetoothPanel(), null);
 	}
 
 	public void dispose() {
@@ -107,6 +110,18 @@ public class MonitorPane extends JTabbedPane implements DisposableComponent {
 			serviceMonitorPanel = new ServiceMonitorPanel();
 		}
 		return serviceMonitorPanel;
+	}
+
+	/**
+	 * This method initializes bluetoothPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
+	private JPanel getBluetoothPanel() {
+		if (bluetoothPanel == null) {
+			bluetoothPanel = new BluetoothDiscoveryPanel();
+		}
+		return bluetoothPanel;
 	}
 
 }

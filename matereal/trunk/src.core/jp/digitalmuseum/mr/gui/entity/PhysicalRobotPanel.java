@@ -74,44 +74,56 @@ public class PhysicalRobotPanel extends JPanel {
 	 *
 	 */
 	private void initialize() {
-        GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
-        gridBagConstraints11.gridx = 0;
-        gridBagConstraints11.anchor = GridBagConstraints.WEST;
-        gridBagConstraints11.insets = new Insets(5, 5, 5, 5);
-        gridBagConstraints11.gridy = 1;
-        connectorLabel = new JLabel();
-        connectorLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD));
-        connectorLabel.setText(Messages.getString("PhysicalRobotPanel.connector"));
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.weightx = 1.0D;
-        gridBagConstraints.weighty = 0.0D;
-        gridBagConstraints.gridx = 0;
-        GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-        gridBagConstraints2.fill = GridBagConstraints.BOTH;
-        gridBagConstraints2.gridx = 0;
-        gridBagConstraints2.gridy = 2;
-        gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
-        gridBagConstraints2.weightx = 1.0D;
-        gridBagConstraints2.anchor = GridBagConstraints.WEST;
-        gridBagConstraints2.weighty = 0.0D;
-        resourceLabel = new JLabel();
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.weightx = 1.0D;
+		gridBagConstraints.weighty = 0.0D;
+
+		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+		gridBagConstraints11.fill = GridBagConstraints.BOTH;
+		gridBagConstraints11.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints11.gridx = 0;
+		gridBagConstraints11.gridy = 1;
+		gridBagConstraints11.weightx = 1.0D;
+		gridBagConstraints11.weighty = 0.0D;
+		connectorLabel = new JLabel();
+		connectorLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD));
+		connectorLabel.setText(Messages.getString("PhysicalRobotPanel.connector"));
+
+		GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
+		gridBagConstraints12.fill = GridBagConstraints.BOTH;
+		gridBagConstraints12.gridx = 0;
+		gridBagConstraints12.gridy = 2;
+		gridBagConstraints12.weightx = 1.0D;
+		gridBagConstraints12.weighty = 0.0D;
+
+		GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+		gridBagConstraints2.fill = GridBagConstraints.BOTH;
+		gridBagConstraints2.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints2.gridx = 0;
+		gridBagConstraints2.gridy = 3;
+		gridBagConstraints2.weightx = 1.0D;
+		gridBagConstraints2.weighty = 0.0D;
+		resourceLabel = new JLabel();
 		resourceLabel.setFont(Matereal.getInstance().getDefaultFont().deriveFont(Font.BOLD)); //$NON-NLS-1$
-        resourceLabel.setText(Messages.getString("RobotPanel.resources"));
-        GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-        gridBagConstraints1.gridx = 0;
-        gridBagConstraints1.gridy = 3;
-        gridBagConstraints1.insets = new Insets(0, 5, 5, 0);
-        gridBagConstraints1.weighty = 1.0D;
-        gridBagConstraints1.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
-        this.setLayout(new GridBagLayout());
-        this.add(getEntityPanel(), gridBagConstraints);
-        this.add(connectorLabel, gridBagConstraints11);
-        this.add(getConnectorPanel(), new GridBagConstraints());
-        this.add(resourceLabel, gridBagConstraints2);
-        this.add(getRobotResourcePanel(), gridBagConstraints1);
+		resourceLabel.setText(Messages.getString("RobotPanel.resources"));
+
+		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		gridBagConstraints1.fill = GridBagConstraints.BOTH;
+		gridBagConstraints1.insets = new Insets(0, 5, 5, 0);
+		gridBagConstraints1.gridx = 0;
+		gridBagConstraints1.gridy = 4;
+		gridBagConstraints1.weightx = 1.0D;
+		gridBagConstraints1.weighty = 1.0D;
+
+		this.setLayout(new GridBagLayout());
+		this.add(getEntityPanel(), gridBagConstraints);
+		this.add(connectorLabel, gridBagConstraints11);
+		this.add(getConnectorPanel(), gridBagConstraints12);
+		this.add(resourceLabel, gridBagConstraints2);
+		this.add(getRobotResourcePanel(), gridBagConstraints1);
 	}
 
 	/**
@@ -145,7 +157,6 @@ public class PhysicalRobotPanel extends JPanel {
 	private ConnectorPanel getConnectorPanel() {
 		if (connectorPanel == null) {
 			connectorPanel = new ConnectorPanel(physicalRobot);
-			connectorPanel.setLayout(new GridBagLayout());
 		}
 		return connectorPanel;
 	}

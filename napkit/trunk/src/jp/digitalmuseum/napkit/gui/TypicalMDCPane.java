@@ -30,10 +30,14 @@ import javax.swing.JTabbedPane;
 
 import jp.digitalmuseum.mr.gui.CoordProviderPanel;
 import jp.digitalmuseum.mr.gui.DisposableComponent;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.EventListener;
+import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceStatus;
+import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.mr.service.CoordProvider;
 import jp.digitalmuseum.mr.service.ImageProvider;
 import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 
 /**
  * Typical marker detector and world coordinate provider configuration pane.
@@ -44,12 +48,12 @@ import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
  */
 public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 	private static final long serialVersionUID = 1L;
-	private WatcherService watcher;
 	private MarkerDetector markerDetector;
 	private CoordProvider coordProvider;
 	private MarkerDetectorPanel markerDetectorPanel;
 	private MarkerEntityPanel markerEntityPanel;
 	private CoordProviderPanel coordProviderPanel;
+	private transient EventListener eventListener;
 
 	/**
 	 * This is the default constructor
@@ -63,9 +67,22 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 
 		initialize();
 
-		// Start watcher service.
-		watcher = new WatcherService();
-		watcher.start(detector.getServiceGroup());
+		eventListener = new EventListener() {
+
+			@Override
+			public void eventOccurred(Event e) {
+				if (e instanceof ServiceUpdateEvent) {
+					ServiceUpdateEvent sue = (ServiceUpdateEvent) e;
+					if("imageProvider".equals(sue.getParameter())) {
+						updateCoordsTab();
+					}
+				} else if (e instanceof ServiceEvent
+						&& ((ServiceEvent) e).getStatus() == ServiceStatus.DISPOSED) {
+					dispose();
+				}
+			}
+		};
+		detector.addEventListener(eventListener);
 	}
 
 	/**
@@ -93,24 +110,13 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 	}
 
 	public void dispose() {
-		coordProviderPanel.dispose();
+		setEnabled(false);
+		if (coordProviderPanel != null) {
+			coordProviderPanel.dispose();
+		}
 		markerDetectorPanel.dispose();
-		watcher.stop();
-	}
-
-	private class WatcherService extends ServiceAbstractImpl {
-		private static final long serialVersionUID = 4436866502915761610L;
-
-		public String getName() {
-			return "Marker Detector Source Watcher";
-		}
-
-		public void run() {
-			final ImageProvider currentImageProvider =
-					markerDetector.getImageProvider();
-			if (!currentImageProvider.equals(coordProvider)) {
-				updateCoordsTab();
-			}
-		}
+		markerDetector.removeEventListener(eventListener);
+		markerDetector = null;
+		coordProvider = null;
 	}
 }

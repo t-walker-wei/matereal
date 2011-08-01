@@ -6,7 +6,6 @@ import java.awt.Stroke;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
@@ -36,8 +35,7 @@ public class DetectMarker {
 		// Let users select a device to capture images.
 		final String identifier = (String) JOptionPane.showInputDialog(null,
 				"Select a device to capture images.", "Device list",
-				JOptionPane.QUESTION_MESSAGE, null, new VideoCaptureFactoryImpl()
-						.queryIdentifiers(), null);
+				JOptionPane.QUESTION_MESSAGE, null, Camera.queryIdentifiers(), null);
 		Camera camera;
 		if ((identifier != null) && (identifier.length() > 0)) {
 			camera = new Camera(identifier);
@@ -50,6 +48,7 @@ public class DetectMarker {
 		// Run a marker detector.
 		final MarkerDetector detector = new MarkerDetector();
 		detector.loadCameraParameter("calib_qcam.dat");
+		detector.setImageProvider(camera);
 		detector.start();
 
 		// Show a configuration window.

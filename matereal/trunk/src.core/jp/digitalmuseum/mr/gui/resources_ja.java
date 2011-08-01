@@ -58,6 +58,7 @@ public class resources_ja extends PropertyResourceBundle {
 		"MonitorPane.graphs=ワークフロー グラフ\n" +
 		"MonitorPane.entities=ロボットとその他の物体\n" +
 		"MonitorPane.services=サービス\n" +
+		"MonitorPane.bluetooth=Bluetooth\n" +
 		"EntityMonitorPanel.selectedEntity=-\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=選択された物体の名称.\n" +
 		"EntityMonitorPanel.ok=OK\n" +
@@ -65,6 +66,8 @@ public class resources_ja extends PropertyResourceBundle {
 		"EntityPanel.entityType=物体の種類\n" +
 		"RobotPanel.resources=ロボットの部品\n" +
 		"PhysicalRobotPanel.connector=コネクタ\n" +
+		"ConnectorPanel.change=変更\n" +
+		"ConnectorPanel.ok=OK\n" +
 		"ResourceViewer.implementation=実装クラス:\n" +
 		"ResourceViewer.status=状態:\n" +
 		"WheelsViewer.rightWheel=右の車輪:\n" +
@@ -79,7 +82,11 @@ public class resources_ja extends PropertyResourceBundle {
 		"ServiceMonitorPanel.stop=停止\n" +
 		"ServiceMonitorPanel.stopIcon=□\n" +
 		"GraphMonitorPanel.selectedGraph=-\n" +
-		"GraphMonitorPanel.nameOfSelectedGraph=選択されたグラフの名称.\n";
+		"GraphMonitorPanel.nameOfSelectedGraph=選択されたグラフの名称.\n" +
+		"BluetoothDiscoveryPanel.search=検索\n" +
+		"BluetoothDiscoveryPanel.address=Bluetooth アドレス\n" +
+		"BluetoothDiscoveryPanel.identifier=識別子\n" +
+		"BluetoothDiscoveryPanel.name=デバイス名\n";
 
 	public resources_ja() throws IOException {
 		super(new ByteArrayInputStream(

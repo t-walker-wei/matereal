@@ -167,6 +167,8 @@ public class ClassUtils {
 					classObjects.add(Class.forName(className));
 				} catch (Exception e) {
 					// Do nothing.
+				} catch (Error e) {
+					// Do nothing.
 				}
 			}
 		}

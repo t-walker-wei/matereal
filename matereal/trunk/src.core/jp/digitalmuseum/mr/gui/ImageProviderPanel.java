@@ -83,8 +83,8 @@ public class ImageProviderPanel extends JPanel implements DisposableComponent {
 	}
 
 	public void dispose() {
-		source.removeEventListener(eventListener);
 		setEnabled(false);
+		source.removeEventListener(eventListener);
 		source = null;
 	}
 

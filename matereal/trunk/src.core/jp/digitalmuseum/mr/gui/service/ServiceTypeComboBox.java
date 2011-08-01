@@ -37,9 +37,10 @@
 package jp.digitalmuseum.mr.gui.service;
 
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -49,16 +50,19 @@ import jp.digitalmuseum.utils.ClassUtils;
 
 public class ServiceTypeComboBox extends JComboBox {
 	private static final long serialVersionUID = 6564200616817807222L;
-	private Set<Class<?>> classSet;
 
 	public ServiceTypeComboBox() {
 		setModel(new DefaultComboBoxModel());
-		classSet = new HashSet<Class<?>>();
 		updateList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public void updateList() {
+		Set<Class<?>> classSet = new TreeSet<Class<?>>(new Comparator<Class<?>>() {
+			public int compare(Class<?> c1, Class<?> c2) {
+				return c1.getSimpleName().compareTo(c2.getSimpleName());
+			}
+		});
 		List<Class<?>> classObjects =
 			ClassUtils.getClasses("jp.digitalmuseum.mr");
 		for (Class<?> classObject : classObjects) {
@@ -77,9 +81,11 @@ public class ServiceTypeComboBox extends JComboBox {
 				continue;
 			}
 
+			classSet.add(classObject);
+		}
+		for (Class<?> classObject : classSet) {
 			((DefaultComboBoxModel) getModel()).addElement(
 					new ServiceClass((Class<? extends Service>) classObject));
-			classSet.add(classObject);
 		}
 	}
 
