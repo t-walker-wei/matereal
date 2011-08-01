@@ -1,4 +1,4 @@
-package calligraphy;
+package hakoniwa.calligraphy;
 
 public interface WizardComponent {
 

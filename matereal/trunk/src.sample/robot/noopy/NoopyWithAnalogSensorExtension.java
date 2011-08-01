@@ -1,34 +1,36 @@
+package robot.noopy;
 import java.util.List;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.Noopy2.Accelerometer;
+import jp.digitalmuseum.mr.entity.Noopy2.AnalogSensor;
+import jp.digitalmuseum.mr.entity.Noopy2.Port;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.mr.task.TaskAbstractImpl;
 
 
-public class NoopyWithAccelerometerExtension {
+public class NoopyWithAnalogSensorExtension {
 
 	public static void main(String[] args) {
-		new NoopyWithAccelerometerExtension();
+		new NoopyWithAnalogSensorExtension();
 	}
 
-	public NoopyWithAccelerometerExtension() {
+	public NoopyWithAnalogSensorExtension() {
 
-		// 加速度センサつきのNoopy
+		// アナログセンサつきのNoopy
 		Noopy2 noopy = new Noopy2("btspp://646E6C00DCB2");
-		noopy.addExtension(Accelerometer.class);
+		noopy.addExtension(AnalogSensor.class, Port.AN0);
 
 		// Noopyにセンサの値を読み取り続けるタスクを割り当てる
-		Task readAcceleration = new ReadAcceleration();
-		if (readAcceleration.assign(noopy)) {
+		Task readAnalogSensor = new ReadAnalogSensor();
+		if (readAnalogSensor.assign(noopy)) {
 
 			// 100msに一度センサの値を読み取る
-			readAcceleration.setInterval(100);
+			readAnalogSensor.setInterval(100);
 
 			// タスク開始
-			readAcceleration.start();
+			readAnalogSensor.start();
 
 			// 適当なところでタスク停止
 			try {
@@ -36,26 +38,25 @@ public class NoopyWithAccelerometerExtension {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			readAcceleration.stop();
+			readAnalogSensor.stop();
 		}
 
 		// 最後にMaterealをシャットダウン
 		Matereal.getInstance().dispose();
 	}
 
-	private static class ReadAcceleration extends TaskAbstractImpl {
+	private static class ReadAnalogSensor extends TaskAbstractImpl {
 		private static final long serialVersionUID = 1L;
-		private Accelerometer accelerometer;
-		private float[] acceleration;
+		private AnalogSensor analogSensor;
 
 		/**
-		 * このタスクが要求するリソース(加速度センサ)を返すメソッド
+		 * このタスクが要求するリソース(アナログセンサ)を返すメソッド
 		 */
 		@Override
 		public List<Class<? extends Resource>> getRequirements() {
 			List<Class<? extends Resource>> requirements =
 				super.getRequirements();
-			requirements.add(Accelerometer.class);
+			requirements.add(AnalogSensor.class);
 			return requirements;
 		}
 
@@ -63,20 +64,17 @@ public class NoopyWithAccelerometerExtension {
 		 * このタスクが始まるときの処理が書かれたメソッド
 		 */
 		protected void onStart() {
-			this.accelerometer = getResourceMap().get(Accelerometer.class);
-			this.acceleration = new float[3];
+			this.analogSensor = getResourceMap().get(AnalogSensor.class);
 		}
 
 		/**
 		 * タスク開始後、定期的に実行される処理が書かれたメソッド
 		 */
 		public void run() {
-			accelerometer.readValues(acceleration);
-			System.out.println(String.format(
-					"%3.3fmg %3.3fmg %3.3fmg",
-					acceleration[0],
-					acceleration[1],
-					acceleration[2]));
+			int value = analogSensor.readValue();
+			if (value >= 0) {
+				System.out.println(value);
+			}
 		}
 	}
 }

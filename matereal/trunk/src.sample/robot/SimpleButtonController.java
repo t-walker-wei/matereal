@@ -1,3 +1,4 @@
+package robot;
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;

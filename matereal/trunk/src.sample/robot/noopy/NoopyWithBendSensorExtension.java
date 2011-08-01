@@ -1,35 +1,35 @@
+package robot.noopy;
 import java.util.List;
 
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.Noopy2.AnalogSensor;
-import jp.digitalmuseum.mr.entity.Noopy2.Port;
+import jp.digitalmuseum.mr.entity.Noopy2.BendSensor;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.mr.task.TaskAbstractImpl;
 
 
-public class NoopyWithAnalogSensorExtension {
+public class NoopyWithBendSensorExtension {
 
 	public static void main(String[] args) {
-		new NoopyWithAnalogSensorExtension();
+		new NoopyWithBendSensorExtension();
 	}
 
-	public NoopyWithAnalogSensorExtension() {
+	public NoopyWithBendSensorExtension() {
 
-		// アナログセンサつきのNoopy
+		// ベンドセンサつきのNoopy
 		Noopy2 noopy = new Noopy2("btspp://646E6C00DCB2");
-		noopy.addExtension(AnalogSensor.class, Port.AN0);
+		noopy.addExtension(BendSensor.class);
 
 		// Noopyにセンサの値を読み取り続けるタスクを割り当てる
-		Task readAnalogSensor = new ReadAnalogSensor();
-		if (readAnalogSensor.assign(noopy)) {
+		Task readBendSensor = new ReadBendSensor();
+		if (readBendSensor.assign(noopy)) {
 
 			// 100msに一度センサの値を読み取る
-			readAnalogSensor.setInterval(100);
+			readBendSensor.setInterval(100);
 
 			// タスク開始
-			readAnalogSensor.start();
+			readBendSensor.start();
 
 			// 適当なところでタスク停止
 			try {
@@ -37,25 +37,25 @@ public class NoopyWithAnalogSensorExtension {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			readAnalogSensor.stop();
+			readBendSensor.stop();
 		}
 
 		// 最後にMaterealをシャットダウン
 		Matereal.getInstance().dispose();
 	}
 
-	private static class ReadAnalogSensor extends TaskAbstractImpl {
+	private static class ReadBendSensor extends TaskAbstractImpl {
 		private static final long serialVersionUID = 1L;
-		private AnalogSensor analogSensor;
+		private BendSensor bendSensor;
 
 		/**
-		 * このタスクが要求するリソース(アナログセンサ)を返すメソッド
+		 * このタスクが要求するリソース(ベンドセンサ)を返すメソッド
 		 */
 		@Override
 		public List<Class<? extends Resource>> getRequirements() {
 			List<Class<? extends Resource>> requirements =
 				super.getRequirements();
-			requirements.add(AnalogSensor.class);
+			requirements.add(BendSensor.class);
 			return requirements;
 		}
 
@@ -63,17 +63,14 @@ public class NoopyWithAnalogSensorExtension {
 		 * このタスクが始まるときの処理が書かれたメソッド
 		 */
 		protected void onStart() {
-			this.analogSensor = getResourceMap().get(AnalogSensor.class);
+			this.bendSensor = getResourceMap().get(BendSensor.class);
 		}
 
 		/**
 		 * タスク開始後、定期的に実行される処理が書かれたメソッド
 		 */
 		public void run() {
-			int value = analogSensor.readValue();
-			if (value >= 0) {
-				System.out.println(value);
-			}
+			System.out.println(bendSensor.readValue());
 		}
 	}
 }

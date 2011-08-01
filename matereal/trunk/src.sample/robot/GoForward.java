@@ -1,3 +1,4 @@
+package robot;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.Robot;
