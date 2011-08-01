@@ -43,9 +43,12 @@
 			<zipfileset dir="./lib/matereal/napkit/"
 					includes="README.txt" fullpath="README_napkit.txt" />
 			<zipfileset dir="./lib/matereal/napkit/"
+					includes="README_mqoloader.txt" fullpath="README_mqoloader.txt" />
+			<zipfileset dir="./lib/matereal/napkit/"
 					includes="LICENSE.txt" fullpath="LICENSE_napkit.txt" />
 			<zipfileset dir="./lib/matereal/napkit/"
 					includes="*.jar" />
+
 		</zip>
 	</target>
 
@@ -54,7 +57,7 @@
 		<zip destfile="matereal-${matereal.version}-samples.zip">
 			<fileset dir="./"
 					includes="src/**/*.java lib/**/* markers/* .project .classpath"
-					excludes="**/.svn" />
+					excludes="**/.svn markers/*.patt" />
 		</zip>
 	</target>
 
