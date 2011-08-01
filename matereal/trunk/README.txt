@@ -1,10 +1,10 @@
-matereal
+Matereal
 Copyright (C) 2010 Jun KATO
 
-version 1.0.3
+version 2.1.0
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-"matereal" is a Java toolkit that allows to prototype
+"Matereal" is a Java toolkit that allows to prototype
 interactive robot applications.
 
 This library is distributed under MPL 1.1/GPL 2.0/LGPL 2.1
