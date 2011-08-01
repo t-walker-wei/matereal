@@ -2,28 +2,31 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/matereal/capture/capture-1.0.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/matereal-samples/lib/matereal/matereal/matereal-1.0.3-docs.zip!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/matereal/connector/connector-1.0.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/matereal-samples/lib/matereal/matereal/matereal-1.0.3-docs.zip!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="lib/matereal/capture/capture-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/matereal/connector/connector-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/bluecove/bluecove-2.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/rxtx-2.1-7-bins-r2/RXTXcomm.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="matereal-samples/lib/rxtx-2.1-7-bins-r2"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/matereal/napkit/napkit-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/matereal/napkit/napkit-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/dsj/dsj.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="matereal-samples/lib/dsj"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/matereal/matereal/matereal-2.1.0-b137.jar"/>
+	<classpathentry kind="lib" path="lib/matereal/matereal/matereal-2.1.0-b141.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-1.1.1a/gluegen-rt.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="matereal-samples/lib/jogl-1.1.1a"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jogl-1.1.1a/jogl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="matereal-samples/lib/jogl-1.1.1a"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/matereal/napkit/mqoloader-1.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,6 +1,4 @@
 package marker;
-import java.net.URL;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -11,9 +9,6 @@ import javax.swing.JOptionPane;
 import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.FPSAnimator;
 
-import jp.digitalmuseum.jogl.JoglCoordinates_ARToolKit;
-import jp.digitalmuseum.jogl.JoglModel;
-import jp.digitalmuseum.jogl.JoglModelMqo;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.service.MarkerDetector;
@@ -29,10 +24,10 @@ import jp.digitalmuseum.utils.Array;
  *
  * @author Jun KATO
  */
-public class DetectMarkerWithMqoOverlay implements GLEventListener {
+public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 
 	public static void main(String[] args) {
-		new DetectMarkerWithMqoOverlay();
+		new DetectMarkerWith3DCGOverlay();
 	}
 
 	private MarkerDetector detector;
@@ -42,10 +37,11 @@ public class DetectMarkerWithMqoOverlay implements GLEventListener {
 	private GL gl;
 	private NapJoglUtils util;
 	private Animator animator;
+	private int polyList = 0;
 
 	private int fps = 15;
 
-	public DetectMarkerWithMqoOverlay() {
+	public DetectMarkerWith3DCGOverlay() {
 
 		// Run two services as one service group.
 		ServiceGroup serviceGroup = new ServiceGroup();
@@ -105,8 +101,6 @@ public class DetectMarkerWithMqoOverlay implements GLEventListener {
 
 		util = new NapJoglUtils(gl);
 
-		initModel();
-
 		animator = new FPSAnimator(drawable, fps);
 		animator.start();
 	}
@@ -131,42 +125,84 @@ public class DetectMarkerWithMqoOverlay implements GLEventListener {
 		for (NapDetectionResult result : results) {
 			if (result.getConfidence() > 0.5) {
 				if (util.preDisplay(detector, result)) {
-					drawModel();
+					drawCube();
 					util.postDisplay();
 				}
 			}
 		}
 	}
 
-	private final String mqoFileName = "model/JSS_miku/Jss_miku.mqo";
-	private final float scale = .005f;
-
-	private JoglModel data;
-	private float translate;
-	private void initModel() {
-		if (data == null) {
-			try {
-				data = new JoglModelMqo(gl, new URL("file:"+mqoFileName), null,
-						scale, new JoglCoordinates_ARToolKit(), true);
-
-				// 髪の毛が足より下にあるので、地面に足をつけようとするとこうなる。
-				translate = -data.getMinPos().getZ() / 2;
-				// translate = -data.getMinPos().getZ();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				data = null;
-			}
+	/**
+	 * Draw a cube.
+	 */
+	private void drawCube() {
+		if (polyList == 0) {
+			initCube();
 		}
+		gl.glPushMatrix();
+		gl.glTranslatef(0.0f, 0.0f, 0.5f);
+		gl.glDisable(GL.GL_LIGHTING);
+		gl.glCallList(polyList);
+		gl.glPopMatrix();
 	}
 
-	private void drawModel() {
-		if (data != null) {
-			gl.glPushMatrix();
-			gl.glTranslatef(0, 0, translate);
-			data.draw();
-			gl.glPopMatrix();
+	private void initCube() {
+
+		float fSize = 0.5f;
+		int f, i;
+		float[][] cubeVertices = new float[][] {
+			{  1.0f,  1.0f,  1.0f },
+			{  1.0f, -1.0f,  1.0f },
+			{ -1.0f, -1.0f,  1.0f },
+			{ -1.0f,  1.0f,  1.0f },
+			{  1.0f,  1.0f, -1.0f },
+			{  1.0f, -1.0f, -1.0f },
+			{ -1.0f, -1.0f, -1.0f },
+			{ -1.0f,  1.0f, -1.0f }
+		};
+		float[][] cubeVertexColors = new float[][] {
+			{ 1.0f, 1.0f, 1.0f },
+			{ 1.0f, 1.0f, 0.0f },
+			{ 0.0f, 1.0f, 0.0f },
+			{ 0.0f, 1.0f, 1.0f },
+			{ 1.0f, 0.0f, 1.0f },
+			{ 1.0f, 0.0f, 0.0f },
+			{ 0.0f, 0.0f, 0.0f },
+			{ 0.0f, 0.0f, 1.0f }
+		};
+
+		short[][] cubeFaces = new short[][] {
+			{ 3, 2, 1, 0 },
+			{ 2, 3, 7, 6 },
+			{ 0, 1, 5, 4 },
+			{ 3, 0, 4, 7 },
+			{ 1, 2, 6, 5 },
+			{ 4, 5, 6, 7 }
+		};
+
+		polyList = gl.glGenLists(1);
+		gl.glNewList(polyList, GL.GL_COMPILE);
+		gl.glBegin(GL.GL_QUADS);
+		for (f = 0; f < cubeFaces.length; f++)
+			for (i = 0; i < 4; i++) {
+				gl.glColor3f(cubeVertexColors[cubeFaces[f][i]][0],
+						cubeVertexColors[cubeFaces[f][i]][1],
+						cubeVertexColors[cubeFaces[f][i]][2]);
+				gl.glVertex3f(cubeVertices[cubeFaces[f][i]][0] * fSize,
+						cubeVertices[cubeFaces[f][i]][1] * fSize,
+						cubeVertices[cubeFaces[f][i]][2] * fSize);
+			}
+		gl.glEnd();
+		gl.glColor3f(0.0f, 0.0f, 0.0f);
+		for (f = 0; f < cubeFaces.length; f++) {
+			gl.glBegin(GL.GL_LINE_LOOP);
+			for (i = 0; i < 4; i++)
+				gl.glVertex3f(cubeVertices[cubeFaces[f][i]][0] * fSize,
+						cubeVertices[cubeFaces[f][i]][1] * fSize,
+						cubeVertices[cubeFaces[f][i]][2] * fSize);
+			gl.glEnd();
 		}
+		gl.glEndList();
 	}
 
 	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
