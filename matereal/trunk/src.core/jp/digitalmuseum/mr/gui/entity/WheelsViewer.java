@@ -137,7 +137,7 @@ public class WheelsViewer extends JPanel implements DisposableComponent {
 	}
 
 	public void dispose() {
-		wheelsMonitor.stop();
+		wheelsMonitor.dispose();
 	}
 
 	/**

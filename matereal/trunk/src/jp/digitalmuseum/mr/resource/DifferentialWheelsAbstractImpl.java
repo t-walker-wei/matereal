@@ -224,8 +224,8 @@ public abstract class DifferentialWheelsAbstractImpl extends PhysicalResourceAbs
 	}
 
 	private boolean doDrive_(int leftPower, int rightPower) {
-		if (this.leftPower != leftPower ||
-				this.rightPower != rightPower) {
+		if (this.leftPower != leftPower
+				|| this.rightPower != rightPower) {
 			if (doDrive(leftPower, rightPower)) {
 				this.leftPower = leftPower;
 				this.rightPower = rightPower;

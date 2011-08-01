@@ -40,6 +40,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.service.Service;
 
 public class ServiceStartAction extends AbstractAction {
@@ -51,9 +52,13 @@ public class ServiceStartAction extends AbstractAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		Service service = serviceMonitorPanel.getSelectedService();
+		final Service service = serviceMonitorPanel.getSelectedService();
 		if (service != null) {
-			service.start();
+			Matereal.getInstance().submit(new Runnable() {
+				public void run() {
+					service.start();
+				}
+			});
 		}
 	}
 }

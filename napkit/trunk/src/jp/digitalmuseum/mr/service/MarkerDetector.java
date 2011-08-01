@@ -122,7 +122,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 		if (imageProvider instanceof CoordProvider) {
 			setCoordsProvider((CoordProvider) imageProvider);
 		}
-		distributeEvent(new ServiceUpdateEvent(this, "image provider", imageProvider));
+		distributeEvent(new ServiceUpdateEvent(this, "imageProvider", imageProvider));
 	}
 
 	public ImageProvider getImageProvider() {
@@ -140,7 +140,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 			return false;
 		}
 		this.subImageProvider = subImageProvider;
-		distributeEvent(new ServiceUpdateEvent(this, "sub camera", subImageProvider));
+		distributeEvent(new ServiceUpdateEvent(this, "subCamera", subImageProvider));
 		return true;
 	}
 

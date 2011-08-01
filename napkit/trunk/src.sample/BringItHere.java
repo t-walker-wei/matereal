@@ -15,6 +15,7 @@ import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.entity.Mini;
+import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalBox;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
@@ -69,6 +70,7 @@ public class BringItHere {
 		// Run a marker detector.
 		detector = new MarkerDetector();
 		detector.loadCameraParameter("calib_qcam.dat");
+		detector.setImageProvider(camera);
 		detector.start();
 
 		// Show a configuration window.
@@ -76,13 +78,13 @@ public class BringItHere {
 				detector));
 
 		// Initialize a robot.
-		final Mini robot = new Mini("Mini", "btspp://000666015818");
+		final Noopy2 robot = new Noopy2("btspp://646E6C00DCB2");
 
 		// Initialize boxes.
 		final Entity[] entities = new Entity[1];
 		entities[0] = new PhysicalBox(10, 8, "Milk chocolate");
-		detector.addMarker(new NapMarker("markers\\4x4_35.patt", 5.5), entities[0]);
-		detector.addMarker(new NapMarker("markers\\4x4_907.patt", 5.5), robot);
+		detector.addMarker(new NapMarker("markers\\4x4_48.patt", 5.5), entities[0]);
+		detector.addMarker(new NapMarker("markers\\4x4_45.patt", 5.5), robot);
 
 		// Show detection results in real-time.
 		final ImageProviderPanel panel = new ImageProviderPanel(camera) {

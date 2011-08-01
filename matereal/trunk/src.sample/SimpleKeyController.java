@@ -3,11 +3,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Noopy;
 import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.entity.Roomba;
 import jp.digitalmuseum.mr.gui.DrawableFrame;
 import jp.digitalmuseum.mr.resource.WheelsController;
 
@@ -28,10 +25,7 @@ public class SimpleKeyController {
 	public SimpleKeyController() {
 		super();
 
-		robot = new Noopy2("btspp://646E6C00DCA3"); // white
-		// robot = new Noopy2("btspp://646e6c00dca2"); // orange
-		// robot = new Noopy("btspp://646E6C00A8E2");
-		// robot = new Roomba("btspp://00066600D69A");
+		robot = new Noopy2("btspp://646E6C00DCB2");
 		robot.connect();
 		wheels = robot.requestResource(WheelsController.class, this);
 

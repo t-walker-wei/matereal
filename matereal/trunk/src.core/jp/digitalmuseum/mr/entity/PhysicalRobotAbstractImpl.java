@@ -71,6 +71,15 @@ public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implem
 		setName(name);
 	}
 
+	@Override
+	public void dispose() {
+		super.dispose();
+		if (connector != null) {
+			connector.disconnect();
+			connector = null;
+		}
+	}
+
 	/**
 	 * Bind a connector to this robot.
 	 */

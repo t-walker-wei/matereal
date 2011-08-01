@@ -44,6 +44,8 @@ import javax.swing.event.ListSelectionListener;
 import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
+import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
 import jp.digitalmuseum.mr.service.MarkerDetector;
 import jp.digitalmuseum.napkit.NapMarker;
@@ -89,6 +91,10 @@ public class MarkerEntityPanel extends JPanel {
 							NapMarker marker = (NapMarker) ((ServiceUpdateEvent) e).getValue();
 							removeMarker(marker);
 						}
+					} else if (e instanceof ServiceEvent
+							&& ((ServiceEvent) e).getStatus() == ServiceStatus.DISPOSED) {
+						setEnabled(false);
+						MarkerEntityPanel.this.markerDetector = null;
 					}
 				}
 			});

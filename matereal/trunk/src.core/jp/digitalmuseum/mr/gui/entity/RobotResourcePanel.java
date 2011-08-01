@@ -46,6 +46,10 @@ import java.awt.GridBagConstraints;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposableComponent;
+import jp.digitalmuseum.mr.message.EntityEvent;
+import jp.digitalmuseum.mr.message.EntityStatus;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.EventListener;
 
 import java.awt.Insets;
 import java.awt.CardLayout;
@@ -67,6 +71,15 @@ public class RobotResourcePanel extends JPanel implements ActionListener, Dispos
 	public RobotResourcePanel(Robot robot) {
 		super();
 		this.resourceComponents = robot.getResourceComponents();
+		robot.addEventListener(new EventListener() {
+			public void eventOccurred(Event e) {
+				if (e instanceof EntityEvent
+						&& ((EntityEvent) e).getStatus() == EntityStatus.DISPOSED) {
+					dispose();
+				}
+			}
+		});
+
 		initialize();
 	}
 
@@ -97,6 +110,7 @@ public class RobotResourcePanel extends JPanel implements ActionListener, Dispos
 	}
 
 	public void dispose() {
+		setEnabled(false);
 		getResourcePanel().removeAll();
 		getJComboBox().removeAllItems();
 		for (JComponent resourceComponent : resourceComponents) {
@@ -145,8 +159,11 @@ public class RobotResourcePanel extends JPanel implements ActionListener, Dispos
 		if (e == null || e.getSource() != getJComboBox()) {
 			return;
 		}
-		((CardLayout) getResourcePanel().getLayout()).show(
-				getResourcePanel(),
-				String.valueOf(getJComboBox().getSelectedItem().hashCode()));
+		Object object = getJComboBox().getSelectedItem();
+		if (object != null) {
+			((CardLayout) getResourcePanel().getLayout()).show(
+					getResourcePanel(),
+					String.valueOf(object.hashCode()));
+		}
 	}
 }

@@ -37,7 +37,7 @@ public class DanceDanceDance {
 
 		// Construct a workflow graph.
 		final Robot[] robots = new Robot[4];
-		final Workflow ad = new Workflow();
+		final Workflow workflow = new Workflow();
 		final Action[] initialNodes = new Action[robots.length];
 		final Action[] finalNodes = new Action[robots.length];
 		for (int i = 0; i < robots.length; i ++) {
@@ -49,30 +49,30 @@ public class DanceDanceDance {
 			for (int loop = 0; loop < 3; loop ++) {
 				Action a = new Action(robots[i], new GoForward());
 				Action b = new Action(robots[i], new SpinLeft());
-				ad.add(a, b);
-				ad.addTransition(new TimeoutTransition(a, b, 3000));
+				workflow.add(a, b);
+				workflow.addTransition(new TimeoutTransition(a, b, 3000));
 				if (loop == 0) {
 					initialNodes[i] = a;
 				} else {
-					ad.addTransition(new TimeoutTransition(tail, a, 3000));
+					workflow.addTransition(new TimeoutTransition(tail, a, 3000));
 				}
 				tail = b;
 			}
 
 			// Stop at last.
 			finalNodes[i] = new Action(robots[i], new Stop());
-			ad.add(finalNodes[i]);
-			ad.addTransition(new TimeoutTransition(tail, finalNodes[i], 3000));
+			workflow.add(finalNodes[i]);
+			workflow.addTransition(new TimeoutTransition(tail, finalNodes[i], 3000));
 		}
 
 		// Run 4 robots in parallel.
 		Fork fork = new Fork(initialNodes);
 		Join join = new Join(finalNodes);
-		ad.add(fork);
-		ad.add(join);
-		ad.addTransition(new Transition(fork, join));
-		ad.setInitialNode(fork);
-		ad.start();
+		workflow.add(fork);
+		workflow.add(join);
+		workflow.addTransition(new Transition(fork, join));
+		workflow.setInitialNode(fork);
+		workflow.start();
 
 		// Make windows for showing a workflow graph and status of hakoniwa.
 		SwingUtilities.invokeLater(new Runnable() {

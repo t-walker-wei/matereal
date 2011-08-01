@@ -56,6 +56,7 @@ public class resources extends PropertyResourceBundle {
 		"MonitorPane.graphs=Workflow graphs\n" +
 		"MonitorPane.entities=Robots and entities\n" +
 		"MonitorPane.services=Services\n" +
+		"MonitorPane.bluetooth=Bluetooth\n" +
 		"EntityMonitorPanel.selectedEntity=-\n" +
 		"EntityMonitorPanel.nameOfSelectedEntity=Name of the selected entity.\n" +
 		"EntityMonitorPanel.ok=OK\n" +
@@ -63,6 +64,8 @@ public class resources extends PropertyResourceBundle {
 		"EntityPanel.entityType=Entity type information\n" +
 		"RobotPanel.resources=Robot resources\n" +
 		"PhysicalRobotPanel.connector=Connector\n" +
+		"ConnectorPanel.change=Change\n" +
+		"ConnectorPanel.ok=OK\n" +
 		"ResourceViewer.implementation=Implementation:\n" +
 		"ResourceViewer.status=Status:\n" +
 		"WheelsViewer.rightWheel=Right wheel:\n" +
@@ -77,7 +80,11 @@ public class resources extends PropertyResourceBundle {
 		"ServiceMonitorPanel.stop=Stop\n" +
 		"ServiceMonitorPanel.stopIcon=x\n" +
 		"GraphMonitorPanel.selectedGraph=-\n" +
-		"GraphMonitorPanel.nameOfSelectedGraph=Name of the selected graph.\n";
+		"GraphMonitorPanel.nameOfSelectedGraph=Name of the selected graph.\n" +
+		"BluetoothDiscoveryPanel.search=Search\n" +
+		"BluetoothDiscoveryPanel.address=Bluetooth address\n" +
+		"BluetoothDiscoveryPanel.identifier=Connection string\n" +
+		"BluetoothDiscoveryPanel.name=Friendly name\n";
 
 	public resources() throws IOException {
 		super(new ByteArrayInputStream(resourcesString.getBytes()));

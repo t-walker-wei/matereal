@@ -39,12 +39,29 @@ package jp.digitalmuseum.mr.gui.entity;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 
+import jp.digitalmuseum.connector.Connector;
+import jp.digitalmuseum.connector.ConnectorFactory;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
+import jp.digitalmuseum.mr.gui.DisposableComponent;
+import jp.digitalmuseum.mr.gui.Messages;
+import jp.digitalmuseum.mr.message.EntityEvent;
+import jp.digitalmuseum.mr.message.EntityStatus;
+import jp.digitalmuseum.mr.message.EntityUpdateEvent;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.EventListener;
+import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
+import javax.swing.JButton;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class ConnectorPanel extends JPanel {
+public class ConnectorPanel extends JPanel implements DisposableComponent {
 
 	private static final long serialVersionUID = -2319312498174759887L;
 	private transient PhysicalRobot physicalRobot;
+	private JTextField connectionStringField = null;
+	private JButton editButton = null;
 
 	/**
 	 * This is the default constructor
@@ -52,7 +69,21 @@ public class ConnectorPanel extends JPanel {
 	public ConnectorPanel(PhysicalRobot physicalRobot) {
 		super();
 		this.physicalRobot = physicalRobot;
+		physicalRobot.addEventListener(new EventListener() {
+			public void eventOccurred(Event e) {
+				if (e instanceof EntityUpdateEvent) {
+					if ("connector".equals(((EntityUpdateEvent) e).getParameter())) {
+						setEnables(false);
+					}
+				} else if (e instanceof EntityEvent) {
+					if (((EntityEvent) e).getStatus() == EntityStatus.DISPOSED) {
+						dispose();
+					}
+				}
+			}
+		});
 		initialize();
+		setEnables(physicalRobot.getConnector() == null);
 	}
 
 	/**
@@ -61,8 +92,89 @@ public class ConnectorPanel extends JPanel {
 	 * @return void
 	 */
 	private void initialize() {
+		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+		gridBagConstraints1.fill = GridBagConstraints.BOTH;
+		gridBagConstraints1.gridx = 1;
+		gridBagConstraints1.gridy = 0;
+		gridBagConstraints1.weightx = 0.0D;
+		gridBagConstraints1.weighty = 1.0D;
+		gridBagConstraints1.insets = new Insets(5, 0, 5, 5);
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.weightx = 1.0;
+		gridBagConstraints.weighty = 1.0D;
+		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints.gridx = 0;
 		this.setSize(300, 200);
 		this.setLayout(new GridBagLayout());
+		this.add(getConnectionStringField(), gridBagConstraints);
+		this.add(getEditButton(), gridBagConstraints1);
 	}
 
+	@Override
+	public void dispose() {
+		setEnabled(false);
+		physicalRobot = null;
+	}
+
+	/**
+	 * This method initializes connectionStringField
+	 *
+	 * @return javax.swing.JTextField
+	 */
+	private JTextField getConnectionStringField() {
+		if (connectionStringField == null) {
+			connectionStringField = new JTextField();
+		}
+		return connectionStringField;
+	}
+
+	/**
+	 * This method initializes editButton
+	 *
+	 * @return javax.swing.JButton
+	 */
+	private JButton getEditButton() {
+		if (editButton == null) {
+			editButton = new JButton();
+			editButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					JTextField field = getConnectionStringField();
+					if (field.isEditable()) {
+						Connector oldConnector = physicalRobot.getConnector();
+						if (oldConnector != null) {
+							oldConnector.disconnect();
+						}
+						Connector connector = ConnectorFactory.makeConnector(
+								field.getText());
+						if (connector != null
+								&& connector.connect()) {
+							physicalRobot.setConnector(connector);
+							setEnables(false);
+						}
+					} else {
+						setEnables(true);
+					}
+				}
+			});
+		}
+		return editButton;
+	}
+
+	private void setEnables(boolean isEnable) {
+		JTextField field = getConnectionStringField();
+		JButton button = getEditButton();
+		if (isEnable) {
+			field.setEditable(true);
+			button.setText(Messages.getString("ConnectorPanel.ok"));
+		} else {
+			field.setEditable(false);
+			if (physicalRobot.getConnector() != null) {
+				field.setText(
+						physicalRobot.getConnector().getConnectionString());
+			}
+			button.setText(Messages.getString("ConnectorPanel.change"));
+		}
+	}
 }

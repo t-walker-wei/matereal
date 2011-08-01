@@ -84,7 +84,7 @@ import javax.swing.SwingConstants;
 public class CoordProviderPanel extends JPanel implements DisposableComponent {
 	private static final long serialVersionUID = 1L;
 	private static final int RADIUS = 6;
-	private final transient CoordProvider source;
+	private transient CoordProvider source;
 	private final transient EventListener eventListener;
 	private final transient Stroke stroke;
 	private transient BufferedImage image;
@@ -132,15 +132,16 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 	 *
 	 */
 	private void initialize() {
-        this.setLayout(new BorderLayout());
-        this.add(getJPanel(), BorderLayout.CENTER);
-        this.add(getJInputPanel(), BorderLayout.SOUTH);
+		this.setLayout(new BorderLayout());
+		this.add(getJPanel(), BorderLayout.CENTER);
+		this.add(getJInputPanel(), BorderLayout.SOUTH);
 
 	}
 
 	public void dispose() {
-		source.removeEventListener(eventListener);
 		setEnabled(false);
+		source.removeEventListener(eventListener);
+		source = null;
 	}
 
 	public CoordProvider getSource() {

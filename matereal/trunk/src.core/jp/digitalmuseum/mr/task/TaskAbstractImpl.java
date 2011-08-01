@@ -41,17 +41,12 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.entity.ResourceMap;
 import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.RobotEvent;
 import jp.digitalmuseum.mr.message.ServiceEvent;
 import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
@@ -66,11 +61,8 @@ import jp.digitalmuseum.mr.workflow.Workflow;
 public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Task {
 	private static final long serialVersionUID = -3132747610411544613L;
 	private transient Robot robot;
-	private transient Queue<RobotEvent> robotEventQueue;
-	private transient RobotEventListener robotEventListener;
 	private ResourceMap resourceMap;
 	private Workflow subflow;
-	private boolean isStopping;
 
 	@Override
 	public String getName() {
@@ -84,8 +76,6 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 
 	protected void initialize() {
 		super.initialize();
-		robotEventQueue = new LinkedList<RobotEvent>();
-		robotEventListener = new RobotEventListener();
 	}
 
 	/**
@@ -141,16 +131,13 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 		if (!isStarted()) {
 			return;
 		}
-		isStopping = true;
 		if (hasSubflow()) {
 			getSubflow().stop();
 		}
 		super.stop();
-		receiveRobotEvent(false);
 		robot.freeResources(resourceMap.resources(), this);
 		robot = null;
 		resourceMap = null;
-		isStopping = false;
 	}
 
 	protected void setSubflow(Workflow subflow) {
@@ -181,51 +168,10 @@ public abstract class TaskAbstractImpl extends ServiceAbstractImpl implements Ta
 	}
 
 	protected synchronized void finish() {
-		if (!isStopping) {
+		if (isStarted()) {
 			stop();
 		}
 		distributeEvent(new ServiceEvent(this, ServiceStatus.FINISHED));
-	}
-
-	/**
-	 * Listen to/Ignore RobotEvent brought by the assigned robot.
-	 * @see #hasNextRobotEvent()
-	 * @see #pollRobotEvent()
-	 */
-	final protected void receiveRobotEvent(boolean flag) {
-		if (flag) {
-			robotEventQueue.clear();
-			robot.addEventListener(robotEventListener);
-		} else {
-			robot.removeEventListener(robotEventListener);
-			robotEventQueue.clear();
-		}
-	}
-
-	/**
-	 * @return Returns true if at least one RobotEvent is available in the event queue.
-	 */
-	final protected boolean hasNextRobotEvent() {
-		return !robotEventQueue.isEmpty();
-	}
-
-	/**
-	 * @return Returns RobotEvent if available in the event queue. Otherwise, returns null.
-	 */
-	final protected RobotEvent pollRobotEvent() {
-		return robotEventQueue.poll();
-	}
-
-	private class RobotEventListener implements EventListener {
-
-		/**
-		 * <b>Note:</b> This method here is thread-safe by natural, because only one robot calls this method.
-		 */
-		public void eventOccurred(Event event) {
-			if (event instanceof RobotEvent) {
-				robotEventQueue.add((RobotEvent) event);
-			}
-		}
 	}
 
 	/**

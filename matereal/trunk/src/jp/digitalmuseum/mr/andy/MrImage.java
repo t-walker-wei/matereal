@@ -44,6 +44,8 @@ import java.util.Arrays;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
+import jp.digitalmuseum.mr.message.ServiceEvent;
+import jp.digitalmuseum.mr.message.ServiceStatus;
 import jp.digitalmuseum.mr.service.ImageProvider;
 import processing.core.PImage;
 
@@ -111,8 +113,10 @@ public class MrImage extends PImage implements EventListener {
 	}
 
 	public void dispose() {
-		imageProvider.removeEventListener(this);
-		imageProvider.stop();
+		if (imageProvider != null) {
+			imageProvider.removeEventListener(this);
+			imageProvider.stop();
+		}
 		if (g2 != null) {
 			g2.dispose();
 		}
@@ -121,6 +125,9 @@ public class MrImage extends PImage implements EventListener {
 	public void eventOccurred(Event e) {
 		if (e instanceof ImageUpdateEvent) {
 			updateImage(((ImageProvider) e.getSource()).getImageData());
+		} else if (e instanceof ServiceEvent
+				&& ((ServiceEvent) e).getStatus() == ServiceStatus.DISPOSED) {
+			imageProvider = null;
 		}
 	}
 
@@ -137,7 +144,7 @@ public class MrImage extends PImage implements EventListener {
 				for (int y = 0; y < cropH; y++) {
 					for (int x = 0; x < cropW; x++) {
 						pixels[index++] =
-							 (data[byteIndex++] & 0xff)
+							(data[byteIndex++] & 0xff)
 							|((data[byteIndex++] & 0xff) << 8)
 							|((data[byteIndex++] & 0xff) << 16);
 					}
@@ -148,7 +155,7 @@ public class MrImage extends PImage implements EventListener {
 				final int dataLength = dataWidth * dataHeight;
 				while (index < dataLength) {
 					pixels[index++] =
-						 (data[byteIndex++] & 0xff)
+						(data[byteIndex++] & 0xff)
 						|((data[byteIndex++] & 0xff) << 8)
 						|((data[byteIndex++] & 0xff) << 16);
 				}

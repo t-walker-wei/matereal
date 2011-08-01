@@ -101,8 +101,8 @@ public class EntityImpl implements Entity {
 		if (!isDisposed() && !Matereal.getInstance().isDisposing()) {
 			distributeEvent(new EntityEvent(this, EntityStatus.DISPOSED));
 			Matereal.getInstance().unregisterEntity(this);
-			listeners.clear();
 		}
+		listeners.clear();
 		isDisposed = true;
 	}
 
