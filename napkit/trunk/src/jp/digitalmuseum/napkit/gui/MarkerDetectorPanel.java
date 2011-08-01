@@ -200,8 +200,10 @@ public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 
 	public void dispose() {
 		setEnabled(false);
-		markerDetector.removeEventListener(eventListener);
-		markerDetector = null;
+		if (markerDetector != null) {
+			markerDetector.removeEventListener(eventListener);
+			markerDetector = null;
+		}
 	}
 
 	/**

@@ -12,7 +12,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
@@ -121,8 +120,7 @@ public class DifferentialWheelsSlider extends JFrame {
 	 */
 	public static void main(String[] args) {
 
-		final PhysicalRobot robot =
-				new Noopy2("btspp://646E6C00DCB2");
+		final PhysicalRobot robot = RobotInfo.getRobot();
 		final DifferentialWheelsController wheels =
 				robot.requestResource(DifferentialWheelsController.class, null);
 		robot.connect();

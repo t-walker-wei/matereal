@@ -1,25 +1,21 @@
+package marker;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.geom.Rectangle2D;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.entity.EntityImpl;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.gui.utils.EntityPainter;
 import jp.digitalmuseum.mr.service.MarkerDetector;
 import jp.digitalmuseum.mr.service.Camera;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
-import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
+import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
+import jp.digitalmuseum.napkit.gui.MarkerEntityPanel;
 import jp.digitalmuseum.utils.Array;
 import jp.digitalmuseum.utils.ScreenPosition;
 
@@ -28,20 +24,19 @@ import jp.digitalmuseum.utils.ScreenPosition;
  *
  * @author Jun KATO
  */
-public class DetectMarkerAndPaintEntity {
+public class DetectMarker {
 
 	public static void main(String[] args) {
-		new DetectMarkerAndPaintEntity();
+		new DetectMarker();
 	}
 
-	public DetectMarkerAndPaintEntity() {
+	public DetectMarker() {
 
 		// Run a camera.
 		// Let users select a device to capture images.
 		final String identifier = (String) JOptionPane.showInputDialog(null,
 				"Select a device to capture images.", "Device list",
-				JOptionPane.QUESTION_MESSAGE, null, new VideoCaptureFactoryImpl()
-						.queryIdentifiers(), null);
+				JOptionPane.QUESTION_MESSAGE, null, Camera.queryIdentifiers(), null);
 		Camera camera;
 		if ((identifier != null) && (identifier.length() > 0)) {
 			camera = new Camera(identifier);
@@ -53,22 +48,20 @@ public class DetectMarkerAndPaintEntity {
 
 		// Run a marker detector.
 		final MarkerDetector detector = new MarkerDetector();
-		detector.loadCameraParameter("calib_qcam.dat");
+		detector.setImageProvider(camera);
 		detector.start();
 
 		// Show a configuration window.
-		final JFrame configFrame = new DisposeOnCloseFrame(new TypicalMDCPane(detector));
+		final JFrame configFrame = new DisposeOnCloseFrame(new MarkerDetectorPanel(detector));
+		configFrame.setSize(640, 480);
+
+		// Show a marker/entity panel.
+		final JFrame markerFrame = new DisposeOnCloseFrame(new MarkerEntityPanel(detector));
+		markerFrame.setSize(640, 480);
 
 		// Detect a marker.
-		final NapMarker marker = new NapMarker("markers\\4x4_78.patt", 45);
-		final Entity dummy = new EntityImpl("test") {
-			private static final long serialVersionUID = -4798999695959433895L;
-			public Shape getShape() { return new Rectangle2D.Double(-10, -10, 20, 20); }
-		};
-		detector.addMarker(marker, dummy);
-
-		// Initialize a painter
-		final EntityPainter painter = new EntityPainter();
+		final NapMarker marker = MarkerInfo.getRobotMarker();
+		detector.addMarker(marker);
 
 		// Show detection results in real-time.
 		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(
@@ -103,9 +96,6 @@ public class DetectMarkerAndPaintEntity {
 							drawString(g2, "Position: "+point, point.getX()+64, point.getY()+56);
 						}
 
-						// Paint a entity
-						painter.paint(g2, dummy);
-
 						// Draw detected number of squares.
 						drawString(g2, "detected: "+(results == null ? 0 : results.size()),
 								10, getHeight()-10);
@@ -128,6 +118,7 @@ public class DetectMarkerAndPaintEntity {
 			private static final long serialVersionUID = 1L;
 			@Override public void dispose() {
 				configFrame.dispose();
+				markerFrame.dispose();
 				super.dispose();
 				Matereal.getInstance().dispose();
 			}

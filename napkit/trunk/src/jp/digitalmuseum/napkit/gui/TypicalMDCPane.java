@@ -82,6 +82,10 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 				}
 			}
 		};
+		if (markerDetector.getImageProvider() != null &&
+				markerDetector.getImageProvider() instanceof CoordProvider) {
+			updateCoordsTab();
+		}
 		detector.addEventListener(eventListener);
 	}
 
@@ -97,16 +101,18 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 	}
 
 	private void updateCoordsTab() {
-		final ImageProvider imageProvider = markerDetector.getImageProvider();
-		if (!(imageProvider instanceof CoordProvider)) { return; }
-		final CoordProvider coordinate = (CoordProvider) imageProvider;
-		coordProviderPanel = new CoordProviderPanel(coordinate);
-		if (coordProvider != null) {
-			removeTabAt(2);
-			coordProviderPanel.dispose();
+		ImageProvider imageProvider = markerDetector.getImageProvider();
+		if (imageProvider instanceof CoordProvider) {
+			CoordProvider coordinate = (CoordProvider) imageProvider;
+			coordProviderPanel = new CoordProviderPanel(coordinate);
+			if (coordProvider != null) {
+				removeTabAt(2);
+				coordProviderPanel.dispose();
+			}
+			addTab(Messages.getString("TypicalMDCPane.worldCoord"), coordProviderPanel);
+			coordProvider = coordinate;
+			return;
 		}
-		addTab(Messages.getString("TypicalMDCPane.worldCoord"), coordProviderPanel);
-		coordProvider = coordinate;
 	}
 
 	public void dispose() {
@@ -115,8 +121,10 @@ public class TypicalMDCPane extends JTabbedPane implements DisposableComponent {
 			coordProviderPanel.dispose();
 		}
 		markerDetectorPanel.dispose();
-		markerDetector.removeEventListener(eventListener);
-		markerDetector = null;
+		if (markerDetector != null) {
+			markerDetector.removeEventListener(eventListener);
+			markerDetector = null;
+		}
 		coordProvider = null;
 	}
 }

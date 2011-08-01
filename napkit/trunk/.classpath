@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src.sample"/>
 	<classpathentry kind="src" path="lib/NyARToolkit-2.5.2/src"/>
+	<classpathentry kind="src" path="src.test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/capture"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/connector"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/matereal"/>

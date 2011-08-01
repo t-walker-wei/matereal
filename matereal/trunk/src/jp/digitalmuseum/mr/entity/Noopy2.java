@@ -107,8 +107,8 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 		}
 		wheels = new NoopyWheels(this);
 		shape = new RoundRectangle2D.Double(
-				-WIDTH/2, -HEIGHT/2,
-				WIDTH, HEIGHT,
+				-HEIGHT*3/4, -WIDTH/2,
+				HEIGHT, WIDTH,
 				3, 3);
 		extensions = new HashSet<NoopyExtension>();
 		super.initialize();

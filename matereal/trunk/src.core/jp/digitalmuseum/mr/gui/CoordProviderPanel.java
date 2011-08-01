@@ -140,8 +140,10 @@ public class CoordProviderPanel extends JPanel implements DisposableComponent {
 
 	public void dispose() {
 		setEnabled(false);
-		source.removeEventListener(eventListener);
-		source = null;
+		if (source != null) {
+			source.removeEventListener(eventListener);
+			source = null;
+		}
 	}
 
 	public CoordProvider getSource() {

@@ -1,3 +1,4 @@
+package marker;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -8,7 +9,6 @@ import javax.swing.JOptionPane;
 import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.FPSAnimator;
 
-import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.service.MarkerDetector;
@@ -16,7 +16,6 @@ import jp.digitalmuseum.mr.service.Camera;
 import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapJoglUtils;
-import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
 import jp.digitalmuseum.utils.Array;
 
@@ -54,7 +53,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 		String identifier = (String) JOptionPane.showInputDialog(null,
 				"Select a device to capture images.", "Device list",
 				JOptionPane.QUESTION_MESSAGE, null,
-				new VideoCaptureFactoryImpl().queryIdentifiers(), null);
+				Camera.queryIdentifiers(), null);
 		if ((identifier != null) && (identifier.length() > 0)) {
 			camera = new Camera(identifier);
 		} else {
@@ -65,7 +64,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 
 		// Run a marker detector.
 		detector = new MarkerDetector();
-		detector.loadCameraParameter("calib_qcam.dat");
+		detector.setImageProvider(camera);
 		detector.setInterval(1000/fps);
 		detector.setTransMatEnabled(true);
 
@@ -75,8 +74,7 @@ public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 		configFrame.setSize(640, 480);
 
 		// Detect a marker.
-		detector.addMarker(new NapMarker("markers\\4x4_78.patt", 45));
-		detector.addMarker(new NapMarker("markers\\4x4_907.patt", 45));
+		detector.addMarker(MarkerInfo.getRobotMarker());
 		detector.start(serviceGroup);
 
 		// Show detection results in real-time.

@@ -6,7 +6,6 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
 import jp.digitalmuseum.mr.resource.WheelsController;
 
@@ -39,7 +38,7 @@ public class SimpleButtonController extends JFrame {
 
 		Matereal.getInstance().showDebugFrame();
 
-		robot = new Noopy2("btspp://646E6C00DCB2");
+		robot = RobotInfo.getRobot();
 		robot.connect();
 
 		wheels = robot.requestResource(WheelsController.class, this);

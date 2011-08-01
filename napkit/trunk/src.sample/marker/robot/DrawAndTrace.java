@@ -1,3 +1,4 @@
+package marker.robot;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -15,15 +16,9 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.PhysicalBox;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithCleanerBrush;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
@@ -34,7 +29,6 @@ import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.mr.task.TracePathLoosely;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
-import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.Position;
 import jp.digitalmuseum.utils.ScreenPosition;
 
@@ -69,7 +63,7 @@ public class DrawAndTrace {
 		final String identifier = (String) JOptionPane.showInputDialog(null,
 				"Select a device to capture images.", "Device list",
 				JOptionPane.QUESTION_MESSAGE, null,
-				new VideoCaptureFactoryImpl().queryIdentifiers(), null);
+				Camera.queryIdentifiers(), null);
 		if ((identifier != null) && (identifier.length() > 0)) {
 			camera = new Camera(identifier);
 		} else {
@@ -81,7 +75,6 @@ public class DrawAndTrace {
 
 		// Run a marker detector.
 		detector = new MarkerDetector();
-		detector.loadCameraParameter("calib_qcam.dat");
 		detector.setImageProvider(camera);
 		detector.start();
 
@@ -90,7 +83,7 @@ public class DrawAndTrace {
 				detector));
 
 		// Initialize a robot.
-		robot = new Noopy2("btspp://646E6C00DCA3");
+		robot = RobotInfo.getRobot();
 
 		// Initialize boxes.
 		detector.addMarker(new NapMarker("markers\\4x4_48.patt", 5.5), robot);
@@ -101,6 +94,7 @@ public class DrawAndTrace {
 
 			@Override public void dispose() {
 				super.dispose();
+				configFrame.dispose();
 				Matereal.getInstance().dispose();
 			}
 
@@ -155,7 +149,7 @@ public class DrawAndTrace {
 				screenPath.add(new ScreenPosition(e.getX(), e.getY()));
 
 				synchronized (robot) {
-					resample(20);
+					resample(30);
 					List<Position> path = new ArrayList<Position>();
 					path2D.reset();
 					boolean isFirst = true;
@@ -241,6 +235,7 @@ public class DrawAndTrace {
 		// Otherwise instantiate task and assign it to the robot.
 		else {
 			tracePath = new TracePathLoosely(path);
+			// tracePath.setAllowedDistance(5);
 			if (tracePath.assign(robot)) {
 				tracePath.start();
 			} else {
