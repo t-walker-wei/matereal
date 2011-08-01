@@ -4,7 +4,7 @@
 	<import file="../napkit/build.xml"/>
 
 	<!-- Zip -->
-	<target name="matereal-full-zip" depends="update">
+	<target name="matereal-full-zip" depends="update, matereal-version">
 		<zip destfile="matereal-${matereal.version}-full.zip" filesonly="true">
 
 			<zipfileset dir="./lib/bluecove/"
@@ -16,11 +16,6 @@
 					includes="README.txt" fullpath="README_rxtx.txt" />
 			<zipfileset dir="./lib/rxtx-2.1-7-bins-r2/"
 					includes="*.jar *.dll" />
-
-			<zipfileset dir="./lib/piccolo/"
-					includes="README.txt" fullpath="README_piccolo.txt" />
-			<zipfileset dir="./lib/piccolo/"
-					includes="*.jar" />
 
 			<zipfileset dir="./lib/matereal/connector/"
 					includes="README.txt" fullpath="README_connector.txt" />

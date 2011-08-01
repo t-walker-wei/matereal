@@ -1,15 +1,15 @@
 Webcam capture package - capture
 Copyright (C) 2010 Jun KATO
 
-version 1.0.2
+version 1.0.3
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Webcam capture package, or simply "capture", is a simple
 package for capturing real-time images using webcams.
 It uses
- - DirectShow for Windows
- - QuickTime for Mac OSX
- - Java Media Framework (Video4Linux) for Linux
+- DirectShow for Windows
+- QuickTime for Mac OSX
+- Java Media Framework (Video4Linux) for Linux
 to capture images.
 
 "capture" is distributed under MPL 1.1/GPL 2.0/LGPL 2.1 triple
