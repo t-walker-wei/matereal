@@ -1,3 +1,4 @@
+package hakoniwa;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -8,62 +9,52 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.*;
 import jp.digitalmuseum.mr.gui.utils.VectorFieldPainter;
 import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
 import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
 import jp.digitalmuseum.mr.message.ImageUpdateEvent;
 import jp.digitalmuseum.mr.resource.Wheels;
 import jp.digitalmuseum.mr.resource.WheelsController;
+import jp.digitalmuseum.mr.task.Follow;
 import jp.digitalmuseum.mr.task.Move;
 import jp.digitalmuseum.mr.task.Task;
 import jp.digitalmuseum.mr.task.VectorFieldTask;
-import jp.digitalmuseum.mr.vectorfield.CollisionAvoidanceField;
 import jp.digitalmuseum.utils.Location;
 import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
- * Click to navigate a robot without collision.
- * Test of assigning multiple vector fields to a robot.
+ * Click to navigate one robot. The other robot will follow him.
+ * Test of assigning tasks to robots.
  *
  * @author Jun KATO
  */
-public class ClickAndRunWithoutCollision {
+public class ClickAndFollow {
 	private Hakoniwa hakoniwa;
-	private VectorFieldTask moveWithCollisionAvoidance = null;
+	private VectorFieldTask follow;
 	private ScreenPosition goal = null;
 
 	public static void main(String[] args) {
-		new ClickAndRunWithoutCollision();
+		new ClickAndFollow();
 	}
 
-	public ClickAndRunWithoutCollision() {
+	public ClickAndFollow() {
 
 		// Run hakoniwa.
 		hakoniwa = new Hakoniwa();
 		hakoniwa.start();
 
-		final Robot robot;
-		robot = new HakoniwaRobotWithPen("My robot", new Location(hakoniwa.getRealWidth()/2 - 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
+		final Robot followee;
+		final Robot follower;
+		followee = new HakoniwaRobotWithPen("followee", new Location(hakoniwa.getRealWidth()/2 - 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
+		follower = new HakoniwaRobotWithPen("follower", new Location(hakoniwa.getRealWidth()/2 + 30, hakoniwa.getRealHeight()/2, -Math.PI*3/4));
 
-		Entity[] entities = new Entity[5];
-		final double x = hakoniwa.getRealWidth()/2;
-		final double y = hakoniwa.getRealHeight()/2;
-		final double r = 240;
-		for (int i = 0; i < entities.length; i ++) {
-			double theta = Math.PI*i/(entities.length-1);
-			entities[i] = new HakoniwaCylinder(
-					"Cylinder "+i,
-					x + Math.cos(theta) * r,
-					y - Math.sin(theta) * r,
-					theta,
-					20);
-		}
+		follow = new Follow(followee);
+		follow.assign(follower);
+		follow.start();
 
 		// Make a window for showing captured image.
 		final DrawableFrame frame = new DrawableFrame() {
@@ -84,7 +75,7 @@ public class ClickAndRunWithoutCollision {
 
 			@Override
 			public void paint2D(Graphics2D g) {
-				final Task task = robot.getAssignedTask(WheelsController.class);
+				final Task task = followee.getAssignedTask(WheelsController.class);
 				g.setColor(Color.white);
 				g.fillRect(0, 0, getFrameWidth(), getFrameHeight());
 				final Composite comp = g.getComposite();
@@ -92,7 +83,7 @@ public class ClickAndRunWithoutCollision {
 				// Draw vectors.
 				g.setComposite(alphaComp);
 				g.setColor(Color.red);
-				vectorFieldPainter.paint(moveWithCollisionAvoidance, g);
+				vectorFieldPainter.paint(follow, g);
 				g.setComposite(alphaComp2);
 				g.setColor(Color.black);
 				g.fillRect(0, 0, getFrameWidth(), 35);
@@ -136,12 +127,11 @@ public class ClickAndRunWithoutCollision {
 				int x = e.getX(), y = e.getY();
 				goal = new ScreenPosition(x, y);
 
-				Task task = robot.getAssignedTask(Wheels.class);
+				Task task = followee.getAssignedTask(Wheels.class);
 				if (task != null) task.stop();
 
-				moveWithCollisionAvoidance = new Move(hakoniwa.screenToReal(goal));
-				moveWithCollisionAvoidance.add(new CollisionAvoidanceField(robot));
-				if (moveWithCollisionAvoidance.assign(robot)) moveWithCollisionAvoidance.start();
+				Move move = new Move(hakoniwa.screenToReal(goal));
+				if (move.assign(followee)) move.start();
 			}
 		});
 

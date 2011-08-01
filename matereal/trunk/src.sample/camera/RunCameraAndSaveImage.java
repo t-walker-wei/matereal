@@ -1,3 +1,4 @@
+package camera;
 import java.awt.image.RenderedImage;
 import java.io.File;
 

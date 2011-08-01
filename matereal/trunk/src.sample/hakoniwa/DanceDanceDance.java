@@ -1,3 +1,4 @@
+package hakoniwa;
 import javax.swing.SwingUtilities;
 
 import jp.digitalmuseum.mr.Matereal;

@@ -56,7 +56,7 @@ public class RobotCalligraphy {
 		}
 
 		// Prepare a workflow graph.
-		final Workflow ad = new Workflow();
+		final Workflow workflow = new Workflow();
 
 		// Show the main window.
 		SwingUtilities.invokeLater(new Runnable() {
@@ -65,7 +65,7 @@ public class RobotCalligraphy {
 				// Initialize wizard components.
 				StrokePainterPanel strokePainterPanel = new StrokePainterPanel(hakoniwa);
 				strokePainterPanel.setStroke(new BasicStroke(3));
-				StrokePlayerPanel strokePlayerPanel = new StrokePlayerPanel(hakoniwa, ad);
+				StrokePlayerPanel strokePlayerPanel = new StrokePlayerPanel(hakoniwa, workflow);
 				strokePlayerPanel.setPathsProvider(strokePainterPanel);
 				strokePlayerPanel.setStroke(strokePainterPanel.getStroke());
 				strokePlayerPanel.setRobots(robots);

@@ -1,3 +1,4 @@
+package hakoniwa;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Robot;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
@@ -16,20 +17,13 @@ import jp.digitalmuseum.utils.ScreenPosition;
  *
  * @author Jun KATO
  */
-public class UseWorkflowToGoForward {
+public class GoForwardWithWorkflow {
 
 	public static void main(String[] args) {
-
-		//
-		Matereal.getInstance().showDebugFrame();
 
 		// Run hakoniwa.
 		Hakoniwa hakoniwa = new Hakoniwa(640, 480);
 		hakoniwa.start();
-
-		// Connect to a robot. Instantiate a task.
-		Robot robot = new HakoniwaRobot("Hakobot",
-				hakoniwa.screenToReal(new ScreenPosition(320, 240)));
 
 		// Make a window for showing captured image.
 		DisposeOnCloseFrame frame = new DisposeOnCloseFrame(new ImageProviderPanel(hakoniwa) {
@@ -41,6 +35,11 @@ public class UseWorkflowToGoForward {
 			}
 		});
 		frame.setResizable(false);
+		frame.setFrameSize(hakoniwa.getWidth(), hakoniwa.getHeight());
+
+		// Connect to a robot. Instantiate a task.
+		Robot robot = new HakoniwaRobot("Hakobot",
+				hakoniwa.screenToReal(new ScreenPosition(320, 240)));
 
 		// Construct a workflow graph.
 		Workflow workflow = new Workflow();

@@ -51,7 +51,7 @@ public class BringACupOfTea {
 		final Kettle kettle = new Kettle("Kettle");
 
 		// Entities and marker detector are already initialized.
-		final Workflow ad = new Workflow();
+		final Workflow workflow = new Workflow();
 		Action push = new Action(robot, new Push(mug, hakoniwa.getPosition(kettle)));
 		Action boil = new Action(kettle, new Boil());
 		Action pour = new Action(kettle, new Pour());
@@ -59,18 +59,18 @@ public class BringACupOfTea {
 		Action stop2 = new Action(kettle, new Stop());
 		Fork fork = new Fork(push, boil);
 		Join join = new Join(push, boil);
-		ad.add(new Node[] { fork, push, boil, join, pour, stop, stop2 });
-		ad.addTransition(new Transition(fork, join));
-		ad.addTransition(new Transition(join, pour));
-		ad.addTransition(new TimeoutTransition(pour, stop, 5000));
-		ad.setInitialNode(fork);
-		ad.start();
+		workflow.add(new Node[] { fork, push, boil, join, pour, stop, stop2 });
+		workflow.addTransition(new Transition(fork, join));
+		workflow.addTransition(new Transition(join, pour));
+		workflow.addTransition(new TimeoutTransition(pour, stop, 5000));
+		workflow.setInitialNode(fork);
+		workflow.start();
 		// Hot water will be poured into the mug for five seconds.
 
 		// Show a workflow graph.
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				WorkflowViewPane pane = new WorkflowViewPane(ad);
+				WorkflowViewPane pane = new WorkflowViewPane(workflow);
 				final DisposeOnCloseFrame viewer = new DisposeOnCloseFrame(pane);
 				viewer.setFrameSize(640, 480);
 

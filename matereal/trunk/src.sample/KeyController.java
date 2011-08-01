@@ -4,10 +4,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.MindstormsNXT;
+import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
 import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.entity.Roomba;
 import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
 import jp.digitalmuseum.mr.gui.DrawableFrame;
 import jp.digitalmuseum.mr.gui.ImageProviderPanel;
@@ -47,8 +46,7 @@ public class KeyController {
 		if (DEBUG) {
 			robot = initHakoniwa();
 		} else {
-			// PhysicalRobot physicalRobot = new Roomba("btspp://00066600D69A");
-			PhysicalRobot physicalRobot = new MindstormsNXT("btspp://00165305B308");
+			PhysicalRobot physicalRobot = new Noopy2("btspp://646E6C00DCB2");
 			physicalRobot.connect();
 			robot = physicalRobot;
 		}

@@ -1,5 +1,4 @@
-import javax.swing.JOptionPane;
-
+package camera;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.gui.*;
 import jp.digitalmuseum.mr.service.Camera;
@@ -9,20 +8,16 @@ import jp.digitalmuseum.mr.service.Camera;
  *
  * @author Jun KATO
  */
-public class RunCameraWithDialog {
+public class RunCamera {
 
 	public static void main(String[] args) {
-		new RunCameraWithDialog();
+		new RunCamera();
 	}
 
-	public RunCameraWithDialog() {
+	public RunCamera() {
 
 		// Run a camera.
-		// Let users select a device to capture images.
-		String identifier = (String) JOptionPane.showInputDialog(null,
-				"Select a device to capture images.", "Device list",
-				JOptionPane.QUESTION_MESSAGE, null, Camera.queryIdentifiers(), null);
-		Camera camera = new Camera(identifier);
+		Camera camera = new Camera();
 		camera.start();
 
 		// Make and show a window for showing captured image.

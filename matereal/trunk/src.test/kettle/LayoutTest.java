@@ -39,7 +39,7 @@ public class LayoutTest {
 		Kettle kettle = new Kettle("Kettle");
 
 		// Entities and marker detector are already initialized.
-		Workflow ad = new Workflow();
+		Workflow workflow = new Workflow();
 		Action push = new Action(robot, new Push(mug, hakoniwa.getPosition(kettle)));
 		Action boil = new Action(kettle, new Boil());
 		Action boil2 = new Action(kettle, new Boil());
@@ -50,16 +50,16 @@ public class LayoutTest {
 		Action stop2 = new Action(kettle, new Stop());
 		Fork fork = new Fork(push, boil);
 		Join join = new Join(push, boil4, stop);
-		ad.add(new Node[] {fork, push, boil, boil2, boil3, boil4, join, pour, stop, stop2});
-		ad.addTransition(new TimeoutTransition(push, stop, 10000));
-		ad.addTransition(new Transition(fork, join));
-		ad.addTransition(new Transition(join, pour));
-		ad.addTransition(new Transition(boil, boil2));
-		ad.addTransition(new Transition(boil2, boil3));
-		ad.addTransition(new Transition(boil3, boil4));
-		ad.addTransition(new TimeoutTransition(pour, stop2, 5000));
-		ad.setInitialNode(fork);
-		return ad.getInitialNode();
+		workflow.add(new Node[] {fork, push, boil, boil2, boil3, boil4, join, pour, stop, stop2});
+		workflow.addTransition(new TimeoutTransition(push, stop, 10000));
+		workflow.addTransition(new Transition(fork, join));
+		workflow.addTransition(new Transition(join, pour));
+		workflow.addTransition(new Transition(boil, boil2));
+		workflow.addTransition(new Transition(boil2, boil3));
+		workflow.addTransition(new Transition(boil3, boil4));
+		workflow.addTransition(new TimeoutTransition(pour, stop2, 5000));
+		workflow.setInitialNode(fork);
+		return workflow.getInitialNode();
 	}
 
 }

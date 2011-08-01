@@ -48,7 +48,7 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 	private JCheckBox jStrokeCheckBox = null;
 	private transient CoordProvider imageProvider;
 	private transient PathsProvider pathProvider;
-	private transient Workflow ad;
+	private transient Workflow workflow;
 	private transient Robot[] robots;
 	private transient Stroke stroke;  //  @jve:decl-index=0:
 	private transient List<Path> paths;
@@ -57,10 +57,10 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 	/**
 	 * This is the default constructor
 	 */
-	public StrokePlayerPanel(CoordProvider coordProvider, Workflow ad) {
+	public StrokePlayerPanel(CoordProvider coordProvider, Workflow workflow) {
 		super();
 		this.imageProvider = coordProvider;
-		this.ad = ad;
+		this.workflow = workflow;
 		initialize();
 	}
 
@@ -136,16 +136,16 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 					Action head = new Action(robots[r], new Move(p.get(0)));
 					Action a = new Action(robots[r], new Rotate(p.get(1)));
 					Action b = new Action(robots[r], new DrawPath(p));
-					ad.add(head);
-					ad.add(a);
-					ad.add(b);
+					workflow.add(head);
+					workflow.add(a);
+					workflow.add(b);
 					if (tail == null) {
 						inits[r] = head;
 					} else {
-						ad.addTransition(new Transition(tail, head));
+						workflow.addTransition(new Transition(tail, head));
 					}
-					ad.addTransition(new Transition(head, a));
-					ad.addTransition(new Transition(a, b));
+					workflow.addTransition(new Transition(head, a));
+					workflow.addTransition(new Transition(a, b));
 					tail = b;
 				}
 				tails[r] = tail;
@@ -153,10 +153,10 @@ public class StrokePlayerPanel extends JPanel implements WizardComponent {
 			}
 			Fork fork = new Fork(inits);
 			Join join = new Join(tails);
-			ad.add(fork, join);
-			ad.addTransition(new Transition(fork, join));
-			ad.setInitialNode(fork);
-			ad.start();
+			workflow.add(fork, join);
+			workflow.addTransition(new Transition(fork, join));
+			workflow.setInitialNode(fork);
+			workflow.start();
 		}
 	}
 
