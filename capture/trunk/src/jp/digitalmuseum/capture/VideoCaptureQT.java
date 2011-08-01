@@ -62,6 +62,7 @@ import quicktime.util.RawEncodedImage;
  *
  * @author Jun KATO
  */
+@SuppressWarnings("deprecation")
 public class VideoCaptureQT extends VideoCaptureAbstractImpl {
 	private static String IDENTIFIER_PREFIX = "channel://";
 	/** Whether VM is running on Windows or not. */

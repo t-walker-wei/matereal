@@ -13,7 +13,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/capture/lib/jmf/jmf-2_0-spec.zip!/jmf20-apidocs"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/qtj/QTJava.zip"/>
 	<classpathentry kind="lib" path="lib/p5/core.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

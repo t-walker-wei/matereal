@@ -52,15 +52,10 @@ public class Boil extends TaskAbstractImpl {
 	}
 	protected void onStart() {
 		core = getResourceMap().get(KettleCore.class);
-		// core.heat(true);
+		core.heat(true);
 	}
 	public void run() {
-		/*
 		if (core.getTemperature() > 90) {
-			finish();
-		}
-		*/
-		if (getAliveTime() > 5000) {
 			finish();
 		}
 	}

@@ -11,11 +11,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/matereal/napkit/napkit-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/dsj/dsj.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="matereal-samples/lib/dsj"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/matereal/matereal/matereal-2.1.0-b141.jar"/>
 	<classpathentry kind="lib" path="lib/jogl-1.1.1a/gluegen-rt.jar">
 		<attributes>

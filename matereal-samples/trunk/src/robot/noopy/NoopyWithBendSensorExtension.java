@@ -1,6 +1,8 @@
 package robot.noopy;
 import java.util.List;
 
+import robot.RobotInfo;
+
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.Noopy2.BendSensor;
@@ -18,7 +20,7 @@ public class NoopyWithBendSensorExtension {
 	public NoopyWithBendSensorExtension() {
 
 		// ベンドセンサつきのNoopy
-		Noopy2 noopy = new Noopy2("btspp://646E6C00DCB2");
+		Noopy2 noopy = RobotInfo.getRobot();
 		noopy.addExtension(BendSensor.class);
 
 		// Noopyにセンサの値を読み取り続けるタスクを割り当てる

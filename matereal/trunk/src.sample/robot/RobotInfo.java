@@ -41,6 +41,6 @@ import jp.digitalmuseum.mr.entity.Noopy2;
 public class RobotInfo {
 
 	public static Noopy2 getRobot() {
-		return new Noopy2("btspp://646E6C00DCB2");
+		return RobotInfo.getRobot();
 	}
 }
