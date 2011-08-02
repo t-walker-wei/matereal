@@ -156,7 +156,7 @@ public class BluetoothDiscoveryPanel extends JPanel {
 			public void run() {
 				try {
 					DefaultTableModel model = (DefaultTableModel) getJTable().getModel();
-					for (int i = 0; i < model.getRowCount(); i ++) {
+					while (model.getRowCount() > 0) {
 						model.removeRow(0);
 					}
 					getJProgressBar().setValue(10);
