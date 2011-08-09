@@ -4,8 +4,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Queue;
+
+import javax.swing.JOptionPane;
 
 import jp.digitalmuseum.capture.VideoCapturePackedUDP;
 import jp.digitalmuseum.mr.Matereal;
@@ -22,7 +24,7 @@ import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 class CapturePackedUDPServer {
 	public final static int WIDTH = 320;
 	public final static int HEIGHT = 240;
-	public static final int PORT = 7777;
+	public final static int PORT = 7777;
 	private DatagramSocket socket;
 	private InetSocketAddress remoteAddress;
 	private Camera camera;
@@ -33,7 +35,13 @@ class CapturePackedUDPServer {
 
 	public CapturePackedUDPServer() {
 
-		camera = new Camera(WIDTH, HEIGHT);
+		// Run a camera.
+		// Let users select a device to capture images.
+		String identifier = (String) JOptionPane.showInputDialog(null,
+				"Select a device to capture images.", "Device list",
+				JOptionPane.QUESTION_MESSAGE, null, Camera.queryIdentifiers(), null);
+		camera = new Camera(identifier);
+		camera.setSize(WIDTH, HEIGHT);
 		camera.start();
 
 		remoteAddress = new InetSocketAddress("127.0.0.1", PORT);
@@ -46,8 +54,9 @@ class CapturePackedUDPServer {
 		}
 
 		new ServiceAbstractImpl() {
-			final private Queue<DatagramPacket> packets =
-					new LinkedList<DatagramPacket>();
+			private static final long serialVersionUID = -626221097758274630L;
+			private Queue<DatagramPacket> packets =
+					new ArrayDeque<DatagramPacket>();
 			public synchronized void run() {
 					try {
 						VideoCapturePackedUDP.explode(camera.getImage(), remoteAddress, packets);
@@ -56,6 +65,8 @@ class CapturePackedUDPServer {
 							socket.send(packet);
 						}
 						packets.clear();
+					} catch (InterruptedException e) {
+						// Do nothing.
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -63,7 +74,7 @@ class CapturePackedUDPServer {
 		}.start();
 
 		// Make and show a window for showing captured image.
-		final DisposeOnCloseFrame frame = new DisposeOnCloseFrame(
+		DisposeOnCloseFrame frame = new DisposeOnCloseFrame(
 				new ImageProviderPanel(camera)) {
 			private static final long serialVersionUID = 1L;
 			@Override public void dispose() {
@@ -71,6 +82,7 @@ class CapturePackedUDPServer {
 				Matereal.getInstance().dispose();
 			}
 		};
+
 		frame.setTitle("Server");
 		frame.setResizable(false);
 		frame.setFrameSize(camera.getWidth(), camera.getHeight());
