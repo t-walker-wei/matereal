@@ -19,16 +19,26 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.TreeSet;
 
 import jp.digitalmuseum.mr.service.Service;
 import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 
 public class VideoCapturePackedUDP extends VideoCaptureAbstractImpl {
-	static public int DEFAULT_TIMEOUT = 1000;
-	static private int udpid;
-	static private int id;
+
+	public static int DEFAULT_TIMEOUT = 1000;
+	private static int udpid;
+	private static int id;
+
+	private final static ByteArrayOutputStream outStream;
+	private final static DataOutputStream out;
+
+	static {
+		outStream = new ByteArrayOutputStream();
+		out = new DataOutputStream(outStream);
+	}
+
 	private Service packetReceiver;
 	private DatagramSocket socket;
 	private BufferedImage image;
@@ -48,18 +58,11 @@ public class VideoCapturePackedUDP extends VideoCaptureAbstractImpl {
 		packetReceiver.stop();
 	}
 
-	/*
-	@Override
-	synchronized public BufferedImage grabFrame() {
-		return image;
-	}
-	*/
-
 	@Override
 	synchronized byte[] tryGrabFrameData() {
 		if (image != null) {
 			if (image.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-				final BufferedImage bgrImage =
+				BufferedImage bgrImage =
 						new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 				bgrImage.getGraphics().drawImage(image, 0, 0, null);
 				image = bgrImage;
@@ -107,41 +110,48 @@ public class VideoCapturePackedUDP extends VideoCaptureAbstractImpl {
 	}
 
 	private class PacketReceiver extends ServiceAbstractImpl {
-		private TreeSet<ImagePacket> packets = new TreeSet<ImagePacket>();
-		final private ImagePacket packet = new ImagePacket();
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		private static final long serialVersionUID = 8777204912730057359L;
+		private ByteArrayOutputStream outStream;
 		private DatagramPacket datagramPacket;
+		private Queue<ImagePacket> packets;
+		private ImagePacket imagePacket;
 		private short currentId = 0;
 
 		public PacketReceiver() {
-			datagramPacket = new DatagramPacket(new byte[ImagePacket.MAX_UDPLEN], ImagePacket.MAX_UDPLEN);
+			outStream = new ByteArrayOutputStream();
+			imagePacket = new ImagePacket();
+			packets = new ArrayDeque<ImagePacket>();
+			datagramPacket = new DatagramPacket(
+					new byte[ImagePacket.MAX_UDPLEN],
+					ImagePacket.MAX_UDPLEN);
 		}
 
 		public void run() {
 			try {
+
 				// Receive a packet and parse data.
 				socket.receive(datagramPacket);
-				final ByteArrayInputStream inStream = new ByteArrayInputStream(datagramPacket.getData());
-				final DataInputStream in = new DataInputStream(inStream);
-				packet.read(in);
+				imagePacket.read(
+						new DataInputStream(
+								new ByteArrayInputStream(datagramPacket.getData())));
 
 				// Check packet contents and add it to the set.
-				if (packet.getId() != currentId) {
+				if (imagePacket.getId() != currentId) {
 					packets.clear();
-					currentId = packet.getId();
+					currentId = imagePacket.getId();
 				}
-				packets.add(packet);
+				packets.add(imagePacket);
 
 				// Check whether the hash-map is full or not.
-				if (packets.size() == packet.getPages()) {
+				if (packets.size() == imagePacket.getPages()) {
 					for (ImagePacket p : packets) {
-						out.write(p.getData());
+						outStream.write(p.getData());
 						p.clear();
 					}
 					synchronized (VideoCapturePackedUDP.this) {
-						image = ImageCodec.decodeImage(out.toByteArray());
+						image = ImageCodec.decodeImage(outStream.toByteArray());
 					}
-					out.reset();
+					outStream.reset();
 					packets.clear();
 				}
 
@@ -155,17 +165,19 @@ public class VideoCapturePackedUDP extends VideoCaptureAbstractImpl {
 		}
 	}
 
-	final private static ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-	final private static DataOutputStream out = new DataOutputStream(outStream);
 	public static void explode(BufferedImage source, InetSocketAddress remoteAddress, Queue<DatagramPacket> packets) throws Exception {
-		final byte[] data = ImageCodec.encodeImage(source);
-		final int length = data.length;
-		final short pages = (short) (length / ImagePacket.MAX_DATALEN +
+
+		byte[] data = ImageCodec.encodeImage(source);
+		int length = data.length;
+
+		short pages = (short) (length / ImagePacket.MAX_DATALEN +
 				(length % ImagePacket.MAX_DATALEN != 0 ? 1 : 0));
-		final ImagePacket p = new ImagePacket();
+
+		ImagePacket p = new ImagePacket();
 		p.setId((short) id ++);
 		p.setData(data);
 		p.setPages(pages);
+
 		for (short curpage = 0; curpage < pages; curpage ++) {
 			int curlength = curpage >= pages - 1 ?
 					length % ImagePacket.MAX_DATALEN : ImagePacket.MAX_DATALEN;
@@ -173,9 +185,12 @@ public class VideoCapturePackedUDP extends VideoCaptureAbstractImpl {
 			p.setCurpage(curpage);
 			p.setCurlength(curlength);
 			p.write(out);
-			final DatagramPacket packet = new DatagramPacket(outStream.toByteArray(), outStream.size(), remoteAddress);
+
+			DatagramPacket packet = new DatagramPacket(outStream.toByteArray(), outStream.size(), remoteAddress);
 			packets.add(packet);
+
 			outStream.reset();
 		}
 	}
+
 }
