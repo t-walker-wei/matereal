@@ -268,13 +268,17 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 			}
 			if (rightPower == 0) {
 				getRobot().writeCommand("!DC1BRK");
+				getRobot().writeCommand("!DC3BRK");
 				getRobot().writeCommand("!DC1STP");
+				getRobot().writeCommand("!DC3STP");
 			} else 	if (rightPower > 0) {
 				getRobot().writeCommand(String.format("!SPG%03d", rightPower));
 				getRobot().writeCommand("!DC1CLW");
+				getRobot().writeCommand("!DC3CLW");
 			} else {
 				getRobot().writeCommand(String.format("!SPG%03d", -rightPower));
 				getRobot().writeCommand("!DC1CCW");
+				getRobot().writeCommand("!DC3CCW");
 			}
 			return true;
 		}
