@@ -32,7 +32,7 @@ public class NoopyWithDCMotorExtension {
 	public NoopyWithDCMotorExtension() {
 		super();
 
-		robot = RobotInfo.getRobot();
+		robot = RobotInfo.getNoopyRobot();
 		robot.addExtension(DCMotorController.class, Port.DC3);
 		motor = robot.requestResource(DCMotorController.class, this);
 		speed = motor.getSpeed();

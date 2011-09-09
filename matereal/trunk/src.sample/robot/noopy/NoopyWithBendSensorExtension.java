@@ -20,7 +20,7 @@ public class NoopyWithBendSensorExtension {
 	public NoopyWithBendSensorExtension() {
 
 		// ベンドセンサつきのNoopy
-		Noopy2 noopy = RobotInfo.getRobot();
+		Noopy2 noopy = RobotInfo.getNoopyRobot();
 		noopy.addExtension(BendSensor.class);
 
 		// Noopyにセンサの値を読み取り続けるタスクを割り当てる

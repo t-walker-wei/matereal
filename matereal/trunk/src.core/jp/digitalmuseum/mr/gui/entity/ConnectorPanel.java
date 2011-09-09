@@ -112,7 +112,6 @@ public class ConnectorPanel extends JPanel implements DisposableComponent {
 		this.add(getEditButton(), gridBagConstraints1);
 	}
 
-	@Override
 	public void dispose() {
 		setEnabled(false);
 		physicalRobot = null;

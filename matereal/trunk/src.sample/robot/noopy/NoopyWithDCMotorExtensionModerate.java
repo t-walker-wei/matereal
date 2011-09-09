@@ -36,7 +36,7 @@ public class NoopyWithDCMotorExtensionModerate {
 		super();
 
 		// ロボット初期化
-		robot = RobotInfo.getRobot();
+		robot = RobotInfo.getNoopyRobot();
 		robot.addExtension(DCMotorController.class, Port.DC3);
 		robot.connect();
 

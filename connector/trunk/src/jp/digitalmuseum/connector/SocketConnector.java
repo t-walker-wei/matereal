@@ -93,7 +93,9 @@ public final class SocketConnector extends ConnectorAbstractImpl {
 	public void disconnect() {
 		super.disconnect();
 		try {
-			socket.close();
+			if (isConnected()) {
+				socket.close();
+			}
 		} catch (IOException e) {
 			// Do nothing.
 		}

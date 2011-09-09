@@ -206,18 +206,22 @@ public class NetTansor extends PhysicalRobotAbstractImpl {
 		private static final long serialVersionUID = -1792941087488727942L;
 		private transient BufferedImage image;
 		private transient long lastTime = 0;
-		private URL url;
+		private URL url = null;
 
-		public NetTansorHeadmountedCamera(final NetTansor netTansor) {
+		public NetTansorHeadmountedCamera(NetTansor netTansor) {
 			super(netTansor);
-			try {
-				url = ((NetTansor)getRobot()).getURL();
-			} catch (MalformedURLException e) {
-				throw new IllegalArgumentException(e);
-			}
 		}
 
 		public synchronized BufferedImage getImage() {
+
+			if (url == null) {
+				try {
+					url = ((NetTansor)getRobot()).getURL();
+				} catch (MalformedURLException e) {
+					return null;
+				}
+			}
+
 			long time = System.currentTimeMillis();
 			if (time - lastTime > 50) {
 				try {

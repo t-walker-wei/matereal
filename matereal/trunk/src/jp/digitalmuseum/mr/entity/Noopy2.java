@@ -238,12 +238,10 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 			return success;
 		}
 
-		@Override
 		public int getRecommendedSpeed() {
 			return 50;
 		}
 
-		@Override
 		public int getRecommendedRotationSpeed() {
 			return 30;
 		}
