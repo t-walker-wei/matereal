@@ -21,7 +21,7 @@ public class NoopyWithAnalogSensorExtension {
 	public NoopyWithAnalogSensorExtension() {
 
 		// アナログセンサつきのNoopy
-		Noopy2 noopy = RobotInfo.getRobot();
+		Noopy2 noopy = RobotInfo.getNoopyRobot();
 		noopy.addExtension(AnalogSensor.class, Port.AN0);
 
 		// Noopyにセンサの値を読み取り続けるタスクを割り当てる

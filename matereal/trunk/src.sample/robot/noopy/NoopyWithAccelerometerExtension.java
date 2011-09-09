@@ -20,7 +20,7 @@ public class NoopyWithAccelerometerExtension {
 	public NoopyWithAccelerometerExtension() {
 
 		// 加速度センサつきのNoopy
-		Noopy2 noopy = RobotInfo.getRobot();
+		Noopy2 noopy = RobotInfo.getNoopyRobot();
 		noopy.addExtension(Accelerometer.class);
 
 		// Noopyにセンサの値を読み取り続けるタスクを割り当てる

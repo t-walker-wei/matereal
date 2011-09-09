@@ -34,19 +34,39 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package robot;
+package robot.nettansor;
 
-import jp.digitalmuseum.mr.entity.NetTansor;
-import jp.digitalmuseum.mr.entity.Noopy2;
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
+import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
+import jp.digitalmuseum.mr.gui.ImageProviderPanel;
+import jp.digitalmuseum.mr.task.Capture;
+import robot.RobotInfo;
 
-public class RobotInfo {
+public class RunRobotCamera {
 
-	public static PhysicalRobot getRobot() {
-		return new NetTansor("http://192.168.10.3");
+	public static void main(String[] args) {
+		new RunRobotCamera();
 	}
 
-	public static Noopy2 getNoopyRobot() {
-		return new Noopy2("btspp://DEADBEAF/");
+	public RunRobotCamera() {
+		PhysicalRobot robot = RobotInfo.getRobot();
+		Capture capture = new Capture();
+		if (capture.assign(robot)) {
+			capture.start();
+			DisposeOnCloseFrame frame = new DisposeOnCloseFrame(
+					new ImageProviderPanel(capture)) {
+				private static final long serialVersionUID = 1L;
+
+				@Override public void dispose() {
+					super.dispose();
+
+					// Shutdown Matereal when the window is closed.
+					Matereal.getInstance().dispose();
+				}
+			};
+			frame.setFrameSize(capture.getWidth(), capture.getHeight());
+		}
 	}
+
 }
