@@ -1,0 +1,1591 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<MetasequoiaDocument>
+    <IncludedBy>Jss_miku.mqo</IncludedBy>
+    <Plugin.BD1224DB.0000002C name="ボーン">
+        <XSFormat version="0.2" app="Metasequoia">
+            <XSConfig>
+                <XSFileConfig limitFPS="0" fastcalc="0" mode="0" />
+                <XSBoneConfig col_def="6737049" col_sel="16757299" col_hot="16776960" />
+            </XSConfig>
+            <XSAnimationContainer>
+                <XSAnimationSet name="umauma" interpolate="21">
+                    <XSAnimation frame="0">
+                        <XSAnimationKey name="mat1">
+                            <v>0.000000 -0.309002 0.010697</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.062557 0.253896 0.077826 0.962064</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000178 0.005378 0.094083 0.995550</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.461410 0.030315 -0.053151 0.885074</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.539637 0.053246 -0.134659 0.829351</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.002115 -0.015689 -0.139649 0.990075</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.166285 0.047554 -0.114080 0.978301</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.161432 0.010536 -0.038060 0.986093</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.003931 -0.035110 -0.058474 0.997664</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.409301 0.409520 0.029527 0.814797</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.389673 0.281254 -0.094248 0.871876</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.577326 -0.627551 0.310939 0.419752</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.052735 -0.863362 0.042174 0.500047</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.080366 -0.383568 0.085674 0.916011</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.030875 -0.021065 0.403056 0.914412</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.034259 -0.204367 -0.862434 0.461810</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.052246 0.006756 -0.028033 0.998218</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.006468 0.018750 0.202381 0.979106</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 0.058886 -0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 0.010440 0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.005048 0.021742 -0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.016398 0.011161 -0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.001623 0.001823 -0.033658 0.999430</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.045856 -0.001937 -0.225541 0.973152</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.064904 0.023862 -0.197328 0.977896</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011910 -0.012809 -0.194331 0.980780</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.048898 -0.065036 -0.066517 0.994462</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.027223 -0.035129 0.035241 0.998390</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011039 -0.045135 0.089553 0.994898</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.009435 -0.011919 0.047341 0.998763</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.017804 -0.021387 0.066915 0.997371</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.156818 -0.105209 0.443594 0.876107</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.100958 0.008444 0.214304 0.971499</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="a" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                    <XSAnimation frame="6">
+                        <XSAnimationKey name="mat1">
+                            <v>-0.148615 0.242407 -0.002662</v>
+                            <q>-0.025106 0.000000 0.000000 0.999685</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.079532 0.047198 0.061149 0.993835</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000418 0.015363 0.154883 0.987813</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.263450 0.018877 -0.066683 0.962180</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.341950 0.055213 -0.083697 0.934353</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.003239 -0.045051 -0.279765 0.959005</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.182482 0.075141 0.105769 0.974611</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.009568 -0.007403 0.037354 0.999229</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.096285 0.017114 0.007402 0.995179</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.437629 0.453369 -0.036431 0.775635</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.416001 0.231327 -0.177122 0.861428</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.612991 -0.681628 0.228362 0.327835</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.212798 -0.584753 -0.145317 0.769197</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.141622 -0.354988 0.231403 0.894639</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.048369 0.006238 0.241951 0.969062</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000187 -0.107034 -0.472433 0.874843</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.169075 0.002000 0.004282 0.985592</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="browR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 -0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="browL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.151955 0.044148 0.198203 0.967304</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 0.058886 -0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 0.010440 0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.005049 0.021741 -0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.016398 0.011161 -0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013310 0.015787 -0.092097 0.995536</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.097968 0.022948 -0.359475 0.927714</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.043292 0.010710 -0.113350 0.992554</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.151955 -0.044148 -0.198203 0.967304</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.013061 -0.058886 0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 -0.010440 -0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.002535 -0.035030 0.061671 0.997478</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.009435 -0.011919 0.047341 0.998763</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.017804 -0.021388 0.066915 0.997371</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.089229 -0.093391 0.341589 0.930931</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.059838 0.007509 0.100377 0.993120</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="0.420000" />
+                        <XSAnimationState name="a" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="browR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="browL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                    <XSAnimation frame="20">
+                        <XSAnimationKey name="mat1">
+                            <v>-0.000000 -0.309002 0.010697</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.062557 -0.253896 -0.077826 0.962064</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.002115 0.015689 0.139649 0.990075</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.166285 -0.047554 0.114080 0.978301</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000178 -0.005378 -0.094083 0.995550</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.461410 -0.030315 0.053151 0.885074</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.539637 -0.053246 0.134659 0.829351</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.161432 -0.010536 0.038060 0.986093</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.006950 0.024446 0.045602 0.998636</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.057560 0.396039 -0.035287 0.915748</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.030875 0.021065 -0.403056 0.914412</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.356410 -0.333247 0.552097 0.676097</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.034259 0.204367 0.862434 0.461810</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.409301 -0.409520 -0.029527 0.814797</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.389673 -0.281254 0.094248 0.871876</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.052735 0.863362 -0.042174 0.500047</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.052246 -0.006756 0.028033 0.998218</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowR">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowL">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.011910 0.012809 0.194331 0.980780</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.048898 0.065036 0.066517 0.994462</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.027223 0.035129 -0.035241 0.998390</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.011039 0.045135 -0.089553 0.994898</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.009435 0.011919 -0.047341 0.998763</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.017804 0.021387 -0.066915 0.997371</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.156818 0.105209 -0.443594 0.876107</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.100958 -0.008444 -0.214304 0.971499</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.006468 -0.018750 -0.202381 0.979106</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.013061 -0.058886 0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 -0.010440 -0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.005048 -0.021742 0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.016398 -0.011161 0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.017788 -0.010144 0.051914 0.998442</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.058260 -0.003034 0.259448 0.963993</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="a" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="blowR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                    <XSAnimation frame="26">
+                        <XSAnimationKey name="mat1">
+                            <v>0.148615 0.242407 -0.002662</v>
+                            <q>-0.025106 -0.000000 -0.000000 0.999685</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.079532 -0.047198 -0.061149 0.993835</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.003239 0.045051 0.279765 0.959005</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.182482 -0.075141 -0.105769 0.974611</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.009568 0.007403 -0.037354 0.999229</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000418 -0.015363 -0.154883 0.987813</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.263451 -0.018876 0.066683 0.962180</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.341950 -0.055212 0.083697 0.934354</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.096285 -0.017114 -0.007402 0.995179</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.141622 0.354988 -0.231403 0.894639</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.048369 -0.006238 -0.241951 0.969062</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.287643 -0.247235 0.589952 0.712807</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000187 0.107034 0.472433 0.874843</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.437629 -0.453369 0.036430 0.775635</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.416000 -0.231327 0.177122 0.861429</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.212798 0.584753 0.145317 0.769197</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.169075 -0.002000 -0.004282 0.985592</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowR">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowL">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 -0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.151955 0.044149 0.198202 0.967304</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 0.058886 -0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 0.010440 0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011039 0.045135 -0.089553 0.994898</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.023476 -0.001616 0.010718 0.999666</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.011836 0.005185 -0.001481 0.999915</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.156817 0.105209 -0.443593 0.876108</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.100958 -0.008445 -0.214305 0.971499</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.151955 -0.044149 -0.198202 0.967304</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 -0.058886 0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 -0.010440 -0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.005049 -0.021741 0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.016398 -0.011161 0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013310 -0.015787 0.092097 0.995536</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.111945 -0.036576 0.395338 0.910955</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.066786 -0.015496 0.153774 0.985725</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="a" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="blowR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                    <XSAnimation frame="40">
+                        <XSAnimationKey name="mat1">
+                            <v>0.000000 -0.309002 0.010697</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.062557 0.253897 0.077826 0.962063</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000178 0.005378 0.094083 0.995550</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.461410 0.030315 -0.053152 0.885074</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.539637 0.053246 -0.134660 0.829351</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.002114 -0.015689 -0.139649 0.990075</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.166285 0.047554 -0.114080 0.978301</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.161431 0.010537 -0.038061 0.986093</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.002295 -0.030383 -0.054603 0.998043</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.409301 0.409520 0.029527 0.814797</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.389673 0.281254 -0.094247 0.871876</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.577327 -0.627550 0.310939 0.419752</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.052735 -0.863362 0.042173 0.500047</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.080366 -0.383568 0.085674 0.916011</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.030875 -0.021065 0.403056 0.914412</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.034258 -0.204367 -0.862434 0.461810</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.052247 0.006756 -0.028033 0.998218</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 -0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.006468 0.018749 0.202381 0.979106</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 0.058886 -0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 0.010440 0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.005049 0.021741 -0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.016398 0.011161 -0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.001623 0.001822 -0.033658 0.999430</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.045855 -0.001937 -0.225541 0.973152</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.064904 0.023862 -0.197328 0.977896</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011910 -0.012809 -0.194331 0.980780</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.048898 -0.065037 -0.066517 0.994462</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.027223 -0.035129 0.035241 0.998390</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011039 -0.045135 0.089553 0.994898</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.009435 -0.011919 0.047341 0.998763</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.017804 -0.021388 0.066915 0.997371</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.156817 -0.105209 0.443593 0.876108</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.100958 0.008445 0.214304 0.971499</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="a" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                    <XSAnimation frame="46">
+                        <XSAnimationKey name="mat1">
+                            <v>-0.148615 0.242407 -0.002662</v>
+                            <q>-0.025106 0.000000 0.000000 0.999685</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.079532 0.047198 0.061149 0.993835</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000418 0.015363 0.154883 0.987813</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.263451 0.018876 -0.066683 0.962180</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.341950 0.055212 -0.083697 0.934354</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.003239 -0.045051 -0.279765 0.959005</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.182482 0.075141 0.105769 0.974611</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.009568 -0.007403 0.037354 0.999229</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.096285 0.017114 0.007402 0.995179</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.437629 0.453369 -0.036430 0.775635</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.416000 0.231327 -0.177122 0.861429</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.612991 -0.681628 0.228362 0.327835</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.212798 -0.584753 -0.145317 0.769197</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.141622 -0.354988 0.231403 0.894639</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.048369 0.006238 0.241951 0.969062</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000187 -0.107034 -0.472433 0.874843</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.169075 0.002000 0.004282 0.985592</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="browR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 -0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="browL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.151955 0.044149 0.198202 0.967304</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 0.058886 -0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 0.010440 0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.005049 0.021741 -0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.016398 0.011161 -0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013310 0.015787 -0.092097 0.995536</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.097968 0.022949 -0.359475 0.927714</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.093810 0.035548 -0.218605 0.970643</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.151955 -0.044149 -0.198202 0.967304</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 -0.058886 0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 -0.010440 -0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.002535 -0.035029 0.061671 0.997478</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.009435 -0.011919 0.047341 0.998763</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.017804 -0.021388 0.066915 0.997371</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.089229 -0.093390 0.341589 0.930931</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.059838 0.007508 0.100377 0.993120</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="a" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="browR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="browL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                    <XSAnimation frame="60">
+                        <XSAnimationKey name="mat1">
+                            <v>-0.000000 -0.309002 0.010697</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.062557 -0.253897 -0.077826 0.962063</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.002114 0.015689 0.139649 0.990075</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.166285 -0.047554 0.114080 0.978301</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000178 -0.005378 -0.094083 0.995550</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.461410 -0.030315 0.053152 0.885074</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.539637 -0.053245 0.134659 0.829351</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.161431 -0.010537 0.038061 0.986093</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.008380 0.029887 0.054573 0.998027</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.057560 0.396039 -0.035287 0.915748</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.030875 0.021065 -0.403055 0.914412</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.246354 -0.196345 0.607665 0.729042</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.034259 0.204367 0.862434 0.461810</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.409301 -0.409520 -0.029527 0.814797</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.389674 -0.281254 0.094248 0.871876</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.052735 0.863362 -0.042174 0.500046</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.052247 -0.006756 0.028033 0.998218</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowR">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 -0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowL">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.011910 0.012809 0.194331 0.980780</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.048898 0.065037 0.066517 0.994462</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.027223 0.035129 -0.035241 0.998390</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011040 0.045136 -0.089553 0.994898</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.009434 0.011919 -0.047341 0.998763</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.017803 0.021388 -0.066915 0.997371</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.156817 0.105209 -0.443593 0.876108</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.100958 -0.008445 -0.214304 0.971499</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.006468 -0.018749 -0.202381 0.979106</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 -0.058886 0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 -0.010440 -0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.005048 -0.021742 0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.016398 -0.011162 0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013309 -0.015788 0.092096 0.995536</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.058260 -0.003034 0.259447 0.963994</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="a" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                    <XSAnimation frame="66">
+                        <XSAnimationKey name="mat1">
+                            <v>0.148615 0.242407 -0.002662</v>
+                            <q>-0.025106 0.000000 0.000000 0.999685</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.079532 -0.047198 -0.061149 0.993835</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.003239 0.045051 0.279765 0.959005</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.182482 -0.075141 -0.105769 0.974611</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.009568 0.007403 -0.037354 0.999229</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000418 -0.015363 -0.154883 0.987813</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.263451 -0.018876 0.066683 0.962180</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.341950 -0.055212 0.083697 0.934354</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.096285 -0.017114 -0.007402 0.995179</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.141622 0.354988 -0.231403 0.894639</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.048369 -0.006238 -0.241951 0.969062</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.307774 -0.272243 0.580011 0.703381</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000187 0.107034 0.472433 0.874843</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.437629 -0.453369 0.036430 0.775635</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.416001 -0.231327 0.177122 0.861428</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.212798 0.584753 0.145318 0.769197</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.169075 -0.002000 -0.004282 0.985592</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowR">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 0.000000 0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowL">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.151955 0.044149 0.198202 0.967304</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 0.058886 -0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 0.010440 0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011039 0.045135 -0.089553 0.994898</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.009434 0.011919 -0.047341 0.998763</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.017803 0.021388 -0.066915 0.997371</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.097968 0.022949 -0.359475 0.927714</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.093810 0.035548 -0.218605 0.970643</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>-0.000000 0.000000 0.000000</v>
+                            <q>0.151955 -0.044149 -0.198202 0.967304</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 -0.058886 0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 -0.010440 -0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.005049 -0.021741 0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.016397 -0.011161 0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013310 -0.015788 0.092097 0.995536</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.111945 -0.036576 0.395337 0.910955</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.066786 -0.015496 0.153774 0.985725</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="a" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="blowR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                    <XSAnimation frame="80">
+                        <XSAnimationKey name="mat1">
+                            <v>0.000000 -0.309002 0.010697</v>
+                            <q>0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body2">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.062557 0.253897 0.077826 0.962063</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000178 0.005378 0.094083 0.995550</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.461410 0.030315 -0.053152 0.885074</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.539637 0.053246 -0.134660 0.829351</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="leg0_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.002114 -0.015689 -0.139649 0.990075</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.166285 0.047554 -0.114080 0.978301</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="legs2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="body1">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.161431 0.010537 -0.038061 0.986093</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="tai">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.003931 -0.035110 -0.058474 0.997664</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.409301 0.409520 0.029527 0.814797</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.389673 0.281254 -0.094247 0.871876</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="negi">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.577327 -0.627550 0.310939 0.419752</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.052735 -0.863362 0.042173 0.500047</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm1_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.080366 -0.383568 0.085674 0.916011</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm2_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.030875 -0.021065 0.403056 0.914412</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="arm3_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.034258 -0.204367 -0.862434 0.461810</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="head">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.052247 0.006756 -0.028033 0.998218</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 0.000000 -0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="blowL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 0.000001 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeL">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="eyeR">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.000000 -0.000000 -0.000000 1.000000</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.006468 0.018749 0.202381 0.979106</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.013061 0.058886 -0.118446 0.991127</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.082046 0.010440 0.119241 0.989414</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.005049 0.021741 -0.049811 0.998509</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.016398 0.011161 -0.060348 0.997980</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.001623 0.001822 -0.033658 0.999430</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.045855 -0.001937 -0.225541 0.973152</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_R_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.064904 0.023862 -0.197328 0.977896</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair01_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011910 -0.012809 -0.194331 0.980780</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair02_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.048898 -0.065037 -0.066517 0.994462</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair03_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>-0.027223 -0.035129 0.035241 0.998390</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair04_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.011039 -0.045135 0.089553 0.994898</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair05_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.009435 -0.011919 0.047341 0.998763</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair06_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.017804 -0.021388 0.066915 0.997371</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair07_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.156817 -0.105209 0.443593 0.876108</q>
+                        </XSAnimationKey>
+                        <XSAnimationKey name="hair08_L_">
+                            <v>0.000000 0.000000 0.000000</v>
+                            <q>0.100958 0.008445 0.214304 0.971499</q>
+                        </XSAnimationKey>
+                        <XSAnimationState name="head" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="faces" visible="0" fvalue="0.000000" />
+                        <XSAnimationState name="face" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="closed" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="smile" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="a" visible="1" fvalue="1.000000" />
+                        <XSAnimationState name="i" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="u" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="o" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="n" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="sm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="blowL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeR" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="eyeL" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="hair" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="body" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="arm" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="leg" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="negi" visible="1" fvalue="0.000000" />
+                        <XSAnimationState name="tai" visible="1" fvalue="0.000000" />
+                    </XSAnimation>
+                </XSAnimationSet>
+            </XSAnimationContainer>
+        </XSFormat>
+    </Plugin.BD1224DB.0000002C>
+</MetasequoiaDocument>
