@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -34,6 +35,7 @@ import jp.digitalmuseum.utils.ScreenPosition;
 import jp.digitalmuseum.utils.Vector2D;
 
 import jp.digitalmuseum.mr.vectorfield.VectorFieldAbstractImpl;
+import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 
 public class RunGameReal {
@@ -72,20 +74,23 @@ public class RunGameReal {
 		}
 
 		// Run a camera.
-		camera = new Camera();
-		camera.setSize(800, 600);
+		// Let users select a device to capture images.
+		String identifier = (String) JOptionPane.showInputDialog(null,
+				"Select a device to capture images.", "Device list",
+				JOptionPane.QUESTION_MESSAGE, null, Camera.queryIdentifiers(), null);
+		camera = new Camera(identifier);
 		camera.start();
 
 		// Run a marker detector.
 		detector = new MarkerDetector();
-		detector.addMarker(new NapMarker("markers/4x4_743.patt", 5.5), robot1);
-		detector.addMarker(new NapMarker("markers/4x4_642.patt", 5.5), robot2);
-		detector.addMarker(new NapMarker("markers/4x4_91.patt", 5.5), robot3);
-		detector.addMarker(new NapMarker("markers/4x4_907.patt", 5.5), robot4);
-		detector.addMarker(new NapMarker("markers/4x4_78.patt", 5.5), objects.get(0));
-		detector.addMarker(new NapMarker("markers/4x4_71.patt", 5.5), objects.get(1));
-		detector.addMarker(new NapMarker("markers/4x4_35.patt", 5.5), objects.get(2));
-		detector.addMarker(new NapMarker("markers/4x4_90.patt", 5.5), objects.get(3));
+		detector.addMarker(new NapMarker("markers/4x4_907.patt", 5.5), robot1);
+		detector.addMarker(new NapMarker("markers/4x4_112.patt", 5.5), robot2);
+		detector.addMarker(new NapMarker("markers/4x4_78.patt", 5.5), robot3);
+		detector.addMarker(new NapMarker("markers/4x4_71.patt", 5.5), robot4);
+		detector.addMarker(new NapMarker("markers/4x4_35.patt", 5.5), objects.get(0));
+		detector.addMarker(new NapMarker("markers/4x4_91.patt", 5.5), objects.get(1));
+		detector.addMarker(new NapMarker("markers/4x4_642.patt", 5.5), objects.get(2));
+		detector.addMarker(new NapMarker("markers/4x4_190.patt", 5.5), objects.get(3));
 		detector.setImageProvider(camera);
 		detector.start();
 
@@ -105,6 +110,9 @@ public class RunGameReal {
 			@Override
 			public void paint2D(Graphics2D g) {
 				final Composite comp = g.getComposite();
+				g.setRenderingHint(
+						RenderingHints.KEY_ANTIALIASING,
+						RenderingHints.VALUE_ANTIALIAS_ON);
 
 				// Draw vectors.
 				g.setComposite(alphaComp2);
@@ -136,14 +144,16 @@ public class RunGameReal {
 
 				camera.drawImage(g);
 
+				Stroke s = g.getStroke();
+				g.setStroke(stroke);
 				ScreenPosition sp = detector.getScreenPosition(robot1);
 				if (sp.isFound()) {
-					g.setColor(Color.cyan);
+					g.setColor(Color.black);
 					g.drawOval(sp.getX()-20, sp.getY()-20, 40, 40);
 				}
 				sp = detector.getScreenPosition(robot3);
 				if(sp.isFound()){
-					g.setColor(Color.cyan);
+					g.setColor(Color.black);
 					g.drawOval(sp.getX()-20,sp.getY()-20,40,40);
 				}
 				sp = detector.getScreenPosition(robot2);
@@ -157,8 +167,14 @@ public class RunGameReal {
 					g.drawOval(sp.getX()-20,sp.getY()-20,40,40);
 				}
 
-				Stroke s = g.getStroke();
-				g.setStroke(stroke);
+				g.setColor(Color.red);
+				for (Entity e : objects) {
+					NapDetectionResult result = detector.getResult(e);
+					if (result != null) {
+						result.getSquare().draw(g, true);
+					}
+				}
+
 				g.setColor(Color.blue);
 				g.drawOval(
 						camera.getWidth()/2 - goalSize, camera.getHeight()/2 - goalSize,
@@ -171,16 +187,16 @@ public class RunGameReal {
 					g.setFont(font);
 					String goal = "";
 					if(finishedrobot == 1){
-						goal = "GOAL!CeanPlayer!!";
+						goal = "GOAL! White Player Won!!";
 					}
 					if(finishedrobot == 2){
-						goal = "GOAL!GreenPlayer!!";
+						goal = "GOAL! Green Player Won!!";
 					}
 					if(finishedrobot == 3){
-						goal = "GOAL!CeanPlayer!!";
+						goal = "GOAL! White Player Won!!";
 					}
 					if(finishedrobot == 4){
-						goal = "GOAL!GreenPlayer!!";
+						goal = "GOAL! Green Player Won!!";
 					}
 					int w = g.getFontMetrics().stringWidth(goal);
 					g.drawString(goal, (camera.getWidth()-w)/2, camera.getHeight()/2);
