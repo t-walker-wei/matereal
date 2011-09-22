@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+
+<project name="matereal-javadoc" default="javadoc" basedir=".">
+	<import file="../napkit/build.xml"/>
+
+	<!-- Zip -->
+	<target name="matereal-full-zip" depends="update, matereal-version">
+		<zip destfile="matereal-${matereal.version}-full.zip" filesonly="true">
+
+			<zipfileset dir="./lib/bluecove/"
+					includes="README.txt" fullpath="README_bluecove.txt" />
+			<zipfileset dir="./lib/bluecove/"
+					includes="*.jar" />
+
+			<zipfileset dir="./lib/rxtx-2.1-7-bins-r2/"
+					includes="README.txt" fullpath="README_rxtx.txt" />
+			<zipfileset dir="./lib/rxtx-2.1-7-bins-r2/"
+					includes="*.jar *.dll" />
+
+			<zipfileset dir="./lib/matereal/connector/"
+					includes="README.txt" fullpath="README_connector.txt" />
+			<zipfileset dir="./lib/matereal/connector/"
+					includes="LICENSE.txt" fullpath="LICENSE_connector.txt" />
+			<zipfileset dir="./lib/matereal/connector/"
+					includes="*.jar" />
+
+			<zipfileset dir="./lib/matereal/capture/"
+					includes="README.txt" fullpath="README_capture.txt" />
+			<zipfileset dir="./lib/matereal/capture/"
+					includes="LICENSE.txt" fullpath="LICENSE_capture.txt" />
+			<zipfileset dir="./lib/matereal/capture/"
+					includes="*.jar" />
+
+			<zipfileset dir="./lib/matereal/matereal/"
+					includes="README.txt" fullpath="README_matereal.txt" />
+			<zipfileset dir="./lib/matereal/matereal/"
+					includes="LICENSE.txt" fullpath="LICENSE_matereal.txt" />
+			<zipfileset dir="./lib/matereal/matereal/"
+					includes="*.jar" />
+			<zipfileset dir="./lib/matereal/matereal/"
+					includes="*-docs.zip" />
+
+			<zipfileset dir="./lib/matereal/napkit/"
+					includes="README.txt" fullpath="README_napkit.txt" />
+			<zipfileset dir="./lib/matereal/napkit/"
+					includes="README_mqoloader.txt" fullpath="README_mqoloader.txt" />
+			<zipfileset dir="./lib/matereal/napkit/"
+					includes="LICENSE.txt" fullpath="LICENSE_napkit.txt" />
+			<zipfileset dir="./lib/matereal/napkit/"
+					includes="*.jar" />
+
+		</zip>
+	</target>
+
+	<!-- Zip -->
+	<target name="matereal-samples-zip" depends="update">
+		<zip destfile="matereal-${matereal.version}-samples.zip">
+			<fileset dir="./"
+					includes="src/**/*.java lib/**/* markers/* .project .classpath"
+					excludes="**/.svn markers/*.patt" />
+		</zip>
+	</target>
+
+	<!-- Update -->
+	<target name="update" depends="matereal-version">
+
+		<copy file="../capture/${capture-jar.name}" todir="./lib/matereal/capture/" />
+		<copy file="../capture/README.txt" todir="./lib/matereal/capture/" />
+		<copy file="../capture/LICENSE.txt" todir="./lib/matereal/capture/" />
+
+		<copy file="../connector/${connector-jar.name}" todir="./lib/matereal/connector/" />
+		<copy file="../connector/README.txt" todir="./lib/matereal/connector/" />
+		<copy file="../connector/LICENSE.txt" todir="./lib/matereal/connector/" />
+
+		<copy file="../matereal/${matereal-jar.dir}${matereal-jar.name}" todir="./lib/matereal/matereal/" />
+		<copy file="../matereal/README.txt" todir="./lib/matereal/matereal/" />
+		<copy file="../matereal/LICENSE.txt" todir="./lib/matereal/matereal/" />
+
+		<copy file="../napkit/${napkit-jar.dir}${napkit-jar.name}" todir="./lib/matereal/napkit/" />
+		<copy file="../napkit/README.txt" todir="./lib/matereal/napkit/" />
+		<copy file="../napkit/LICENSE.txt" todir="./lib/matereal/napkit/" />
+	</target>
+
+</project>
