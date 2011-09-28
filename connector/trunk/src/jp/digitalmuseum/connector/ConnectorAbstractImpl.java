@@ -76,6 +76,9 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public boolean write(byte b) {
+		if (!isConnected()) {
+			connect();
+		}
 		if (outputStream == null) {
 			return false;
 		}
@@ -93,6 +96,9 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public boolean write(int i) {
+		if (!isConnected()) {
+			connect();
+		}
 		if (outputStream == null) {
 			return false;
 		}
