@@ -34,26 +34,35 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.resource;
+package jp.digitalmuseum.mr.task;
 
-public interface DifferentialWheels extends Wheels {
+import java.util.List;
 
-	/** Get the recommended value for default speed. [0-100] */
-	public int getRecommendedSpeed();
+import jp.digitalmuseum.mr.entity.Resource;
+import jp.digitalmuseum.mr.resource.Battery;
 
-	/** Get the recommended value for rotation speed. [0-100] */
-	public int getRecommendedRotationSpeed();
+public class MonitorBatteryLevel extends TaskAbstractImpl {
+	private static final long serialVersionUID = 7882378675153078764L;
+	private Battery battery;
+	private int batteryLevel = 0;
 
-	/** Get the current power of the motor. [0-100] */
-	public int getSpeed();
+	@Override
+	public List<Class<? extends Resource>> getRequirements() {
+		final List<Class<? extends Resource>> resourceTypes = super.getRequirements();
+		resourceTypes.add(Battery.class);
+		return resourceTypes;
+	}
 
-	/** Get the current power of the motor to rotate. [0-100] */
-	public int getRotationSpeed();
+	@Override
+	protected void onAssigned() {
+		battery = (Battery) getResourceMap().get(Battery.class);
+	}
 
-	/** Get the current power of the left motor. [0-100] */
-	public int getLeftWheelPower();
+	public void run() {
+		batteryLevel = battery.getBatteryLevel();
+	}
 
-	/** Get the current power of the right motor. [0-100] */
-	public int getRightWheelPower();
-
+	public int getBatteryLevel() {
+		return batteryLevel;
+	}
 }

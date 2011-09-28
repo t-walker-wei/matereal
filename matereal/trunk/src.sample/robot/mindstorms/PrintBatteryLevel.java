@@ -34,26 +34,39 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package jp.digitalmuseum.mr.resource;
+package robot.mindstorms;
 
-public interface DifferentialWheels extends Wheels {
+import jp.digitalmuseum.mr.Matereal;
+import jp.digitalmuseum.mr.entity.PhysicalRobot;
+import jp.digitalmuseum.mr.task.MonitorBatteryLevel;
+import robot.RobotInfo;
 
-	/** Get the recommended value for default speed. [0-100] */
-	public int getRecommendedSpeed();
+public class PrintBatteryLevel {
 
-	/** Get the recommended value for rotation speed. [0-100] */
-	public int getRecommendedRotationSpeed();
+	public static void main(String[] args) {
+		new PrintBatteryLevel();
+	}
 
-	/** Get the current power of the motor. [0-100] */
-	public int getSpeed();
+	public PrintBatteryLevel() {
 
-	/** Get the current power of the motor to rotate. [0-100] */
-	public int getRotationSpeed();
+		PhysicalRobot robot = RobotInfo.getRobot();
+		robot.connect();
+		MonitorBatteryLevel monitor = new MonitorBatteryLevel();
 
-	/** Get the current power of the left motor. [0-100] */
-	public int getLeftWheelPower();
-
-	/** Get the current power of the right motor. [0-100] */
-	public int getRightWheelPower();
+		if (monitor.assign(robot)) {
+			monitor.setInterval(500);
+			monitor.start();
+			for (int i = 0; i < 50; i ++) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				System.out.println(String.format("Battery level: %2d / 100", monitor.getBatteryLevel()));
+			}
+			monitor.stop();
+			Matereal.getInstance().dispose();
+		}
+	}
 
 }

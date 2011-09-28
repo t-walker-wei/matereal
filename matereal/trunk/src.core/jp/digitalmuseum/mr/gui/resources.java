@@ -43,8 +43,8 @@ import java.util.PropertyResourceBundle;
 public class resources extends PropertyResourceBundle {
 
 	private final static String resourcesString =
-		"Matereal.fonts=Lucida Grande,MS UI Gothic\n" +
-		"Matereal.debugTitle=Debug window\n" +
+		"Matereal.fonts=Lucida Grande,Segoe UI,MS UI Gothic\n" +
+		"Matereal.debugTitle=Runtime Debug Tool\n" +
 		"CoordProviderPanel.centimeter=[cm]\n" +
 		"CoordProviderPanel.apply=Apply change of the area size\n" +
 		"CoordProviderPanel.errorDescWidth=Please input numbers for the width.\n" +
