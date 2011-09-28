@@ -37,6 +37,7 @@
 package jp.digitalmuseum.mr.entity;
 
 import java.awt.Shape;
+import java.awt.geom.RoundRectangle2D;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,7 @@ import jp.digitalmuseum.connector.Connector;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.PhysicalRobotAbstractImpl;
 import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
+import jp.digitalmuseum.mr.resource.Battery;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
 
 /**
@@ -58,13 +60,21 @@ import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
  */
 public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	private static final long serialVersionUID = -2489251030390060500L;
+
+	final public static double WIDTH = 14;
+	final public static double HEIGHT = 14;
+
 	public static final int A = 0;
 	public static final int B = 1;
 	public static final int C = 2;
 	public static final int ALL = 0xff;
+
 	public static final byte TACHO_FOREVER = 0;
+
 	private static int instances = 0;
 	private MindstormsNXTDifferentialWheels dw;
+	private MindstormsNXTBattery b;
+	private Shape shape;
 
 	public MindstormsNXT() {
 		super();
@@ -94,6 +104,12 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 			setName(getTypeName()+" ("+instances+")");
 		}
 		dw = new MindstormsNXTDifferentialWheels(this);
+		b = new MindstormsNXTBattery(this);
+
+		shape = new RoundRectangle2D.Double(
+				-HEIGHT/2, -WIDTH/2,
+				HEIGHT, WIDTH,
+				3, 3);
 		super.initialize();
 	}
 
@@ -107,11 +123,12 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	protected List<ResourceAbstractImpl> getResources() {
 		List<ResourceAbstractImpl> rs = super.getResources();
 		rs.add(dw);
+		rs.add(b);
 		return rs;
 	}
 
 	public Shape getShape() {
-		return null;
+		return shape;
 	}
 
 	protected boolean drive(final int port,
@@ -283,6 +300,57 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		return reply;
 	}
 
+	public int getLeftWheelPort() {
+		return dw.getLeftWheelPort();
+	}
+
+	public int getRightWheelPort() {
+		return dw.getRightWheelPort();
+	}
+
+	public void setLeftWheelPort(int leftWheelPort) {
+		dw.setLeftWheelPort(leftWheelPort);
+	}
+
+	public void setRightWheelPort(int rightWheelPort) {
+		dw.setRightWheelPort(rightWheelPort);
+	}
+
+	public static class MindstormsNXTBattery extends PhysicalResourceAbstractImpl implements Battery {
+		private static final long serialVersionUID = -7810540994535818261L;
+
+		public MindstormsNXTBattery(MindstormsNXT mindstormsNXT) {
+			super(mindstormsNXT);
+		}
+
+		public int getBatteryLevel() {
+			if (write(new byte[] {
+					DIRECT_COMMAND_REPLY,
+					GET_BATTERY_LEVEL}, getConnector())) {
+
+				// Wait for ~100ms latency.
+				try { Thread.sleep(100); }
+				catch (InterruptedException e) { }
+
+				// Get the result.
+				final byte[] ret = read(getConnector());
+				if (ret != null &&
+						ret.length == 5 &&
+						ret[1] == GET_BATTERY_LEVEL &&
+						ret[2] == 0) {
+					int batteryLevel = ((0xff & ret[3]) | (((0xff & ret[4]) << 8))) / 90 /* * 100 / 9000 */;
+					if (batteryLevel < 0) {
+						return 0;
+					} else if (batteryLevel > 100) {
+						return 100;
+					}
+					return batteryLevel;
+				}
+			}
+			return 0;
+		}
+	}
+
 	/**
 	 * Differential wheels of LEGO Mindstorms NXT.
 	 *
@@ -291,8 +359,8 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	 */
 	public static class MindstormsNXTDifferentialWheels extends DifferentialWheelsAbstractImpl {
 		private static final long serialVersionUID = 3164832272022311974L;
-		public final static int DEFAULT_SPEED = 10;
-		public final static int DEFAULT_ROTATION_SPEED = 5;
+		public final static int DEFAULT_SPEED = 20;
+		public final static int DEFAULT_ROTATION_SPEED = 10;
 		private byte leftWheelPort = C;
 		private byte rightWheelPort = B;
 

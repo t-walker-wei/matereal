@@ -36,24 +36,15 @@
  */
 package jp.digitalmuseum.mr.resource;
 
-public interface DifferentialWheels extends Wheels {
+import jp.digitalmuseum.mr.entity.Resource;
 
-	/** Get the recommended value for default speed. [0-100] */
-	public int getRecommendedSpeed();
+/**
+ * Resource to get battery information.
+ */
+public interface Battery extends Resource {
 
-	/** Get the recommended value for rotation speed. [0-100] */
-	public int getRecommendedRotationSpeed();
-
-	/** Get the current power of the motor. [0-100] */
-	public int getSpeed();
-
-	/** Get the current power of the motor to rotate. [0-100] */
-	public int getRotationSpeed();
-
-	/** Get the current power of the left motor. [0-100] */
-	public int getLeftWheelPower();
-
-	/** Get the current power of the right motor. [0-100] */
-	public int getRightWheelPower();
-
+	/**
+	 * Get battery level. [0-100]
+	 */
+	public int getBatteryLevel();
 }

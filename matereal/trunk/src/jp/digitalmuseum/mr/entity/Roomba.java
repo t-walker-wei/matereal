@@ -133,74 +133,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 
 		private transient RoombaMode mode = RoombaMode.UNKNOWN;
 
-		public static final int R_START = 128;
-		public static final int R_BAUD = 129;
-
-		/**
-		 * identical to the Safe command.
-		 * @see #R_SAFE
-		 */
-		public static final int R_CONTROL = 130;
-
-		/** Mode commands / Safe */
-		public static final int R_SAFE = 131;
-		/** Mode commands / Full */
-		public static final int R_FULL = 132;
-
-		/** Cleaning commands / Clean */
-		public static final int R_CLEAN = 135;
-		/** Cleaning commands / Max */
-		public static final int R_MAX = 136;
-		/** Cleaning commands / Spot */
-		public static final int R_SPOT = 134;
-		/** Cleaning commands / Seek Dock */
-		public static final int R_SEEKDOCK = 143;
-		/** Cleaning commands / Schedule */
-		public static final int R_SCHEDULE = 167;
-		/** Cleaning commands / Set Day/Time */
-		public static final int R_SETDAYTIME = 168;
-		/** Cleaning commands / Power off */
-		public static final int R_POWER = 133;
-
-		/** Actuator commands / Drive */
-		public static final int R_DRIVE = 137;
-		/** Actuator commands / Drive Direct */
-		public static final int R_DRIVEDIRECT = 145;
-		/**
-		 * Actuator commands / Drive <a href="http://monoist.atmarkit.co.jp/fembedded/h8/h8primer09/h8primer09a.html">Pulse Width Modulation</a>
-		 */
-		public static final int R_DRIVEPWM = 146;
-		/** Actuator commands / Motors */
-		public static final int R_MOTORS = 138;
-		/**
-		 * Actuator commands / Motors
-		 * @see #R_DRIVEPWM
-		 */
-		public static final int R_MOTORSPWM = 144;
-		/** Actuator commands / LEDs */
-		public static final int R_LEDS = 139;
-		/** Actuator commands / Scheduling LEDs */
-		public static final int R_SCHEDULELEDS = 162;
-		/** Actuator commands / Digit LEDs Raw */
-		public static final int R_DIGITLEDRAW = 163;
-		/** Actuator commands / Digit LEDs ASCII */
-		public static final int R_DIGITLED= 164;
-		/** Actuator commands / Buttons */
-		public static final int R_Buttons= 165;
-		/** Actuator commands / Song */
-		public static final int R_SONG = 140;
-		/** Actuator commands / Play */
-		public static final int R_PLAY = 141;
-
-		/** Input commands / Sensors */
-		public static final int R_SENSORS = 142;
-		/** Input commands / Query list */
-		public static final int R_QUERYLIST = 149;
-		/** Input commands / Stream */
-		public static final int R_STREAM = 148;
-		/** Input commands / Pause/Resume stream */
-		public static final int R_PAUSERESUMESTREAM = 150;
-
 		public RoombaDriver(Connector connector) {
 			super(connector);
 			initialize();
@@ -647,6 +579,18 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 			wait(20);
 		}
 
+		/**
+		 * This command requests sensor data from Roomba.
+		 * TODO to be implemented. see http://svn.dprg.org/repos/roomba/roombacomm/trunk/src/com/hackingroomba/roombacomm/RoombaComm.java
+		 */
+		public byte[] sensors(int packetCode) {
+			/*
+			switch (packetCode) {
+			}
+			*/
+			return null;
+		}
+
 		private void wait(int ms) {
 			try { Thread.sleep(ms); }
 			catch (InterruptedException e) { e.printStackTrace(); }
@@ -664,101 +608,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 
 		private int getVelocity(int speed) {
 			return speed*MAXIMUM_VELOCITY/100;
-		}
-
-		/**
-		 * Note consisting Song<br />
-		 * <dl>
-		 *	<dt>Note Number (31 – 127)</dt><dd>
-		 * The pitch of the musical note Roomba will play, according to the MIDI note numbering scheme. The
-		 * lowest musical note that Roomba will play is Note #31. Roomba considers all musical notes outside
-		 * the range of 31 – 127 as rest notes, and will make no sound during the duration of those notes.</dd>
-		 *	<dt>Note Duration (0 – 255)</dt><dd>
-		 * The duration of a musical note, in increments of 1/64th of a second. Example: a half-second long
-		 * musical note has a duration value of 32.</dd>
-		 * </dl>
-		 *
-		 * @author Jun KATO
-		 * @see Song
-		 */
-		public static class Note {
-			final public static int A = 69;
-			final public static int A_SHARP = 70;
-			final public static int B = 71;
-			final public static int C = 72;
-			final public static int C_SHARP = 73;
-			final public static int D = 74;
-			final public static int D_SHARP = 75;
-			final public static int E = 76;
-			final public static int F = 77;
-			final public static int F_SHARP = 78;
-			final public static int G = 79;
-			final public static int G_SHARP = 80;
-			final public static int QUARTER_SECOND = 16;
-			final public static int HALF_SECOND = 32;
-			final public static int SECOND = 64;
-			private int number;
-			private int duration;
-			public Note(int number, int duration) {
-				this.setNumber(number);
-				this.setDuration(duration);
-			}
-			public void setNumber(int number) {
-				this.number = number;
-			}
-			public int getNumber() {
-				return number;
-			}
-			public void setDuration(int duration) {
-				this.duration = duration;
-			}
-			public int getDuration() {
-				return duration;
-			}
-		}
-
-		/**
-		 * Roomba song consisted of 16 Notes at maximum.
-		 *
-		 * @author Jun KATO
-		 * @see Note
-		 */
-		public static class Song implements Iterable<Note> {
-			private List<Note> notes;
-			public Song() {
-				notes = new ArrayList<Note>();
-			}
-			public Song(Note note) {
-				notes = new ArrayList<Note>();
-				notes.add(note);
-			}
-			public Song(Note[] notes) {
-				this.notes = Arrays.asList(notes);
-			}
-			public void add(Note n) {
-				notes.add(n);
-			}
-			public void add(int index, Note n) {
-				notes.add(index, n);
-			}
-			public void add(int number, int duration) {
-				add(new Note(number, duration));
-			}
-			public void add(int index, int number, int duration) {
-				add(index, new Note(number, duration));
-			}
-			public Note get(int index) {
-				return notes.get(index);
-			}
-			public Note remove(int index) {
-				return notes.remove(index);
-			}
-			public int size() {
-				return notes.size();
-			}
-			public Iterator<Note> iterator() {
-				return notes.iterator();
-			}
 		}
 	}
 
@@ -787,6 +636,174 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		public void startCleaning() {
 			roomba.driver.motors(true);
 			isWorking = true;
+		}
+	}
+
+	public static final int R_START = 128;
+	public static final int R_BAUD = 129;
+
+	/**
+	 * identical to the Safe command.
+	 * @see #R_SAFE
+	 */
+	public static final int R_CONTROL = 130;
+
+	/** Mode commands / Safe */
+	public static final int R_SAFE = 131;
+	/** Mode commands / Full */
+	public static final int R_FULL = 132;
+
+	/** Cleaning commands / Clean */
+	public static final int R_CLEAN = 135;
+	/** Cleaning commands / Max */
+	public static final int R_MAX = 136;
+	/** Cleaning commands / Spot */
+	public static final int R_SPOT = 134;
+	/** Cleaning commands / Seek Dock */
+	public static final int R_SEEKDOCK = 143;
+	/** Cleaning commands / Schedule */
+	public static final int R_SCHEDULE = 167;
+	/** Cleaning commands / Set Day/Time */
+	public static final int R_SETDAYTIME = 168;
+	/** Cleaning commands / Power off */
+	public static final int R_POWER = 133;
+
+	/** Actuator commands / Drive */
+	public static final int R_DRIVE = 137;
+	/** Actuator commands / Drive Direct */
+	public static final int R_DRIVEDIRECT = 145;
+	/**
+	 * Actuator commands / Drive <a href="http://monoist.atmarkit.co.jp/fembedded/h8/h8primer09/h8primer09a.html">Pulse Width Modulation</a>
+	 */
+	public static final int R_DRIVEPWM = 146;
+	/** Actuator commands / Motors */
+	public static final int R_MOTORS = 138;
+	/**
+	 * Actuator commands / Motors
+	 * @see #R_DRIVEPWM
+	 */
+	public static final int R_MOTORSPWM = 144;
+	/** Actuator commands / LEDs */
+	public static final int R_LEDS = 139;
+	/** Actuator commands / Scheduling LEDs */
+	public static final int R_SCHEDULELEDS = 162;
+	/** Actuator commands / Digit LEDs Raw */
+	public static final int R_DIGITLEDRAW = 163;
+	/** Actuator commands / Digit LEDs ASCII */
+	public static final int R_DIGITLED= 164;
+	/** Actuator commands / Buttons */
+	public static final int R_Buttons= 165;
+	/** Actuator commands / Song */
+	public static final int R_SONG = 140;
+	/** Actuator commands / Play */
+	public static final int R_PLAY = 141;
+
+	/** Input commands / Sensors */
+	public static final int R_SENSORS = 142;
+	/** Input commands / Query list */
+	public static final int R_QUERYLIST = 149;
+	/** Input commands / Stream */
+	public static final int R_STREAM = 148;
+	/** Input commands / Pause/Resume stream */
+	public static final int R_PAUSERESUMESTREAM = 150;
+
+	public static final int R_SENSORS_ALL = 0;
+	public static final int R_SENSORS_PHYSICAL = 1;
+	public static final int R_SENSORS_INTERNAL = 2;
+	public static final int R_SENSORS_POWER = 3;
+
+	/**
+	 * Note consisting Song<br />
+	 * <dl>
+	 *	<dt>Note Number (31 – 127)</dt><dd>
+	 * The pitch of the musical note Roomba will play, according to the MIDI note numbering scheme. The
+	 * lowest musical note that Roomba will play is Note #31. Roomba considers all musical notes outside
+	 * the range of 31 – 127 as rest notes, and will make no sound during the duration of those notes.</dd>
+	 *	<dt>Note Duration (0 – 255)</dt><dd>
+	 * The duration of a musical note, in increments of 1/64th of a second. Example: a half-second long
+	 * musical note has a duration value of 32.</dd>
+	 * </dl>
+	 *
+	 * @author Jun KATO
+	 * @see Song
+	 */
+	public static class Note {
+		final public static int A = 69;
+		final public static int A_SHARP = 70;
+		final public static int B = 71;
+		final public static int C = 72;
+		final public static int C_SHARP = 73;
+		final public static int D = 74;
+		final public static int D_SHARP = 75;
+		final public static int E = 76;
+		final public static int F = 77;
+		final public static int F_SHARP = 78;
+		final public static int G = 79;
+		final public static int G_SHARP = 80;
+		final public static int QUARTER_SECOND = 16;
+		final public static int HALF_SECOND = 32;
+		final public static int SECOND = 64;
+		private int number;
+		private int duration;
+		public Note(int number, int duration) {
+			this.setNumber(number);
+			this.setDuration(duration);
+		}
+		public void setNumber(int number) {
+			this.number = number;
+		}
+		public int getNumber() {
+			return number;
+		}
+		public void setDuration(int duration) {
+			this.duration = duration;
+		}
+		public int getDuration() {
+			return duration;
+		}
+	}
+
+	/**
+	 * Roomba song consisted of 16 Notes at maximum.
+	 *
+	 * @author Jun KATO
+	 * @see Note
+	 */
+	public static class Song implements Iterable<Note> {
+		private List<Note> notes;
+		public Song() {
+			notes = new ArrayList<Note>();
+		}
+		public Song(Note note) {
+			notes = new ArrayList<Note>();
+			notes.add(note);
+		}
+		public Song(Note[] notes) {
+			this.notes = Arrays.asList(notes);
+		}
+		public void add(Note n) {
+			notes.add(n);
+		}
+		public void add(int index, Note n) {
+			notes.add(index, n);
+		}
+		public void add(int number, int duration) {
+			add(new Note(number, duration));
+		}
+		public void add(int index, int number, int duration) {
+			add(index, new Note(number, duration));
+		}
+		public Note get(int index) {
+			return notes.get(index);
+		}
+		public Note remove(int index) {
+			return notes.remove(index);
+		}
+		public int size() {
+			return notes.size();
+		}
+		public Iterator<Note> iterator() {
+			return notes.iterator();
 		}
 	}
 }
