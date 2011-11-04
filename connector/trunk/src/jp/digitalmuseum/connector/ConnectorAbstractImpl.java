@@ -139,7 +139,18 @@ public abstract class ConnectorAbstractImpl implements Connector {
 		return true;
 	}
 
-	public int readInt() throws IOException {
-		return getInputStream().read();
+	public int read() {
+		if (!isConnected()) {
+			connect();
+		}
+		if (inputStream == null) {
+			return -1;
+		}
+
+		try {
+			return getInputStream().read();
+		} catch (IOException e) {
+			return -1;
+		}
 	}
 }
