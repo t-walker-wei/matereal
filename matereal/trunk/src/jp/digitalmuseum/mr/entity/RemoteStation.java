@@ -58,6 +58,11 @@ public class RemoteStation extends PhysicalRobotAbstractImpl {
 	public static final double WIDTH = 4;
 	public static final double HEIGHT = 6;
 
+	public static final int PORT1 = 0x31;
+	public static final int PORT2 = 0x32;
+	public static final int PORT3 = 0x33;
+	public static final int PORT4 = 0x34;
+
 	private static int instances = 0;
 	private RemoteStationCore core;
 	private Shape shape;
@@ -131,9 +136,70 @@ public class RemoteStation extends PhysicalRobotAbstractImpl {
 			return (RemoteStation) super.getRobot();
 		}
 
+		public boolean blinkLED(int time) {
+			boolean result = true;
+			for (int i = 0; i < 3; i ++) {
+				if (i > 0) {
+					try {
+						Thread.sleep(250);
+					} catch (InterruptedException e) {
+						return false;
+					}
+				}
+				result = result & blinkLED();
+			}
+			return result;
+		}
+
 		public boolean blinkLED() {
 			getConnector().write(0x69);
-			return getConnector().read() == 0x4f;
+			getConnector().waitForResponse();
+			int result = getConnector().read();
+			return result == 0x4f;
+		}
+
+		public byte[] receiveCommand() {
+			getConnector().write(0x72);
+			getConnector().waitForResponse();
+			if (getConnector().read() != 0x59) {
+				return null;
+			}
+
+			getConnector().waitForResponse(5000);
+			if (getConnector().read() != 0x53) {
+				return null;
+			}
+
+			byte[] data = new byte[240];
+			getConnector().readAll(data);
+
+			getConnector().waitForResponse();
+			if (getConnector().read() != 0x45) {
+				return null;
+			}
+			return data;
+		}
+
+		public boolean sendCommand(byte[] data, int port) {
+			if (data == null || data.length != 240) {
+				return false;
+			}
+
+			getConnector().write(0x74);
+			getConnector().waitForResponse();
+			if (getConnector().read() != 0x59) {
+				return false;
+			}
+
+			getConnector().write(port);
+			getConnector().waitForResponse();
+			if (getConnector().read() != 0x59) {
+				return false;
+			}
+
+			getConnector().write(data);
+			getConnector().waitForResponse();
+			return getConnector().read() == 0x45;
 		}
 	}
 }

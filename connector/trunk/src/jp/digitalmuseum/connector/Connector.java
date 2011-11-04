@@ -51,4 +51,14 @@ public interface Connector extends Serializable {
 	public boolean write(byte[] b);
 	public InputStream getInputStream();
 	public int read();
+	public int read(byte[] data);
+	public int read(byte[] data, int off, int len);
+
+	public int readAll(byte[] data);
+
+	/**
+	 * Wait till the response is available for a moment.
+	 */
+	public boolean waitForResponse();
+	public boolean waitForResponse(int timeout);
 }

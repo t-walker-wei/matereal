@@ -153,4 +153,78 @@ public abstract class ConnectorAbstractImpl implements Connector {
 			return -1;
 		}
 	}
+
+	public int read(byte[] data) {
+		if (!isConnected()) {
+			connect();
+		}
+		if (inputStream == null) {
+			return -1;
+		}
+
+		try {
+			return getInputStream().read(data);
+		} catch (IOException e) {
+			return -1;
+		}
+	}
+
+	public int read(byte[] data, int off, int len) {
+		if (!isConnected()) {
+			connect();
+		}
+		if (inputStream == null) {
+			return -1;
+		}
+
+		try {
+			return getInputStream().read(data, off, len);
+		} catch (IOException e) {
+			return -1;
+		}
+	}
+
+	public int readAll(byte[] data) {
+		if (!isConnected()) {
+			connect();
+		}
+		if (inputStream == null) {
+			return -1;
+		}
+
+		int read = 0;
+		int off = 0;
+		try {
+			while ((read = getInputStream().read(data, off, data.length - off)) > 0) {
+				off += read;
+				waitForResponse();
+			}
+		} catch (IOException e) {
+			// Do nothing.
+		}
+		return off;
+	}
+
+	public boolean waitForResponse() {
+		return waitForResponse(100);
+	}
+
+	public boolean waitForResponse(int ms) {
+		int max = ms / 10;
+		int count = 0;
+		try {
+			while (inputStream.available() <= 0 && count < max) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					count = max - 1;
+					break;
+				}
+				count ++;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		return count < max;
+	}
 }

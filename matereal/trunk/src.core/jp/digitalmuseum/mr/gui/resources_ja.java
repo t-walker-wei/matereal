@@ -45,7 +45,7 @@ import jp.digitalmuseum.utils.StringResourceParser;
 public class resources_ja extends PropertyResourceBundle {
 
 	private final static String resourcesString =
-		"Matereal.fonts=ヒラギノ角ゴ Pro W3,Hiragino Kaku Gothic Pro,メイリオ,Meiryo,ＭＳ Ｐゴシック,MS UI Gothic\n" +
+		"Matereal.fonts=メイリオ,Meiryo,ＭＳ Ｐゴシック,MS UI Gothic\n" +
 		"Matereal.debugTitle=ランタイム デバッグ ツール\n" +
 		"CoordProviderPanel.centimeter=[cm]\n" +
 		"CoordProviderPanel.apply=サイズの変更を適用\n" +

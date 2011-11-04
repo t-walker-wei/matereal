@@ -59,11 +59,11 @@ public final class SocketConnector extends ConnectorAbstractImpl {
 	private void parseConnectionString(String con) {
 
 		// Remove prefix.
-		if (con.startsWith(CON_PREFIX)) {
+		if (con.toLowerCase().startsWith(CON_PREFIX)) {
 			parseConnectionString(con.substring(CON_PREFIX.length()));
 			return;
 		}
-		if (con.startsWith(CON_PREFIX2)) {
+		if (con.toLowerCase().startsWith(CON_PREFIX2)) {
 			parseConnectionString(con.substring(CON_PREFIX2.length()));
 			return;
 		}
@@ -78,6 +78,10 @@ public final class SocketConnector extends ConnectorAbstractImpl {
 	}
 
 	public boolean connect() {
+
+		if (isConnected()) {
+			return true;
+		}
 
 		// Open a connection.
 		try {
