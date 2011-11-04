@@ -36,10 +36,8 @@
  */
 package jp.digitalmuseum.connector;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-
 
 public interface Connector extends Serializable {
 
@@ -52,5 +50,5 @@ public interface Connector extends Serializable {
 	public boolean write(byte b);
 	public boolean write(byte[] b);
 	public InputStream getInputStream();
-	public int readInt() throws IOException;
+	public int read();
 }
