@@ -38,12 +38,28 @@ package jp.digitalmuseum.connector;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
 
 public final class RXTXConnector extends ConnectorAbstractImpl {
 	private static final long serialVersionUID = 7565866420854582460L;
 	final public static String CON_PREFIX = "COM:";
 	private String portName;
 	private transient CommPort port;
+
+	public static final int DATABITS_5 = 5;
+	public static final int DATABITS_6 = 6;
+	public static final int DATABITS_7 = 7;
+	public static final int DATABITS_8 = 8;
+
+	public static final int STOPBITS_1 = 1;
+	public static final int STOPBITS_2 = 2;
+	public static final int STOPBITS_1_5 = 3;
+
+	public static final int PARITY_NONE = 0;
+	public static final int PARITY_ODD = 1;
+	public static final int PARITY_EVEN = 2;
+	public static final int PARITY_MARK = 3;
+	public static final int PARITY_SPACE = 4;
 
 	public RXTXConnector(String con) {
 		parseConnectionString(con);
@@ -52,21 +68,46 @@ public final class RXTXConnector extends ConnectorAbstractImpl {
 	private void parseConnectionString(String con) {
 
 		// Remove prefix.
-		if (con.startsWith(CON_PREFIX)) {
-			parseConnectionString(con.substring(CON_PREFIX.length()));
-			return;
+		if (con.toUpperCase().startsWith(CON_PREFIX)) {
+			portName = con.substring(CON_PREFIX.length());
+		} else {
+			portName = con;
 		}
-
-		// Get port name.
-		portName = con;
 	}
 
 	public boolean connect() {
+
+		if (isConnected()) {
+			return true;
+		}
 
 		// Open the port.
 		try {
 			final CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
 			port = portIdentifier.open("class", 2000);
+			setInputStream(port.getInputStream());
+			setOutputStream(port.getOutputStream());
+		} catch (Exception e) {
+			disconnect();
+			return false;
+		}
+		return true;
+	}
+
+	public boolean connect(int dataRate, int dataBits, int stopBits, int parity) {
+
+		if (isConnected()) {
+			return true;
+		}
+
+		// Open the port.
+		try {
+			final CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+			port = portIdentifier.open("class", 2000);
+			((SerialPort) port).setSerialPortParams(dataRate,
+					dataBits,
+					stopBits,
+					parity);
 			setInputStream(port.getInputStream());
 			setOutputStream(port.getOutputStream());
 		} catch (Exception e) {

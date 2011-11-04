@@ -63,7 +63,7 @@ public final class BluetoothConnector extends ConnectorAbstractImpl {
 			if (con != null) {
 
 				// Remove prefix.
-				if (con.startsWith(CON_PREFIX)) {
+				if (con.toLowerCase().startsWith(CON_PREFIX)) {
 					con = con.substring(CON_PREFIX.length());
 				}
 
@@ -141,6 +141,10 @@ public final class BluetoothConnector extends ConnectorAbstractImpl {
 	}
 
 	public boolean connect() {
+
+		if (isConnected()) {
+			return true;
+		}
 
 		// Open a connection.
 		try {
