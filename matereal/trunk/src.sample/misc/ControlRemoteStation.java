@@ -41,8 +41,10 @@ public class ControlRemoteStation {
 			for (byte b : data) {
 				int i = b & 0xff;
 				System.out.print(String.format("%02x", i));
-				if (idx % 8 == 7) {
+				if (idx % 16 == 15) {
 					System.out.println();
+				} else if (idx % 8 == 7) {
+					System.out.print(" ");
 				}
 			}
 		}
@@ -50,7 +52,7 @@ public class ControlRemoteStation {
 		rsCore.blinkLED(3);
 
 		try {
-			Thread.sleep(500);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
