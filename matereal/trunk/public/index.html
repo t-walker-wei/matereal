@@ -1,8 +1,208 @@
+<!DOCTYPE html>
 <html>
 <head>
-	<title>test</title>
+	<title>Realmote</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css" />
+	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
+	<script type="text/javascript">
+
+	var commands = [];
+	var editingCommand = null;
+
+	$(document).bind("pagebeforechange", function(e, data) {
+		if ((typeof data.toPage == "string" &&
+				$.mobile.path.parseUrl(data.toPage).hash == "#edit")
+				|| (typeof data.toPage != "string" &&
+						data.toPage.attr("id") == "edit")) {
+			if (editingCommand == null) {
+				e.preventDefault();
+			}
+		}
+	});
+
+	$(function(){
+
+		var showEditPage = function(id) {
+			editingCommand = null;
+			$.each(commands, function() {
+				if (this.id == id) {
+					editingCommand = this;
+				}
+			});
+			if (editingCommand == null) {
+				return false;
+			}
+			$("#edit_name").val(editingCommand.name);
+		}
+
+		var updateListView = function() {
+			var listview = $("#commands");
+			var header = listview.children().first();
+			header.nextAll().remove();
+			if (commands.length <= 0) {
+				header.after("<li>No command is recorded yet.</li>");
+			} else {
+				var li = header;
+				$.each(commands, function() {
+					var new_li = $("<li><a href=\"#home\">" + this.name + "</a><a href=\"#edit\">Edit</a></li>");
+					var main = new_li.children().first();
+					var edit = main.next();
+					var id = this.id;
+					main.click(function() {
+						$.mobile.showPageLoadingMsg();
+						$.ajax({
+							url: "/remote/play/" + id,
+							complete: function() {
+								$.mobile.hidePageLoadingMsg();
+							}
+						});
+						return false;
+					});
+					edit.click(function() {
+						showEditPage(id);
+					});
+					li.after(new_li);
+					li = new_li;
+				});
+			}
+			listview.listview("refresh");
+		}
+
+		$("#reload").click(function() {
+			$.mobile.showPageLoadingMsg();
+			$.ajax({
+				url: "/system/reload",
+				complete: function() {
+					$.mobile.hidePageLoadingMsg();
+					location.href = "/";
+				}
+			});
+			return false;
+		});
+
+		$("#record").click(function() {
+			$.mobile.showPageLoadingMsg();
+			$.ajax({
+				url: "/remote/record",
+				success: function(data) {
+					commands[commands.length] = data;
+					updateListView();
+				},
+				complete: function(jqXHR) {
+					$.mobile.hidePageLoadingMsg();
+				}
+			});
+			return false;
+		});
+
+		$("#edit_submit").click(function() {
+			$.mobile.showPageLoadingMsg();
+			$.ajax({
+				url: "/remote/set/" + editingCommand.id,
+				data: { name: $("#edit_name").val() },
+				success: function(data) {
+					editingCommand.name = data.name;
+					updateListView();
+				},
+				complete: function(jqXHR) {
+					$.mobile.hidePageLoadingMsg();
+					$.mobile.changePage($("#home"));
+					editingCommand = null;
+				}
+			});
+			return false;
+		});
+
+		$("#edit_delete").click(function() {
+			$.mobile.showPageLoadingMsg();
+			$.ajax({
+				url: "/remote/delete/" + editingCommand.id,
+				success: function(data) {
+					for (var i = 0; i < commands.length; i ++) {
+						if (commands[i].id == editingCommand.id) {
+							commands.splice(i, 1);
+							break;
+						}
+					}
+					updateListView();
+				},
+				complete: function(jqXHR) {
+					$.mobile.hidePageLoadingMsg();
+					$.mobile.changePage($("#home"));
+					editingCommand = null;
+				}
+			});
+			return false;
+		});
+
+		$.mobile.showPageLoadingMsg();
+		$.ajax({
+			url: "/remote/list",
+			dataType: "json",
+			success: function(data) {
+				commands = data;
+				updateListView();
+			},
+			complete: function() {
+				$.mobile.hidePageLoadingMsg();
+			}
+		});
+
+	});
+
+	</script>
 </head>
 <body>
-body
+
+<!-- main page -->
+<div data-role="page" id="home">
+
+	<div data-role="header">
+		<h1>Realmote home</h1>
+	</div>
+
+	<div data-role="content">
+		<ul data-role="listview" data-inset="true" data-split-icon="gear" data-split-theme="d" id="commands">
+			<li data-theme="a">Available commands</li>
+		</ul>
+		<a href="#home" id="record" data-role="button">Record new command</a>
+		<a href="#home" id="reload" data-role="button">Reload the page</a>
+	</div>
+
+	<div data-role="footer">
+		<h4>Realmote v.1a</h4>
+	</div>
+
+</div>
+
+<!-- edit page -->
+<div data-role="page" id="edit">
+
+	<div data-role="header">
+		<h1>Edit the name</h1>
+	</div>
+
+	<div data-role="content">
+		<div data-role="fieldcontain">
+			<label for="edit_name">Name:</label>
+			<input type="text" name="name" id="edit_name" value=""  />
+		</div>
+		<div data-role="fieldcontain">
+			<a id="edit_submit" href="#home" data-role="button" data-direction="reverse" data-icon="check" data-theme="b">Save</a>
+			<fieldset class="ui-grid-a">
+				<div class="ui-block-a"><a id="edit_delete" href="#home" data-role="button" data-direction="reverse" data-icon="delete" data-theme="b">Delete</a></div>
+				<div class="ui-block-b"><a href="#home" data-role="button" data-direction="reverse">Cancel</a></div>
+			</fieldset>
+		</div>
+	</div>
+
+	<div data-role="footer">
+		<h4>Realmote v.1a</h4>
+	</div>
+
+</div>
+
 </body>
 </html>

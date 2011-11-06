@@ -36,7 +36,11 @@
  */
 package misc.remote;
 
-public class RemoteCommand {
+import java.io.Serializable;
+
+public class RemoteCommand implements Serializable {
+	private static final long serialVersionUID = -7376294502947079836L;
+	public int id;
 	public String name;
 	public byte[] data;
 

@@ -19,14 +19,18 @@ import jp.digitalmuseum.mr.entity.RemoteStation;
 public class RemoteStationServer implements HttpHandler {
 
 	public static final int NUM_BACKLOG = 5;
-	private HttpServer server = null;
+	public static final String NAME_CONFIGFILE = "rss.dat";
+	private HttpServer server;
 	private DefaultFileHandler defaultFileHandler;
+	private RemoteStationHandler rsHandler;
 
 	public static void main(String[] args) throws IOException {
 		new RemoteStationServer();
 	}
 
 	public RemoteStationServer() throws IOException {
+
+		ParameterFilter filter = new ParameterFilter();
 
 		defaultFileHandler = new DefaultFileHandler("public");
 
@@ -36,11 +40,16 @@ public class RemoteStationServer implements HttpHandler {
 				RXTXConnector.STOPBITS_1,
 				RXTXConnector.PARITY_NONE);
 		RemoteStation rs = new RemoteStation(connector);
-		RemoteStationHandler rsHandler = new RemoteStationHandler(rs);
+		rsHandler = new RemoteStationHandler(rs);
+		try {
+			rsHandler.load(NAME_CONFIGFILE);
+		} catch (ClassNotFoundException e) {
+			//
+		}
 
 		server = HttpServer.create(new InetSocketAddress(8000), NUM_BACKLOG);
 		server.createContext("/", defaultFileHandler);
-		server.createContext("/remote", rsHandler);
+		server.createContext("/remote", rsHandler).getFilters().add(filter);
 		server.createContext("/system", this);
 		server.setExecutor(null);
 		server.start();
@@ -53,13 +62,15 @@ public class RemoteStationServer implements HttpHandler {
 
 		// Shutdown the server.
 		if (path.equals("/system/off")) {
+			rsHandler.save(NAME_CONFIGFILE);
 			exchange.sendResponseHeaders(200, 0);
 			exchange.close();
 			Matereal.getInstance().dispose();
-			server.stop(0);
+			this.server.stop(0);
 			return;
 		} else if (path.equals("/system/reload")) {
-			defaultFileHandler.loadFiles();
+			rsHandler.save(NAME_CONFIGFILE);
+			this.defaultFileHandler.loadFiles();
 			exchange.sendResponseHeaders(200, 0);
 			exchange.close();
 			return;
