@@ -108,6 +108,9 @@ public class DefaultFileHandler implements HttpHandler {
 			File dir = new File(dirPath);
 			String[] list = dir.list();
 			for (String e : list) {
+				if (e.startsWith(".")) {
+					continue;
+				}
 				String path = dirPath + "/" + e;
 				File f = new File(path);
 				if (f.exists()) {

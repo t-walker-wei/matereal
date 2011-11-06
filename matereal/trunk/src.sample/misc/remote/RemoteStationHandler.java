@@ -36,8 +36,16 @@
  */
 package misc.remote;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 import jp.digitalmuseum.mr.entity.RemoteStation;
 import jp.digitalmuseum.mr.entity.RemoteStation.RemoteStationCore;
@@ -49,6 +57,7 @@ import com.sun.net.httpserver.HttpHandler;
 public class RemoteStationHandler implements HttpHandler {
 	private RemoteStationCore rsCore;
 	private ArrayList<RemoteCommand> commands;
+	private int maxId = 0;
 
 	public RemoteStationHandler(RemoteStation rs) {
 		rsCore = rs.requestResource(RemoteStationCore.class, null);
@@ -69,6 +78,10 @@ public class RemoteStationHandler implements HttpHandler {
 			return;
 		} else if (path.startsWith("/remote/play/")) {
 			result = play(exchange, path.substring("/remote/play/".length()));
+		} else if (path.startsWith("/remote/set/")) {
+			result = set(exchange, path.substring("/remote/set/".length()));
+		} else if (path.startsWith("/remote/delete/")) {
+			result = delete(exchange, path.substring("/remote/delete/".length()));
 		} else {
 			result = false;
 		}
@@ -80,22 +93,67 @@ public class RemoteStationHandler implements HttpHandler {
 		exchange.close();
 	}
 
+	public void save(String fileName) throws IOException {
+		FileOutputStream fos = new FileOutputStream(fileName);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeInt(maxId);
+        oos.writeObject(commands);
+        oos.close();
+        fos.close();
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean load(String fileName) throws IOException, ClassNotFoundException {
+		try {
+			FileInputStream fis = new FileInputStream(fileName);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			maxId = ois.readInt();
+			commands = (ArrayList<RemoteCommand>) ois.readObject();
+		} catch (FileNotFoundException e) {
+			return false;
+		}
+		return true;
+	}
+
+	private RemoteCommand getCommand(String idString) {
+		int id;
+		try {
+			id = Integer.parseInt(idString);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+		RemoteCommand command = null;
+		for (RemoteCommand c : commands) {
+			if (c.id == id) {
+				command = c;
+				break;
+			}
+		}
+		return command;
+	}
+
 	private void list(HttpExchange exchange) throws IOException {
+
+		// Construct the response body.
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for (int id = 0; id < commands.size(); id ++) {
+			if (id != 0) {
+				sb.append(",");
+			}
+			RemoteCommand command = commands.get(id);
+			sb.append(String.format("{\"id\":%d,\"name\":\"%s\"}", id, command.name));
+		}
+		sb.append("]");
+		byte[] body = sb.toString().getBytes();
 
 		// Send the response.
 		Headers responseHeaders = exchange.getResponseHeaders();
 		responseHeaders.set("Content-Type", "application/json");
-		exchange.getResponseBody().write("[".getBytes());
-		for (int id = 0; id < commands.size(); id ++) {
-			if (id != 0) {
-				exchange.getResponseBody().write(",".getBytes());
-			}
-			RemoteCommand command = commands.get(id);
-			exchange.getResponseBody().write(
-					String.format("{id:%d,name:\"%s\"}", id, command.name).getBytes());
-		}
-		exchange.getResponseBody().write("]".getBytes());
-		exchange.getResponseBody().close();
+		exchange.sendResponseHeaders(200, body.length);
+		OutputStream responseBody = exchange.getResponseBody();
+		responseBody.write(body);
+		responseBody.close();
 		exchange.close();
 	}
 
@@ -106,6 +164,7 @@ public class RemoteStationHandler implements HttpHandler {
 		rsCore.blinkLED(3);
 		byte[] data = rsCore.receiveCommand();
 		if (data == null) {
+			System.out.println("No data received.");
 			rsCore.blinkLED(5);
 			exchange.sendResponseHeaders(500, 0);
 			exchange.close();
@@ -113,19 +172,14 @@ public class RemoteStationHandler implements HttpHandler {
 		}
 
 		// Register the command.
-		int id = commands.size();
 		RemoteCommand command = new RemoteCommand();
-		command.name = String.format("Command no.%d", id + 1);
+		command.id = maxId ++;
+		command.name = String.format("Command no.%d", command.id + 1);
 		command.data = data;
-		commands.add(id, command);
+		commands.add(commands.size(), command);
 
 		// Send the response.
-		Headers responseHeaders = exchange.getResponseHeaders();
-		responseHeaders.set("Content-Type", "application/json");
-		exchange.getResponseBody().write(
-				String.format("{id:%d,name:\"%s\"}", id, command.name).getBytes());
-		exchange.getResponseBody().close();
-		exchange.close();
+		sendResponse(exchange, command);
 
 		System.out.println("Received command:");
 		command.print();
@@ -136,19 +190,13 @@ public class RemoteStationHandler implements HttpHandler {
 		System.out.println("---Sending a command.");
 
 		// Get the specified command data.
-		int id;
-		try {
-			id = Integer.parseInt(idString);
-		} catch (NumberFormatException e) {
-			id = -1;
-		}
-		if (id < 0 || id >= commands.size()) {
+		RemoteCommand command = getCommand(idString);
+		if (command == null) {
 			rsCore.blinkLED(5);
 			return false;
 		}
 
 		// Send the command data to the RemoteStation.
-		RemoteCommand command = commands.get(id);
 		boolean result = true;
 		for (int i = 0; i < 4; i ++) {
 			boolean r = rsCore.sendCommand(command.data, RemoteStation.PORT1 + i);
@@ -164,5 +212,69 @@ public class RemoteStationHandler implements HttpHandler {
 		exchange.close();
 		rsCore.blinkLED(result ? 3 : 5);
 		return true;
+	}
+
+	private boolean set(HttpExchange exchange, String idString) throws IOException {
+		System.out.println("---Setting the name of the command.");
+
+		// Get the specified command data.
+		RemoteCommand command = getCommand(idString);
+		if (command == null) {
+			rsCore.blinkLED(5);
+			return false;
+		}
+
+		// Set the name of the command.
+		@SuppressWarnings("unchecked")
+		Map<String, Object> params = (Map<String, Object>) exchange.getAttribute("parameters");
+		if (params.containsKey("name")) {
+			command.name = params.get("name").toString();			
+			sendResponse(exchange, command);
+			System.out.println(String.format("The name is set to \"%s\"", command.name));
+		} else {
+			exchange.sendResponseHeaders(500, 0);
+			exchange.close();
+		}
+		return true;
+	}
+
+	private boolean delete(HttpExchange exchange, String idString) throws IOException {
+		System.out.println("---Deleting the command.");
+
+		// Parse the id string.
+		int id;
+		try {
+			id = Integer.parseInt(idString);
+		} catch (NumberFormatException e) {
+			rsCore.blinkLED(5);
+			return false;
+		}
+
+		// Remove the specified command.
+		Iterator<RemoteCommand> it = commands.iterator();
+		while (it.hasNext()) {
+			RemoteCommand c = it.next();
+			if (c.id == id) {
+				it.remove();
+				return true;
+			}
+		}
+
+		// Return false if the command is not found.
+		rsCore.blinkLED(5);
+		return false;
+	}
+
+	private void sendResponse(HttpExchange exchange, RemoteCommand command) throws IOException {
+		byte[] body =
+			String.format("{\"id\":%d,\"name\":\"%s\"}", command.id, command.name).getBytes();
+
+		Headers responseHeaders = exchange.getResponseHeaders();
+		responseHeaders.set("Content-Type", "application/json");
+		exchange.sendResponseHeaders(200, body.length);
+		OutputStream responseBody = exchange.getResponseBody();
+		responseBody.write(body);
+		responseBody.close();
+		exchange.close();
 	}
 }
