@@ -828,4 +828,61 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 			isWorking = true;
 		}
 	}
+
+	/**
+	 * Utility class for controlling RooTooth (FireFly.)
+	 */
+	public static class RooTooth {
+
+		/**
+		 * Wake up Roomba to accept ROI commands.
+		 * @param roomba Roomba to wake up.
+		 */
+		public static void wakeUp(Roomba roomba) {
+			Connector connector = roomba.getConnector();
+			byte[] response = new byte[5];
+			// Dive into command mode.
+			sendCommand("$$$", connector, response);
+			// Set GPIO7 as output.
+			sendCommand("S@,8080\n", connector, response);
+			// Toggle GPIO7 to low.
+			sendCommand("S&,8000\n", connector, response);
+			roomba.core.wait(500);
+			// Toggle GPIO7 to high.
+			sendCommand("S&,8080\n", connector, response);
+			// Get out of the command mode.
+			sendCommand("---\n", connector, response);
+		}
+
+		/**
+		 * Set baud rate of FireFly chip to 115200bps (the default baud rate for ROI communication.) 
+		 * @param roomba
+		 */
+		public static void setBaudRate115K(Roomba roomba) {
+			setBaudRate(roomba, "115K");
+		}
+
+		public static void setBaudRate(Roomba roomba, String baudRate) {
+			Connector connector = roomba.getConnector();
+			byte[] response = new byte[5];
+			// Dive into command mode.
+			sendCommand("$$$", connector, response);
+			// Set baud rate to 115K.
+			sendCommand(String.format("SU,%s\n", baudRate), connector, response);
+			// Get out of the command mode.
+			sendCommand("---\n", connector, response);
+		}
+
+		private static void sendCommand(String command, Connector connector, byte[] response) {
+			// System.out.print(command);
+			connector.write(command);
+			connector.waitForResponse();
+			connector.readAll(response);
+			/*
+			for (byte b : response) {
+				System.out.print((char) (b & 0xff));
+			}
+			*/
+		}
+	}
 }
