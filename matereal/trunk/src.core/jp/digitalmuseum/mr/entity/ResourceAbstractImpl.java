@@ -139,6 +139,19 @@ public abstract class ResourceAbstractImpl implements Resource {
 		//
 	}
 
+	/**
+	 * Wait for the specified milliseconds.
+	 *
+	 * @param ms
+	 */
+	protected void wait(int ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public String toString() {
 		return getClass().getSimpleName();
