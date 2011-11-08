@@ -36,14 +36,17 @@
  */
 package robot;
 
-import jp.digitalmuseum.mr.entity.NetTansor;
 import jp.digitalmuseum.mr.entity.Noopy2;
 import jp.digitalmuseum.mr.entity.PhysicalRobot;
+import jp.digitalmuseum.mr.entity.Roomba;
 
 public class RobotInfo {
 
 	public static PhysicalRobot getRobot() {
-		return new NetTansor("http://192.168.10.3");
+		Roomba roomba = new Roomba("btspp://00066600D69A");
+		Roomba.RooTooth.wakeUp(roomba);
+		return roomba;
+		// return new NetTansor("http://192.168.10.3");
 	}
 
 	public static Noopy2 getNoopyRobot() {
