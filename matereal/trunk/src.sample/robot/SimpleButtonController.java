@@ -50,6 +50,7 @@ public class SimpleButtonController extends JFrame {
 	public void dispose() {
 		super.dispose();
 		robot.freeResource(wheels, this);
+		Matereal.getInstance().dispose();
 	}
 
 	/**

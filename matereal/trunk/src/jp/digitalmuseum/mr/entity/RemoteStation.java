@@ -153,28 +153,30 @@ public class RemoteStation extends PhysicalRobotAbstractImpl {
 
 		public boolean blinkLED() {
 			getConnector().write(0x69);
-			getConnector().waitForResponse();
+			if (!getConnector().waitForResponse()) {
+				return false;
+			}
 			int result = getConnector().read();
 			return result == 0x4f;
 		}
 
 		public byte[] receiveCommand() {
 			getConnector().write(0x72);
-			getConnector().waitForResponse();
-			if (getConnector().read() != 0x59) {
+			if (!getConnector().waitForResponse() ||
+					getConnector().read() != 0x59) {
 				return null;
 			}
 
-			getConnector().waitForResponse(5000);
-			if (getConnector().read() != 0x53) {
+			if (!getConnector().waitForResponse(5000) ||
+					getConnector().read() != 0x53) {
 				return null;
 			}
 
 			byte[] data = new byte[240];
 			getConnector().readAll(data);
 
-			getConnector().waitForResponse();
-			if (getConnector().read() != 0x45) {
+			if (!getConnector().waitForResponse() ||
+					getConnector().read() != 0x45) {
 				return null;
 			}
 			return data;
@@ -186,20 +188,20 @@ public class RemoteStation extends PhysicalRobotAbstractImpl {
 			}
 
 			getConnector().write(0x74);
-			getConnector().waitForResponse();
-			if (getConnector().read() != 0x59) {
+			if (!getConnector().waitForResponse() ||
+					getConnector().read() != 0x59) {
 				return false;
 			}
 
 			getConnector().write(port);
-			getConnector().waitForResponse();
-			if (getConnector().read() != 0x59) {
+			if (!getConnector().waitForResponse() ||
+					getConnector().read() != 0x59) {
 				return false;
 			}
 
 			getConnector().write(data);
-			getConnector().waitForResponse();
-			return getConnector().read() == 0x45;
+			return getConnector().waitForResponse() &&
+					getConnector().read() == 0x45;
 		}
 	}
 }

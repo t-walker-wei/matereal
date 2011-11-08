@@ -52,16 +52,17 @@ import jp.digitalmuseum.mr.resource.CleanerBrushController;
 import jp.digitalmuseum.mr.resource.DifferentialWheelsAbstractImpl;
 
 /**
- * Roomba.
+ * Roomba driver for Matereal.
  *
  * @author Jun KATO
- * @see RoombaDriver
+ * @see RoombaCore
  */
 public class Roomba extends PhysicalRobotAbstractImpl {
-	private static final long serialVersionUID = -4274597295040015350L;
+	private static final long serialVersionUID = -8733485049894567603L;
 	public static final double RADIUS = 17;
 	private static int instances = 0;
-	private RoombaDriver driver;
+	private RoombaCore core;
+	private RoombaWheels wheels;
 	private RoombaCleanerBrush cleaner;
 	private Shape shape;
 
@@ -92,17 +93,18 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		if (getName() == null) {
 			setName(getTypeName()+" ("+instances+")");
 		}
-		driver = new RoombaDriver(this);
+		core = new RoombaCore(this);
+		wheels = new RoombaWheels(this);
 		cleaner = new RoombaCleanerBrush(this);
 		shape = new Ellipse2D.Double(-RADIUS, -RADIUS, RADIUS*2, RADIUS*2);
 		super.initialize();
 	}
 
-
 	@Override
 	protected List<ResourceAbstractImpl> getResources() {
 		List<ResourceAbstractImpl> rs = super.getResources();
-		rs.add(driver);
+		rs.add(core);
+		rs.add(wheels);
 		rs.add(cleaner);
 		return rs;
 	}
@@ -120,45 +122,25 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 	};
 
 	/**
-	 * Differential wheels of Roomba.
-	 *
+	 * Core driver for Roomba.
+	 * 
 	 * @author Jun KATO
-	 * @see Roomba
 	 */
-	public static class RoombaDriver extends DifferentialWheelsAbstractImpl {
-		private static final long serialVersionUID = -8077520687089529287L;
-		public final static int MAXIMUM_VELOCITY = 500;
-		public final static int DEFAULT_SPEED = 14;
-		public final static int DEFAULT_ROTATION_SPEED = 10;
+	public static class RoombaCore extends PhysicalResourceAbstractImpl {
+		private static final long serialVersionUID = -4557084824109152696L;
 
 		private transient RoombaMode mode = RoombaMode.UNKNOWN;
 
-		public RoombaDriver(Connector connector) {
+		protected RoombaCore(Connector connector) {
 			super(connector);
-			initialize();
 		}
 
-		public RoombaDriver(Roomba roomba) {
+		protected RoombaCore(Roomba roomba) {
 			super(roomba);
-			initialize();
 		}
 
 		private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
 			ois.defaultReadObject();
-			initialize();
-		}
-
-		protected void onFree() {
-			stopWheels();
-			power();
-		}
-
-		public int getRecommendedSpeed() {
-			return DEFAULT_SPEED;
-		}
-
-		public int getRecommendedRotationSpeed() {
-			return DEFAULT_ROTATION_SPEED;
 		}
 
 		/**
@@ -169,10 +151,8 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void start() {
-			for (int i = 0; i < 3; i ++) {
-				getConnector().write(R_START);
-				wait(20);
-			}
+			getConnector().write(R_START);
+			wait(30); // 20[ms] seems too short.
 			mode = RoombaMode.PASSIVE;
 		}
 
@@ -205,6 +185,9 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </table>
 		 */
 		public void baud(byte baudCode) {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+			}
 			getConnector().write(R_BAUD);
 			getConnector().write(baudCode);
 			wait(100);
@@ -214,8 +197,11 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @see #safe()
 		 */
 		public void control() {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+			}
 			getConnector().write(R_CONTROL);
-			wait(20);
+			wait(30);
 			mode = RoombaMode.SAFE;
 		}
 
@@ -229,8 +215,11 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void safe() {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+			}
 			getConnector().write(R_SAFE);
-			wait(20);
+			wait(30);
 			mode = RoombaMode.SAFE;
 		}
 
@@ -245,8 +234,11 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void full() {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+			}
 			getConnector().write(R_FULL);
-			wait(20);
+			wait(30);
 			mode = RoombaMode.FULL;
 		}
 
@@ -260,7 +252,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		public void clean() {
 			if (mode == RoombaMode.UNKNOWN) {
 				start();
-				control();
 			}
 			getConnector().write(R_CLEAN);
 			wait(20);
@@ -277,7 +268,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		public void max() {
 			if (mode == RoombaMode.UNKNOWN) {
 				start();
-				control();
 			}
 			getConnector().write(R_MAX);
 			wait(20);
@@ -294,7 +284,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		public void spot() {
 			if (mode == RoombaMode.UNKNOWN) {
 				start();
-				control();
 			}
 			getConnector().write(R_SPOT);
 			wait(20);
@@ -311,7 +300,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		public void seekDock() {
 			if (mode == RoombaMode.UNKNOWN) {
 				start();
-				control();
 			}
 			getConnector().write(R_SEEKDOCK);
 			wait(20);
@@ -326,10 +314,13 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void power() {
-			if (mode != RoombaMode.UNKNOWN) {
+			if (mode == RoombaMode.UNKNOWN) {
+				start();
+			}
+			if (mode != RoombaMode.PASSIVE) {
 				getConnector().write(R_POWER);
 				wait(20);
-				mode = RoombaMode.UNKNOWN;
+				mode = RoombaMode.PASSIVE;
 			}
 		}
 
@@ -337,8 +328,8 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * This command controls Roomba’s drive wheels. It takes four data bytes, interpreted as two 16-bit signed
 		 * values using two’s complement. The first two bytes specify the average velocity of the drive wheels in
 		 * millimeters per second (mm/s), with the high byte being sent first. The next two bytes specify the radius
-		 * in millimeters at which Roomba will turn. The longer radii make Roomba drive straighter, while the
-		 * shorter radii make Roomba turn more. The radius is measured from the center of the turning circle to the
+		 * in millimeters at which Roomba will turn. The longer radius make Roomba drive straighter, while the
+		 * shorter radius make Roomba turn more. The radius is measured from the center of the turning circle to the
 		 * center of Roomba. A Drive command with a positive velocity and a positive radius makes Roomba drive
 		 * forward while turning toward the left. A negative radius makes Roomba turn toward the right. Special
 		 * cases for the radius make Roomba turn in place or drive straight, as specified below. A negative velocity
@@ -356,14 +347,11 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param velocity
 		 * @param radius
 		 */
-		public void drive_(int velocity, int radius) {
-			if (mode == RoombaMode.UNKNOWN) {
-				start();
-				control();
-			} else 	if (mode.equals(RoombaMode.PASSIVE)) {
+		public void drive(int velocity, int radius) {
+			if (mode == RoombaMode.UNKNOWN ||
+					mode.equals(RoombaMode.PASSIVE)) {
 				safe();
 			}
-			// System.out.println("drive:"+velocity+","+radius);
 			getConnector().write(new byte[] {
 				(byte) R_DRIVE,
 				/** v upper 8 bits */ (byte) (velocity >> 8),
@@ -391,13 +379,10 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param rightVelocity
 		 */
 		public void driveDirect(int leftVelocity, int rightVelocity) {
-			if (mode == RoombaMode.UNKNOWN) {
-				start();
-				control();
-			} else 	if (mode.equals(RoombaMode.PASSIVE)) {
+			if (mode == RoombaMode.UNKNOWN ||
+					mode.equals(RoombaMode.PASSIVE)) {
 				safe();
 			}
-			// System.out.println("drive:"+velocity+","+radius);
 			getConnector().write(new byte[] {
 				(byte) R_DRIVEDIRECT,
 				/** vr upper 8 bits */ (byte) (rightVelocity >> 8),
@@ -437,10 +422,8 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param mainBrushOutward Outward or inward
 		 */
 		public void motors(boolean vacuum, boolean sideBrush, boolean sideBrushClockwise, boolean mainBrush, boolean mainBrushOutward) {
-			if (mode == RoombaMode.UNKNOWN) {
-				start();
-				control();
-			} else if (mode.equals(RoombaMode.PASSIVE)) {
+			if (mode == RoombaMode.UNKNOWN ||
+					mode.equals(RoombaMode.PASSIVE)) {
 				safe();
 			}
 			getConnector().write(R_MOTORS);
@@ -468,10 +451,8 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param cleanOrPowerIntensity 0-255
 		 */
 		public void lightLED(boolean home, boolean spot, boolean checkRobot, boolean debris, int cleanOrPowerColor, int cleanOrPowerIntensity) {
-			if (mode == RoombaMode.UNKNOWN) {
-				start();
-				control();
-			} else if (mode.equals(RoombaMode.PASSIVE)) {
+			if (mode == RoombaMode.UNKNOWN ||
+					mode.equals(RoombaMode.PASSIVE)) {
 				safe();
 			}
 			getConnector().write(R_MOTORS);
@@ -495,10 +476,8 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * </ul>
 		 */
 		public void lightDigitLED(char c0, char c1, char c2, char c3) {
-			if (mode == RoombaMode.UNKNOWN) {
-				start();
-				control();
-			} else if (mode.equals(RoombaMode.PASSIVE)) {
+			if (mode == RoombaMode.UNKNOWN ||
+					mode.equals(RoombaMode.PASSIVE)) {
 				safe();
 			}
 			getConnector().write(R_DIGITLED);
@@ -544,7 +523,6 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		public void song(int index, Song song) {
 			if (mode == RoombaMode.UNKNOWN) {
 				start();
-				control();
 			}
 			final Connector connector = getConnector();
 			connector.write(R_SONG);
@@ -568,10 +546,8 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 		 * @param index 0-4
 		 */
 		public void play(int index) {
-			if (mode == RoombaMode.UNKNOWN) {
-				start();
-				control();
-			} else if (mode.equals(RoombaMode.PASSIVE)) {
+			if (mode == RoombaMode.UNKNOWN ||
+					mode.equals(RoombaMode.PASSIVE)) {
 				safe();
 			}
 			getConnector().write(R_PLAY);
@@ -591,18 +567,227 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 			return null;
 		}
 
-		private void wait(int ms) {
-			try { Thread.sleep(ms); }
-			catch (InterruptedException e) { e.printStackTrace(); }
+		public static final int R_START = 128;
+		public static final int R_BAUD = 129;
+
+		/**
+		 * identical to the Safe command.
+		 * @see #R_SAFE
+		 */
+		public static final int R_CONTROL = 130;
+
+		/** Mode commands / Safe */
+		public static final int R_SAFE = 131;
+		/** Mode commands / Full */
+		public static final int R_FULL = 132;
+
+		/** Cleaning commands / Clean */
+		public static final int R_CLEAN = 135;
+		/** Cleaning commands / Max */
+		public static final int R_MAX = 136;
+		/** Cleaning commands / Spot */
+		public static final int R_SPOT = 134;
+		/** Cleaning commands / Seek Dock */
+		public static final int R_SEEKDOCK = 143;
+		/** Cleaning commands / Schedule */
+		public static final int R_SCHEDULE = 167;
+		/** Cleaning commands / Set Day/Time */
+		public static final int R_SETDAYTIME = 168;
+		/** Cleaning commands / Power off */
+		public static final int R_POWER = 133;
+
+		/** Actuator commands / Drive */
+		public static final int R_DRIVE = 137;
+		/** Actuator commands / Drive Direct */
+		public static final int R_DRIVEDIRECT = 145;
+		/**
+		 * Actuator commands / Drive <a href="http://monoist.atmarkit.co.jp/fembedded/h8/h8primer09/h8primer09a.html">Pulse Width Modulation</a>
+		 */
+		public static final int R_DRIVEPWM = 146;
+		/** Actuator commands / Motors */
+		public static final int R_MOTORS = 138;
+		/**
+		 * Actuator commands / Motors
+		 * @see #R_DRIVEPWM
+		 */
+		public static final int R_MOTORSPWM = 144;
+		/** Actuator commands / LEDs */
+		public static final int R_LEDS = 139;
+		/** Actuator commands / Scheduling LEDs */
+		public static final int R_SCHEDULELEDS = 162;
+		/** Actuator commands / Digit LEDs Raw */
+		public static final int R_DIGITLEDRAW = 163;
+		/** Actuator commands / Digit LEDs ASCII */
+		public static final int R_DIGITLED= 164;
+		/** Actuator commands / Buttons */
+		public static final int R_Buttons= 165;
+		/** Actuator commands / Song */
+		public static final int R_SONG = 140;
+		/** Actuator commands / Play */
+		public static final int R_PLAY = 141;
+
+		/** Input commands / Sensors */
+		public static final int R_SENSORS = 142;
+		/** Input commands / Query list */
+		public static final int R_QUERYLIST = 149;
+		/** Input commands / Stream */
+		public static final int R_STREAM = 148;
+		/** Input commands / Pause/Resume stream */
+		public static final int R_PAUSERESUMESTREAM = 150;
+
+		public static final int R_SENSORS_ALL = 0;
+		public static final int R_SENSORS_PHYSICAL = 1;
+		public static final int R_SENSORS_INTERNAL = 2;
+		public static final int R_SENSORS_POWER = 3;
+
+		/**
+		 * Note consisting Song<br />
+		 * <dl>
+		 *	<dt>Note Number (31 – 127)</dt><dd>
+		 * The pitch of the musical note Roomba will play, according to the MIDI note numbering scheme. The
+		 * lowest musical note that Roomba will play is Note #31. Roomba considers all musical notes outside
+		 * the range of 31 – 127 as rest notes, and will make no sound during the duration of those notes.</dd>
+		 *	<dt>Note Duration (0 – 255)</dt><dd>
+		 * The duration of a musical note, in increments of 1/64th of a second. Example: a half-second long
+		 * musical note has a duration value of 32.</dd>
+		 * </dl>
+		 *
+		 * @author Jun KATO
+		 * @see Song
+		 */
+		public static class Note {
+			final public static int A = 69;
+			final public static int A_SHARP = 70;
+			final public static int B = 71;
+			final public static int C = 72;
+			final public static int C_SHARP = 73;
+			final public static int D = 74;
+			final public static int D_SHARP = 75;
+			final public static int E = 76;
+			final public static int F = 77;
+			final public static int F_SHARP = 78;
+			final public static int G = 79;
+			final public static int G_SHARP = 80;
+			final public static int QUARTER_SECOND = 16;
+			final public static int HALF_SECOND = 32;
+			final public static int SECOND = 64;
+			private int number;
+			private int duration;
+			public Note(int number, int duration) {
+				this.setNumber(number);
+				this.setDuration(duration);
+			}
+			public void setNumber(int number) {
+				this.number = number;
+			}
+			public int getNumber() {
+				return number;
+			}
+			public void setDuration(int duration) {
+				this.duration = duration;
+			}
+			public int getDuration() {
+				return duration;
+			}
+		}
+
+		/**
+		 * Roomba song consisted of 16 Notes at maximum.
+		 *
+		 * @author Jun KATO
+		 * @see Note
+		 */
+		public static class Song implements Iterable<Note> {
+			private List<Note> notes;
+			public Song() {
+				notes = new ArrayList<Note>();
+			}
+			public Song(Note note) {
+				notes = new ArrayList<Note>();
+				notes.add(note);
+			}
+			public Song(Note[] notes) {
+				this.notes = Arrays.asList(notes);
+			}
+			public void add(Note n) {
+				notes.add(n);
+			}
+			public void add(int index, Note n) {
+				notes.add(index, n);
+			}
+			public void add(int number, int duration) {
+				add(new Note(number, duration));
+			}
+			public void add(int index, int number, int duration) {
+				add(index, new Note(number, duration));
+			}
+			public Note get(int index) {
+				return notes.get(index);
+			}
+			public Note remove(int index) {
+				return notes.remove(index);
+			}
+			public int size() {
+				return notes.size();
+			}
+			public Iterator<Note> iterator() {
+				return notes.iterator();
+			}
+		}
+	}
+
+	/**
+	 * Differential wheels of Roomba.
+	 *
+	 * @author Jun KATO
+	 * @see Roomba
+	 */
+	public static class RoombaWheels extends DifferentialWheelsAbstractImpl {
+		private static final long serialVersionUID = -8077520687089529287L;
+		public final static int MAXIMUM_VELOCITY = 500;
+		public final static int DEFAULT_SPEED = 14;
+		public final static int DEFAULT_ROTATION_SPEED = 10;
+
+		public RoombaWheels(Roomba roomba) {
+			super(roomba);
+			initialize();
+		}
+
+		protected void onFree() {
+			stopWheels();
+		}
+
+		@Override
+		public Roomba getRobot() {
+			return (Roomba) super.getRobot();
+		}
+
+		public int getRecommendedSpeed() {
+			return DEFAULT_SPEED;
+		}
+
+		public int getRecommendedRotationSpeed() {
+			return DEFAULT_ROTATION_SPEED;
 		}
 
 		protected boolean doStopWheels() {
-			driveDirect(0, 0);
+			getRobot().core.driveDirect(0, 0);
+
+			// Set Roomba to PASSIVE mode while stopping.
+			// if (getRobot().core.mode != RoombaMode.PASSIVE) {
+			getRobot().core.start();
+			// }
 			return true;
 		}
 
 		protected boolean doDrive(int leftPower, int rightPower) {
-			driveDirect(getVelocity(leftPower), getVelocity(rightPower));
+
+			// Set Roomba to FULL mode while driving.
+			if (getRobot().core.mode != RoombaMode.FULL) {
+				getRobot().core.full();
+			}
+
+			getRobot().core.driveDirect(getVelocity(leftPower), getVelocity(rightPower));
 			return true;
 		}
 
@@ -613,197 +798,34 @@ public class Roomba extends PhysicalRobotAbstractImpl {
 
 	public static class RoombaCleanerBrush extends ResourceAbstractImpl implements CleanerBrushController {
 		private static final long serialVersionUID = -293735845062700029L;
-		private Roomba roomba;
 		private transient boolean isWorking = false;
 
 		public RoombaCleanerBrush(Roomba roomba) {
 			super(roomba);
-			this.roomba = roomba;
+		}
+
+		@Override
+		public Roomba getRobot() {
+			return (Roomba) super.getRobot();
 		}
 
 		public boolean isWorking() {
 			return isWorking;
 		}
 
+		@Override
 		protected void onFree() {
+			endCleaning();
 		}
 
 		public void endCleaning() {
-			roomba.driver.motors(false);
+			getRobot().core.motors(false);
 			isWorking = false;
 		}
 
 		public void startCleaning() {
-			roomba.driver.motors(true);
+			getRobot().core.motors(true);
 			isWorking = true;
-		}
-	}
-
-	public static final int R_START = 128;
-	public static final int R_BAUD = 129;
-
-	/**
-	 * identical to the Safe command.
-	 * @see #R_SAFE
-	 */
-	public static final int R_CONTROL = 130;
-
-	/** Mode commands / Safe */
-	public static final int R_SAFE = 131;
-	/** Mode commands / Full */
-	public static final int R_FULL = 132;
-
-	/** Cleaning commands / Clean */
-	public static final int R_CLEAN = 135;
-	/** Cleaning commands / Max */
-	public static final int R_MAX = 136;
-	/** Cleaning commands / Spot */
-	public static final int R_SPOT = 134;
-	/** Cleaning commands / Seek Dock */
-	public static final int R_SEEKDOCK = 143;
-	/** Cleaning commands / Schedule */
-	public static final int R_SCHEDULE = 167;
-	/** Cleaning commands / Set Day/Time */
-	public static final int R_SETDAYTIME = 168;
-	/** Cleaning commands / Power off */
-	public static final int R_POWER = 133;
-
-	/** Actuator commands / Drive */
-	public static final int R_DRIVE = 137;
-	/** Actuator commands / Drive Direct */
-	public static final int R_DRIVEDIRECT = 145;
-	/**
-	 * Actuator commands / Drive <a href="http://monoist.atmarkit.co.jp/fembedded/h8/h8primer09/h8primer09a.html">Pulse Width Modulation</a>
-	 */
-	public static final int R_DRIVEPWM = 146;
-	/** Actuator commands / Motors */
-	public static final int R_MOTORS = 138;
-	/**
-	 * Actuator commands / Motors
-	 * @see #R_DRIVEPWM
-	 */
-	public static final int R_MOTORSPWM = 144;
-	/** Actuator commands / LEDs */
-	public static final int R_LEDS = 139;
-	/** Actuator commands / Scheduling LEDs */
-	public static final int R_SCHEDULELEDS = 162;
-	/** Actuator commands / Digit LEDs Raw */
-	public static final int R_DIGITLEDRAW = 163;
-	/** Actuator commands / Digit LEDs ASCII */
-	public static final int R_DIGITLED= 164;
-	/** Actuator commands / Buttons */
-	public static final int R_Buttons= 165;
-	/** Actuator commands / Song */
-	public static final int R_SONG = 140;
-	/** Actuator commands / Play */
-	public static final int R_PLAY = 141;
-
-	/** Input commands / Sensors */
-	public static final int R_SENSORS = 142;
-	/** Input commands / Query list */
-	public static final int R_QUERYLIST = 149;
-	/** Input commands / Stream */
-	public static final int R_STREAM = 148;
-	/** Input commands / Pause/Resume stream */
-	public static final int R_PAUSERESUMESTREAM = 150;
-
-	public static final int R_SENSORS_ALL = 0;
-	public static final int R_SENSORS_PHYSICAL = 1;
-	public static final int R_SENSORS_INTERNAL = 2;
-	public static final int R_SENSORS_POWER = 3;
-
-	/**
-	 * Note consisting Song<br />
-	 * <dl>
-	 *	<dt>Note Number (31 – 127)</dt><dd>
-	 * The pitch of the musical note Roomba will play, according to the MIDI note numbering scheme. The
-	 * lowest musical note that Roomba will play is Note #31. Roomba considers all musical notes outside
-	 * the range of 31 – 127 as rest notes, and will make no sound during the duration of those notes.</dd>
-	 *	<dt>Note Duration (0 – 255)</dt><dd>
-	 * The duration of a musical note, in increments of 1/64th of a second. Example: a half-second long
-	 * musical note has a duration value of 32.</dd>
-	 * </dl>
-	 *
-	 * @author Jun KATO
-	 * @see Song
-	 */
-	public static class Note {
-		final public static int A = 69;
-		final public static int A_SHARP = 70;
-		final public static int B = 71;
-		final public static int C = 72;
-		final public static int C_SHARP = 73;
-		final public static int D = 74;
-		final public static int D_SHARP = 75;
-		final public static int E = 76;
-		final public static int F = 77;
-		final public static int F_SHARP = 78;
-		final public static int G = 79;
-		final public static int G_SHARP = 80;
-		final public static int QUARTER_SECOND = 16;
-		final public static int HALF_SECOND = 32;
-		final public static int SECOND = 64;
-		private int number;
-		private int duration;
-		public Note(int number, int duration) {
-			this.setNumber(number);
-			this.setDuration(duration);
-		}
-		public void setNumber(int number) {
-			this.number = number;
-		}
-		public int getNumber() {
-			return number;
-		}
-		public void setDuration(int duration) {
-			this.duration = duration;
-		}
-		public int getDuration() {
-			return duration;
-		}
-	}
-
-	/**
-	 * Roomba song consisted of 16 Notes at maximum.
-	 *
-	 * @author Jun KATO
-	 * @see Note
-	 */
-	public static class Song implements Iterable<Note> {
-		private List<Note> notes;
-		public Song() {
-			notes = new ArrayList<Note>();
-		}
-		public Song(Note note) {
-			notes = new ArrayList<Note>();
-			notes.add(note);
-		}
-		public Song(Note[] notes) {
-			this.notes = Arrays.asList(notes);
-		}
-		public void add(Note n) {
-			notes.add(n);
-		}
-		public void add(int index, Note n) {
-			notes.add(index, n);
-		}
-		public void add(int number, int duration) {
-			add(new Note(number, duration));
-		}
-		public void add(int index, int number, int duration) {
-			add(index, new Note(number, duration));
-		}
-		public Note get(int index) {
-			return notes.get(index);
-		}
-		public Note remove(int index) {
-			return notes.remove(index);
-		}
-		public int size() {
-			return notes.size();
-		}
-		public Iterator<Note> iterator() {
-			return notes.iterator();
 		}
 	}
 }
