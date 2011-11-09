@@ -34,7 +34,7 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package misc.remote;
+package jp.digitalmuseum.rm.handler;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,12 +56,12 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class RemoteStationHandler implements HttpHandler {
-	private RemoteStationCore rsCore;
+	private RemoteStationCore remoteStationCore;
 	private ArrayList<RemoteCommand> commands;
 	private int maxId = 0;
 
-	public RemoteStationHandler(RemoteStation rs) {
-		rsCore = rs.requestResource(RemoteStationCore.class, null);
+	public RemoteStationHandler(RemoteStation remoteStation) {
+		remoteStationCore = remoteStation.requestResource(RemoteStationCore.class, null);
 		commands = new ArrayList<RemoteCommand>();
 	}
 
@@ -89,7 +90,7 @@ public class RemoteStationHandler implements HttpHandler {
 		if (result) {
 			return;
 		}
-		exchange.sendResponseHeaders(200, 0);
+		exchange.sendResponseHeaders(404, 0);
 		exchange.close();
 	}
 
@@ -142,7 +143,7 @@ public class RemoteStationHandler implements HttpHandler {
 				sb.append(",");
 			}
 			RemoteCommand command = commands.get(id);
-			sb.append(String.format("{\"id\":%d,\"name\":\"%s\"}", id, command.name));
+			sb.append(String.format("{\"id\":%d,\"name\":\"%s\"}", command.id, command.name));
 		}
 		sb.append("]");
 		byte[] body = sb.toString().getBytes();
@@ -161,11 +162,11 @@ public class RemoteStationHandler implements HttpHandler {
 		System.out.println("---Receiving a command.");
 
 		// Receive command.
-		rsCore.blinkLED(3);
-		byte[] data = rsCore.receiveCommand();
+		remoteStationCore.blinkLED(3);
+		byte[] data = remoteStationCore.receiveCommand();
 		if (data == null) {
-			System.out.println("No data received.");
-			rsCore.blinkLED(5);
+			System.out.println("No data was received.");
+			remoteStationCore.blinkLED(5);
 			exchange.sendResponseHeaders(500, 0);
 			exchange.close();
 			return;
@@ -183,7 +184,7 @@ public class RemoteStationHandler implements HttpHandler {
 
 		System.out.println("Received command:");
 		command.print();
-		rsCore.blinkLED(3);
+		remoteStationCore.blinkLED(3);
 	}
 
 	private boolean play(HttpExchange exchange, String idString) throws IOException {
@@ -192,16 +193,19 @@ public class RemoteStationHandler implements HttpHandler {
 		// Get the specified command data.
 		RemoteCommand command = getCommand(idString);
 		if (command == null) {
-			rsCore.blinkLED(5);
+			remoteStationCore.blinkLED(5);
 			return false;
 		}
 
 		// Send the command data to the RemoteStation.
 		boolean result = true;
 		for (int i = 0; i < 4; i ++) {
-			boolean r = rsCore.sendCommand(command.data, RemoteStation.PORT1 + i);
+			if ((command.mask >> i & 1) == 0) {
+				continue;
+			}
+			boolean r = remoteStationCore.sendCommand(command.data, RemoteStation.PORT1 + i);
 			result &= r;
-			System.out.print("The command sent to port ");
+			System.out.print("The command is sent to port ");
 			System.out.print(i + 1);
 			System.out.print(": ");
 			System.out.println(r ? "OK" : "NG");
@@ -210,7 +214,7 @@ public class RemoteStationHandler implements HttpHandler {
 		// Send the response.
 		exchange.sendResponseHeaders(result ? 200 : 500, 0);
 		exchange.close();
-		rsCore.blinkLED(result ? 3 : 5);
+		remoteStationCore.blinkLED(result ? 3 : 5);
 		return true;
 	}
 
@@ -220,7 +224,7 @@ public class RemoteStationHandler implements HttpHandler {
 		// Get the specified command data.
 		RemoteCommand command = getCommand(idString);
 		if (command == null) {
-			rsCore.blinkLED(5);
+			remoteStationCore.blinkLED(5);
 			return false;
 		}
 
@@ -246,7 +250,7 @@ public class RemoteStationHandler implements HttpHandler {
 		try {
 			id = Integer.parseInt(idString);
 		} catch (NumberFormatException e) {
-			rsCore.blinkLED(5);
+			remoteStationCore.blinkLED(5);
 			return false;
 		}
 
@@ -256,12 +260,15 @@ public class RemoteStationHandler implements HttpHandler {
 			RemoteCommand c = it.next();
 			if (c.id == id) {
 				it.remove();
+				System.out.println(String.format("Command ID %d is removed.", id));
+				exchange.sendResponseHeaders(200, 0);
+				exchange.close();
 				return true;
 			}
 		}
 
 		// Return false if the command is not found.
-		rsCore.blinkLED(5);
+		remoteStationCore.blinkLED(5);
 		return false;
 	}
 
@@ -276,5 +283,27 @@ public class RemoteStationHandler implements HttpHandler {
 		responseBody.write(body);
 		responseBody.close();
 		exchange.close();
+	}
+
+	public static class RemoteCommand implements Serializable {
+		private static final long serialVersionUID = -5749209411053231400L;
+		public int id;
+		public String name;
+		public byte[] data;
+		public int mask = 0xf;
+
+		public void print() {
+			int idx = 0;
+			for (byte b : data) {
+				int i = b & 0xff;
+				System.out.print(String.format("%02x", i));
+				if (idx % 16 == 15) {
+					System.out.println();
+				} else if (idx % 8 == 7) {
+					System.out.print(" ");
+				}
+				idx ++;
+			}
+		}
 	}
 }

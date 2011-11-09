@@ -206,7 +206,7 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public boolean waitForResponse() {
-		return waitForResponse(100);
+		return waitForResponse(200);
 	}
 
 	public boolean waitForResponse(int ms) {
@@ -223,6 +223,7 @@ public abstract class ConnectorAbstractImpl implements Connector {
 				count ++;
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			return false;
 		}
 		return count < max;

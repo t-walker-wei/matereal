@@ -1,4 +1,4 @@
-package misc.remote;
+package jp.digitalmuseum.rm;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -10,25 +10,30 @@ import com.sun.net.httpserver.HttpServer;
 import jp.digitalmuseum.connector.RXTXConnector;
 import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.RemoteStation;
+import jp.digitalmuseum.mr.entity.Roomba;
+import jp.digitalmuseum.rm.handler.DefaultFileHandler;
+import jp.digitalmuseum.rm.handler.RemoteStationHandler;
+import jp.digitalmuseum.rm.handler.RoombaHandler;
 
 /**
  * Control RemoteStation.
  *
  * @author Jun KATO
  */
-public class RemoteStationServer implements HttpHandler {
+public class RealmoteMain implements HttpHandler {
 
 	public static final int NUM_BACKLOG = 5;
 	public static final String NAME_CONFIGFILE = "rss.dat";
 	private HttpServer server;
 	private DefaultFileHandler defaultFileHandler;
-	private RemoteStationHandler rsHandler;
+	private RemoteStationHandler remoteStationHandler;
+	private RoombaHandler roombaHandler;
 
 	public static void main(String[] args) throws IOException {
-		new RemoteStationServer();
+		new RealmoteMain();
 	}
 
-	public RemoteStationServer() throws IOException {
+	public RealmoteMain() throws IOException {
 
 		ParameterFilter filter = new ParameterFilter();
 
@@ -39,17 +44,21 @@ public class RemoteStationServer implements HttpHandler {
 				RXTXConnector.DATABITS_8,
 				RXTXConnector.STOPBITS_1,
 				RXTXConnector.PARITY_NONE);
-		RemoteStation rs = new RemoteStation(connector);
-		rsHandler = new RemoteStationHandler(rs);
+		RemoteStation remoteStation = new RemoteStation(connector);
+		remoteStationHandler = new RemoteStationHandler(remoteStation);
 		try {
-			rsHandler.load(NAME_CONFIGFILE);
-		} catch (ClassNotFoundException e) {
-			//
+			remoteStationHandler.load(NAME_CONFIGFILE);
+		} catch (Exception e) {
+			System.out.println("Realmote version was updated.");
 		}
+
+		Roomba roomba = new Roomba("btspp://00066600D69A");
+		roombaHandler = new RoombaHandler(roomba);
 
 		server = HttpServer.create(new InetSocketAddress(8000), NUM_BACKLOG);
 		server.createContext("/", defaultFileHandler);
-		server.createContext("/remote", rsHandler).getFilters().add(filter);
+		server.createContext("/remote", remoteStationHandler).getFilters().add(filter);
+		server.createContext("/roomba", roombaHandler).getFilters().add(filter);
 		server.createContext("/system", this);
 		server.setExecutor(null);
 		server.start();
@@ -62,14 +71,14 @@ public class RemoteStationServer implements HttpHandler {
 
 		// Shutdown the server.
 		if (path.equals("/system/off")) {
-			rsHandler.save(NAME_CONFIGFILE);
+			remoteStationHandler.save(NAME_CONFIGFILE);
 			exchange.sendResponseHeaders(200, 0);
 			exchange.close();
 			Matereal.getInstance().dispose();
 			this.server.stop(0);
 			return;
 		} else if (path.equals("/system/reload")) {
-			rsHandler.save(NAME_CONFIGFILE);
+			remoteStationHandler.save(NAME_CONFIGFILE);
 			this.defaultFileHandler.loadFiles();
 			exchange.sendResponseHeaders(200, 0);
 			exchange.close();
