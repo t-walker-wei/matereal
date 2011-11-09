@@ -34,7 +34,7 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package misc.remote;
+package jp.digitalmuseum.rm;
 
 import java.io.BufferedReader;
 import java.io.IOException;
