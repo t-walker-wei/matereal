@@ -1,3 +1,4 @@
+package robot.mindstorms;
 /*
  * PROJECT: matereal at http://mr.digitalmuseum.jp/
  * ----------------------------------------------------------------------------
@@ -34,23 +35,43 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package robot;
 
+
+import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.MindstormsNXT;
-import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
+import jp.digitalmuseum.mr.entity.MindstormsNXT.MindstormsNXTExtension;
+import jp.digitalmuseum.mr.entity.MindstormsNXT.Port;
 
-public class RobotInfo {
+public class PrintMotorState {
 
-	public static PhysicalRobot getRobot() {
-		// Roomba roomba = new Roomba("btspp://00066600D69A");
-		// Roomba.RooTooth.wakeUp(roomba);
-		// return roomba;
-		// return new NetTansor("http://192.168.10.3");
-		return new MindstormsNXT("btspp://00165306523E");
+	public static void main(String[] args) {
+		new PrintMotorState();
 	}
 
-	public static Noopy2 getNoopyRobot() {
-		return new Noopy2("btspp://DEADBEAF/");
+	public PrintMotorState() {
+
+		MindstormsNXT nxt = new MindstormsNXT("btspp://00165306523E");
+		nxt.removeDifferentialWheels();
+		nxt.addExtension("MindstormsNXTExtension", Port.B);
+		nxt.connect();
+
+		MindstormsNXTExtension ext = nxt.requestResource(MindstormsNXTExtension.class, this);
+		if (ext != null) {
+
+			// Reset the motor.
+			ext.setOutputState((byte) 0, 0, 0, 0, 0, 0);
+
+			// Get status of the motor rotation and print it every 100 ms.
+			for (int i = 0; i < 100; i ++) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					break;
+				}
+				System.out.println(ext.getOutputState().rotationCount);
+			}
+		}
+		Matereal.getInstance().dispose();
 	}
+
 }

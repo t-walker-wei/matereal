@@ -42,7 +42,10 @@ import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jp.digitalmuseum.connector.BluetoothConnector;
 import jp.digitalmuseum.connector.Connector;
@@ -73,6 +76,14 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		public int getPortNumber() {
 			return portNumber;
 		}
+		public static Port get(int portNumber) {
+			for (Port port : EnumSet.allOf(Port.class)) {
+				if (port.getPortNumber() == portNumber) {
+					return port;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static final byte TACHO_FOREVER = 0;
@@ -81,6 +92,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	private MindstormsNXTDifferentialWheels dw;
 	private MindstormsNXTBattery b;
 	private Shape shape;
+	private Set<MindstormsNXTExtension> extensions;
 
 	public MindstormsNXT() {
 		super();
@@ -115,6 +127,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 				-HEIGHT/2, -WIDTH/2,
 				HEIGHT, WIDTH,
 				3, 3);
+		extensions = new HashSet<MindstormsNXTExtension>();
 		super.initialize();
 	}
 
@@ -132,6 +145,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		if (dw != null) {
 			rs.add(dw);
 		}
+		rs.addAll(extensions);
 		rs.add(b);
 		return rs;
 	}
@@ -157,18 +171,58 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		dw = new MindstormsNXTDifferentialWheels(this, leftWheelPort, rightWheelPort);
 	}
 
-	public boolean addExtension(Class<? extends MindstormsNXTExtension> extensionClass, Port port) {
-		// TODO	
+	public boolean addExtension(String className, Port port) {
+		try {
+			Class<?> extensionClass = Class.forName(String.format("%s$%s",
+					getClass().getName(),
+					className));
+			if (MindstormsNXTExtension.class.isAssignableFrom(extensionClass)) {
+				extensions.add(
+						(MindstormsNXTExtension)
+						extensionClass
+							.getConstructor(MindstormsNXT.class, Port.class)
+							.newInstance(this, port));
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 
-	
+	public boolean addExtension(Class<? extends MindstormsNXTExtension> extensionClass, Port port) {
+		try {
+			extensions.add(
+					extensionClass
+						.getConstructor(MindstormsNXT.class, Port.class)
+						.newInstance(this, port));
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	protected boolean setOutputState(OutputState outputState) {
+		return setOutputState(outputState.port,
+				outputState.powerSetpoint, outputState.mode,
+				outputState.regulationMode, outputState.turnRatio,
+				outputState.runState, outputState.tachoLimit);
+	}
+
+	protected static boolean setOutputState(OutputState outputState, Connector connector) {
+		return setOutputState(outputState.port,
+				outputState.powerSetpoint, outputState.mode,
+				outputState.regulationMode, outputState.turnRatio,
+				outputState.runState, outputState.tachoLimit,
+				connector);
+	}
+
 	/**
 	 * @see #setOutputState(int, byte, int, int, int, int, int, Connector)
 	 */
 	protected boolean setOutputState(final int port,
 			final byte power, final int mode,
 			final int regulationMode, final int turnRatio,
-			final int runState, final int tachoLimit) {
+			final int runState, final long tachoLimit) {
 		return setOutputState(port,
 				power, mode,
 				regulationMode, turnRatio,
@@ -188,7 +242,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	protected static boolean setOutputState(final int port,
 			final byte power, final int mode,
 			final int regulationMode, final int turnRatio,
-			final int runState, final int tachoLimit,
+			final int runState, final long tachoLimit,
 			final Connector connector) {
 		return write(new byte[] {
 				DIRECT_COMMAND_NOREPLY,
@@ -387,16 +441,27 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		}
 
 		/**
+		 * @see MindstormsNXT#setOutputState(OutputState)
+		 */
+		public boolean setOutputState(OutputState outputState) {
+			if (outputState.port != port.getPortNumber()) {
+				return false;
+			}
+			return MindstormsNXT.setOutputState(outputState,
+					getConnector());
+		}
+
+		/**
 		 * @see MindstormsNXT#setOutputState(int, byte, int, int, int, int, int, Connector)
 		 */
-		public void setOutputState(
+		public boolean setOutputState(
 				byte power,
 				int mode,
 				int regulationMode,
 				int turnRatio,
 				int runState,
 				int tachoLimit) {
-			MindstormsNXT.setOutputState(
+			return MindstormsNXT.setOutputState(
 					port.getPortNumber(), power, mode,
 					regulationMode, turnRatio,
 					runState, tachoLimit,
@@ -683,6 +748,32 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		}
 
 		public OutputState() {
+		}
+
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			String lineSeparator = System.getProperty("line.separator");
+			sb.append(String.format("Status: %d%s",
+					status, lineSeparator));
+			sb.append(String.format("Port: %s%s",
+					Port.get(port), lineSeparator));
+			sb.append(String.format("Power: %d [-100 to 100]%s",
+					powerSetpoint, lineSeparator));
+			sb.append(String.format("Mode: %d%s",
+					mode, lineSeparator));
+			sb.append(String.format("Regulation Mode: %d%s",
+					regulationMode, lineSeparator));
+			sb.append(String.format("Turn ratio: %d [-100 to 100]%s",
+					turnRatio, lineSeparator));
+			sb.append(String.format("Motor running state: %d%s",
+					runState, lineSeparator));
+			sb.append(String.format("Current limit on a movement: %d%s",
+					tachoLimit, lineSeparator));
+			sb.append(String.format("Current position relative to last programmed movement: %d%s",
+					blockTachoCount, lineSeparator));
+			sb.append(String.format("Current position relative to last reset of the sensor: %d%s",
+					rotationCount, lineSeparator));
+			return sb.toString();
 		}
 	}
 }

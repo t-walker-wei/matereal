@@ -114,6 +114,42 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 		super.initialize();
 	}
 
+	public boolean addExtension(String className) {
+		try {
+			Class<?> extensionClass = Class.forName(String.format("%s$%s",
+					getClass().getName(),
+					className));
+			if (NoopyExtension.class.isAssignableFrom(extensionClass)) {
+				extensions.add(
+						(NoopyExtension)
+						extensionClass
+							.getConstructor(Noopy2.class)
+							.newInstance(this));
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	public boolean addExtension(String className, Port port) {
+		try {
+			Class<?> extensionClass = Class.forName(String.format("%s$%s",
+					getClass().getName(),
+					className));
+			if (NoopyExtension.class.isAssignableFrom(extensionClass)) {
+				extensions.add(
+						(NoopyExtension)
+						extensionClass
+							.getConstructor(Noopy2.class, Port.class)
+							.newInstance(this, port));
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
 	public boolean addExtension(Class<? extends NoopyExtension> extensionClass) {
 		try {
 			extensions.add(
