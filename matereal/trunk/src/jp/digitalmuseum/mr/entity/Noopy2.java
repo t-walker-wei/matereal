@@ -290,11 +290,11 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 		private static final long serialVersionUID = -7122759624061405292L;
 		private Port port;
 
-		protected NoopyExtension(PhysicalRobotAbstractImpl robot) {
+		protected NoopyExtension(Noopy2 robot) {
 			this(robot, null);
 		}
 
-		protected NoopyExtension(PhysicalRobotAbstractImpl robot, Port port) {
+		protected NoopyExtension(Noopy2 robot, Port port) {
 			super(robot);
 			this.port = port;
 		}
