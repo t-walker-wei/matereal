@@ -248,20 +248,23 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 			final int regulationMode, final int turnRatio,
 			final int runState, final long tachoLimit,
 			final Connector connector) {
-			synchronized (connector) {
-		return write(new byte[] {
-				DIRECT_COMMAND_NOREPLY,
-				SET_OUTPUT_STATE,
-				(byte)port,
-				power,
-				(byte)mode,
-				(byte)regulationMode,
-				(byte)turnRatio,
-				(byte)runState,
-				(byte)tachoLimit,
-				(byte)(tachoLimit>>>8),
-				(byte)(tachoLimit>>>16),
-				(byte)(tachoLimit>>>24)}, connector);
+		if (connector == null) {
+			return false;
+		}
+		synchronized (connector) {
+			return write(new byte[] {
+					DIRECT_COMMAND_NOREPLY,
+					SET_OUTPUT_STATE,
+					(byte)port,
+					power,
+					(byte)mode,
+					(byte)regulationMode,
+					(byte)turnRatio,
+					(byte)runState,
+					(byte)tachoLimit,
+					(byte)(tachoLimit>>>8),
+					(byte)(tachoLimit>>>16),
+					(byte)(tachoLimit>>>24)}, connector);
 		}
 	}
 
@@ -297,6 +300,9 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	 */
 	public static void getOutputState(final int port, final Connector connector,
 			final OutputState outputState) {
+		if (connector == null) {
+			return;
+		}
 		synchronized (connector) {
 			if (write(new byte[] {
 					DIRECT_COMMAND_REPLY,
@@ -338,6 +344,9 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	}
 
 	public static boolean sendAck(final Connector connector) {
+		if (connector == null) {
+			return false;
+		}
 		synchronized (connector) {
 			if (write(new byte[] {
 					SYSTEM_COMMAND_REPLY,
