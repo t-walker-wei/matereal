@@ -1,4 +1,3 @@
-package robot.mindstorms;
 /*
  * PROJECT: matereal at http://mr.digitalmuseum.jp/
  * ----------------------------------------------------------------------------
@@ -35,68 +34,96 @@ package robot.mindstorms;
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
+package jp.digitalmuseum.mr.task;
 
+import java.util.List;
 
-import jp.digitalmuseum.mr.Matereal;
 import jp.digitalmuseum.mr.entity.MindstormsNXT;
+import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.entity.MindstormsNXT.MindstormsNXTExtension;
-import jp.digitalmuseum.mr.entity.MindstormsNXT.Port;
+import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.task.TaskAbstractImpl;
 
-public class ManageMotorState {
-	private static final int ROTATION_THRESHOLD = 2;
-	private static final int TIME_THRESHOLD = 10;
+public class ManageMotorState extends TaskAbstractImpl {
+	private static final int DEFAULT_ROTATION_THRESHOLD = 5;
+	private static final int DEFAULT_TIME_THRESHOLD = 7;
 
-	public static void main(String[] args) {
-		new ManageMotorState();
+	private static final long serialVersionUID = -3034846848072940340L;
+	private MindstormsNXTExtension ext;
+	private int rotationThreshold = DEFAULT_ROTATION_THRESHOLD;
+	private int timeThreshold = DEFAULT_TIME_THRESHOLD;
+	private int rotationCount;
+	private int stableCount;
+	private boolean isStable;
+
+	@Override
+	public List<Class<? extends Resource>> getRequirements() {
+		List<Class<? extends Resource>> requirements = super.getRequirements();
+		requirements.add(MindstormsNXTExtension.class);
+		return requirements;
 	}
 
-	public ManageMotorState() {
+	public int getRotationThreshold() {
+		return rotationThreshold;
+	}
 
-		MindstormsNXT nxt = new MindstormsNXT("btspp://00165306523E");
-		nxt.removeDifferentialWheels();
-		nxt.addExtension("MindstormsNXTExtension", Port.B);
-		nxt.connect();
+	public void setRotationThreshold(int rotationThreshold) {
+		this.rotationThreshold = rotationThreshold;
+	}
 
-		MindstormsNXTExtension ext = nxt.requestResource(MindstormsNXTExtension.class, this);
-		if (ext != null) {
+	public int getTimeThreshold() {
+		return timeThreshold;
+	}
 
-			int rotationCount = ext.getOutputState().rotationCount;
-			int stableCount = 0;
+	public void setTimeThreshold(int timeThreshold) {
+		this.timeThreshold = timeThreshold;
+	}
 
-			makeStable(ext, true);
-			boolean isStable = true;
+	@Override
+	protected void onStart() {
+		this.ext = getResourceMap().get(MindstormsNXTExtension.class);
+		rotationCount = ext.getOutputState().rotationCount;
+		stableCount = 0;
+	}
 
-			while (true) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					break;
-				}
+	@Override
+	protected void onStop() {
+		ext.setOutputState((byte) 0, 0, 0, 0, 0, 0);
+	}
 
-				int count = ext.getOutputState().rotationCount;
-				if (diff(rotationCount, count) > ROTATION_THRESHOLD) {
-					stableCount = 0;
-				} else {
-					stableCount ++;
-				}
+	@Override
+	public void run() {
 
-				if (isStable) {
-					if (stableCount == 0) {
-						makeStable(ext, false);
-						isStable = false;
-					}
-				} else {
-					if (stableCount > TIME_THRESHOLD) {
-						makeStable(ext, true);
-						isStable = true;
-					}
-				}
-
-				rotationCount = count;
-				System.out.println(rotationCount + " : " + stableCount);
-			}
+		int count = ext.getOutputState().rotationCount;
+		if (diff(rotationCount, count) > rotationThreshold) {
+			stableCount = 0;
+		} else {
+			stableCount ++;
 		}
-		Matereal.getInstance().dispose();
+
+		if (isStable) {
+			if (stableCount == 0) {
+				makeStable(ext, false);
+				isStable = false;
+			}
+		} else {
+			if (stableCount > timeThreshold) {
+				makeStable(ext, true);
+				isStable = true;
+			}
+			rotationCount = count;
+		}
+
+		Event e = new Event(this);
+		distributeEvent(e);
+	}
+
+	public int getRotationCount() {
+		return rotationCount;
+	}
+
+	public boolean isStable() {
+		return isStable;
 	}
 
 	private int diff(int a, int b) {
@@ -105,7 +132,6 @@ public class ManageMotorState {
 	}
 
 	private boolean makeStable(MindstormsNXTExtension ext, boolean isStable) {
-		System.out.println("Make stable: " + isStable);
 		return ext.setOutputState(
 				(byte) 0,
 				isStable ? (MindstormsNXT.MOTORON | MindstormsNXT.BRAKE | MindstormsNXT.REGULATED) : 0,
