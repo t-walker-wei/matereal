@@ -64,10 +64,16 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	final public static double WIDTH = 14;
 	final public static double HEIGHT = 14;
 
-	public static final int A = 0;
-	public static final int B = 1;
-	public static final int C = 2;
-	public static final int ALL = 0xff;
+	public static enum Port {
+		A(0), B(1), C(2), D(3), ALL(0xff);
+		private int portNumber;
+		private Port(int portNumber) {
+			this.portNumber = portNumber;
+		}
+		public int getPortNumber() {
+			return portNumber;
+		}
+	}
 
 	public static final byte TACHO_FOREVER = 0;
 
@@ -103,9 +109,8 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		if (getName() == null) {
 			setName(getTypeName()+" ("+instances+")");
 		}
-		dw = new MindstormsNXTDifferentialWheels(this);
+		dw = new MindstormsNXTDifferentialWheels(this, Port.C, Port.B);
 		b = new MindstormsNXTBattery(this);
-
 		shape = new RoundRectangle2D.Double(
 				-HEIGHT/2, -WIDTH/2,
 				HEIGHT, WIDTH,
@@ -115,25 +120,24 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 
 	@Override
 	public void dispose() {
-		dw.stopWheels();
+		if (dw != null) {
+			dw.stopWheels();
+		}
 		super.dispose();
 	}
 
 	@Override
 	protected List<ResourceAbstractImpl> getResources() {
 		List<ResourceAbstractImpl> rs = super.getResources();
-		rs.add(dw);
+		if (dw != null) {
+			rs.add(dw);
+		}
 		rs.add(b);
 		return rs;
 	}
 
 	public Shape getShape() {
 		return shape;
-	}
-
-	protected boolean drive(final int port,
-			final byte power, final int mode) {
-		return drive(port, power, mode, getConnector());
 	}
 
 	protected static boolean drive(final int port,
@@ -145,6 +149,19 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 				connector);
 	}
 
+	public void removeDifferentialWheels() {
+		dw = null;
+	}
+
+	public void addDifferentialWheels(Port leftWheelPort, Port rightWheelPort) {
+		dw = new MindstormsNXTDifferentialWheels(this, leftWheelPort, rightWheelPort);
+	}
+
+	public boolean addExtension(Class<? extends MindstormsNXTExtension> extensionClass, Port port) {
+		// TODO	
+	}
+
+	
 	/**
 	 * @see #setOutputState(int, byte, int, int, int, int, int, Connector)
 	 */
@@ -300,19 +317,19 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		return reply;
 	}
 
-	public int getLeftWheelPort() {
+	public Port getLeftWheelPort() {
 		return dw.getLeftWheelPort();
 	}
 
-	public int getRightWheelPort() {
+	public Port getRightWheelPort() {
 		return dw.getRightWheelPort();
 	}
 
-	public void setLeftWheelPort(int leftWheelPort) {
+	public void setLeftWheelPort(Port leftWheelPort) {
 		dw.setLeftWheelPort(leftWheelPort);
 	}
 
-	public void setRightWheelPort(int rightWheelPort) {
+	public void setRightWheelPort(Port rightWheelPort) {
 		dw.setRightWheelPort(rightWheelPort);
 	}
 
@@ -351,6 +368,51 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		}
 	}
 
+	public static class MindstormsNXTExtension extends PhysicalResourceAbstractImpl {
+		private static final long serialVersionUID = 1657289083336290551L;
+		private Port port;
+
+		public MindstormsNXTExtension(MindstormsNXT mindstormsNXT, Port port) {
+			super(mindstormsNXT);
+			this.port = port;
+		}
+
+		public MindstormsNXTExtension(Connector connector, Port port) {
+			super(connector);
+			this.port = port;
+		}
+
+		public Port getPort() {
+			return port;
+		}
+
+		/**
+		 * @see MindstormsNXT#setOutputState(int, byte, int, int, int, int, int, Connector)
+		 */
+		public void setOutputState(
+				byte power,
+				int mode,
+				int regulationMode,
+				int turnRatio,
+				int runState,
+				int tachoLimit) {
+			MindstormsNXT.setOutputState(
+					port.getPortNumber(), power, mode,
+					regulationMode, turnRatio,
+					runState, tachoLimit,
+					getConnector());
+		}
+
+		/**
+		 * @see MindstormsNXT#getOutputState(int, Connector)
+		 */
+		public OutputState getOutputState() {
+			return MindstormsNXT.getOutputState(
+					port.getPortNumber(),
+					getConnector());
+		}
+	}
+
 	/**
 	 * Differential wheels of LEGO Mindstorms NXT.
 	 *
@@ -361,15 +423,27 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		private static final long serialVersionUID = 3164832272022311974L;
 		public final static int DEFAULT_SPEED = 20;
 		public final static int DEFAULT_ROTATION_SPEED = 10;
-		private byte leftWheelPort = C;
-		private byte rightWheelPort = B;
+		private Port leftWheelPort;
+		private Port rightWheelPort;
 
 		public MindstormsNXTDifferentialWheels(MindstormsNXT mindstormsNXT) {
+			this(mindstormsNXT, Port.C, Port.B);
+		}
+
+		public MindstormsNXTDifferentialWheels(MindstormsNXT mindstormsNXT, Port leftWheelPort, Port rightWheelPort) {
 			super(mindstormsNXT);
+			this.leftWheelPort = leftWheelPort;
+			this.rightWheelPort = rightWheelPort;
 		}
 
 		public MindstormsNXTDifferentialWheels(Connector connector) {
+			this(connector, Port.C, Port.B);
+		}
+
+		public MindstormsNXTDifferentialWheels(Connector connector, Port leftWheelPort, Port rightWheelPort) {
 			super(connector);
+			this.leftWheelPort = leftWheelPort;
+			this.rightWheelPort = rightWheelPort;
 		}
 
 		@Override
@@ -378,20 +452,20 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 			sendAck(getConnector());
 		}
 
-		public int getLeftWheelPort() {
+		public Port getLeftWheelPort() {
 			return leftWheelPort;
 		}
 
-		public void setLeftWheelPort(int leftWheelPort) {
-			this.leftWheelPort = (byte) leftWheelPort;
+		public void setLeftWheelPort(Port leftWheelPort) {
+			this.leftWheelPort = leftWheelPort;
 		}
 
-		public int getRightWheelPort() {
+		public Port getRightWheelPort() {
 			return rightWheelPort;
 		}
 
-		public void setRightWheelPort(int rightWheelPort) {
-			this.rightWheelPort = (byte) rightWheelPort;
+		public void setRightWheelPort(Port rightWheelPort) {
+			this.rightWheelPort = rightWheelPort;
 		}
 
 		public int getRecommendedRotationSpeed() {
@@ -405,10 +479,10 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		protected boolean doDrive(int leftPower, int rightPower) {
 			final Connector connector = getConnector();
 			return
-				MindstormsNXT.drive(leftWheelPort,
+				MindstormsNXT.drive(leftWheelPort.getPortNumber(),
 						(byte)leftPower, MOTORON + REGULATED,
 						connector) &&
-				MindstormsNXT.drive(rightWheelPort,
+				MindstormsNXT.drive(rightWheelPort.getPortNumber(),
 						(byte)rightPower, MOTORON + REGULATED,
 						connector);
 		}
@@ -416,10 +490,10 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		protected boolean doStopWheels() {
 			final Connector connector = getConnector();
 			return
-				MindstormsNXT.drive(leftWheelPort,
+				MindstormsNXT.drive(leftWheelPort.getPortNumber(),
 						(byte)0, BRAKE + MOTORON + REGULATED,
 						connector) &&
-				MindstormsNXT.drive(rightWheelPort,
+				MindstormsNXT.drive(rightWheelPort.getPortNumber(),
 						(byte)0, BRAKE + MOTORON + REGULATED,
 						connector);
 		}

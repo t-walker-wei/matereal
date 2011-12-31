@@ -88,7 +88,7 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 	public static class MindstormsNXTPen extends PhysicalResourceAbstractImpl implements PenController {
 		private static final long serialVersionUID = -5728192484061964775L;
 		private PenStatus status;
-		private byte penPort = A;
+		private Port penPort = Port.A;
 		private byte power = 100;
 		private int tachoLimit = 180;
 
@@ -96,7 +96,7 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 			private static final long serialVersionUID = 1994711563180836282L;
 			final private OutputState outputState = new OutputState();
 			public void run() {
-				MindstormsNXTWithPen.getOutputState(penPort,
+				MindstormsNXTWithPen.getOutputState(penPort.getPortNumber(),
 						getConnector(),
 						outputState);
 				if (outputState.runState ==
@@ -133,11 +133,11 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 			return status;
 		}
 
-		public void setPenPort(byte penPort) {
+		public void setPenPort(Port penPort) {
 			this.penPort = penPort;
 		}
 
-		public byte getPenPort() {
+		public Port getPenPort() {
 			return penPort;
 		}
 
@@ -147,7 +147,7 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 					finishWatchingState();
 				}
 				MindstormsNXTWithPen.setOutputState(
-						penPort, (byte) -power, MOTORON + REGULATED,
+						penPort.getPortNumber(), (byte) -power, MOTORON + REGULATED,
 						REGULATION_MODE_IDLE, 0,
 						MOTOR_RUN_STATE_RUNNING, tachoLimit,
 						getConnector());
@@ -162,7 +162,7 @@ public class MindstormsNXTWithPen extends MindstormsNXT {
 					finishWatchingState();
 				}
 				MindstormsNXTWithPen.setOutputState(
-						penPort, power, MOTORON + REGULATED,
+						penPort.getPortNumber(), power, MOTORON + REGULATED,
 						REGULATION_MODE_IDLE, 0,
 						MOTOR_RUN_STATE_RUNNING, tachoLimit,
 						getConnector());
