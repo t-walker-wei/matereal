@@ -177,7 +177,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 					getClass().getName(),
 					className));
 			if (MindstormsNXTExtension.class.isAssignableFrom(extensionClass)) {
-				extensions.add(
+				addExtension(
 						(MindstormsNXTExtension)
 						extensionClass
 							.getConstructor(MindstormsNXT.class, Port.class)
@@ -191,7 +191,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 
 	public boolean addExtension(Class<? extends MindstormsNXTExtension> extensionClass, Port port) {
 		try {
-			extensions.add(
+			addExtension(
 					extensionClass
 						.getConstructor(MindstormsNXT.class, Port.class)
 						.newInstance(this, port));
@@ -199,6 +199,10 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 			return false;
 		}
 		return true;
+	}
+
+	public void addExtension(MindstormsNXTExtension extension) {
+		extensions.add(extension);
 	}
 
 	protected boolean setOutputState(OutputState outputState) {
@@ -244,6 +248,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 			final int regulationMode, final int turnRatio,
 			final int runState, final long tachoLimit,
 			final Connector connector) {
+			synchronized (connector) {
 		return write(new byte[] {
 				DIRECT_COMMAND_NOREPLY,
 				SET_OUTPUT_STATE,
@@ -257,6 +262,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 				(byte)(tachoLimit>>>8),
 				(byte)(tachoLimit>>>16),
 				(byte)(tachoLimit>>>24)}, connector);
+		}
 	}
 
 	/**
@@ -291,27 +297,40 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	 */
 	public static void getOutputState(final int port, final Connector connector,
 			final OutputState outputState) {
-		write(new byte[] {
-				DIRECT_COMMAND_REPLY,
-				GET_OUTPUT_STATE,
-				(byte)port}, connector);
-		final byte [] ret = read(connector);
-
-		if(ret == null || ret.length <= 1 || ret[1] != GET_OUTPUT_STATE) {
-			outputState.status = -1;
-			return;
+		synchronized (connector) {
+			if (write(new byte[] {
+					DIRECT_COMMAND_REPLY,
+					GET_OUTPUT_STATE,
+					(byte)port}, connector)) {
+	
+				// Wait for the latency.
+				try { Thread.sleep(30); }
+				catch (InterruptedException e) { }
+	
+				byte[] ret = null;
+				try {
+					ret = read(connector);
+				} catch (IOException e) {
+					// Do nothing.
+				}
+		
+				if(ret == null || ret.length < 25 || ret[1] != GET_OUTPUT_STATE) {
+					outputState.status = -1;
+					return;
+				}
+				outputState.status = ret[2];
+				outputState.port = ret[3];
+				outputState.powerSetpoint = ret[4];
+				outputState.mode = ret[5];
+				outputState.regulationMode = ret[6];
+				outputState.turnRatio = ret[7];
+				outputState.runState = ret[8];
+				outputState.tachoLimit = (0xFF & ret[9]) | ((0xFF & ret[10]) << 8)| ((0xFF & ret[11]) << 16)| ((0xFF & ret[12]) << 24);
+				outputState.tachoCount = (0xFF & ret[13]) | ((0xFF & ret[14]) << 8)| ((0xFF & ret[15]) << 16)| ((0xFF & ret[16]) << 24);
+				outputState.blockTachoCount = (0xFF & ret[17]) | ((0xFF & ret[18]) << 8)| ((0xFF & ret[19]) << 16)| ((0xFF & ret[20]) << 24);
+				outputState.rotationCount = (0xFF & ret[21]) | ((0xFF & ret[22]) << 8)| ((0xFF & ret[23]) << 16)| ((0xFF & ret[24]) << 24);
+			}
 		}
-		outputState.status = ret[2];
-		outputState.port = ret[3];
-		outputState.powerSetpoint = ret[4];
-		outputState.mode = ret[5];
-		outputState.regulationMode = ret[6];
-		outputState.turnRatio = ret[7];
-		outputState.runState = ret[8];
-		outputState.tachoLimit = (0xFF & ret[9]) | ((0xFF & ret[10]) << 8)| ((0xFF & ret[11]) << 16)| ((0xFF & ret[12]) << 24);
-		outputState.tachoCount = (0xFF & ret[13]) | ((0xFF & ret[14]) << 8)| ((0xFF & ret[15]) << 16)| ((0xFF & ret[16]) << 24);
-		outputState.blockTachoCount = (0xFF & ret[17]) | ((0xFF & ret[18]) << 8)| ((0xFF & ret[19]) << 16)| ((0xFF & ret[20]) << 24);
-		outputState.rotationCount = (0xFF & ret[21]) | ((0xFF & ret[22]) << 8)| ((0xFF & ret[23]) << 16)| ((0xFF & ret[24]) << 24);
 	}
 
 	public boolean sendAck() {
@@ -319,21 +338,29 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	}
 
 	public static boolean sendAck(final Connector connector) {
-		if (write(new byte[] {
-				SYSTEM_COMMAND_REPLY,
-				GET_FIRMWARE_VERSION}, connector)) {
-
-			// Wait for ~100ms latency.
-			try { Thread.sleep(100); }
-			catch (InterruptedException e) { }
-
-			// Get the result.
-			final byte[] ret = read(connector);
-			if (0 >= ret[2]) {
-				Matereal.getInstance().getOutStream().println(
-						"NXT Firmware version: "
-						+ ret[4] + "." + ret[3]
-						+ ", " + ret[6] + "." + ret[5]);
+		synchronized (connector) {
+			if (write(new byte[] {
+					SYSTEM_COMMAND_REPLY,
+					GET_FIRMWARE_VERSION}, connector)) {
+	
+				// Wait for the latency.
+				try { Thread.sleep(30); }
+				catch (InterruptedException e) { }
+	
+				// Get the result.
+				byte[] ret;
+				try {
+					ret = read(connector);
+					if (0 >= ret[2]) {
+						Matereal.getInstance().getOutStream().println(
+								"NXT Firmware version: "
+								+ ret[4] + "." + ret[3]
+								+ ", " + ret[6] + "." + ret[5]);
+					}
+					return true;
+				} catch (IOException e) {
+					// Do nothing.
+				}
 			}
 		}
 		return false;
@@ -354,19 +381,15 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		return connector.write(buf);
 	}
 
-	protected static byte[] read(final Connector connector) {
+	protected static byte[] read(final Connector connector) throws IOException {
 		final InputStream inStream = connector.getInputStream();
 		byte[] reply = null;
 		int length = -1;
-		try {
-			length = (inStream.read() & 0xff) | ((inStream.read() & 0xff << 8));
-			reply = new byte[length];
-			while (length > 0) {
-				length -= inStream.read(reply,
-						reply.length-length, length);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		length = (inStream.read() & 0xff) | ((inStream.read() & 0xff << 8));
+		reply = new byte[length];
+		while (length > 0) {
+			length -= inStream.read(reply,
+					reply.length-length, length);
 		}
 		return reply;
 	}
@@ -404,25 +427,30 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 				catch (InterruptedException e) { }
 
 				// Get the result.
-				final byte[] ret = read(getConnector());
-				if (ret != null &&
-						ret.length == 5 &&
-						ret[1] == GET_BATTERY_LEVEL &&
-						ret[2] == 0) {
-					int batteryLevel = ((0xff & ret[3]) | (((0xff & ret[4]) << 8))) / 90 /* * 100 / 9000 */;
-					if (batteryLevel < 0) {
-						return 0;
-					} else if (batteryLevel > 100) {
-						return 100;
+				byte[] ret;
+				try {
+					ret = read(getConnector());
+					if (ret != null &&
+							ret.length == 5 &&
+							ret[1] == GET_BATTERY_LEVEL &&
+							ret[2] == 0) {
+						int batteryLevel = ((0xff & ret[3]) | (((0xff & ret[4]) << 8))) / 90 /* * 100 / 9000 */;
+						if (batteryLevel < 0) {
+							return 0;
+						} else if (batteryLevel > 100) {
+							return 100;
+						}
+						return batteryLevel;
 					}
-					return batteryLevel;
+				} catch (IOException e) {
+					// Do nothing.
 				}
 			}
 			return 0;
 		}
 	}
 
-	public static class MindstormsNXTExtension extends PhysicalResourceAbstractImpl {
+	public static class MindstormsNXTExtension extends PhysicalResourceAbstractImpl implements ExclusiveResource {
 		private static final long serialVersionUID = 1657289083336290551L;
 		private Port port;
 
