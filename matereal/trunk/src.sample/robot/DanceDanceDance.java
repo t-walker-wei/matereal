@@ -26,6 +26,8 @@ public class DanceDanceDance implements EventListener {
 
 	public DanceDanceDance() {
 
+		Matereal.getInstance().showDebugFrame();
+
 		PhysicalRobot robot = RobotInfo.getRobot();
 		robot.connect();
 
@@ -38,11 +40,11 @@ public class DanceDanceDance implements EventListener {
 			Action a = new Action(robot, fullSpeed(new GoForward()));
 			Action b = new Action(robot, fullSpeed(new SpinLeft()));
 			workflow.add(a, b);
-			workflow.addTransition(new TimeoutTransition(a, b, 1000));
+			workflow.addTransition(new TimeoutTransition(a, b, 10000));
 			if (tail == null) {
 				head = a;
 			} else {
-				workflow.addTransition(new TimeoutTransition(tail, a, 1000));
+				workflow.addTransition(new TimeoutTransition(tail, a, 10000));
 			}
 			tail = b;
 		}

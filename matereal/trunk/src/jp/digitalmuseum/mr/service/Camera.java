@@ -266,7 +266,6 @@ public class Camera extends HomographyCoordProviderAbstractImpl {
 		} catch (Exception e) {
 			// If an error occurred starting capture,
 			// simply throw an exception and do not start this service.
-			e.printStackTrace();
 			throw new IllegalStateException(e);
 		}
 	}

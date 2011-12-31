@@ -153,6 +153,9 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		// Use the default device if not specified.
 		if (filter == null) {
 			setSourceFilter(lookForUnusedFilter());
+			if (filter == null) {
+				throw new Exception("No camera is ready to use.");
+			}
 		}
 		isStarted = true;
 
@@ -361,7 +364,8 @@ public class VideoCaptureDS extends VideoCaptureAbstractImpl {
 		DSFilterInfo[] filters = queryDevices();
 		if (filters != null) {
 			for (int i = 0; i < filterInUse.length; i ++) {
-				if (filterInUse[i] == false) {
+				if (filterInUse[i] == false &&
+						filters[i].getDownstreamPins() != null) {
 					return filters[i];
 				}
 			}

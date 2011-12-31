@@ -42,6 +42,8 @@ public class KeyController {
 	public KeyController() {
 		super();
 
+		Matereal.getInstance().showDebugFrame();
+
 		final Robot robot;
 		if (DEBUG) {
 			robot = initHakoniwa();
@@ -153,7 +155,7 @@ public class KeyController {
 					KeyController.this.stop();
 					break;
 				case NONE:
-					damp();
+					//damp();
 					break;
 				}
 			}
