@@ -153,4 +153,30 @@
 		<delete dir="${mqoloader-javadoc.dir}" />
 		<delete dir="${napkit-dist.dir}" />
 	</target>
+
+	<!-- Classes destination directory -->
+	<property name="matereal-full-classes.dir" value="bin.full" />
+
+	<!-- Jar file name -->
+	<target name="matereal-full-version" depends="matereal-version">
+		<property name="matereal-full-jar.name" value="matereal-${matereal.version}-b${svnversion}.jar" />
+	</target>
+
+	<!-- Matereal full package -->
+	<target name="matereal-full-jar" depends="napkit-jar, matereal-full-version">
+		<mkdir dir="${matereal-full-classes.dir}" />
+		<unjar src="../capture/${capture-jar.name}" dest="${matereal-full-classes.dir}" />
+		<unjar src="../connector/${connector-jar.name}" dest="${matereal-full-classes.dir}" />
+		<unjar src="../matereal/${matereal-jar.dir}${matereal-jar.name}" dest="${matereal-full-classes.dir}" />
+		<unjar src="${napkit-jar.dir}${napkit-jar.name}" dest="${matereal-full-classes.dir}" />
+		<jar jarfile="${napkit-jar.dir}${matereal-full-jar.name}">
+			<fileset dir="${matereal-full-classes.dir}" includes="**/*.class **/*.java" />
+		</jar>
+	</target>
+
+	<!-- Cleaning -->
+	<target name="matereal-full-clean" depends="matereal-full-version">
+		<delete dir="${matereal-full-classes.dir}" />
+		<delete file="${napkit-jar.dir}${matereal-full-jar.name}" />
+	</target>
 </project>

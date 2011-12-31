@@ -35,11 +35,11 @@
 	<property name="matereal-dist.dir" value="dist/" />
 	<property name="matereal-lib.dir" value="lib/" />
 	<property name="matereal-jar.dir" value="${matereal-dist.dir}${matereal-lib.dir}" />
-	<property name="matereal-jar.basename" value="matereal-${matereal.version}" />
+	<property name="matereal-jar.basename" value="matereal-core-${matereal.version}" />
 	<property name="matereal-jar-utils.name" value="matereal-utils-${matereal.version}.jar" />
 
 	<!-- Zip file name -->
-	<property name="matereal-zip.name" value="matereal-${matereal.version}.zip" />
+	<property name="matereal-zip.name" value="matereal-core-${matereal.version}.zip" />
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -69,7 +69,6 @@
 			regexp="[MS]"
 			replace="" />
 		<property name="matereal-jar.name" value="${matereal-jar.basename}-b${svnversion}.jar" />
-		<echo message="Jar file name: ${matereal-jar.name}" />
 	</target>
 
 	<!-- Zip -->
