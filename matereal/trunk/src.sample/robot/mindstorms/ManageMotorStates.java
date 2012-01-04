@@ -36,10 +36,14 @@ package robot.mindstorms;
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-import java.awt.FlowLayout;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -49,7 +53,8 @@ import jp.digitalmuseum.mr.entity.MindstormsNXT;
 import jp.digitalmuseum.mr.entity.MindstormsNXT.Port;
 import jp.digitalmuseum.mr.message.Event;
 import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.task.ManageMotorState;
+import jp.digitalmuseum.mr.message.RobotUpdateEvent;
+import jp.digitalmuseum.mr.task.ManageNXTMotorState;
 
 public class ManageMotorStates {
 
@@ -65,8 +70,8 @@ public class ManageMotorStates {
 		nxt.addExtension("MindstormsNXTExtension", Port.C);
 		nxt.connect();
 
-		final ManageMotorState monitorB = new ManageMotorState();
-		final ManageMotorState monitorC = new ManageMotorState();
+		final ManageNXTMotorState monitorB = new ManageNXTMotorState();
+		final ManageNXTMotorState monitorC = new ManageNXTMotorState();
 
 		if (monitorB.assign(nxt) &&
 				monitorC.assign(nxt)) {
@@ -78,13 +83,18 @@ public class ManageMotorStates {
 				public void run() {
 
 					JFrame frame = new JFrame();
-					frame.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-					frame.add(getLabelForMonitor(monitorB));
-					frame.add(getLabelForMonitor(monitorC));
+
+					Container container = frame.getContentPane();
+					container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+					container.add(Box.createRigidArea(new Dimension(0,5)));
+					container.add(getLabelForMonitor(monitorB));
+					container.add(Box.createRigidArea(new Dimension(0,5)));
+					container.add(getLabelForMonitor(monitorC));
+					container.add(Box.createRigidArea(new Dimension(0,5)));
+
 					frame.addWindowListener(new WindowAdapter() {
 						@Override
 						public void windowClosing(WindowEvent e) {
-							monitorB.stop();
 							Matereal.getInstance().dispose();
 						}
 					});
@@ -96,19 +106,22 @@ public class ManageMotorStates {
 		}
 	}
 
-	private JLabel getLabelForMonitor(final ManageMotorState monitor) {
+	private JLabel getLabelForMonitor(final ManageNXTMotorState monitor) {
 
 		final JLabel label = new JLabel();
+		label.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 		label.setFont(Matereal.getInstance().getDefaultFont());
 		label.setText("Connecting to the Mindstorms NXT bricks...");
 
 		monitor.addEventListener(new EventListener() {
 			public void eventOccurred(Event e) {
-				label.setText(String.format(
-						"Rotation count: %d (%s)",
-						monitor.getRotationCount(),
-						monitor.isStable() ?
-								"stable" : "flexible"));
+				if (e instanceof RobotUpdateEvent) {
+					label.setText(String.format(
+							"Rotation count: %d (%s)",
+							monitor.getRotationCount(),
+							monitor.isStable() ?
+									"stable" : "flexible"));
+				}
 			}
 		});
 

@@ -39,28 +39,46 @@ package jp.digitalmuseum.mr.task;
 import java.util.List;
 
 import jp.digitalmuseum.mr.entity.MindstormsNXT;
+import jp.digitalmuseum.mr.entity.MindstormsNXT.OutputState;
 import jp.digitalmuseum.mr.entity.Resource;
 import jp.digitalmuseum.mr.entity.MindstormsNXT.MindstormsNXTExtension;
 import jp.digitalmuseum.mr.message.Event;
+import jp.digitalmuseum.mr.message.RobotUpdateEvent;
 import jp.digitalmuseum.mr.task.TaskAbstractImpl;
 
-public class ManageMotorState extends TaskAbstractImpl {
+public class ManageNXTMotorState extends TaskAbstractImpl {
+	private static final int DEFAULT_ROTATION_ERROR_THRESHOLD = 15;
 	private static final int DEFAULT_ROTATION_THRESHOLD = 5;
 	private static final int DEFAULT_TIME_THRESHOLD = 7;
 
 	private static final long serialVersionUID = -3034846848072940340L;
 	private MindstormsNXTExtension ext;
+	private int rotationErrorThreshold = DEFAULT_ROTATION_ERROR_THRESHOLD;
 	private int rotationThreshold = DEFAULT_ROTATION_THRESHOLD;
 	private int timeThreshold = DEFAULT_TIME_THRESHOLD;
+
+	private OutputState outputState;
+
 	private int rotationCount;
 	private int stableCount;
 	private boolean isStable;
+
+	private int targetRotationCount;
+	private boolean isRotating;
 
 	@Override
 	public List<Class<? extends Resource>> getRequirements() {
 		List<Class<? extends Resource>> requirements = super.getRequirements();
 		requirements.add(MindstormsNXTExtension.class);
 		return requirements;
+	}
+
+	public int getRotationErrorThreshold() {
+		return rotationErrorThreshold;
+	}
+
+	public void setRotationErrorThreshold(int rotationErrorThreshold) {
+		this.rotationErrorThreshold = rotationErrorThreshold;
 	}
 
 	public int getRotationThreshold() {
@@ -94,27 +112,45 @@ public class ManageMotorState extends TaskAbstractImpl {
 	@Override
 	public void run() {
 
-		int count = ext.getOutputState().rotationCount;
-		if (diff(rotationCount, count) > rotationThreshold) {
-			stableCount = 0;
-		} else {
-			stableCount ++;
-		}
+		OutputState oldOutputState = outputState;
+		outputState = ext.getOutputState();
+		int count = outputState.rotationCount;
 
-		if (isStable) {
-			if (stableCount == 0) {
-				makeStable(ext, false);
-				isStable = false;
-			}
-		} else {
-			if (stableCount > timeThreshold) {
+		if (isRotating) {
+			int diff = targetRotationCount - outputState.rotationCount;
+			int diffAbs = abs(diff);
+			if ((abs(oldOutputState.rotationCount - targetRotationCount) <
+					diffAbs) ||
+					(diffAbs < rotationErrorThreshold)) {
+				isRotating = false;
 				makeStable(ext, true);
-				isStable = true;
+			} else if (diffAbs > outputState.tachoLimit / 2) {
+				setRelativeRotation(diff, false);
 			}
-			rotationCount = count;
+
+		} else {
+	
+			if (diff(rotationCount, count) > rotationThreshold) {
+				stableCount = 0;
+			} else {
+				stableCount ++;
+			}
+	
+			if (isStable) {
+				if (stableCount == 0) {
+					makeStable(ext, false);
+					isStable = false;
+				}
+			} else {
+				if (stableCount > timeThreshold) {
+					makeStable(ext, true);
+					isStable = true;
+				}
+				rotationCount = count;
+			}
 		}
 
-		Event e = new Event(this);
+		Event e = new RobotUpdateEvent(getAssignedRobot(), ext.getPort().toString(), count);
 		distributeEvent(e);
 	}
 
@@ -122,8 +158,36 @@ public class ManageMotorState extends TaskAbstractImpl {
 		return rotationCount;
 	}
 
+	public void setRotationCount(int rotationCount) {
+		int diff = (rotationCount - this.rotationCount) % 360;
+		if (diff == 0) {
+			return;
+		}
+		isRotating = true;
+		targetRotationCount = rotationCount;
+		setRelativeRotation(diff, true);
+	}
+
+	private void setRelativeRotation(int diff, boolean rampUp) {
+		int diffAbs = abs(diff);
+		int power = diffAbs > 90 ? 100 : (diffAbs > 45 ? 50 : 25);
+		ext.setOutputState(
+				(byte) (rampUp ? (diff > 0 ? power : -power) : 0),
+				MindstormsNXT.MOTORON | MindstormsNXT.BRAKE | MindstormsNXT.REGULATED,
+				MindstormsNXT.REGULATION_MODE_MOTOR_SPEED,
+				0,
+				rampUp ?
+					MindstormsNXT.MOTOR_RUN_STATE_RAMPUP : 
+					MindstormsNXT.MOTOR_RUN_STATE_RAMPDOWN,
+				diffAbs);
+	}
+
 	public boolean isStable() {
 		return isStable;
+	}
+
+	private int abs(int a) {
+		return a > 0 ? a : -a;
 	}
 
 	private int diff(int a, int b) {
