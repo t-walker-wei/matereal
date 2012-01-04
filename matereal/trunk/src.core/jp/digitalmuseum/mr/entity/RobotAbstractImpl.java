@@ -173,7 +173,7 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 			requestResources(Collection<Class<? extends Resource>> resourceTypes, Object object) {
 
 		// Look for the desired resources.
-		final Set<Resource> resources = new HashSet<Resource>(getResources());
+		final List<Resource> resources = new ArrayList<Resource>(getResources());
 		final ResourceMap resourceMap = new ResourceMap();
 		for (Class<? extends Resource> resourceType : resourceTypes) {
 			Iterator<Resource> it = resources.iterator();
