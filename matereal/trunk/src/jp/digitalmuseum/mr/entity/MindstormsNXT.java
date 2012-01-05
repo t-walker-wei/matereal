@@ -44,6 +44,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -99,7 +100,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	private MindstormsNXTDifferentialWheels dw;
 	private MindstormsNXTBattery b;
 	private Shape shape;
-	private Set<MindstormsNXTExtension> extensions;
+	private List<MindstormsNXTExtension> extensions;
 
 	public MindstormsNXT() {
 		super();
@@ -134,7 +135,7 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 				-HEIGHT/2, -WIDTH/2,
 				HEIGHT, WIDTH,
 				3, 3);
-		extensions = new HashSet<MindstormsNXTExtension>();
+		extensions = new ArrayList<MindstormsNXTExtension>();
 		super.initialize();
 	}
 
