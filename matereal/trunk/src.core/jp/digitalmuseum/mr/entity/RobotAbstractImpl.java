@@ -266,7 +266,7 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 	}
 
 	public List<JComponent> getResourceComponents(Collection<Class<? extends Resource>> resourceTypes) {
-		final Set<Resource> resources = new HashSet<Resource>(getResources());
+		final List<Resource> resources = new ArrayList<Resource>(getResources());
 		final List<JComponent> components = new ArrayList<JComponent>();
 
 		for (Class<? extends Resource> resourceType : resourceTypes) {

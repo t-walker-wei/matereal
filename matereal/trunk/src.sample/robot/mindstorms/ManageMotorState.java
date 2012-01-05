@@ -42,13 +42,15 @@ import jp.digitalmuseum.mr.entity.MindstormsNXT;
 import jp.digitalmuseum.mr.entity.MindstormsNXT.MindstormsNXTExtension;
 import jp.digitalmuseum.mr.entity.MindstormsNXT.Port;
 
-public class PrintMotorState {
+public class ManageMotorState {
+	private static final int ROTATION_THRESHOLD = 2;
+	private static final int TIME_THRESHOLD = 10;
 
 	public static void main(String[] args) {
-		new PrintMotorState();
+		new ManageMotorState();
 	}
 
-	public PrintMotorState() {
+	public ManageMotorState() {
 
 		MindstormsNXT nxt = new MindstormsNXT("btspp://00165305B308");
 		nxt.removeDifferentialWheels();
@@ -58,20 +60,58 @@ public class PrintMotorState {
 		MindstormsNXTExtension ext = nxt.requestResource(MindstormsNXTExtension.class, this);
 		if (ext != null) {
 
-			// Reset the motor.
-			ext.setOutputState((byte) 0, 0, 0, 0, 0, 0);
+			int rotationCount = ext.getOutputState().rotationCount;
+			int stableCount = 0;
 
-			// Get status of the motor rotation and print it every 100 ms.
-			for (int i = 0; i < 100; i ++) {
+			makeStable(ext, true);
+			boolean isStable = true;
+
+			while (true) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					break;
 				}
-				System.out.println(ext.getOutputState().rotationCount);
+
+				int count = ext.getOutputState().rotationCount;
+				if (diff(rotationCount, count) > ROTATION_THRESHOLD) {
+					stableCount = 0;
+				} else {
+					stableCount ++;
+				}
+
+				if (isStable) {
+					if (stableCount == 0) {
+						makeStable(ext, false);
+						isStable = false;
+					}
+				} else {
+					if (stableCount > TIME_THRESHOLD) {
+						makeStable(ext, true);
+						isStable = true;
+					}
+				}
+
+				rotationCount = count;
+				System.out.println(rotationCount + " : " + stableCount);
 			}
 		}
 		Matereal.getInstance().dispose();
 	}
 
+	private int diff(int a, int b) {
+		int diff = a - b;
+		return diff < 0 ? -diff : diff;
+	}
+
+	private boolean makeStable(MindstormsNXTExtension ext, boolean isStable) {
+		System.out.println("Make stable: " + isStable);
+		return ext.setOutputState(
+				(byte) 0,
+				isStable ? (MindstormsNXT.MOTORON | MindstormsNXT.BRAKE | MindstormsNXT.REGULATED) : 0,
+				isStable ? MindstormsNXT.REGULATION_MODE_MOTOR_SPEED : 0,
+				0,
+				isStable ? MindstormsNXT.MOTOR_RUN_STATE_RUNNING : 0,
+				0);
+	}
 }

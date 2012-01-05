@@ -37,6 +37,8 @@
 package jp.digitalmuseum.mr.entity;
 
 import java.awt.Shape;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.geom.RoundRectangle2D;
 
 import java.io.IOException;
@@ -46,6 +48,11 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import jp.digitalmuseum.connector.BluetoothConnector;
 import jp.digitalmuseum.connector.Connector;
@@ -303,40 +310,43 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		if (connector == null) {
 			return;
 		}
+
+		byte[] ret;
 		synchronized (connector) {
-			if (write(new byte[] {
-					DIRECT_COMMAND_REPLY,
-					GET_OUTPUT_STATE,
-					(byte)port}, connector)) {
-	
-				// Wait for the latency.
-				try { Thread.sleep(30); }
-				catch (InterruptedException e) { }
-	
-				byte[] ret = null;
-				try {
-					ret = read(connector);
-				} catch (IOException e) {
-					// Do nothing.
-				}
-		
-				if(ret == null || ret.length < 25 || ret[1] != GET_OUTPUT_STATE) {
-					outputState.status = -1;
-					return;
-				}
-				outputState.status = ret[2];
-				outputState.port = ret[3];
-				outputState.powerSetpoint = ret[4];
-				outputState.mode = ret[5];
-				outputState.regulationMode = ret[6];
-				outputState.turnRatio = ret[7];
-				outputState.runState = ret[8];
-				outputState.tachoLimit = (0xFF & ret[9]) | ((0xFF & ret[10]) << 8)| ((0xFF & ret[11]) << 16)| ((0xFF & ret[12]) << 24);
-				outputState.tachoCount = (0xFF & ret[13]) | ((0xFF & ret[14]) << 8)| ((0xFF & ret[15]) << 16)| ((0xFF & ret[16]) << 24);
-				outputState.blockTachoCount = (0xFF & ret[17]) | ((0xFF & ret[18]) << 8)| ((0xFF & ret[19]) << 16)| ((0xFF & ret[20]) << 24);
-				outputState.rotationCount = (0xFF & ret[21]) | ((0xFF & ret[22]) << 8)| ((0xFF & ret[23]) << 16)| ((0xFF & ret[24]) << 24);
+			if (!write(new byte[] {
+							DIRECT_COMMAND_REPLY,
+							GET_OUTPUT_STATE,
+							(byte)port
+					}, connector)) {
+				return;
+			}
+
+			// Wait for the latency and read the response.
+			try {
+				Thread.sleep(30);
+				ret = read(connector);
+			} catch (Exception e) {
+				outputState.status = -1;
+				return;
 			}
 		}
+
+		if(ret == null || ret.length < 25 || ret[1] != GET_OUTPUT_STATE) {
+			outputState.status = -1;
+			return;
+		}
+
+		outputState.status = ret[2];
+		outputState.port = ret[3];
+		outputState.powerSetpoint = ret[4];
+		outputState.mode = ret[5];
+		outputState.regulationMode = ret[6];
+		outputState.turnRatio = ret[7];
+		outputState.runState = ret[8];
+		outputState.tachoLimit = (0xFF & ret[9]) | ((0xFF & ret[10]) << 8)| ((0xFF & ret[11]) << 16)| ((0xFF & ret[12]) << 24);
+		outputState.tachoCount = (0xFF & ret[13]) | ((0xFF & ret[14]) << 8)| ((0xFF & ret[15]) << 16)| ((0xFF & ret[16]) << 24);
+		outputState.blockTachoCount = (0xFF & ret[17]) | ((0xFF & ret[18]) << 8)| ((0xFF & ret[19]) << 16)| ((0xFF & ret[20]) << 24);
+		outputState.rotationCount = (0xFF & ret[21]) | ((0xFF & ret[22]) << 8)| ((0xFF & ret[23]) << 16)| ((0xFF & ret[24]) << 24);
 	}
 
 	public boolean sendAck() {
@@ -347,32 +357,33 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		if (connector == null) {
 			return false;
 		}
+
+		byte[] ret;
 		synchronized (connector) {
-			if (write(new byte[] {
-					SYSTEM_COMMAND_REPLY,
-					GET_FIRMWARE_VERSION}, connector)) {
-	
-				// Wait for the latency.
-				try { Thread.sleep(30); }
-				catch (InterruptedException e) { }
-	
-				// Get the result.
-				byte[] ret;
-				try {
-					ret = read(connector);
-					if (0 >= ret[2]) {
-						Matereal.getInstance().getOutStream().println(
-								"NXT Firmware version: "
-								+ ret[4] + "." + ret[3]
-								+ ", " + ret[6] + "." + ret[5]);
-					}
-					return true;
-				} catch (IOException e) {
-					// Do nothing.
-				}
+			if (!write(new byte[] {
+							SYSTEM_COMMAND_REPLY,
+							GET_FIRMWARE_VERSION
+					}, connector)) {
+				return false;
+			}
+
+			// Wait for the latency and read the response.
+			try {
+				Thread.sleep(30);
+				ret = read(connector);
+			} catch (Exception e) {
+				return false;
 			}
 		}
-		return false;
+
+		// Get the result.
+		if (0 >= ret[2]) {
+			Matereal.getInstance().getOutStream().println(
+					"NXT Firmware version: "
+					+ ret[4] + "." + ret[3]
+					+ ", " + ret[6] + "." + ret[5]);
+		}
+		return true;
 	}
 
 	protected static boolean write(final byte[] buf, final Connector connector) {
@@ -462,6 +473,8 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 	public static class MindstormsNXTExtension extends PhysicalResourceAbstractImpl implements ExclusiveResource {
 		private static final long serialVersionUID = 1657289083336290551L;
 		private Port port;
+		private OutputState latestOutputState;
+		private Set<JLabel> labels = new HashSet<JLabel>();
 
 		public MindstormsNXTExtension(MindstormsNXT mindstormsNXT, Port port) {
 			super(mindstormsNXT);
@@ -509,9 +522,52 @@ public class MindstormsNXT extends PhysicalRobotAbstractImpl {
 		 * @see MindstormsNXT#getOutputState(int, Connector)
 		 */
 		public OutputState getOutputState() {
-			return MindstormsNXT.getOutputState(
+			latestOutputState = MindstormsNXT.getOutputState(
 					port.getPortNumber(),
 					getConnector());
+			final String text = String.format("Rotation count: %d", latestOutputState.rotationCount);
+			if (labels.size() > 0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						for (JLabel label : labels) {
+							label.setText(text);
+						}
+					}
+				});
+			}
+			return latestOutputState;
+		}
+
+		/**
+		 * This component is updated every time {{@link #getOutputState()} is called.
+		 */
+		@Override
+		public JComponent getConfigurationComponent() {
+			final JLabel label = new JLabel() {
+				private static final long serialVersionUID = -1821483937025749491L;
+				@Override
+				public String toString() {
+					return MindstormsNXTExtension.this.toString();
+				}
+			};
+			label.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+			label.setFont(Matereal.getInstance().getDefaultFont());
+			label.setText("Connecting to the Mindstorms NXT brick...");
+			label.addComponentListener(new ComponentListener() {
+				public void componentShown(ComponentEvent e) {
+					labels.add(label);
+				}
+				public void componentResized(ComponentEvent e) {
+					labels.add(label);
+				}
+				public void componentMoved(ComponentEvent e) {
+					labels.add(label);
+				}
+				public void componentHidden(ComponentEvent e) {
+					labels.remove(label);
+				}
+			});
+			return label;
 		}
 	}
 

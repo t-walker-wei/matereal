@@ -38,6 +38,8 @@ package jp.digitalmuseum.mr.task;
 
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import jp.digitalmuseum.mr.entity.MindstormsNXT;
 import jp.digitalmuseum.mr.entity.MindstormsNXT.OutputState;
 import jp.digitalmuseum.mr.entity.Resource;
@@ -129,13 +131,13 @@ public class ManageNXTMotorState extends TaskAbstractImpl {
 			}
 
 		} else {
-	
+
 			if (diff(rotationCount, count) > rotationThreshold) {
 				stableCount = 0;
 			} else {
 				stableCount ++;
 			}
-	
+
 			if (isStable) {
 				if (stableCount == 0) {
 					makeStable(ext, false);
@@ -177,7 +179,7 @@ public class ManageNXTMotorState extends TaskAbstractImpl {
 				MindstormsNXT.REGULATION_MODE_MOTOR_SPEED,
 				0,
 				rampUp ?
-					MindstormsNXT.MOTOR_RUN_STATE_RAMPUP : 
+					MindstormsNXT.MOTOR_RUN_STATE_RAMPUP :
 					MindstormsNXT.MOTOR_RUN_STATE_RAMPDOWN,
 				diffAbs);
 	}
@@ -203,5 +205,10 @@ public class ManageNXTMotorState extends TaskAbstractImpl {
 				0,
 				isStable ? MindstormsNXT.MOTOR_RUN_STATE_RUNNING : 0,
 				0);
+	}
+
+	@Override
+	public JComponent getConfigurationComponent() {
+		return ext == null ? super.getConfigurationComponent() : ext.getConfigurationComponent();
 	}
 }

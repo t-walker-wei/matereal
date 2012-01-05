@@ -64,6 +64,8 @@ public class ManageMotorStates {
 
 	public ManageMotorStates() {
 
+		Matereal.getInstance().showDebugFrame();
+
 		MindstormsNXT nxt = new MindstormsNXT("btspp://00165305B308");
 		nxt.removeDifferentialWheels();
 		nxt.addExtension("MindstormsNXTExtension", Port.B);
@@ -96,6 +98,7 @@ public class ManageMotorStates {
 						@Override
 						public void windowClosing(WindowEvent e) {
 							Matereal.getInstance().dispose();
+							e.getWindow().dispose();
 						}
 					});
 

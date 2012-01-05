@@ -45,6 +45,15 @@ import jp.digitalmuseum.mr.message.RobotUpdateEvent;
 
 public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implements PhysicalRobot {
 	private static final long serialVersionUID = 2914683592930955216L;
+	public static boolean isAutoConnectEnabled = true;
+
+	public static void setAutoConnect(boolean isAutoConnectEnabled) {
+		PhysicalRobotAbstractImpl.isAutoConnectEnabled = isAutoConnectEnabled;
+	}
+
+	public static boolean isAutoConnectEnabled() {
+		return isAutoConnectEnabled;
+	}
 
 	/** Connector for this robot */
 	private Connector connector;
@@ -86,6 +95,9 @@ public abstract class PhysicalRobotAbstractImpl extends RobotAbstractImpl implem
 	final public void setConnector(Connector connector) {
 		if (this.connector != connector) {
 			this.connector = connector;
+			if (PhysicalRobotAbstractImpl.isAutoConnectEnabled) {
+				connector.connect();
+			}
 			distributeEvent(new RobotUpdateEvent(this, "connector", connector));
 		}
 	}

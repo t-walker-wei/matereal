@@ -76,78 +76,58 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public boolean write(byte b) {
-		if (!isConnected()) {
-			connect();
-		}
-		if (outputStream == null) {
-			return false;
-		}
-
 		try {
+			if (outputStream == null) {
+				return false;
+			}
 			outputStream.write(b);
 			outputStream.flush();
 
 			// System.out.println((int)b);
-
+			return true;
 		} catch (IOException e) {
 			return false;
 		}
-		return true;
 	}
 
 	public boolean write(int i) {
-		if (!isConnected()) {
-			connect();
-		}
-		if (outputStream == null) {
-			return false;
-		}
-
 		try {
+			if (outputStream == null) {
+				return false;
+			}
 			outputStream.write(i);
 			outputStream.flush();
 
 			// System.out.println(i);
-
+			return true;
 		} catch (IOException e) {
 			return false;
 		}
-		return true;
 	}
 
 	public boolean write(byte[] byteArray) {
-		if (!isConnected()) {
-			connect();
-		}
-		if (outputStream == null) {
-			return false;
-		}
-
 		try {
+			if (outputStream == null) {
+				return false;
+			}
 			outputStream.write(byteArray);
 			outputStream.flush();
 
 			// for (byte b : byteArray) {
 			//	System.out.println((int)b);
 			// }
-
+			// System.out.println(new String(byteArray));
+			return true;
 		} catch (IOException e) {
 			return false;
 		}
-
-		// System.out.println(new String(byteArray));
-		return true;
 	}
 
 	public int read() {
-		if (!isConnected()) {
-			connect();
-		}
-		if (inputStream == null) {
-			return -1;
-		}
-
 		try {
+			if (inputStream == null) {
+				return -1;
+			}
 			return getInputStream().read();
 		} catch (IOException e) {
 			return -1;
@@ -155,14 +135,10 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public int read(byte[] data) {
-		if (!isConnected()) {
-			connect();
-		}
-		if (inputStream == null) {
-			return -1;
-		}
-
 		try {
+			if (inputStream == null) {
+				return -1;
+			}
 			return getInputStream().read(data);
 		} catch (IOException e) {
 			return -1;
@@ -170,14 +146,10 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public int read(byte[] data, int off, int len) {
-		if (!isConnected()) {
-			connect();
-		}
-		if (inputStream == null) {
-			return -1;
-		}
-
 		try {
+			if (inputStream == null) {
+				return -1;
+			}
 			return getInputStream().read(data, off, len);
 		} catch (IOException e) {
 			return -1;
@@ -185,24 +157,21 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public int readAll(byte[] data) {
-		if (!isConnected()) {
-			connect();
-		}
-		if (inputStream == null) {
-			return -1;
-		}
-
-		int read = 0;
-		int off = 0;
 		try {
+			if (inputStream == null) {
+				return -1;
+			}
+
+			int read = 0;
+			int off = 0;
 			while ((read = getInputStream().read(data, off, data.length - off)) > 0) {
 				off += read;
 				waitForResponse();
 			}
+			return off;
 		} catch (IOException e) {
-			// Do nothing.
+			return -1;
 		}
-		return off;
 	}
 
 	public boolean waitForResponse() {
@@ -210,9 +179,9 @@ public abstract class ConnectorAbstractImpl implements Connector {
 	}
 
 	public boolean waitForResponse(int ms) {
-		int max = ms / 10;
-		int count = 0;
 		try {
+			int max = ms / 10;
+			int count = 0;
 			while (inputStream.available() <= 0 && count < max) {
 				try {
 					Thread.sleep(10);
@@ -222,10 +191,9 @@ public abstract class ConnectorAbstractImpl implements Connector {
 				}
 				count ++;
 			}
+			return count < max;
 		} catch (IOException e) {
-			e.printStackTrace();
 			return false;
 		}
-		return count < max;
 	}
 }
