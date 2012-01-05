@@ -40,9 +40,8 @@ import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,7 +75,7 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 	private static int instances = 0;
 	private NoopyWheels wheels;
 	private Shape shape;
-	private Set<NoopyExtension> extensions;
+	private List<NoopyExtension> extensions;
 
 	public Noopy2() {
 		super();
@@ -110,7 +109,7 @@ public class Noopy2 extends PhysicalRobotAbstractImpl {
 				-HEIGHT*3/4, -WIDTH/2,
 				HEIGHT, WIDTH,
 				3, 3);
-		extensions = new HashSet<NoopyExtension>();
+		extensions = new ArrayList<NoopyExtension>();
 		super.initialize();
 	}
 
