@@ -97,6 +97,14 @@ public interface Robot extends Entity, EventProvider, Serializable {
 	public <T extends Resource> T requestResource(
 			Class<T> resourceType, Object object);
 
+	/**
+	 * Request resource with specified interface.
+	 * @param resourceClassName
+	 * @return Returns the resource if succeeded. Otherwise, returns null.
+	 */
+	public Resource requestResource(
+			String resourceClassName, Object object);
+
 	public void freeResources(
 			Collection<Resource> resources, Object object);
 
