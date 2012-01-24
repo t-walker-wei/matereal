@@ -233,6 +233,22 @@ public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public synchronized Resource requestResource(String resourceClassName, Object object) {
+		Class<?> classObject;
+		try {
+			classObject = Class.forName(String.format("%s$%s",
+					getClass().toString(),
+					resourceClassName));
+			if (Resource.class.isAssignableFrom(classObject)) {
+				return requestResource((Class<? extends Resource>) classObject, object);
+			}
+		} catch (ClassNotFoundException e) {
+			// Do nothing.
+		}
+		return null;
+	}
+
 	public synchronized void freeResources(Collection<Resource> resources, Object object) {
 		for (Resource resource : resources) {
 			if (resource instanceof ResourceAbstractImpl) {
