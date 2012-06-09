@@ -37,10 +37,11 @@ package robot.mindstorms;
  */
 
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.MindstormsNXT;
-import jp.digitalmuseum.mr.entity.MindstormsNXT.MindstormsNXTExtension;
-import jp.digitalmuseum.mr.entity.MindstormsNXT.Port;
+import com.phybots.Phybots;
+import com.phybots.entity.MindstormsNXT;
+import com.phybots.entity.MindstormsNXT.MindstormsNXTExtension;
+import com.phybots.entity.MindstormsNXT.Port;
+
 
 public class PrintMotorState {
 
@@ -71,7 +72,7 @@ public class PrintMotorState {
 				System.out.println(ext.getOutputState().rotationCount);
 			}
 		}
-		Matereal.getInstance().dispose();
+		Phybots.getInstance().dispose();
 	}
 
 }

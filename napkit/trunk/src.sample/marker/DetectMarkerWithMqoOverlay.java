@@ -8,21 +8,21 @@ import javax.media.opengl.GLJPanel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.phybots.Phybots;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.service.Camera;
+import com.phybots.service.MarkerDetector;
+import com.phybots.service.ServiceGroup;
+import com.phybots.utils.Array;
 import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.FPSAnimator;
 
 import jp.digitalmuseum.jogl.JoglCoordinates_ARToolKit;
 import jp.digitalmuseum.jogl.JoglModel;
 import jp.digitalmuseum.jogl.JoglModelMqo;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.mr.service.Camera;
-import jp.digitalmuseum.mr.service.ServiceGroup;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapJoglUtils;
 import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
-import jp.digitalmuseum.utils.Array;
 
 /**
  * Run marker detection and show its results.
@@ -92,7 +92,7 @@ public class DetectMarkerWithMqoOverlay implements GLEventListener {
 				configFrame.dispose();
 				super.dispose();
 				animator.stop();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		};
 		frame.setFrameSize(camera.getWidth(), camera.getHeight());

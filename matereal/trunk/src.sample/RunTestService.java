@@ -1,9 +1,10 @@
 
 
-import jp.digitalmuseum.mr.*;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.service.ServiceGroup;
-import jp.digitalmuseum.mr.service.TestService;
+import com.phybots.*;
+import com.phybots.gui.*;
+import com.phybots.service.ServiceGroup;
+import com.phybots.service.TestService;
+
 
 /**
  * Run two services in different intervals.
@@ -26,8 +27,8 @@ public class RunTestService {
 			@Override public void dispose() {
 				super.dispose();
 
-				// Shutdown Matereal when the window is closed.
-				Matereal.getInstance().dispose();
+				// Shutdown Phybots when the window is closed.
+				Phybots.getInstance().dispose();
 			}
 		};
 		frame.setFrameSize(640, 480);

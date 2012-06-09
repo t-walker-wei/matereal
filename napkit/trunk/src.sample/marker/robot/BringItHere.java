@@ -12,27 +12,28 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.phybots.Phybots;
+import com.phybots.entity.Entity;
+import com.phybots.entity.Noopy2;
+import com.phybots.entity.PhysicalBox;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.gui.utils.EntityPainter;
+import com.phybots.gui.utils.VectorFieldPainter;
+import com.phybots.resource.WheelsController;
+import com.phybots.service.Camera;
+import com.phybots.service.MarkerDetector;
+import com.phybots.task.Push;
+import com.phybots.task.Task;
+import com.phybots.task.VectorFieldTask;
+import com.phybots.utils.Array;
+import com.phybots.utils.Position;
+import com.phybots.utils.ScreenPosition;
+
 import marker.MarkerInfo;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.PhysicalBox;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.gui.utils.EntityPainter;
-import jp.digitalmuseum.mr.gui.utils.VectorFieldPainter;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.mr.service.Camera;
-import jp.digitalmuseum.mr.task.Push;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.VectorFieldTask;
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
-import jp.digitalmuseum.utils.Array;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
  * Bring it here!
@@ -209,7 +210,7 @@ public class BringItHere {
 			public void dispose() {
 				configFrame.dispose();
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		};
 		frame.setFrameSize(camera.getWidth(), camera.getHeight());
@@ -224,7 +225,7 @@ public class BringItHere {
 	 */
 	private Entity getClickedEntity(int x, int y) {
 		Position p = camera.screenToReal(new ScreenPosition(x, y));
-		for (Entity e : Matereal.getInstance().getEntities()) {
+		for (Entity e : Phybots.getInstance().getEntities()) {
 			if (detector.contains(e, p)) {
 				return e;
 			}

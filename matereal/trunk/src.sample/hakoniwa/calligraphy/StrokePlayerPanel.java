@@ -22,24 +22,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.service.CoordProvider;
-import jp.digitalmuseum.mr.task.DrawPath;
-import jp.digitalmuseum.mr.task.Move;
-import jp.digitalmuseum.mr.task.Rotate;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.workflow.Action;
-import jp.digitalmuseum.mr.workflow.Workflow;
-import jp.digitalmuseum.mr.workflow.Fork;
-import jp.digitalmuseum.mr.workflow.Join;
-import jp.digitalmuseum.mr.workflow.Transition;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.ScreenPosition;
 
 import javax.swing.JToolBar;
 import javax.swing.JButton;
+
+import com.phybots.entity.Robot;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.resource.WheelsController;
+import com.phybots.service.CoordProvider;
+import com.phybots.task.DrawPath;
+import com.phybots.task.Move;
+import com.phybots.task.Rotate;
+import com.phybots.task.Task;
+import com.phybots.utils.Position;
+import com.phybots.utils.ScreenPosition;
+import com.phybots.workflow.Action;
+import com.phybots.workflow.Fork;
+import com.phybots.workflow.Join;
+import com.phybots.workflow.Transition;
+import com.phybots.workflow.Workflow;
 
 public class StrokePlayerPanel extends JPanel implements WizardComponent {
 

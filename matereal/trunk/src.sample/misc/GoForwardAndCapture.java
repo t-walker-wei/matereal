@@ -1,11 +1,12 @@
 package misc;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.NetTansor;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.task.Capture;
-import jp.digitalmuseum.mr.task.GoForward;
+import com.phybots.Phybots;
+import com.phybots.entity.NetTansor;
+import com.phybots.entity.Robot;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.task.Capture;
+import com.phybots.task.GoForward;
+
 
 /**
  * Test code to go forward and capture images simultaneously.
@@ -33,7 +34,7 @@ public class GoForwardAndCapture {
 					private static final long serialVersionUID = 1L;
 					public void dispose() {
 						super.dispose();
-						Matereal.getInstance().dispose();
+						Phybots.getInstance().dispose();
 					}
 				}.setFrameSize(cap.getWidth(), cap.getHeight());
 

@@ -8,23 +8,24 @@ import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.gui.utils.VectorFieldPainter;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.resource.Wheels;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.task.Follow;
-import jp.digitalmuseum.mr.task.Move;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.VectorFieldTask;
-import jp.digitalmuseum.utils.Location;
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.gui.*;
+import com.phybots.gui.utils.VectorFieldPainter;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobotWithPen;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ImageUpdateEvent;
+import com.phybots.resource.Wheels;
+import com.phybots.resource.WheelsController;
+import com.phybots.task.Follow;
+import com.phybots.task.Move;
+import com.phybots.task.Task;
+import com.phybots.task.VectorFieldTask;
+import com.phybots.utils.Location;
+import com.phybots.utils.ScreenPosition;
+
 
 /**
  * Click to navigate one robot. The other robot will follow him.
@@ -70,7 +71,7 @@ public class ClickAndFollow {
 
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 
 			@Override

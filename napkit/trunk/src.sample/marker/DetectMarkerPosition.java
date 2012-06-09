@@ -1,17 +1,18 @@
 package marker;
 import javax.swing.JFrame;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.LocationUpdateEvent;
-import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.mr.service.Camera;
+import com.phybots.Phybots;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.LocationUpdateEvent;
+import com.phybots.service.Camera;
+import com.phybots.service.MarkerDetector;
+import com.phybots.utils.ScreenPosition;
+
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
-import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
  * Run marker detection and print its results.
@@ -62,7 +63,7 @@ public class DetectMarkerPosition {
 
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		};
 		configFrame.setSize(640, 480);

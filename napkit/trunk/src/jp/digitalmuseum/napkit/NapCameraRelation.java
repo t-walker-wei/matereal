@@ -26,8 +26,8 @@
  */
 package jp.digitalmuseum.napkit;
 
-import jp.digitalmuseum.utils.ScreenPosition;
-import jp.digitalmuseum.utils.ScreenRectangle;
+import com.phybots.utils.ScreenPosition;
+import com.phybots.utils.ScreenRectangle;
 
 public class NapCameraRelation {
 	private static double[] matrix1 = new double[16];

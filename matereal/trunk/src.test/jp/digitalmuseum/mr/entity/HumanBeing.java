@@ -39,9 +39,10 @@ package jp.digitalmuseum.mr.entity;
 import java.awt.Shape;
 import java.util.List;
 
-import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
-import jp.digitalmuseum.mr.entity.RobotAbstractImpl;
-import jp.digitalmuseum.mr.resource.WheelsController;
+import com.phybots.entity.ResourceAbstractImpl;
+import com.phybots.entity.RobotAbstractImpl;
+import com.phybots.resource.WheelsController;
+
 
 /**
  * Human being.

@@ -2,25 +2,26 @@ package kettle;
 
 import javax.swing.SwingUtilities;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.gui.workflow.WorkflowViewPane;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.task.Push;
-import jp.digitalmuseum.mr.workflow.Action;
-import jp.digitalmuseum.mr.workflow.Workflow;
-import jp.digitalmuseum.mr.workflow.Fork;
-import jp.digitalmuseum.mr.workflow.Join;
-import jp.digitalmuseum.mr.workflow.Node;
-import jp.digitalmuseum.mr.workflow.TimeoutTransition;
-import jp.digitalmuseum.mr.workflow.Transition;
-import jp.digitalmuseum.utils.Location;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.gui.*;
+import com.phybots.gui.workflow.WorkflowViewPane;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaCylinder;
+import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ImageUpdateEvent;
+import com.phybots.task.Push;
+import com.phybots.utils.Location;
+import com.phybots.workflow.Action;
+import com.phybots.workflow.Fork;
+import com.phybots.workflow.Join;
+import com.phybots.workflow.Node;
+import com.phybots.workflow.TimeoutTransition;
+import com.phybots.workflow.Transition;
+import com.phybots.workflow.Workflow;
+
 import kettle.task.Boil;
 import kettle.task.Pour;
 import kettle.task.Stop;
@@ -81,7 +82,7 @@ public class BringACupOfTea {
 					@Override public void dispose() {
 						super.dispose();
 						viewer.dispose();
-						Matereal.getInstance().dispose();
+						Phybots.getInstance().dispose();
 					}
 				};
 				frame.setResizable(false);

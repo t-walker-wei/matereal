@@ -3,10 +3,11 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.gui.DrawableFrame;
-import jp.digitalmuseum.mr.resource.WheelsController;
+import com.phybots.Phybots;
+import com.phybots.entity.PhysicalRobot;
+import com.phybots.gui.DrawableFrame;
+import com.phybots.resource.WheelsController;
+
 
 /**
  * Show a controller GUI for a robot.
@@ -36,7 +37,7 @@ public class SimpleKeyController {
 			public void dispose() {
 				super.dispose();
 				robot.freeResource(wheels, this);
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 			public void paint2D(Graphics2D g) {
 				g.setColor(getBackground());

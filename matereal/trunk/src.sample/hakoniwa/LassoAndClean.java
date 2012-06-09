@@ -1,14 +1,15 @@
 package hakoniwa;
 import java.util.List;
 
-import jp.digitalmuseum.mr.task.EndCleaning;
-import jp.digitalmuseum.mr.task.FillPath;
-import jp.digitalmuseum.mr.task.Move;
-import jp.digitalmuseum.mr.task.MobileCleaningTask;
-import jp.digitalmuseum.mr.task.TracePathLoosely;
-import jp.digitalmuseum.mr.workflow.Action;
-import jp.digitalmuseum.mr.workflow.Workflow;
-import jp.digitalmuseum.utils.Position;
+import com.phybots.task.EndCleaning;
+import com.phybots.task.FillPath;
+import com.phybots.task.MobileCleaningTask;
+import com.phybots.task.Move;
+import com.phybots.task.TracePathLoosely;
+import com.phybots.utils.Position;
+import com.phybots.workflow.Action;
+import com.phybots.workflow.Workflow;
+
 
 /**
  * Lasso path to navigate a robot filling the path with cleaning.<br />

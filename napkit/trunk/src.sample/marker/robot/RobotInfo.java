@@ -36,7 +36,7 @@
  */
 package marker.robot;
 
-import jp.digitalmuseum.mr.entity.Noopy2;
+import com.phybots.entity.Noopy2;
 
 public class RobotInfo {
 

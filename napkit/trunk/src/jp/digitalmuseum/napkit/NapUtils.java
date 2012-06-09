@@ -30,8 +30,9 @@ import java.nio.IntBuffer;
 
 import javax.media.opengl.glu.GLU;
 
-import jp.digitalmuseum.utils.ScreenRectangle;
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.utils.ScreenPosition;
+import com.phybots.utils.ScreenRectangle;
+
 import jp.nyatla.nyartoolkit.core.param.NyARParam;
 import jp.nyatla.nyartoolkit.core.types.NyARIntPoint2d;
 import jp.nyatla.nyartoolkit.core.types.NyARIntSize;

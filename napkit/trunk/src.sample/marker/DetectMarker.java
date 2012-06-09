@@ -7,17 +7,18 @@ import java.awt.Stroke;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.mr.service.Camera;
+import com.phybots.Phybots;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.service.Camera;
+import com.phybots.service.MarkerDetector;
+import com.phybots.utils.Array;
+import com.phybots.utils.ScreenPosition;
+
 import jp.digitalmuseum.napkit.NapDetectionResult;
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
 import jp.digitalmuseum.napkit.gui.MarkerEntityPanel;
-import jp.digitalmuseum.utils.Array;
-import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
  * Run marker detection and show its results.
@@ -120,7 +121,7 @@ public class DetectMarker {
 				configFrame.dispose();
 				markerFrame.dispose();
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		};
 		frame.setFrameSize(camera.getWidth(), camera.getHeight());

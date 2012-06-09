@@ -10,19 +10,20 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.mr.service.Camera;
-import jp.digitalmuseum.mr.task.Move;
-import jp.digitalmuseum.mr.task.Task;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.resource.WheelsController;
+import com.phybots.service.Camera;
+import com.phybots.service.MarkerDetector;
+import com.phybots.task.Move;
+import com.phybots.task.Task;
+import com.phybots.utils.Position;
+import com.phybots.utils.ScreenPosition;
+
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
  * Show a frame with a view of the world coordinate.
@@ -93,7 +94,7 @@ public class ClickAndRun {
 			@Override public void dispose() {
 				configFrame.dispose();
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		};
 

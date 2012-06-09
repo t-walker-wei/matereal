@@ -11,13 +11,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
-import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 
 import javax.swing.JLabel;
 import javax.swing.JButton;
+
+import com.phybots.Phybots;
+import com.phybots.entity.PhysicalRobot;
+import com.phybots.resource.DifferentialWheelsController;
+import com.phybots.service.ServiceAbstractImpl;
+
 import java.awt.Insets;
 
 public class DifferentialWheelsSlider extends JFrame {
@@ -125,7 +127,7 @@ public class DifferentialWheelsSlider extends JFrame {
 				robot.requestResource(DifferentialWheelsController.class, null);
 		robot.connect();
 
-		Matereal.getInstance().showDebugFrame();
+		Phybots.getInstance().showDebugFrame();
 
 		SwingUtilities.invokeLater(new Runnable() {
 			private DifferentialWheelsSlider thisClass;
@@ -138,7 +140,7 @@ public class DifferentialWheelsSlider extends JFrame {
 				thisClass.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e) {
 						wheels.stopWheels();
-						Matereal.getInstance().dispose();
+						Phybots.getInstance().dispose();
 					}
 				});
 

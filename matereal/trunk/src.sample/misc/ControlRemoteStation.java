@@ -1,9 +1,10 @@
 package misc;
 
+import com.phybots.Phybots;
+import com.phybots.entity.RemoteStation;
+import com.phybots.entity.RemoteStation.RemoteStationCore;
+
 import jp.digitalmuseum.connector.RXTXConnector;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.RemoteStation;
-import jp.digitalmuseum.mr.entity.RemoteStation.RemoteStationCore;
 
 /**
  * Control RemoteStation.
@@ -64,6 +65,6 @@ public class ControlRemoteStation {
 			System.out.println(result ? "OK" : "NG");
 		}
 
-		Matereal.getInstance().dispose();
+		Phybots.getInstance().dispose();
 	}
 }

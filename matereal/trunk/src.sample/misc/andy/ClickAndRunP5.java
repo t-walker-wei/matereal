@@ -36,10 +36,11 @@
  */
 package misc.andy;
 
-import jp.digitalmuseum.mr.andy.MobileRobot;
-import jp.digitalmuseum.mr.andy.MrImage;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
+import com.phybots.andy.MobileRobot;
+import com.phybots.andy.MrImage;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobot;
+
 import processing.core.PApplet;
 
 public class ClickAndRunP5 extends PApplet {

@@ -6,16 +6,17 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
+import com.phybots.Phybots;
+import com.phybots.entity.Noopy2;
+import com.phybots.entity.Resource;
+import com.phybots.entity.Noopy2.DCMotorController;
+import com.phybots.entity.Noopy2.Port;
+import com.phybots.entity.Noopy2.DCMotorController.Command;
+import com.phybots.gui.DrawableFrame;
+import com.phybots.task.TaskAbstractImpl;
+
 import robot.RobotInfo;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.Noopy2.DCMotorController.Command;
-import jp.digitalmuseum.mr.entity.Resource;
-import jp.digitalmuseum.mr.entity.Noopy2.DCMotorController;
-import jp.digitalmuseum.mr.entity.Noopy2.Port;
-import jp.digitalmuseum.mr.gui.DrawableFrame;
-import jp.digitalmuseum.mr.task.TaskAbstractImpl;
 
 /**
  * キーボード操作に応じてDC3ポートに接続されたDCモータの回転方向・速度を切り替える。<br />
@@ -56,7 +57,7 @@ public class NoopyWithDCMotorExtensionModerate {
 					public void dispose() {
 						super.dispose();
 						motorTask.stop();
-						Matereal.getInstance().dispose();
+						Phybots.getInstance().dispose();
 					}
 
 					public void paint2D(Graphics2D g) {

@@ -5,13 +5,14 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.SwingUtilities;
 
+import com.phybots.Phybots;
+import com.phybots.entity.Noopy2;
+import com.phybots.entity.Noopy2.DCMotorController;
+import com.phybots.entity.Noopy2.Port;
+import com.phybots.gui.DrawableFrame;
+
 import robot.RobotInfo;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.Noopy2.DCMotorController;
-import jp.digitalmuseum.mr.entity.Noopy2.Port;
-import jp.digitalmuseum.mr.gui.DrawableFrame;
 
 /**
  * キーボード操作に応じてDC3ポートに接続されたDCモータの回転方向・速度を切り替える。<br />
@@ -47,7 +48,7 @@ public class NoopyWithDCMotorExtension {
 					public void dispose() {
 						super.dispose();
 						robot.freeResource(motor, NoopyWithDCMotorExtension.this);
-						Matereal.getInstance().dispose();
+						Phybots.getInstance().dispose();
 					}
 
 					public void paint2D(Graphics2D g) {

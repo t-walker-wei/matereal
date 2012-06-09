@@ -8,22 +8,23 @@ import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaCylinder;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.task.MobilePenTask;
-import jp.digitalmuseum.mr.task.Move;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.utils.Location;
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.Phybots;
+import com.phybots.entity.Entity;
+import com.phybots.entity.Robot;
+import com.phybots.gui.*;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaCylinder;
+import com.phybots.hakoniwa.HakoniwaRobotWithPen;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ImageUpdateEvent;
+import com.phybots.resource.WheelsController;
+import com.phybots.task.MobilePenTask;
+import com.phybots.task.Move;
+import com.phybots.task.Task;
+import com.phybots.utils.Location;
+import com.phybots.utils.ScreenPosition;
+
 
 /**
  * Click to navigate a robot without collision.
@@ -73,7 +74,7 @@ public class ClickAndRunWithPen {
 
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 
 			@Override

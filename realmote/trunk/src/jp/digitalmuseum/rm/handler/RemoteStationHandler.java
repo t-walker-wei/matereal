@@ -48,9 +48,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
-import jp.digitalmuseum.mr.entity.RemoteStation;
-import jp.digitalmuseum.mr.entity.RemoteStation.RemoteStationCore;
 
+import com.phybots.entity.RemoteStation;
+import com.phybots.entity.RemoteStation.RemoteStationCore;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

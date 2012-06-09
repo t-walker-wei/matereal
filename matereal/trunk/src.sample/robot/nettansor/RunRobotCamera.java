@@ -36,11 +36,12 @@
  */
 package robot.nettansor;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.task.Capture;
+import com.phybots.Phybots;
+import com.phybots.entity.PhysicalRobot;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.task.Capture;
+
 import robot.RobotInfo;
 
 public class RunRobotCamera {
@@ -61,8 +62,8 @@ public class RunRobotCamera {
 				@Override public void dispose() {
 					super.dispose();
 
-					// Shutdown Matereal when the window is closed.
-					Matereal.getInstance().dispose();
+					// Shutdown Phybots when the window is closed.
+					Phybots.getInstance().dispose();
 				}
 			};
 			frame.setFrameSize(capture.getWidth(), capture.getHeight());

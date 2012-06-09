@@ -5,10 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import jp.digitalmuseum.mr.andy.*;
-import jp.digitalmuseum.mr.gui.DrawableFrame;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
+import com.phybots.andy.*;
+import com.phybots.gui.DrawableFrame;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobot;
+
 
 /**
  * Click and run!

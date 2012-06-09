@@ -16,21 +16,22 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.service.Camera;
-import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.TracePathLoosely;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.gui.*;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ImageUpdateEvent;
+import com.phybots.resource.WheelsController;
+import com.phybots.service.Camera;
+import com.phybots.service.MarkerDetector;
+import com.phybots.task.Task;
+import com.phybots.task.TracePathLoosely;
+import com.phybots.utils.Position;
+import com.phybots.utils.ScreenPosition;
+
 import jp.digitalmuseum.napkit.NapMarker;
 import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.ScreenPosition;
 
 /**
  * Draw path to navigate a robot along the path.<br/>
@@ -95,7 +96,7 @@ public class DrawAndTrace {
 			@Override public void dispose() {
 				super.dispose();
 				configFrame.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 
 			@Override

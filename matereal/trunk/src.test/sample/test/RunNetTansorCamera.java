@@ -1,12 +1,13 @@
 package sample.test;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.NetTansor;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.task.Capture;
+import com.phybots.Phybots;
+import com.phybots.entity.NetTansor;
+import com.phybots.entity.Robot;
+import com.phybots.gui.*;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ImageUpdateEvent;
+import com.phybots.task.Capture;
+
 
 /**
  * Run a camera service.
@@ -39,8 +40,8 @@ public class RunNetTansorCamera {
 						@Override public void dispose() {
 							super.dispose();
 
-							// Shutdown Matereal when the window is closed.
-							Matereal.getInstance().dispose();
+							// Shutdown Phybots when the window is closed.
+							Phybots.getInstance().dispose();
 						}
 					};
 					frame.setFrameSize(capture.getWidth(), capture.getHeight());

@@ -13,20 +13,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithCleanerBrush;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.TracePathLoosely;
-import jp.digitalmuseum.utils.Location;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.gui.*;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobotWithCleanerBrush;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ImageUpdateEvent;
+import com.phybots.resource.WheelsController;
+import com.phybots.task.Task;
+import com.phybots.task.TracePathLoosely;
+import com.phybots.utils.Location;
+import com.phybots.utils.Position;
+import com.phybots.utils.ScreenPosition;
+
 
 /**
  * Draw path to navigate a robot along the path.<br/>
@@ -70,7 +71,7 @@ public class DrawAndTrace {
 
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 
 			@Override

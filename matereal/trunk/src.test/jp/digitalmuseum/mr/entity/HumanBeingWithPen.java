@@ -38,8 +38,9 @@ package jp.digitalmuseum.mr.entity;
 
 import java.util.List;
 
-import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
-import jp.digitalmuseum.mr.resource.Pen;
+import com.phybots.entity.ResourceAbstractImpl;
+import com.phybots.resource.Pen;
+
 
 public class HumanBeingWithPen extends HumanBeing {
 	private HumanPen humanPen;

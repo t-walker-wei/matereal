@@ -36,9 +36,10 @@
  */
 package robot.mindstorms;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.task.MonitorBatteryLevel;
+import com.phybots.Phybots;
+import com.phybots.entity.PhysicalRobot;
+import com.phybots.task.MonitorBatteryLevel;
+
 import robot.RobotInfo;
 
 public class PrintBatteryLevel {
@@ -65,7 +66,7 @@ public class PrintBatteryLevel {
 				System.out.println(String.format("Battery level: %2d / 100", monitor.getBatteryLevel()));
 			}
 			monitor.stop();
-			Matereal.getInstance().dispose();
+			Phybots.getInstance().dispose();
 		}
 	}
 

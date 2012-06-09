@@ -1,22 +1,23 @@
 package hakoniwa;
 import javax.swing.SwingUtilities;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.task.GoForward;
-import jp.digitalmuseum.mr.task.SpinLeft;
-import jp.digitalmuseum.mr.task.Stop;
-import jp.digitalmuseum.mr.workflow.Action;
-import jp.digitalmuseum.mr.workflow.Workflow;
-import jp.digitalmuseum.mr.workflow.Fork;
-import jp.digitalmuseum.mr.workflow.Join;
-import jp.digitalmuseum.mr.workflow.TimeoutTransition;
-import jp.digitalmuseum.mr.workflow.Transition;
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.task.GoForward;
+import com.phybots.task.SpinLeft;
+import com.phybots.task.Stop;
+import com.phybots.utils.ScreenPosition;
+import com.phybots.workflow.Action;
+import com.phybots.workflow.Fork;
+import com.phybots.workflow.Join;
+import com.phybots.workflow.TimeoutTransition;
+import com.phybots.workflow.Transition;
+import com.phybots.workflow.Workflow;
+
 
 /**
  * Make 4 robots do the same things in parallel. Test of using a workflow graph.
@@ -83,7 +84,7 @@ public class DanceDanceDance {
 					@Override
 					public void dispose() {
 						super.dispose();
-						Matereal.getInstance().dispose();
+						Phybots.getInstance().dispose();
 					}
 				};
 				frame.setResizable(false);

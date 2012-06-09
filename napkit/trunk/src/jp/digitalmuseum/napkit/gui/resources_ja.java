@@ -30,7 +30,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.PropertyResourceBundle;
 
-import jp.digitalmuseum.utils.StringResourceParser;
+import com.phybots.utils.StringResourceParser;
+
 
 public class resources_ja extends PropertyResourceBundle {
 
