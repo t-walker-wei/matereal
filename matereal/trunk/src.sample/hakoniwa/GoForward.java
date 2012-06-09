@@ -1,12 +1,13 @@
 package hakoniwa;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.resource.WheelsController;
+import com.phybots.utils.ScreenPosition;
+
 
 /**
  * Go forward for 7 seconds and stop.
@@ -27,7 +28,7 @@ public class GoForward {
 
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		});
 		frame.setResizable(false);

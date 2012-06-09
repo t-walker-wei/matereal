@@ -4,19 +4,20 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.DrawableFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.resource.DifferentialWheelsController;
-import jp.digitalmuseum.mr.resource.Wheels.Spin;
-import jp.digitalmuseum.mr.service.Service;
-import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
-import jp.digitalmuseum.utils.Position;
+import com.phybots.Phybots;
+import com.phybots.entity.PhysicalRobot;
+import com.phybots.entity.Robot;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.DrawableFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.resource.DifferentialWheelsController;
+import com.phybots.resource.Wheels.Spin;
+import com.phybots.service.Service;
+import com.phybots.service.ServiceAbstractImpl;
+import com.phybots.utils.Position;
+
 
 /**
  * Show a controller GUI for a robot.
@@ -42,7 +43,7 @@ public class KeyController {
 	public KeyController() {
 		super();
 
-		Matereal.getInstance().showDebugFrame();
+		Phybots.getInstance().showDebugFrame();
 
 		final Robot robot;
 		if (DEBUG) {
@@ -69,7 +70,7 @@ public class KeyController {
 				if (hakoniwaFrame != null) {
 					hakoniwaFrame.dispose();
 				}
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 			public void paint2D(Graphics2D g) {
 				g.setColor(Color.white);

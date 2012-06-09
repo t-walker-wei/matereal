@@ -18,8 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
 
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.service.ImageProvider;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.service.ImageProvider;
+
 
 public class StrokePainterPanel extends JPanel implements PathsProvider {
 

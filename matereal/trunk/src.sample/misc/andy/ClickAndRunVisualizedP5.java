@@ -39,13 +39,14 @@ package misc.andy;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import jp.digitalmuseum.mr.andy.MobileRobot;
-import jp.digitalmuseum.mr.andy.MrImage;
-import jp.digitalmuseum.mr.andy.Position;
-import jp.digitalmuseum.mr.gui.utils.VectorFieldPainter;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.task.VectorFieldTask;
+import com.phybots.andy.MobileRobot;
+import com.phybots.andy.MrImage;
+import com.phybots.andy.Position;
+import com.phybots.gui.utils.VectorFieldPainter;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.task.VectorFieldTask;
+
 import processing.core.PApplet;
 
 public class ClickAndRunVisualizedP5 extends PApplet {

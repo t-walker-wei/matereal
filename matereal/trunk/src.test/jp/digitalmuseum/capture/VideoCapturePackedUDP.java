@@ -22,8 +22,9 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import jp.digitalmuseum.mr.service.Service;
-import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
+import com.phybots.service.Service;
+import com.phybots.service.ServiceAbstractImpl;
+
 
 public class VideoCapturePackedUDP extends VideoCaptureAbstractImpl {
 

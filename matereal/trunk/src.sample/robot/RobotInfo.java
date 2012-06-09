@@ -36,9 +36,10 @@
  */
 package robot;
 
-import jp.digitalmuseum.mr.entity.MindstormsNXT;
-import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
+import com.phybots.entity.MindstormsNXT;
+import com.phybots.entity.Noopy2;
+import com.phybots.entity.PhysicalRobot;
+
 
 public class RobotInfo {
 

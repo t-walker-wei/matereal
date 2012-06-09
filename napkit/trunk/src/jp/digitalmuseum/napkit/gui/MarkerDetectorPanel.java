@@ -39,28 +39,30 @@ import javax.swing.JSlider;
 import javax.swing.JCheckBox;
 import java.awt.Dimension;
 import javax.swing.JTextPane;
+
+import com.phybots.Phybots;
+import com.phybots.gui.DisposableComponent;
+import com.phybots.gui.utils.GUIUtils;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.LocationUpdateEvent;
+import com.phybots.message.ServiceEvent;
+import com.phybots.message.ServiceStatus;
+import com.phybots.message.ServiceUpdateEvent;
+import com.phybots.service.ImageProvider;
+import com.phybots.service.MarkerDetector;
+import com.phybots.utils.ScreenRectangle;
+
 import java.awt.SystemColor;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.DisposableComponent;
-import jp.digitalmuseum.mr.gui.utils.GUIUtils;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.LocationUpdateEvent;
-import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceStatus;
-import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
-import jp.digitalmuseum.mr.service.ImageProvider;
-import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.utils.ScreenRectangle;
 
 /**
  * Panel class for configuring MarkerDetector.
  *
  * @author Jun KATO
- * @see jp.digitalmuseum.mr.service.MarkerDetector
+ * @see com.phybots.service.MarkerDetector
  */
 public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 	private MarkerDetector markerDetector;  //  @jve:decl-index=0:
@@ -122,7 +124,7 @@ public class MarkerDetectorPanel extends JPanel implements DisposableComponent {
 	}
 
 	private void updateJComboBox() {
-		Set<ImageProvider> providers = Matereal.getInstance().lookForServices(ImageProvider.class);
+		Set<ImageProvider> providers = Phybots.getInstance().lookForServices(ImageProvider.class);
 		getJComboBox().removeAllItems();
 		for (ImageProvider provider : providers) {
 			getJComboBox().addItem(provider);

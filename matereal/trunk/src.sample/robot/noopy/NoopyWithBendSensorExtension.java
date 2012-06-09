@@ -1,14 +1,15 @@
 package robot.noopy;
 import java.util.List;
 
+import com.phybots.Phybots;
+import com.phybots.entity.Noopy2;
+import com.phybots.entity.Resource;
+import com.phybots.entity.Noopy2.BendSensor;
+import com.phybots.task.Task;
+import com.phybots.task.TaskAbstractImpl;
+
 import robot.RobotInfo;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Noopy2;
-import jp.digitalmuseum.mr.entity.Noopy2.BendSensor;
-import jp.digitalmuseum.mr.entity.Resource;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.TaskAbstractImpl;
 
 
 public class NoopyWithBendSensorExtension {
@@ -43,7 +44,7 @@ public class NoopyWithBendSensorExtension {
 		}
 
 		// 最後にMaterealをシャットダウン
-		Matereal.getInstance().dispose();
+		Phybots.getInstance().dispose();
 	}
 
 	private static class ReadBendSensor extends TaskAbstractImpl {

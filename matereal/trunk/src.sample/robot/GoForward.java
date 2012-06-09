@@ -1,7 +1,8 @@
 package robot;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.resource.WheelsController;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.resource.WheelsController;
+
 
 /**
  * Go forward for 7 seconds and stop.
@@ -24,7 +25,7 @@ public class GoForward {
 		} finally {
 			wheels.stopWheels();
 			robot.freeResource(wheels, GoForward.class);
-			Matereal.getInstance().dispose();
+			Phybots.getInstance().dispose();
 		}
 	}
 }

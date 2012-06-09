@@ -9,12 +9,13 @@ import java.util.Queue;
 
 import javax.swing.JOptionPane;
 
+import com.phybots.Phybots;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.service.Camera;
+import com.phybots.service.ServiceAbstractImpl;
+
 import jp.digitalmuseum.capture.VideoCapturePackedUDP;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.service.Camera;
-import jp.digitalmuseum.mr.service.ServiceAbstractImpl;
 
 /**
  * Capture server.
@@ -79,7 +80,7 @@ class CapturePackedUDPServer {
 			private static final long serialVersionUID = 1L;
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		};
 

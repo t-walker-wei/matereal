@@ -31,8 +31,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import jp.digitalmuseum.utils.Array;
-import jp.digitalmuseum.utils.ScreenRectangle;
+import com.phybots.utils.Array;
+import com.phybots.utils.ScreenRectangle;
+
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.NyARMat;
 import jp.nyatla.nyartoolkit.core.match.NyARMatchPattDeviationColorData;

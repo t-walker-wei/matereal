@@ -1,12 +1,13 @@
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
+import com.phybots.Phybots;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+
 
 /**
- * Show Matereal Debug Window.
+ * Show Phybots Debug Window.
  *
  * @author Jun KATO
  */
@@ -14,20 +15,20 @@ public class ShowDebugFrame {
 
 	public static void main(String[] args) {
 
-		Matereal.getInstance().getDebugFrame().addWindowListener(
+		Phybots.getInstance().getDebugFrame().addWindowListener(
 				new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		});
 
-		Matereal.getInstance().addEventListener(new EventListener() {
+		Phybots.getInstance().addEventListener(new EventListener() {
 			public void eventOccurred(Event e) {
 				System.out.println(e.toString());
 			}
 		});
 
-		Matereal.getInstance().showDebugFrame();
+		Phybots.getInstance().showDebugFrame();
 	}
 }

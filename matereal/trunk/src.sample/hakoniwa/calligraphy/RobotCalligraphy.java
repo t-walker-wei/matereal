@@ -9,17 +9,18 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobotWithPen;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ImageUpdateEvent;
-import jp.digitalmuseum.mr.message.LocationUpdateEvent;
-import jp.digitalmuseum.mr.service.ServiceGroup;
-import jp.digitalmuseum.mr.workflow.Workflow;
-import jp.digitalmuseum.utils.Position;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobotWithPen;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ImageUpdateEvent;
+import com.phybots.message.LocationUpdateEvent;
+import com.phybots.service.ServiceGroup;
+import com.phybots.utils.Position;
+import com.phybots.workflow.Workflow;
+
 
 public class RobotCalligraphy {
 
@@ -29,7 +30,7 @@ public class RobotCalligraphy {
 
 	public RobotCalligraphy() {
 
-		Matereal.getInstance().addEventListener(new EventListener() {
+		Phybots.getInstance().addEventListener(new EventListener() {
 
 			public void eventOccurred(Event e) {
 				if (e instanceof ImageUpdateEvent ||
@@ -85,12 +86,12 @@ public class RobotCalligraphy {
 				wizardFrame.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowClosed(WindowEvent e) {
-						Matereal.getInstance().dispose();
+						Phybots.getInstance().dispose();
 					}
 				});
 				wizardFrame.setTitle("Robot Caligraphy");
 
-				Matereal.getInstance().showDebugFrame();
+				Phybots.getInstance().showDebugFrame();
 			}
 		});
 	}

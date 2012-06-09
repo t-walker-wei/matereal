@@ -1,16 +1,17 @@
 package hakoniwa;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.gui.ImageProviderPanel;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.task.GoForward;
-import jp.digitalmuseum.mr.task.Stop;
-import jp.digitalmuseum.mr.workflow.Action;
-import jp.digitalmuseum.mr.workflow.Workflow;
-import jp.digitalmuseum.mr.workflow.TimeoutTransition;
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.Phybots;
+import com.phybots.entity.Robot;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.gui.ImageProviderPanel;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.task.GoForward;
+import com.phybots.task.Stop;
+import com.phybots.utils.ScreenPosition;
+import com.phybots.workflow.Action;
+import com.phybots.workflow.TimeoutTransition;
+import com.phybots.workflow.Workflow;
+
 
 /**
  * Assign one task to a robot. Get the robot to go forward for 7 seconds.
@@ -31,7 +32,7 @@ public class GoForwardWithWorkflow {
 
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		});
 		frame.setResizable(false);

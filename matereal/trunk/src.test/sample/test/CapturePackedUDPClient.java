@@ -2,10 +2,11 @@ package sample.test;
 
 import java.net.DatagramSocket;
 
+import com.phybots.Phybots;
+import com.phybots.gui.*;
+import com.phybots.service.Camera;
+
 import jp.digitalmuseum.capture.VideoCapturePackedUDP;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.service.Camera;
 
 /**
  * Capture client.
@@ -41,7 +42,7 @@ public class CapturePackedUDPClient {
 			private static final long serialVersionUID = 1L;
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		};
 		frame.setTitle("Client");

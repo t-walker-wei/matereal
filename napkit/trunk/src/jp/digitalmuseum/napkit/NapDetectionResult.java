@@ -26,9 +26,10 @@
  */
 package jp.digitalmuseum.napkit;
 
-import jp.digitalmuseum.utils.ScreenLocation;
-import jp.digitalmuseum.utils.ScreenRectangle;
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.utils.ScreenLocation;
+import com.phybots.utils.ScreenPosition;
+import com.phybots.utils.ScreenRectangle;
+
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.squaredetect.NyARSquare;
 

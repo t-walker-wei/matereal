@@ -1,9 +1,10 @@
 package camera;
 import javax.swing.JOptionPane;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.service.Camera;
+import com.phybots.Phybots;
+import com.phybots.gui.*;
+import com.phybots.service.Camera;
+
 
 /**
  * Run a camera service to capture images.
@@ -34,8 +35,8 @@ public class RunCameraWithDialog {
 			@Override public void dispose() {
 				super.dispose();
 
-				// Shutdown Matereal when the window is closed.
-				Matereal.getInstance().dispose();
+				// Shutdown Phybots when the window is closed.
+				Phybots.getInstance().dispose();
 			}
 		};
 		frame.setFrameSize(camera.getWidth(), camera.getHeight());

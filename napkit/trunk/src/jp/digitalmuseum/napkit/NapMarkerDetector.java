@@ -29,8 +29,9 @@ package jp.digitalmuseum.napkit;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 
-import jp.digitalmuseum.utils.Array;
-import jp.digitalmuseum.utils.ScreenRectangle;
+import com.phybots.utils.Array;
+import com.phybots.utils.ScreenRectangle;
+
 
 
 /**

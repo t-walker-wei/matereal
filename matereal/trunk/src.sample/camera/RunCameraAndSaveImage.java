@@ -4,8 +4,9 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.service.Camera;
+import com.phybots.Phybots;
+import com.phybots.service.Camera;
+
 
 /**
  * Run a camera service to capture images.
@@ -28,7 +29,7 @@ public class RunCameraAndSaveImage {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			Matereal.getInstance().dispose();
+			Phybots.getInstance().dispose();
 		}
 	}
 }

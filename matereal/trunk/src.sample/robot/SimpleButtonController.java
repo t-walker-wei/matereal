@@ -5,9 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.resource.WheelsController;
+import com.phybots.Phybots;
+import com.phybots.entity.PhysicalRobot;
+import com.phybots.resource.WheelsController;
+
 
 /**
  * Show a controller GUI for a robot.
@@ -36,7 +37,7 @@ public class SimpleButtonController extends JFrame {
 	public SimpleButtonController() {
 		super();
 
-		Matereal.getInstance().showDebugFrame();
+		Phybots.getInstance().showDebugFrame();
 
 		robot = RobotInfo.getRobot();
 		robot.connect();
@@ -50,7 +51,7 @@ public class SimpleButtonController extends JFrame {
 	public void dispose() {
 		super.dispose();
 		robot.freeResource(wheels, this);
-		Matereal.getInstance().dispose();
+		Phybots.getInstance().dispose();
 	}
 
 	/**

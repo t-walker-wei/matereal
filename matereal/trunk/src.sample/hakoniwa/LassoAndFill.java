@@ -8,8 +8,9 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.util.List;
 
-import jp.digitalmuseum.mr.task.FillPathLoosely;
-import jp.digitalmuseum.utils.Position;
+import com.phybots.task.FillPathLoosely;
+import com.phybots.utils.Position;
+
 
 /**
  * Lasso path to navigate a robot filling the path.<br />

@@ -3,22 +3,23 @@ package misc;
 
 import java.util.HashSet;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.CloneWheelsRobot;
-import jp.digitalmuseum.mr.entity.MindstormsNXT;
-import jp.digitalmuseum.mr.entity.NetTansor;
-import jp.digitalmuseum.mr.entity.Noopy;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.entity.Roomba;
-import jp.digitalmuseum.mr.task.GoBackward;
-import jp.digitalmuseum.mr.task.GoForward;
-import jp.digitalmuseum.mr.task.SpinLeft;
-import jp.digitalmuseum.mr.task.SpinRight;
-import jp.digitalmuseum.mr.task.Stop;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.workflow.Action;
-import jp.digitalmuseum.mr.workflow.Workflow;
-import jp.digitalmuseum.mr.workflow.TimeoutTransition;
+import com.phybots.Phybots;
+import com.phybots.entity.CloneWheelsRobot;
+import com.phybots.entity.MindstormsNXT;
+import com.phybots.entity.NetTansor;
+import com.phybots.entity.Noopy;
+import com.phybots.entity.Robot;
+import com.phybots.entity.Roomba;
+import com.phybots.task.GoBackward;
+import com.phybots.task.GoForward;
+import com.phybots.task.SpinLeft;
+import com.phybots.task.SpinRight;
+import com.phybots.task.Stop;
+import com.phybots.task.Task;
+import com.phybots.workflow.Action;
+import com.phybots.workflow.TimeoutTransition;
+import com.phybots.workflow.Workflow;
+
 
 /**
  * Assign tasks to a virtual robot. The robot works as a proxy of five real robots.
@@ -68,6 +69,6 @@ public class CloneWheels {
 	}
 
 	public void dispose() {
-		Matereal.getInstance().dispose();
+		Phybots.getInstance().dispose();
 	}
 }

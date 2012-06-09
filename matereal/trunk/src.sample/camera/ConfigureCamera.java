@@ -3,9 +3,10 @@ package camera;
 
 import javax.swing.JFrame;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.service.Camera;
+import com.phybots.Phybots;
+import com.phybots.gui.*;
+import com.phybots.service.Camera;
+
 
 /**
  * Run a camera and show its configuration window.
@@ -33,8 +34,8 @@ public class ConfigureCamera {
 			@Override public void dispose() {
 				super.dispose();
 
-				// Shutdown Matereal when the window is closed.
-				Matereal.getInstance().dispose();
+				// Shutdown Phybots when the window is closed.
+				Phybots.getInstance().dispose();
 			}
 		};
 		frame.setSize(500,410);

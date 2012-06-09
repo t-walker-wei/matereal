@@ -16,22 +16,22 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLJPanel;
 
+import com.phybots.Phybots;
+import com.phybots.gui.*;
+import com.phybots.hakoniwa.Hakoniwa;
+import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.resource.WheelsController;
+import com.phybots.task.Move;
+import com.phybots.task.Task;
+import com.phybots.task.VectorFieldTask;
+import com.phybots.utils.Location;
+import com.phybots.utils.Position;
+import com.phybots.utils.ScreenPosition;
+import com.phybots.utils.Vector2D;
 import com.sun.opengl.util.Animator;
 import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.FPSAnimator;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.hakoniwa.Hakoniwa;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
-import jp.digitalmuseum.mr.resource.WheelsController;
-import jp.digitalmuseum.mr.task.Move;
-import jp.digitalmuseum.mr.task.Task;
-import jp.digitalmuseum.mr.task.VectorFieldTask;
-import jp.digitalmuseum.utils.Location;
-import jp.digitalmuseum.utils.Position;
-import jp.digitalmuseum.utils.ScreenPosition;
-import jp.digitalmuseum.utils.Vector2D;
 
 /**
  * Click and run!
@@ -76,7 +76,7 @@ public class VisualizedClickAndRunGL {
 			public void dispose() {
 				super.dispose();
 				animator.stop();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		};
 		// frame.setResizable(false);
@@ -100,7 +100,7 @@ public class VisualizedClickAndRunGL {
 		// Repaint the window periodically.
 		animator.start();
 		/*
-		Matereal.getInstance().addActionListener(new ActionListener() {
+		Phybots.getInstance().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { frame.repaint(); }
 		});
 		*/

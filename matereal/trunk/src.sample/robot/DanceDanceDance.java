@@ -1,17 +1,18 @@
 package robot;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.PhysicalRobot;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.WorkflowNodeEvent;
-import jp.digitalmuseum.mr.message.WorkflowNodeStatus;
-import jp.digitalmuseum.mr.task.GoForward;
-import jp.digitalmuseum.mr.task.MobileTask;
-import jp.digitalmuseum.mr.task.SpinLeft;
-import jp.digitalmuseum.mr.task.Stop;
-import jp.digitalmuseum.mr.workflow.Action;
-import jp.digitalmuseum.mr.workflow.Workflow;
-import jp.digitalmuseum.mr.workflow.TimeoutTransition;
+import com.phybots.Phybots;
+import com.phybots.entity.PhysicalRobot;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.WorkflowNodeEvent;
+import com.phybots.message.WorkflowNodeStatus;
+import com.phybots.task.GoForward;
+import com.phybots.task.MobileTask;
+import com.phybots.task.SpinLeft;
+import com.phybots.task.Stop;
+import com.phybots.workflow.Action;
+import com.phybots.workflow.TimeoutTransition;
+import com.phybots.workflow.Workflow;
+
 
 /**
  * Make a robot go forward and spin left for 10 times. Test of using a workflow graph.
@@ -26,7 +27,7 @@ public class DanceDanceDance implements EventListener {
 
 	public DanceDanceDance() {
 
-		Matereal.getInstance().showDebugFrame();
+		Phybots.getInstance().showDebugFrame();
 
 		PhysicalRobot robot = RobotInfo.getRobot();
 		robot.connect();
@@ -67,7 +68,7 @@ public class DanceDanceDance implements EventListener {
 	public void eventOccurred(Event e) {
 		if (e instanceof WorkflowNodeEvent &&
 				((WorkflowNodeEvent) e).getStatus() == WorkflowNodeStatus.LEFT) {
-			Matereal.getInstance().dispose();
+			Phybots.getInstance().dispose();
 		}
 	}
 }

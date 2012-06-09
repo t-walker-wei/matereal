@@ -41,13 +41,6 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jp.digitalmuseum.mr.entity.Entity;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceStatus;
-import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
-import jp.digitalmuseum.mr.service.MarkerDetector;
 import jp.digitalmuseum.napkit.NapMarker;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -55,6 +48,14 @@ import javax.swing.ListSelectionModel;
 import java.awt.Insets;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+
+import com.phybots.entity.Entity;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ServiceEvent;
+import com.phybots.message.ServiceStatus;
+import com.phybots.message.ServiceUpdateEvent;
+import com.phybots.service.MarkerDetector;
 
 public class MarkerEntityPanel extends JPanel {
 

@@ -1,12 +1,13 @@
 package misc;
 import java.awt.image.BufferedImage;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.NetTansor;
-import jp.digitalmuseum.mr.entity.Robot;
-import jp.digitalmuseum.mr.gui.*;
-import jp.digitalmuseum.mr.service.ImageProvider.ImageListener;
-import jp.digitalmuseum.mr.task.Capture;
+import com.phybots.Phybots;
+import com.phybots.entity.NetTansor;
+import com.phybots.entity.Robot;
+import com.phybots.gui.*;
+import com.phybots.service.ImageProvider.ImageListener;
+import com.phybots.task.Capture;
+
 
 /**
  * Run a camera service to capture images.
@@ -44,7 +45,7 @@ public class RunNetTansorCamera {
 					public void dispose() {
 						super.dispose();
 						capture.stop();
-						Matereal.getInstance().dispose();
+						Phybots.getInstance().dispose();
 					}
 				};
 				frame.setFrameSize(image.getWidth(), image.getHeight());

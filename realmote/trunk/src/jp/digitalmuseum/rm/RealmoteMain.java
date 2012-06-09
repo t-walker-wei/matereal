@@ -3,14 +3,14 @@ package jp.digitalmuseum.rm;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import com.phybots.Phybots;
+import com.phybots.entity.RemoteStation;
+import com.phybots.entity.Roomba;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import jp.digitalmuseum.connector.RXTXConnector;
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.RemoteStation;
-import jp.digitalmuseum.mr.entity.Roomba;
 import jp.digitalmuseum.rm.handler.DefaultFileHandler;
 import jp.digitalmuseum.rm.handler.RemoteStationHandler;
 import jp.digitalmuseum.rm.handler.RoombaHandler;
@@ -74,7 +74,7 @@ public class RealmoteMain implements HttpHandler {
 			remoteStationHandler.save(NAME_CONFIGFILE);
 			exchange.sendResponseHeaders(200, 0);
 			exchange.close();
-			Matereal.getInstance().dispose();
+			Phybots.getInstance().dispose();
 			this.server.stop(0);
 			return;
 		} else if (path.equals("/system/reload")) {

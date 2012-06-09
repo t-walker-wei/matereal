@@ -37,10 +37,11 @@ package robot.mindstorms;
  */
 
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.MindstormsNXT;
-import jp.digitalmuseum.mr.entity.MindstormsNXT.MindstormsNXTExtension;
-import jp.digitalmuseum.mr.entity.MindstormsNXT.Port;
+import com.phybots.Phybots;
+import com.phybots.entity.MindstormsNXT;
+import com.phybots.entity.MindstormsNXT.MindstormsNXTExtension;
+import com.phybots.entity.MindstormsNXT.Port;
+
 
 public class ManageMotorState {
 	private static final int ROTATION_THRESHOLD = 2;
@@ -96,7 +97,7 @@ public class ManageMotorState {
 				System.out.println(rotationCount + " : " + stableCount);
 			}
 		}
-		Matereal.getInstance().dispose();
+		Phybots.getInstance().dispose();
 	}
 
 	private int diff(int a, int b) {

@@ -28,16 +28,17 @@ package jp.digitalmuseum.napkit.gui;
 
 import javax.swing.JTabbedPane;
 
-import jp.digitalmuseum.mr.gui.CoordProviderPanel;
-import jp.digitalmuseum.mr.gui.DisposableComponent;
-import jp.digitalmuseum.mr.message.Event;
-import jp.digitalmuseum.mr.message.EventListener;
-import jp.digitalmuseum.mr.message.ServiceEvent;
-import jp.digitalmuseum.mr.message.ServiceStatus;
-import jp.digitalmuseum.mr.message.ServiceUpdateEvent;
-import jp.digitalmuseum.mr.service.CoordProvider;
-import jp.digitalmuseum.mr.service.ImageProvider;
-import jp.digitalmuseum.mr.service.MarkerDetector;
+import com.phybots.gui.CoordProviderPanel;
+import com.phybots.gui.DisposableComponent;
+import com.phybots.message.Event;
+import com.phybots.message.EventListener;
+import com.phybots.message.ServiceEvent;
+import com.phybots.message.ServiceStatus;
+import com.phybots.message.ServiceUpdateEvent;
+import com.phybots.service.CoordProvider;
+import com.phybots.service.ImageProvider;
+import com.phybots.service.MarkerDetector;
+
 
 /**
  * Typical marker detector and world coordinate provider configuration pane.

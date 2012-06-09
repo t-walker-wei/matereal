@@ -6,7 +6,7 @@
 			<accessrule kind="accessible" pattern="com/sun/**"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/matereal"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/phybots"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/connector"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

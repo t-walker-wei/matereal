@@ -39,10 +39,11 @@ package kettle;
 import java.util.Date;
 import java.util.List;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.entity.ExclusiveResource;
-import jp.digitalmuseum.mr.entity.ResourceAbstractImpl;
-import jp.digitalmuseum.mr.hakoniwa.HakoniwaRobot;
+import com.phybots.Phybots;
+import com.phybots.entity.ExclusiveResource;
+import com.phybots.entity.ResourceAbstractImpl;
+import com.phybots.hakoniwa.HakoniwaRobot;
+
 
 public class Kettle extends HakoniwaRobot {
 	private static final long serialVersionUID = -1044123032265398208L;
@@ -71,7 +72,7 @@ public class Kettle extends HakoniwaRobot {
 		public void heat(boolean isOn) {
 			getTemperature();
 			this.isOn = isOn;
-			Matereal.getInstance().getOutStream().println(isOn
+			Phybots.getInstance().getOutStream().println(isOn
 					? "Start heating water."
 					: "Stop heating water.");
 		}
@@ -95,12 +96,12 @@ public class Kettle extends HakoniwaRobot {
 		}
 
 		public void startPour() {
-			Matereal.getInstance().getOutStream().println(
+			Phybots.getInstance().getOutStream().println(
 					"Start pouring water.");
 		}
 
 		public void stopPour() {
-			Matereal.getInstance().getOutStream().println(
+			Phybots.getInstance().getOutStream().println(
 					"Stopped pouring water.");
 		}
 	}

@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jp.digitalmuseum.utils.ScreenPosition;
+import com.phybots.utils.ScreenPosition;
+
 
 public class Path implements Iterable<ScreenPosition> {
 	private PointList points;

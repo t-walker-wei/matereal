@@ -44,9 +44,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.phybots.gui.DrawableFrame;
+import com.phybots.resource.Pen;
+
 import jp.digitalmuseum.mr.entity.HumanBeing;
 import jp.digitalmuseum.mr.entity.HumanBeingWithPen;
-import jp.digitalmuseum.mr.resource.Pen;
 
 public class HumanBeingFrame extends DrawableFrame {
 	private static final long serialVersionUID = 1L;

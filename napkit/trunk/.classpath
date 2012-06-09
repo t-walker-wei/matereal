@@ -6,7 +6,7 @@
 	<classpathentry kind="src" path="src.test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/capture"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/connector"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/matereal"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/phybots"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jogl-1.1.1a/gluegen-rt.jar">
 		<attributes>

@@ -3,10 +3,11 @@ package marker;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import jp.digitalmuseum.mr.Matereal;
-import jp.digitalmuseum.mr.gui.DisposeOnCloseFrame;
-import jp.digitalmuseum.mr.service.MarkerDetector;
-import jp.digitalmuseum.mr.service.Camera;
+import com.phybots.Phybots;
+import com.phybots.gui.DisposeOnCloseFrame;
+import com.phybots.service.Camera;
+import com.phybots.service.MarkerDetector;
+
 import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
 
 /**
@@ -49,7 +50,7 @@ public class DetectMarkerDialog {
 			private static final long serialVersionUID = 1L;
 			@Override public void dispose() {
 				super.dispose();
-				Matereal.getInstance().dispose();
+				Phybots.getInstance().dispose();
 			}
 		}).setFrameSize(800, 600);
 	}

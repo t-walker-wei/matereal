@@ -38,8 +38,9 @@ package kettle.task;
 
 import java.util.List;
 
-import jp.digitalmuseum.mr.entity.Resource;
-import jp.digitalmuseum.mr.task.TaskAbstractImpl;
+import com.phybots.entity.Resource;
+import com.phybots.task.TaskAbstractImpl;
+
 import kettle.Kettle.KettleCore;
 
 public class Pour extends TaskAbstractImpl {
