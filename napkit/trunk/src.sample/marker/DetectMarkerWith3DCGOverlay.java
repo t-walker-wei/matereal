@@ -22,7 +22,7 @@ import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
 /**
  * Run marker detection and show its results.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class DetectMarkerWith3DCGOverlay implements GLEventListener {
 

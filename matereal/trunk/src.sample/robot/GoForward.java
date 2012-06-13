@@ -7,7 +7,7 @@ import com.phybots.resource.WheelsController;
 /**
  * Go forward for 7 seconds and stop.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class GoForward {
 

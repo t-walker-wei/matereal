@@ -11,7 +11,7 @@ import jp.digitalmuseum.capture.VideoCapturePackedUDP;
 /**
  * Capture client.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class CapturePackedUDPClient {
 

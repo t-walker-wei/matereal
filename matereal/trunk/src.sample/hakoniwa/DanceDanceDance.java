@@ -22,7 +22,7 @@ import com.phybots.workflow.Workflow;
 /**
  * Make 4 robots do the same things in parallel. Test of using a workflow graph.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class DanceDanceDance {
 	Hakoniwa hakoniwa;

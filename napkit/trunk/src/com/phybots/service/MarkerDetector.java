@@ -1,5 +1,5 @@
 /*
- * PROJECT: napkit at http://mr.digitalmuseum.jp/
+ * PROJECT: napkit at http://digitalmuseum.jp/en/software/
  * ----------------------------------------------------------------------------
  *
  * This file is part of NyARToolkit Application Toolkit.
@@ -68,7 +68,7 @@ import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
 /**
  * Marker detector service using NyARToolkit.
  *
- * @author Jun KATO
+ * @author Jun Kato
  * @see NapMarker
  */
 public class MarkerDetector extends ScreenLocationProviderAbstractImpl implements NapMarkerDetector, LocationProvider {

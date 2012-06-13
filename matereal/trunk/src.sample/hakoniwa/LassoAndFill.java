@@ -16,7 +16,7 @@ import com.phybots.utils.Position;
  * Lasso path to navigate a robot filling the path.<br />
  * 囲んだ領域を舐めるように動く
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class LassoAndFill extends DrawAndTrace {
 

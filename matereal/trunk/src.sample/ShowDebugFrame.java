@@ -9,7 +9,7 @@ import com.phybots.message.EventListener;
 /**
  * Show Phybots Debug Window.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ShowDebugFrame {
 

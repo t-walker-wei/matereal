@@ -11,7 +11,7 @@ import com.phybots.service.Camera;
 /**
  * Run a camera and show its configuration window.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ConfigureCamera {
 

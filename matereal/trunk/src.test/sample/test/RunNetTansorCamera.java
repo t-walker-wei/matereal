@@ -12,7 +12,7 @@ import com.phybots.task.Capture;
 /**
  * Run a camera service.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class RunNetTansorCamera {
 

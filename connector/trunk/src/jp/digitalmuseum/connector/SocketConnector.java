@@ -1,5 +1,5 @@
 /*
- * PROJECT: connector at http://mr.digitalmuseum.jp/
+ * PROJECT: connector at http://digitalmuseum.jp/en/software/
  * ----------------------------------------------------------------------------
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -16,11 +16,11 @@
  *
  * The Original Code is connector.
  *
- * The Initial Developer of the Original Code is Jun KATO.
+ * The Initial Developer of the Original Code is Jun Kato.
  * Portions created by the Initial Developer are
- * Copyright (C) 2009 Jun KATO. All Rights Reserved.
+ * Copyright (C) 2009 Jun Kato. All Rights Reserved.
  *
- * Contributor(s): Jun KATO
+ * Contributor(s): Jun Kato
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),

@@ -5,16 +5,22 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import com.phybots.andy.*;
 import com.phybots.gui.DrawableFrame;
 import com.phybots.hakoniwa.Hakoniwa;
 import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.p5.*;
+import com.phybots.p5.andy.Andy;
+import com.phybots.p5.andy.Entity;
+import com.phybots.p5.andy.Location;
+import com.phybots.p5.andy.LocationListener;
+import com.phybots.p5.andy.MobileRobot;
+import com.phybots.p5.andy.Position;
 
 
 /**
  * Click and run!
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ClickAndRun {
 	Hakoniwa hakoniwa;

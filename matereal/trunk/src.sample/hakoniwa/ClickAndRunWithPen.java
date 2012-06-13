@@ -30,7 +30,7 @@ import com.phybots.utils.ScreenPosition;
  * Click to navigate a robot without collision.
  * Test of assigning multiple vector fields to a robot.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ClickAndRunWithPen {
 	private Hakoniwa hakoniwa;

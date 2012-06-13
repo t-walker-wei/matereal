@@ -33,7 +33,7 @@ import com.phybots.utils.ScreenPosition;
  * Draw path to navigate a robot along the path.<br/>
  * 描かれた線をなぞるように動く
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class DrawAndTrace {
 	private Hakoniwa hakoniwa;

@@ -1,5 +1,5 @@
 /*
- * PROJECT: matereal at http://mr.digitalmuseum.jp/
+ * PROJECT: Phybots at http://phybots.com/
  * ----------------------------------------------------------------------------
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -14,13 +14,13 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is matereal.
+ * The Original Code is Phybots.
  *
- * The Initial Developer of the Original Code is Jun KATO.
+ * The Initial Developer of the Original Code is Jun Kato.
  * Portions created by the Initial Developer are
- * Copyright (C) 2009 Jun KATO. All Rights Reserved.
+ * Copyright (C) 2009 Jun Kato. All Rights Reserved.
  *
- * Contributor(s): Jun KATO
+ * Contributor(s): Jun Kato
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -39,12 +39,12 @@ package misc.andy;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import com.phybots.andy.MobileRobot;
-import com.phybots.andy.MrImage;
-import com.phybots.andy.Position;
 import com.phybots.gui.utils.VectorFieldPainter;
 import com.phybots.hakoniwa.Hakoniwa;
 import com.phybots.hakoniwa.HakoniwaRobot;
+import com.phybots.p5.PhybotsImage;
+import com.phybots.p5.andy.MobileRobot;
+import com.phybots.p5.andy.Position;
 import com.phybots.task.VectorFieldTask;
 
 import processing.core.PApplet;
@@ -52,7 +52,7 @@ import processing.core.PApplet;
 public class ClickAndRunVisualizedP5 extends PApplet {
 	private static final long serialVersionUID = 1L;
 	Hakoniwa hako;
-	MrImage hakoImage;
+	PhybotsImage hakoImage;
 	MobileRobot robot;
 	VectorFieldPainter painter;
 
@@ -70,7 +70,7 @@ public class ClickAndRunVisualizedP5 extends PApplet {
 		painter = new VectorFieldPainter(hako);
 
 		// 箱庭を表示する準備
-		hakoImage = new MrImage(hako.getWidth(), hako.getHeight());
+		hakoImage = new PhybotsImage(hako.getWidth(), hako.getHeight());
 
 		// 箱庭にロボットを置く
 		robot = new MobileRobot(new HakoniwaRobot("Test bot"));

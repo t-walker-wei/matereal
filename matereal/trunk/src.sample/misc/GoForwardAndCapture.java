@@ -11,7 +11,7 @@ import com.phybots.task.GoForward;
 /**
  * Test code to go forward and capture images simultaneously.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class GoForwardAndCapture {
 

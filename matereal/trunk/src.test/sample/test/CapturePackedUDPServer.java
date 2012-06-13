@@ -20,7 +20,7 @@ import jp.digitalmuseum.capture.VideoCapturePackedUDP;
 /**
  * Capture server.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 class CapturePackedUDPServer {
 	public final static int WIDTH = 320;

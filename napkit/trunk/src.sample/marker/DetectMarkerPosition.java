@@ -17,7 +17,7 @@ import jp.digitalmuseum.napkit.gui.MarkerDetectorPanel;
 /**
  * Run marker detection and print its results.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class DetectMarkerPosition {
 

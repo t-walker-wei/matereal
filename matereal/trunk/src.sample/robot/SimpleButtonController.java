@@ -13,7 +13,7 @@ import com.phybots.resource.WheelsController;
 /**
  * Show a controller GUI for a robot.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class SimpleButtonController extends JFrame {
 	private static final long serialVersionUID = 1L;

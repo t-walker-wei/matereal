@@ -38,7 +38,7 @@ import jp.digitalmuseum.napkit.NapUtils;
 /**
  * Run marker detection and show its results.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class DetectMarkerWithMqoOverlayWith2Cameras implements GLEventListener {
 

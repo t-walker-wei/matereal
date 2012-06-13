@@ -31,7 +31,7 @@ import com.phybots.utils.ScreenPosition;
  * Click to navigate one robot. The other robot will follow him.
  * Test of assigning tasks to robots.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ClickAndFollow {
 	private Hakoniwa hakoniwa;

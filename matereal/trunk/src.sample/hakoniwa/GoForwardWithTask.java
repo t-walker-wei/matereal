@@ -12,7 +12,7 @@ import com.phybots.utils.ScreenPosition;
 /**
  * Assign one task to a robot. Get the robot to go forward for 7 seconds.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class GoForwardWithTask {
 

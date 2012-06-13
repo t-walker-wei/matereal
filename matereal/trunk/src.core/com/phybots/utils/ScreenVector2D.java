@@ -1,9 +1,9 @@
 /*
- * PROJECT: mataereal at http://matereal.sourceforge.jp/
+ * PROJECT: Phybots at http://phybots.com/
  * ----------------------------------------------------------------------------
  *
- * This file is part of matereal.
- * matereal is a Java toolkit that allows to operate home-robots easily.
+ * This file is part of Phybots.
+ * Phybots is a Java/Processing toolkit for making robotic things.
  *
  * ----------------------------------------------------------------------------
  *
@@ -19,13 +19,13 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is matereal.
+ * The Original Code is Phybots.
  *
- * The Initial Developer of the Original Code is Jun KATO.
+ * The Initial Developer of the Original Code is Jun Kato.
  * Portions created by the Initial Developer are
- * Copyright (C) 2009 Jun KATO. All Rights Reserved.
+ * Copyright (C) 2009 Jun Kato. All Rights Reserved.
  *
- * Contributor(s): Jun KATO
+ * Contributor(s): Jun Kato
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -47,7 +47,7 @@ import java.io.Serializable;
 /**
  * 2D vector in a screen coordinate.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ScreenVector2D implements Serializable {
 	private static final long serialVersionUID = -8961098699551120179L;

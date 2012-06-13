@@ -39,7 +39,7 @@ import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
  * Bring it here!
  * Test of assigning a task to a robot.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class BringItHere {
 	private Camera camera;

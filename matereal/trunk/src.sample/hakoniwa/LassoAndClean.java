@@ -15,7 +15,7 @@ import com.phybots.workflow.Workflow;
  * Lasso path to navigate a robot filling the path with cleaning.<br />
  * 囲んだ領域を舐めるように動いて掃除する
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class LassoAndClean extends LassoAndFill {
 	private Workflow workflow = null;

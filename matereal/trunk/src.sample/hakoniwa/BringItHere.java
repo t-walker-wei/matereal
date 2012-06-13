@@ -32,7 +32,7 @@ import com.phybots.utils.ScreenPosition;
  * Bring it here!
  * Test of assigning a task to a robot.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class BringItHere {
 	private Hakoniwa hakoniwa;

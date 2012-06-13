@@ -1,5 +1,5 @@
 /*
- * PROJECT: matereal at http://mr.digitalmuseum.jp/
+ * PROJECT: Phybots at http://phybots.com/
  * ----------------------------------------------------------------------------
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -14,13 +14,13 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is matereal.
+ * The Original Code is Phybots.
  *
- * The Initial Developer of the Original Code is Jun KATO.
+ * The Initial Developer of the Original Code is Jun Kato.
  * Portions created by the Initial Developer are
- * Copyright (C) 2009 Jun KATO. All Rights Reserved.
+ * Copyright (C) 2009 Jun Kato. All Rights Reserved.
  *
- * Contributor(s): Jun KATO
+ * Contributor(s): Jun Kato
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -34,7 +34,7 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package com.phybots.andy;
+package com.phybots.p5;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -50,7 +50,12 @@ import com.phybots.service.ImageProvider;
 
 import processing.core.PImage;
 
-public class MrImage extends PImage implements EventListener {
+/**
+ * Utility class that bridges Processing and Java2D rendering.
+ * 
+ * @author Jun Kato
+ */
+public class PhybotsImage extends PImage implements EventListener {
 	private ImageProvider imageProvider;
 	private BufferedImage image;
 	private Graphics2D g2;
@@ -63,8 +68,7 @@ public class MrImage extends PImage implements EventListener {
 	public int cropW;
 	public int cropH;
 
-	public MrImage(ImageProvider imageProvider) {
-		Andy.getInstance();
+	public PhybotsImage(ImageProvider imageProvider) {
 		this.imageProvider = imageProvider;
 		imageProvider.addEventListener(this);
 		if (!imageProvider.isStarted()) {
@@ -75,7 +79,7 @@ public class MrImage extends PImage implements EventListener {
 		init(dataWidth, dataHeight, 1);
 	}
 
-	public MrImage(int width, int height) {
+	public PhybotsImage(int width, int height) {
 		image = new BufferedImage(width, height,
 				BufferedImage.TYPE_3BYTE_BGR);
 		data = ((DataBufferByte)image.getRaster().getDataBuffer()).getData();

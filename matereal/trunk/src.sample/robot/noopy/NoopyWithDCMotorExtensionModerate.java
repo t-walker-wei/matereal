@@ -22,7 +22,7 @@ import robot.RobotInfo;
  * キーボード操作に応じてDC3ポートに接続されたDCモータの回転方向・速度を切り替える。<br />
  * <b>※キーの押しすぎ対応版。</b>
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class NoopyWithDCMotorExtensionModerate {
 	private DrawableFrame drawableFrame;

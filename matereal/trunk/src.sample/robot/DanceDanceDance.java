@@ -17,7 +17,7 @@ import com.phybots.workflow.Workflow;
 /**
  * Make a robot go forward and spin left for 10 times. Test of using a workflow graph.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class DanceDanceDance implements EventListener {
 
