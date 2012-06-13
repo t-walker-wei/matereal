@@ -293,7 +293,7 @@ public class MarkerDetector extends ScreenLocationProviderAbstractImpl implement
 				// Ignore results with low confidence.
 				if (previousResult != null &&
 						previousResult.getConfidence() >
-							result.getConfidence() * 2) {
+							result.getConfidence()) {
 						continue;
 				}
 				entityResultMap.put(entity, result);
