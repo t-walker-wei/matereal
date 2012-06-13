@@ -12,7 +12,7 @@ import com.phybots.utils.ScreenPosition;
 /**
  * Go forward for 7 seconds and stop.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class GoForward {
 

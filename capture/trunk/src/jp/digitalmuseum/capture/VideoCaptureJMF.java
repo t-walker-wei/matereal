@@ -27,7 +27,7 @@ import javax.media.protocol.DataSource;
 /**
  * Capture images using Java Media Framework.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class VideoCaptureJMF extends VideoCaptureAbstractImpl {
 

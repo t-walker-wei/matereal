@@ -15,7 +15,7 @@ import jp.digitalmuseum.capture.VideoCaptureFactoryImpl;
 /**
  * Run a camera service to capture images.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class RunCameraWithHighResWindows {
 

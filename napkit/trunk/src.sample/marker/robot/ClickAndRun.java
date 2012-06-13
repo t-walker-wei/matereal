@@ -28,7 +28,7 @@ import jp.digitalmuseum.napkit.gui.TypicalMDCPane;
 /**
  * Show a frame with a view of the world coordinate.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ClickAndRun {
 	private Task move;

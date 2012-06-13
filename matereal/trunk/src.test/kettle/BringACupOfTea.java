@@ -29,7 +29,7 @@ import kettle.task.Stop;
 /**
  * Bring a cup of tea.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class BringACupOfTea {
 	private Hakoniwa hakoniwa;

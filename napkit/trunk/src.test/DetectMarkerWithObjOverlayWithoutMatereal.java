@@ -23,7 +23,7 @@ import jp.digitalmuseum.napkit.NapMarkerDetectorImpl;
 /**
  * Run marker detection and show its results.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class DetectMarkerWithObjOverlayWithoutMatereal implements GLEventListener {
 

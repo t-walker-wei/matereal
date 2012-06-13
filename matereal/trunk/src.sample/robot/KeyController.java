@@ -23,7 +23,7 @@ import com.phybots.utils.Position;
  * Show a controller GUI for a robot.
  * Set focus to the controller GUI and press arrow keys to navigate a robot manually.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class KeyController {
 	private enum Key { UP, DOWN, LEFT, RIGHT, ESC, NONE }

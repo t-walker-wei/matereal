@@ -36,44 +36,95 @@
  */
 package misc.andy;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+import com.phybots.gui.utils.VectorFieldPainter;
 import com.phybots.hakoniwa.Hakoniwa;
 import com.phybots.hakoniwa.HakoniwaRobot;
 import com.phybots.p5.PhybotsImage;
-import com.phybots.p5.andy.MobileRobot;
+import com.phybots.resource.DifferentialWheels;
+import com.phybots.task.Move;
+import com.phybots.task.VectorFieldTask;
+import com.phybots.utils.ScreenPosition;
 
 import processing.core.PApplet;
 
-public class ClickAndRunP5 extends PApplet {
+public class ClickAndRunVisualizedP5Raw extends PApplet {
 	private static final long serialVersionUID = 1L;
-	Hakoniwa hakoniwa;
-	PhybotsImage image;
-	MobileRobot robot;
-	int x, y;
+	Hakoniwa hako;
+	PhybotsImage hakoImage;
+	HakoniwaRobot robot;
+	Move move;
+	VectorFieldPainter painter;
 
 	public static void main(String[] args) {
-		new ClickAndRunP5();
+		new ClickAndRunVisualizedP5Raw();
 	}
 
 	public void setup() {
-		hakoniwa = new Hakoniwa(640, 480);
-		hakoniwa.start();
-		hakoniwa.setAntialiased(true);
-		image = new PhybotsImage(hakoniwa);
-		robot = new MobileRobot(new HakoniwaRobot("test"));
-		size(640, 480);
+
+		// 箱庭の準備
+		hako = new Hakoniwa(640, 480);
+		hako.start();
+
+		// ベクトル場描画の準備
+		painter = new VectorFieldPainter(hako);
+
+		// 箱庭を表示する準備
+		hakoImage = new PhybotsImage(hako.getWidth(), hako.getHeight());
+
+		// 箱庭にロボットを置く
+		robot = new HakoniwaRobot("Test bot");
+
+		// 画面の大きさを箱庭に合わせる
+		size(hako.getWidth(), hako.getHeight());
 	}
 
 	public void draw() {
-		fill(255);
-		rect(0, 0, width - 1, height - 1);
-		image(image, 0, 0);
-		line(x-5, y-5, x+5, y+5);
-		line(x-5, y+5, x+5, y-5);
+
+		// 箱庭がらみの描画を始める
+		Graphics2D g2 = hakoImage.beginDraw();
+		hakoImage.clear();
+
+			// 箱庭の様子を表示する
+			hako.drawImage(g2);
+
+			// ベクトル場を描画する
+			g2.setColor(Color.blue);
+			painter.setVectorTask((VectorFieldTask)
+					robot.getAssignedTask(DifferentialWheels.class));
+			painter.paint(g2);
+
+		// 描いた内容を表示する
+		hakoImage.endDraw();
+		image(hakoImage, 0, 0);
+
+		// ロボットが目指しているゴールを表示する
+		if (move != null) {
+			ScreenPosition goal =
+					hako.realToScreen(
+							move.getDestination());
+			if (goal != null) {
+				strokeWeight(5);
+				stroke(0);
+				int x = goal.getX();
+				int y = goal.getY();
+				line(x-5, y-5, x+5, y+5);
+				line(x-5, y+5, x+5, y-5);
+			}
+		}
 	}
 
 	public void mouseClicked() {
-		x = mouseX;
-		y = mouseY;
-		robot.moveTo(x, y);
+
+		// クリックされたらロボットにゴールを指示する
+		if (move != null) {
+			move.stop();
+		}
+		move = new Move(hako.screenToReal(
+				new ScreenPosition(mouseX, mouseY)));
+		move.assign(robot);
+		move.start();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * PROJECT: matereal at http://mr.digitalmuseum.jp/
+ * PROJECT: Phybots at http://phybots.com/
  * ----------------------------------------------------------------------------
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -14,13 +14,13 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is matereal.
+ * The Original Code is Phybots.
  *
- * The Initial Developer of the Original Code is Jun KATO.
+ * The Initial Developer of the Original Code is Jun Kato.
  * Portions created by the Initial Developer are
- * Copyright (C) 2009 Jun KATO. All Rights Reserved.
+ * Copyright (C) 2009 Jun Kato. All Rights Reserved.
  *
- * Contributor(s): Jun KATO
+ * Contributor(s): Jun Kato
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -54,7 +54,7 @@ import com.phybots.task.Task;
  * Abstract implementation of Robot.<br />
  * Robot classes must extend this abstract class.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public abstract class RobotAbstractImpl extends EntityImpl implements Robot {
 	private static final long serialVersionUID = 7934515270996412490L;

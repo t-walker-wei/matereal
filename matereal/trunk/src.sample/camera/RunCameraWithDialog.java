@@ -9,7 +9,7 @@ import com.phybots.service.Camera;
 /**
  * Run a camera service to capture images.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class RunCameraWithDialog {
 

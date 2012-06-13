@@ -1,60 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="matereal" default="jar" basedir=".">
+<project name="phybots" default="jar" basedir=".">
 	<import file="../capture/build.xml"/>
 	<import file="../connector/build.xml"/>
 
 	<!-- ****Properties**** -->
-	<property name="matereal.version" value="2.1.0" />
+	<property name="phybots.version" value="1.0.0" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture" value="../capture/${capture-jar.name}" />
 	<property name="connector" value="../connector/${connector-jar.name}"/>
 	<property name="bluecove" value="../connector/${connector-bluecove}" />
 	<property name="rxtxlib" value="../connector/${connector-rxtxlib}" />
-	<property name="jbox2d" value="../matereal/lib/jbox2d/JBox2D-2.0.1-b250-Library.jar" />
-	<property name="piccolo2d" value="../matereal/lib/piccolo/piccolo2d-core-1.3.jar" />
-	<property name="piccolo2d-extras" value="../matereal/lib/piccolo/piccolo2d-extras-1.3.jar" />
-	<property name="jogl" value="../matereal/lib/jogl-1.1.1a/jogl.jar;../matereal/lib/jogl-1.1.1a/gluegen-rt.jar" />
-	<property name="p5" value="../matereal/lib/p5/core.jar" />
-	<property name="matereal-classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${piccolo2d};${piccolo2d-extras};${jogl};${p5}" />
+	<property name="jbox2d" value="../phybots/lib/jbox2d/JBox2D-2.0.1-b250-Library.jar" />
+	<property name="piccolo2d" value="../phybots/lib/piccolo/piccolo2d-core-1.3.jar" />
+	<property name="piccolo2d-extras" value="../phybots/lib/piccolo/piccolo2d-extras-1.3.jar" />
+	<property name="jogl" value="../phybots/lib/jogl-1.1.1a/jogl.jar;../phybots/lib/jogl-1.1.1a/gluegen-rt.jar" />
+	<property name="p5" value="../phybots/lib/p5/core.jar" />
+	<property name="phybots-classpath" value="${capture};${connector};${bluecove};${rxtxlib};${jbox2d};${piccolo2d};${piccolo2d-extras};${jogl};${p5}" />
 
 	<!-- Source directory -->
-	<property name="matereal-src.dir" value="src" />
-	<property name="matereal-src-core.dir" value="src.core" />
+	<property name="phybots-src.dir" value="src" />
+	<property name="phybots-src-core.dir" value="src.core" />
 
 	<!-- Classes destination directory -->
-	<property name="matereal-classes.dir" value="bin" />
+	<property name="phybots-classes.dir" value="bin" />
 
 	<!-- Javadoc destination -->
-	<property name="matereal-javadoc.dir" value="docs" />
-	<property name="style" value="../matereal/style.css" />
-	<property name="copyright" value="&lt;center&gt;Copyright by Jun KATO (arc@dmz) at &lt;a href=&quot;http://mr.digitalmuseum.jp/&quot;&gt;http://mr.digitalmuseum.jp/&lt;/a&gt;&lt;/center&gt;" />
+	<property name="phybots-javadoc.dir" value="docs" />
+	<property name="style" value="../phybots/style.css" />
+	<property name="copyright" value="&lt;center&gt;Copyright by Jun Kato at &lt;a href=&quot;http://phybots.com/&quot;&gt;http://phybots.com/&lt;/a&gt;&lt;/center&gt;" />
 
 	<!-- Jar file name -->
-	<property name="matereal-dist.dir" value="dist/" />
-	<property name="matereal-lib.dir" value="lib/" />
-	<property name="matereal-jar.dir" value="${matereal-dist.dir}${matereal-lib.dir}" />
-	<property name="matereal-jar.basename" value="matereal-core-${matereal.version}" />
-	<property name="matereal-jar-utils.name" value="matereal-utils-${matereal.version}.jar" />
+	<property name="phybots-dist.dir" value="dist/" />
+	<property name="phybots-lib.dir" value="lib/" />
+	<property name="phybots-jar.dir" value="${phybots-dist.dir}${phybots-lib.dir}" />
+	<property name="phybots-jar.basename" value="phybots-core-${phybots.version}" />
+	<property name="phybots-jar-utils.name" value="phybots-utils-${phybots.version}.jar" />
 
 	<!-- Zip file name -->
-	<property name="matereal-zip.name" value="matereal-core-${matereal.version}.zip" />
+	<property name="phybots-zip.name" value="phybots-core-${phybots.version}.zip" />
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
-			<pathelement location="../matereal/lib/ant-contrib/ant-contrib-1.0b3.jar"/>
+			<pathelement location="../phybots/lib/ant-contrib/ant-contrib-1.0b3.jar"/>
 		</classpath>
 	</taskdef>
 
 	<!-- ****Targets**** -->
 
 	<!-- Version string with Subversion revision -->
-	<target name="matereal-version">
+	<target name="phybots-version">
+		<property name="phybots-jar.name" value="${phybots-jar.basename}.jar" />
+		<!--
+		<property name="phybots-jar.name" value="${phybots-jar.basename}-${phybots.version}.jar" />
+		-->
+	</target>
+
+	<target name="phybots-svnversion">
 		<exec executable="svnversion" outputproperty="svnversion" failonerror="true">
 			<arg value="--no-newline" />
 			<arg value="--committed" />
-			<arg value="../matereal/" />
+			<arg value="../phybots/" />
 		</exec>
 		<propertyregex
 			property="svnversion"
@@ -68,13 +75,13 @@
 			input="${svnversion}"
 			regexp="[MS]"
 			replace="" />
-		<property name="matereal-jar.name" value="${matereal-jar.basename}-b${svnversion}.jar" />
+		<property name="phybots-jar.name" value="${phybots-jar.basename}-b${svnversion}.jar" />
 	</target>
 
 	<!-- Zip -->
-	<target name="matereal-zip" depends="jar">
-		<zip destfile="${matereal-dist.dir}${matereal-zip.name}">
-			<fileset file="${matereal-jar.dir}${matereal-jar.name}" />
+	<target name="phybots-zip" depends="jar">
+		<zip destfile="${phybots-dist.dir}${phybots-zip.name}">
+			<fileset file="${phybots-jar.dir}${phybots-jar.name}" />
 			<fileset dir="./">
 				<include name="LICENSE.txt"/>
 				<include name="README.txt"/>
@@ -83,65 +90,65 @@
 	</target>
 
 	<!-- Jar -->
-	<target name="jar" depends="compile, extract, matereal-version">
-		<mkdir dir="${matereal-jar.dir}" />
-		<jar jarfile="${matereal-jar.dir}${matereal-jar.name}">
-			<fileset dir="${matereal-classes.dir}" includes="**/*.class" />
-			<fileset dir="${matereal-src.dir}" includes="**/*.java **/*.properties" />
-			<fileset dir="${matereal-src-core.dir}" includes="**/*.java **/*.properties" />
+	<target name="jar" depends="compile, extract, phybots-version">
+		<mkdir dir="${phybots-jar.dir}" />
+		<jar jarfile="${phybots-jar.dir}${phybots-jar.name}">
+			<fileset dir="${phybots-classes.dir}" includes="**/*.class" />
+			<fileset dir="${phybots-src.dir}" includes="**/*.java **/*.properties" />
+			<fileset dir="${phybots-src-core.dir}" includes="**/*.java **/*.properties" />
 		</jar>
 	</target>
 
 	<!-- Jar (utility classes only) -->
 	<target name="jar-utils" depends="compile">
-		<jar jarfile="${matereal-jar.dir}${matereal-jar-utils.name}">
-			<fileset dir="${matereal-classes.dir}" includes="jp/digitalmuseum/utils/*.class" />
-			<fileset dir="${matereal-src.dir}" includes="jp/digitalmuseum/utils/*.java" />
-			<fileset dir="${matereal-src-core.dir}" includes="jp/digitalmuseum/utils/*.java" />
+		<jar jarfile="${phybots-jar.dir}${phybots-jar-utils.name}">
+			<fileset dir="${phybots-classes.dir}" includes="com/phybots/utils/*.class" />
+			<fileset dir="${phybots-src.dir}" includes="com/phybots/utils/*.java" />
+			<fileset dir="${phybots-src-core.dir}" includes="com/phybots/utils/*.java" />
 		</jar>
 	</target>
 
 	<!-- Compile -->
 	<target name="compile">
-		<mkdir dir="${matereal-classes.dir}" />
-		<javac srcdir="${matereal-src-core.dir};${matereal-src.dir}" destdir="${matereal-classes.dir}"
+		<mkdir dir="${phybots-classes.dir}" />
+		<javac srcdir="${phybots-src-core.dir};${phybots-src.dir}" destdir="${phybots-classes.dir}"
 				target="1.5"
 				source="1.5"
 				optimize="on"
-				classpath="${matereal-classpath}"
+				classpath="${phybots-classpath}"
 				encoding="UTF-8" />
 	</target>
 
 	<!-- Extract -->
 	<target name="extract">
-		<unjar src="${jbox2d}" dest="${matereal-classes.dir}">
+		<unjar src="${jbox2d}" dest="${phybots-classes.dir}">
 			<patternset>
 				<include name="**/*.class" />
 				<include name="**/*.html" />
 			</patternset>
 		</unjar>
-		<unjar src="${piccolo2d}" dest="${matereal-classes.dir}" />
-		<unjar src="${piccolo2d-extras}" dest="${matereal-classes.dir}" />
+		<unjar src="${piccolo2d}" dest="${phybots-classes.dir}" />
+		<unjar src="${piccolo2d-extras}" dest="${phybots-classes.dir}" />
 	</target>
 
 	<!-- Javadoc -->
 	<target name="javadoc">
-		<javadoc sourcepath="${matereal-src-core.dir};${matereal-src.dir}"
-			destdir="${matereal-javadoc.dir}"
-			packagenames="jp.digitalmuseum.*"
+		<javadoc sourcepath="${phybots-src-core.dir};${phybots-src.dir}"
+			destdir="${phybots-javadoc.dir}"
+			packagenames="jp.digitalmuseum.*,com.phybots.*"
 			charset="UTF-8"
 			encoding="UTF-8"
 			docencoding="UTF-8"
 			locale="en"
-			classpath="${matereal-classpath}"
+			classpath="${phybots-classpath}"
 			stylesheetfile="${style}"
 			bottom="${copyright}" />
 	</target>
 
 	<!-- Clean -->
 	<target name="clean">
-		<delete dir="${matereal-classes.dir}" />
-		<delete dir="${matereal-javadoc.dir}" />
-		<delete dir="${matereal-dist.dir}" />
+		<delete dir="${phybots-classes.dir}" />
+		<delete dir="${phybots-javadoc.dir}" />
+		<delete dir="${phybots-dist.dir}" />
 	</target>
 </project>

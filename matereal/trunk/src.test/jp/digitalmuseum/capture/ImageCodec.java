@@ -23,7 +23,7 @@ import javax.imageio.ImageWriter;
 
 /**
  * BufferedImage <-> JPEG/PNG byte[] Codec.
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ImageCodec {
 	static public enum Codec {

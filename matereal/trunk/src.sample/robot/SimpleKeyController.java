@@ -12,7 +12,7 @@ import com.phybots.resource.WheelsController;
 /**
  * Show a controller GUI for a robot.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class SimpleKeyController {
 	private final DrawableFrame drawableFrame;

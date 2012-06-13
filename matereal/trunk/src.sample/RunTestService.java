@@ -9,7 +9,7 @@ import com.phybots.service.TestService;
 /**
  * Run two services in different intervals.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class RunTestService {
 

@@ -33,7 +33,7 @@ import com.phybots.vectorfield.CollisionAvoidanceField;
  * Click to navigate a robot without collision.
  * Test of assigning multiple vector fields to a robot.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ClickAndRunWithoutCollision {
 	private Hakoniwa hakoniwa;

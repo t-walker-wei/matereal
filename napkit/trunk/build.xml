@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Shift_JIS"?>
 
 <project name="napkit" default="napkit-jar" basedir=".">
-	<import file="../matereal/build.xml"/>
+	<import file="../phybots/build.xml"/>
 
 	<!-- ****Properties**** -->
 
@@ -34,7 +34,7 @@
 	<!-- MQO loader -->
 	<property name="mqoloader.classes" value="jp/digitalmuseum/jogl/*.class jp/digitalmuseum/utils/MixedDataReader.class" />
 	<property name="mqoloader.codes" value="jp/digitalmuseum/jogl/*.java jp/digitalmuseum/utils/MixedDataReader.java" />
-	<property name="mqoloader.packages" value="jp.digitalmuseum.jogl.*,jp.digitalmuseum.utils.*" />
+	<property name="mqoloader.packages" value="jp.digitalmuseum.jogl.*,com.phybots.utils.*" />
 	<property name="mqoloader-javadoc.dir" value="docs.mqoloader" />
 	<property name="mqoloader-jar.name" value="mqoloader-${mqoloader.version}.jar" />
 	<property name="mqoloader-zip.name" value="mqoloader-${mqoloader.version}.zip" />
@@ -42,8 +42,8 @@
 	<!-- ****Targets**** -->
 
 	<!-- Dependent class paths -->
-	<target name="napkit-classpath" depends="matereal-version">
-		<property name="napkit-classpath" value="../matereal/${matereal-jar.dir}${matereal-jar.name};${capture};${connector};${jogl}" />
+	<target name="napkit-classpath" depends="phybots-version">
+		<property name="napkit-classpath" value="../phybots/${phybots-jar.dir}${phybots-jar.name};${capture};${connector};${jogl}" />
 	</target>
 
 	<!-- Zip -->
@@ -128,7 +128,7 @@
 
 	<!-- Extract -->
 	<target name="napkit-extract">
-		<unjar src="../matereal/${matereal-jar.dir}${matereal-jar-utils.name}" dest="${napkit-classes.dir}" />
+		<unjar src="../phybots/${phybots-jar.dir}${phybots-jar-utils.name}" dest="${napkit-classes.dir}" />
 	</target>
 
 	<!-- Javadoc -->
@@ -141,7 +141,7 @@
 			docencoding="UTF-8"
 			locale="en"
 			classpath="${napkit-classpath};${nyar-classes.dir};${jogl}"
-			stylesheetfile="../matereal/${style}"
+			stylesheetfile="../phybots/${style}"
 			bottom="${copyright}" />
 	</target>
 
@@ -155,28 +155,28 @@
 	</target>
 
 	<!-- Classes destination directory -->
-	<property name="matereal-full-classes.dir" value="bin.full" />
+	<property name="phybots-full-classes.dir" value="bin.full" />
 
 	<!-- Jar file name -->
-	<target name="matereal-full-version" depends="matereal-version">
-		<property name="matereal-full-jar.name" value="matereal-${matereal.version}-b${svnversion}.jar" />
+	<target name="phybots-full-version" depends="phybots-version">
+		<property name="phybots-full-jar.name" value="phybots-${phybots.version}-b${svnversion}.jar" />
 	</target>
 
-	<!-- Matereal full package -->
-	<target name="matereal-full-jar" depends="napkit-jar, matereal-full-version">
-		<mkdir dir="${matereal-full-classes.dir}" />
-		<unjar src="../capture/${capture-jar.name}" dest="${matereal-full-classes.dir}" />
-		<unjar src="../connector/${connector-jar.name}" dest="${matereal-full-classes.dir}" />
-		<unjar src="../matereal/${matereal-jar.dir}${matereal-jar.name}" dest="${matereal-full-classes.dir}" />
-		<unjar src="${napkit-jar.dir}${napkit-jar.name}" dest="${matereal-full-classes.dir}" />
-		<jar jarfile="${napkit-jar.dir}${matereal-full-jar.name}">
-			<fileset dir="${matereal-full-classes.dir}" includes="**/*.class **/*.java" />
+	<!-- phybots full package -->
+	<target name="phybots-full-jar" depends="napkit-jar, phybots-full-version">
+		<mkdir dir="${phybots-full-classes.dir}" />
+		<unjar src="../capture/${capture-jar.name}" dest="${phybots-full-classes.dir}" />
+		<unjar src="../connector/${connector-jar.name}" dest="${phybots-full-classes.dir}" />
+		<unjar src="../phybots/${phybots-jar.dir}${phybots-jar.name}" dest="${phybots-full-classes.dir}" />
+		<unjar src="${napkit-jar.dir}${napkit-jar.name}" dest="${phybots-full-classes.dir}" />
+		<jar jarfile="${napkit-jar.dir}${phybots-full-jar.name}">
+			<fileset dir="${phybots-full-classes.dir}" includes="**/*.class **/*.java" />
 		</jar>
 	</target>
 
 	<!-- Cleaning -->
-	<target name="matereal-full-clean" depends="matereal-full-version">
-		<delete dir="${matereal-full-classes.dir}" />
-		<delete file="${napkit-jar.dir}${matereal-full-jar.name}" />
+	<target name="phybots-full-clean" depends="phybots-full-version">
+		<delete dir="${phybots-full-classes.dir}" />
+		<delete file="${napkit-jar.dir}${phybots-full-jar.name}" />
 	</target>
 </project>

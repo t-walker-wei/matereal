@@ -9,7 +9,7 @@ import jp.digitalmuseum.connector.RXTXConnector;
 /**
  * Control RemoteStation.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class ControlRemoteStation {
 

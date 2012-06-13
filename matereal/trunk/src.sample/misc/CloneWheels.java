@@ -24,7 +24,7 @@ import com.phybots.workflow.Workflow;
 /**
  * Assign tasks to a virtual robot. The robot works as a proxy of five real robots.
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class CloneWheels {
 

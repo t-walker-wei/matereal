@@ -1,5 +1,5 @@
 /*
- * PROJECT: matereal at http://mr.digitalmuseum.jp/
+ * PROJECT: Phybots at http://phybots.com/
  * ----------------------------------------------------------------------------
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -14,13 +14,13 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is matereal.
+ * The Original Code is Phybots.
  *
- * The Initial Developer of the Original Code is Jun KATO.
+ * The Initial Developer of the Original Code is Jun Kato.
  * Portions created by the Initial Developer are
- * Copyright (C) 2009 Jun KATO. All Rights Reserved.
+ * Copyright (C) 2009 Jun Kato. All Rights Reserved.
  *
- * Contributor(s): Jun KATO
+ * Contributor(s): Jun Kato
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -34,9 +34,51 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package com.phybots.andy;
+package com.phybots.p5.andy;
 
-public interface LocationListener {
+public class LocationEvent {
+	private Entity entity;
+	private Location location;
 
-	public void locationUpdated(Entity entity, Location location);
+	public LocationEvent(Entity entity, Location location) {
+		Andy.getInstance();
+		this.entity = entity;
+		this.location = location;
+	}
+
+	public Entity getEntity() {
+		return entity;
+	}
+
+	public Location getLocation() {
+		return new Location(location);
+	}
+
+	public void getLocationOut(Location location) {
+		location.setLocation(this.location);
+	}
+
+	public int getScreenX() {
+		return location.getScreenX();
+	}
+
+	public int getScreenY() {
+		return location.getScreenY();
+	}
+
+	public double getScreenRotation() {
+		return location.getScreenRotation();
+	}
+
+	public double getX() {
+		return location.getX();
+	}
+
+	public double getY() {
+		return location.getY();
+	}
+
+	public double getRotation() {
+		return location.getRotation();
+	}
 }

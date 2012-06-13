@@ -36,7 +36,7 @@ import com.sun.opengl.util.FPSAnimator;
 /**
  * Click and run!
  *
- * @author Jun KATO
+ * @author Jun Kato
  */
 public class VisualizedClickAndRunGL {
 	private final static int DEFAULT_INTERVAL = 50;
