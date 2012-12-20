@@ -57,8 +57,15 @@ public interface Connector extends Serializable {
 	public int readAll(byte[] data);
 
 	/**
-	 * Wait till the response is available for a moment.
+	 * Wait till the response is available or 100 [ms] has passed.
 	 */
 	public boolean waitForResponse();
+
+	/**
+	 * Wait till the response is available or the specified time has passed.
+	 * 
+	 * @param timeout Time to wait for the response.
+	 * @return Whether the response is available or not.
+	 */
 	public boolean waitForResponse(int timeout);
 }

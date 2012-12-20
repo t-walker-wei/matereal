@@ -1,7 +1,7 @@
 connector
 Copyright (C) 2010 Jun KATO
 
-version 1.0.3
+version 1.0.4
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 "connector" is a simple wrapper package for connecting Java VM
@@ -21,5 +21,5 @@ http://bluecove.org/ and distributed under Apache License,
 Version 2.0.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-http://mr.digitalmuseum.jp/
+http://phybots.com/
 arc (at) digitalmuseum.jp
