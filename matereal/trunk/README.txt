@@ -1,11 +1,10 @@
-Matereal
-Copyright (C) 2010 Jun KATO
+Phybots
+Copyright (C) 2012 Jun KATO
 
-version 2.1.0
+version 1.0.0
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-"Matereal" is a Java toolkit that allows to prototype
-interactive robot applications.
+"Phybots" is a Java toolkit to prototype "robotic things."
 
 This library is distributed under MPL 1.1/GPL 2.0/LGPL 2.1
 triple license. Please read LICENSE.txt for the detail.
@@ -13,10 +12,11 @@ You can get the source code by visiting its official site.
 
 "napkit" is required when you want to know position and
 rotation of robots and other physical entities in your
-application by detecting ARToolKit markers in webcam-captured
-images. "napkit" is distributed under GNU GPLv3
-Please see http://mr.digitalmuseum.jp/ for details.
+application. It uses a webcam to detect ARToolKit markers.
+"napkit" is distributed under GNU GPLv3.
+
+Please see http://phybots.com/ for details.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-http://mr.digitalmuseum.jp/
+http://phybots.com/
 arc (at) digitalmuseum.jp
