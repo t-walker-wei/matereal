@@ -1,5 +1,5 @@
 connector
-Copyright (C) 2010 Jun KATO
+Copyright (C) 2012 Jun KATO
 
 The contents of this file are subject to the Mozilla Public License Version
 1.1 (the "License"); you may not use this file except in compliance with
@@ -15,7 +15,7 @@ The Original Code is connector.
 
 The Initial Developer of the Original Code is Jun KATO.
 Portions created by the Initial Developer are
-Copyright (C) 2010 Jun KATO. All Rights Reserved.
+Copyright (C) 2012 Jun KATO. All Rights Reserved.
 
 Contributor(s): Jun KATO
 
