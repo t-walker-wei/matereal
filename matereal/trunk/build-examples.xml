@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="matereal-examples" default="matereal-examples-compile" basedir=".">
+<project name="phybots-examples" default="phybots-examples-compile" basedir=".">
 	<import file="build.xml"/>
 
 	<!-- ****Properties**** -->
 
-	<property name="matereal-examples-classpath" value="${matereal-jar.dir}${matereal-jar.name};${matereal-classpath}" />
+	<property name="phybots-examples-classpath" value="${phybots-jar.dir}${phybots-jar.name};${phybots-classpath}" />
 
 	<!-- Source directory -->
-	<property name="matereal-examples-src.dir" value="src.sample" />
+	<property name="phybots-examples-src.dir" value="src.sample" />
 
 	<!-- Classes destination directory -->
-	<property name="matereal-examples-classes.dir" value="bin.sample" />
+	<property name="phybots-examples-classes.dir" value="bin.sample" />
 
 	<!-- ****Targets**** -->
 
 	<!-- Compile -->
-	<target name="matereal-examples-compile" depends="jar">
-		<mkdir dir="${matereal-examples-classes.dir}" />
-		<javac srcdir="${matereal-examples-src.dir}" destdir="${matereal-examples-classes.dir}"
+	<target name="phybots-examples-compile" depends="jar">
+		<mkdir dir="${phybots-examples-classes.dir}" />
+		<javac srcdir="${phybots-examples-src.dir}" destdir="${phybots-examples-classes.dir}"
 				target="1.5"
 				source="1.5"
 				optimize="on"
-				classpath="${matereal-examples-classpath}"
+				verbose="true"
+				classpath="${phybots-examples-classpath}"
 				encoding="UTF-8" />
 	</target>
 
 	<!-- Clean -->
-	<target name="matereal-examples-clean">
-		<delete dir="${matereal-examples-classes.dir}"/>
+	<target name="phybots-examples-clean">
+		<delete dir="${phybots-examples-classes.dir}"/>
 	</target>
 </project>
