@@ -23,9 +23,11 @@
 	<!-- Source directory -->
 	<property name="phybots-src.dir" value="src" />
 	<property name="phybots-src-core.dir" value="src.core" />
+	<property name="phybots-src-p5.dir" value="src.p5" />
 
 	<!-- Classes destination directory -->
 	<property name="phybots-classes.dir" value="bin" />
+	<property name="phybots-classes-p5.dir" value="bin.p5" />
 
 	<!-- Javadoc destination -->
 	<property name="phybots-javadoc.dir" value="docs" />
@@ -37,6 +39,7 @@
 	<property name="phybots-lib.dir" value="lib/" />
 	<property name="phybots-jar.dir" value="${phybots-dist.dir}${phybots-lib.dir}" />
 	<property name="phybots-jar.basename" value="phybots-core-${phybots.version}" />
+	<property name="phybots-jar-p5.name" value="PhybotsP5.jar" />
 	<property name="phybots-jar-utils.name" value="phybots-utils-${phybots.version}.jar" />
 	<property name="phybots-jar.name" value="${phybots-jar.basename}.jar" />
 
@@ -103,6 +106,14 @@
 		</jar>
 	</target>
 
+	<!-- Jar (for Processing) -->
+	<target name="jar-p5" depends="compile-p5">
+		<jar jarfile="${phybots-jar.dir}${phybots-jar-p5.name}">
+			<fileset dir="${phybots-classes-p5.dir}" includes="**/*.class" />
+			<fileset dir="${phybots-src-p5.dir}" includes="**/*.java" />
+		</jar>
+	</target>
+
 	<!-- Jar (utility classes only) -->
 	<target name="jar-utils" depends="compile">
 		<jar jarfile="${phybots-jar.dir}${phybots-jar-utils.name}">
@@ -120,6 +131,17 @@
 				source="1.5"
 				optimize="on"
 				classpath="${phybots-classpath}"
+				encoding="UTF-8" />
+	</target>
+
+	<!-- Compile (for Processing) -->
+	<target name="compile-p5" depends="compile">
+		<mkdir dir="${phybots-classes-p5.dir}" />
+		<javac srcdir="${phybots-src-p5.dir}" destdir="${phybots-classes-p5.dir}"
+				target="1.5"
+				source="1.5"
+				optimize="on"
+				classpath="${phybots-classpath};${phybots-classes.dir}"
 				encoding="UTF-8" />
 	</target>
 

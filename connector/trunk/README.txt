@@ -1,4 +1,4 @@
-connector
+connector - a communication package for Windows/Mac/Linux
 Copyright (C) 2010 Jun KATO
 
 version 1.0.4

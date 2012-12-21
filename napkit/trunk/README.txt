@@ -1,10 +1,10 @@
-NyARToolkit Application Toolkit - napkit
+napkit - a simple wrapper for NyARToolkit
 Copyright (C) 2009-2012 Jun KATO
 
 version 1.1.1
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-NyARToolkit Application Toolkit, or simply "napkit", is a simple
+NyARToolkit Application Toolkit, or simply "napkit", is a small
 wrapper library for NyARToolkit.
 It uses NyARToolkit 2.5.2 for marker detection,
 and allows to detect markers in a very smart way.

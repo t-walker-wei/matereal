@@ -16,6 +16,7 @@ ant jar-utils
 cd ../napkit/
 ant napkit-clean
 ant napkit-zip
+ant mqoloader-zip
 
 cd ../phybots/
 ant -f build-javadoc.xml javadoc-zip
