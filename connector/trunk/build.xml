@@ -8,8 +8,13 @@
 	<property name="connector-version" value="1.0.4" />
 
 	<!-- Dependent class pathes -->
-	<property name="connector-bluecove" value="../connector/lib/bluecove/bluecove-2.1.1-SNAPSHOT.jar" />
-	<property name="connector-rxtxlib" value="../connector/lib/rxtx-2.2-20081207-x64/RXTXcomm.jar" />
+	<property name="connector-bluecove.dir" value="../connector/lib/bluecove/" />
+	<property name="connector-bluecove.file" value="bluecove-2.1.1-SNAPSHOT.jar" />
+	<property name="connector-bluecove" value="${connector-bluecove.dir}${connector-bluecove.file}" />
+	<property name="connector-rxtxlib.dir" value="../connector/lib/rxtx-2.2-20081207-x64/" />
+	<property name="connector-rxtxlib.x86.dir" value="../connector/lib/rxtx-2.2pre2-x86/" />
+	<property name="connector-rxtxlib.file" value="RXTXcomm.jar" />
+	<property name="connector-rxtxlib" value="${connector-rxtxlib.dir}${connector-rxtxlib.file}" />
 	<property name="connector-classpath" value="${connector-bluecove};${connector-rxtxlib}" />
 
 	<!-- Source directory -->
