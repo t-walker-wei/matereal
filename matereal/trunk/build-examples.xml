@@ -5,7 +5,7 @@
 
 	<!-- ****Properties**** -->
 
-	<property name="phybots-examples-classpath" value="${phybots-jar.dir}${phybots-jar.name};${phybots-classpath}" />
+	<property name="phybots-examples-classpath" value="dist/lib/phybots-core-1.0.0.jar;${phybots-jar.dir}${phybots-jar.name};${phybots-classpath}" />
 
 	<!-- Source directory -->
 	<property name="phybots-examples-src.dir" value="src.sample" />
@@ -22,7 +22,6 @@
 				target="1.5"
 				source="1.5"
 				optimize="on"
-				verbose="true"
 				classpath="${phybots-examples-classpath}"
 				encoding="UTF-8" />
 	</target>

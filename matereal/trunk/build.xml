@@ -6,6 +6,7 @@
 
 	<!-- ****Properties**** -->
 	<property name="phybots.version" value="1.0.0" />
+	<property name="phybots.mainClass" value="com.phybots.Phybots" />
 
 	<!-- Dependent class pathes -->
 	<property name="capture" value="../capture/${capture-jar.name}" />
@@ -37,6 +38,7 @@
 	<property name="phybots-jar.dir" value="${phybots-dist.dir}${phybots-lib.dir}" />
 	<property name="phybots-jar.basename" value="phybots-core-${phybots.version}" />
 	<property name="phybots-jar-utils.name" value="phybots-utils-${phybots.version}.jar" />
+	<property name="phybots-jar.name" value="${phybots-jar.basename}.jar" />
 
 	<!-- Zip file name -->
 	<property name="phybots-zip.name" value="phybots-core-${phybots.version}.zip" />
@@ -51,7 +53,6 @@
 
 	<!-- Version string with Subversion revision -->
 	<target name="phybots-version">
-		<property name="phybots-jar.name" value="${phybots-jar.basename}.jar" />
 		<!--
 		<property name="phybots-jar.name" value="${phybots-jar.basename}-${phybots.version}.jar" />
 		-->
@@ -96,6 +97,9 @@
 			<fileset dir="${phybots-classes.dir}" includes="**/*.class" />
 			<fileset dir="${phybots-src.dir}" includes="**/*.java **/*.properties" />
 			<fileset dir="${phybots-src-core.dir}" includes="**/*.java **/*.properties" />
+			<manifest>
+				<attribute name="Main-Class" value="${phybots.mainClass}" />
+			</manifest>
 		</jar>
 	</target>
 

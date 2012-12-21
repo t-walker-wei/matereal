@@ -44,7 +44,6 @@ import com.phybots.Phybots;
 import com.phybots.service.CoordProvider;
 import com.phybots.service.LocationProvider;
 
-
 public class Andy {
 	private static Andy instance;
 	private CoordProvider coordProvider;

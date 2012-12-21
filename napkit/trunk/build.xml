@@ -10,20 +10,20 @@
 	<property name="mqoloader.version" value="1.0.0" />
 
 	<!-- Source directory -->
-	<property name="napkit-src.dir" value="src" />
+	<property name="napkit-src.dir" value="../napkit/src" />
 
 	<!-- NyARToolkit directory -->
-	<property name="nyar-src.dir" value="lib/NyARToolkit-2.5.2/src" />
-	<property name="nyar-classes.dir" value="bin.nyar" />
+	<property name="nyar-src.dir" value="../napkit/lib/NyARToolkit-2.5.2/src" />
+	<property name="nyar-classes.dir" value="../napkit/bin.nyar" />
 
 	<!-- Classes destination directory -->
-	<property name="napkit-classes.dir" value="bin" />
+	<property name="napkit-classes.dir" value="../napkit/bin" />
 
 	<!-- Javadoc destination -->
-	<property name="napkit-javadoc.dir" value="docs" />
+	<property name="napkit-javadoc.dir" value="../napkit/docs" />
 
 	<!-- Jar file name -->
-	<property name="napkit-dist.dir" value="dist/" />
+	<property name="napkit-dist.dir" value="../napkit/dist/" />
 	<property name="napkit-lib.dir" value="lib/" />
 	<property name="napkit-jar.dir" value="${napkit-dist.dir}${napkit-lib.dir}" />
 	<property name="napkit-jar.name" value="napkit-${napkit.version}.jar" />
