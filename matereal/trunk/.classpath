@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="src.test"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src.sample"/>
+	<classpathentry kind="src" path="src.p5"/>
 	<classpathentry kind="lib" path="lib/jogl-1.1.1a/gluegen-rt.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="matereal/lib/jogl-1.1.1a"/>

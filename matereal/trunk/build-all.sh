@@ -8,20 +8,17 @@ cd ../connector/
 ant connector-clean
 ant connector-zip
 
-cd ../matereal/
+cd ../phybots/
 ant clean
-ant matereal-zip
+ant phybots-zip
 ant jar-utils
 
 cd ../napkit/
 ant napkit-clean
 ant napkit-zip
 
-cd ../matereal/
+cd ../phybots/
 ant -f build-javadoc.xml javadoc-zip
+ant -f build-fullpackage.xml phybots-full-zip
 
-cd ../matereal-samples/
-ant matereal-full-zip
-ant matereal-samples-zip
-
-cd ../matereal/
+cd ../phybots/

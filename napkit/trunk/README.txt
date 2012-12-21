@@ -1,5 +1,5 @@
 NyARToolkit Application Toolkit - napkit
-Copyright (C) 2009-2011 Jun KATO
+Copyright (C) 2009-2012 Jun KATO
 
 version 1.1.1
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -13,9 +13,9 @@ and allows to detect markers in a very smart way.
 Please read LICENSE.txt for the detail.
 You can get the source code by visiting its official site.
 
-This toolkit works well with "matereal"
+This toolkit works well with "Phybots"
 and its video capturing package (jp.digitalmuseum.capture).
-Please see http://mr.digitalmuseum.jp/ for details.
+Please see http://phybots.com/ for details.
 
 NyARToolkit is developed by R.Iizuka.
 It is a Java implementation of ARToolKit, which was originally
@@ -38,5 +38,5 @@ http://nyatla.jp/nyartoolkit/wiki/index.php?FrontPage.en
 
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-http://mr.digitalmuseum.jp/
+http://phybots.com/
 arc (at) digitalmuseum.jp
