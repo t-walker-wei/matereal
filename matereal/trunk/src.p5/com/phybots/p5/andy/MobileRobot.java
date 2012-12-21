@@ -36,6 +36,10 @@
  */
 package com.phybots.p5.andy;
 
+import jp.digitalmuseum.connector.Connector;
+import jp.digitalmuseum.connector.ConnectorFactory;
+
+import com.phybots.entity.PhysicalRobot;
 import com.phybots.entity.Robot;
 import com.phybots.task.FollowVectorField;
 import com.phybots.task.GoBackward;
@@ -48,12 +52,47 @@ import com.phybots.task.Stop;
 import com.phybots.task.Task;
 import com.phybots.utils.VectorField;
 
-
 public class MobileRobot extends Entity {
+	private static final String PREFIX_PACKAGE_NAME = "com.phybots.entity.";
 	private Robot robot;
 	private Task task;
 	private Position goal;
 	private Entity entity;
+
+	public static Robot getRobotInstance(
+			String robotClassName) {
+		Robot robot = null;
+		if (!robotClassName.startsWith(PREFIX_PACKAGE_NAME) &&
+				!robotClassName.contains(".")) {
+			robotClassName = PREFIX_PACKAGE_NAME + robotClassName;
+		}
+		try {
+			robot = (Robot) Class.forName(robotClassName).newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return robot;
+	}
+	
+	public static PhysicalRobot getRobotInstance(
+			String robotClassName, String connectorName) {
+		PhysicalRobot robot = (PhysicalRobot) getRobotInstance(robotClassName);
+		Connector connector = ConnectorFactory.makeConnector(connectorName);
+		robot.setConnector(connector);
+		return robot;
+	}
+
+	public MobileRobot(String robotClassName) {
+		this(getRobotInstance(robotClassName));
+	}
+
+	public MobileRobot(String robotClassName, String connectorName) {
+		this(getRobotInstance(robotClassName, connectorName));
+	}
 
 	public MobileRobot(Robot robot) {
 		super(robot);

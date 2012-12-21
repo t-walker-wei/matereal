@@ -153,30 +153,4 @@
 		<delete dir="${mqoloader-javadoc.dir}" />
 		<delete dir="${napkit-dist.dir}" />
 	</target>
-
-	<!-- Classes destination directory -->
-	<property name="phybots-full-classes.dir" value="bin.full" />
-
-	<!-- Jar file name -->
-	<target name="phybots-full-version" depends="phybots-version">
-		<property name="phybots-full-jar.name" value="phybots-${phybots.version}-b${svnversion}.jar" />
-	</target>
-
-	<!-- phybots full package -->
-	<target name="phybots-full-jar" depends="napkit-jar, phybots-full-version">
-		<mkdir dir="${phybots-full-classes.dir}" />
-		<unjar src="../capture/${capture-jar.name}" dest="${phybots-full-classes.dir}" />
-		<unjar src="../connector/${connector-jar.name}" dest="${phybots-full-classes.dir}" />
-		<unjar src="../phybots/${phybots-jar.dir}${phybots-jar.name}" dest="${phybots-full-classes.dir}" />
-		<unjar src="${napkit-jar.dir}${napkit-jar.name}" dest="${phybots-full-classes.dir}" />
-		<jar jarfile="${napkit-jar.dir}${phybots-full-jar.name}">
-			<fileset dir="${phybots-full-classes.dir}" includes="**/*.class **/*.java" />
-		</jar>
-	</target>
-
-	<!-- Cleaning -->
-	<target name="phybots-full-clean" depends="phybots-full-version">
-		<delete dir="${phybots-full-classes.dir}" />
-		<delete file="${napkit-jar.dir}${phybots-full-jar.name}" />
-	</target>
 </project>

@@ -2,10 +2,11 @@
 
 <project name="phybots-fullpackage" default="phybots-full-zip" basedir=".">
 	<import file="../napkit/build.xml"/>
+	<import file="./build-javadoc.xml"/>
 
 	<!-- Zip -->
-	<target name="phybots-full-zip" depends="napkit-jar, javadoc">
-		<zip destfile="phybots-${phybots.version}-full.zip" filesonly="true">
+	<target name="phybots-full-zip">
+		<zip destfile="${phybots-dist.dir}phybots-full-${phybots.version}.zip" filesonly="true">
 
 			<zipfileset dir="${connector-bluecove.dir}"
 					includes="README.txt" fullpath="README_bluecove.txt" />
@@ -48,17 +49,98 @@
 					includes="LICENSE.txt" fullpath="LICENSE_phybots.txt" />
 			<zipfileset dir="../phybots/${phybots-jar.dir}"
 					includes="${phybots-jar.name}" />
-			<zipfileset dir="../phybots/${phybots-javadoc.dir}"
+			<zipfileset dir="../phybots/${phybots-dist.dir}"
 					includes="${javadoc-zip.name}" />
+			<!--
+			<zipfileset dir="../phybots/"
+					includes="${phybots-javadoc.dir}/**/*" />
+			-->
 
 			<zipfileset dir="../napkit/"
 					includes="README.txt" fullpath="README_napkit.txt" />
 			<zipfileset dir="../napkit/"
 					includes="README_mqoloader.txt" fullpath="README_mqoloader.txt" />
+			<zipfileset dir="../napkit/${napkit-jar.dir}"
+					includes="${napkit-jar.name}" />
 			<zipfileset dir="../napkit/"
 					includes="LICENSE.txt" fullpath="LICENSE_napkit.txt" />
 			<zipfileset dir="../napkit/${napkit-jar.dir}"
-					includes="${napkit-jar.name}" />
+					includes="${mqoloader-jar.name}" />
+		</zip>
+	</target>
+
+	<!-- Zip -->
+	<target name="phybots-p5-zip">
+		<zip destfile="${phybots-dist.dir}PhybotsP5.zip" filesonly="true">
+
+			<zipfileset dir="${connector-bluecove.dir}"
+					includes="README.txt" fullpath="library/README_bluecove.txt" />
+			<zipfileset dir="${connector-bluecove.dir}"
+					includes="${connector-bluecove.file}" prefix="library/" />
+
+			<!-- RXTX library for Windows x64 -->
+			<!--
+			<zipfileset dir="${connector-rxtxlib.dir}"
+					includes="README.txt" fullpath="library/README_rxtx.txt" />
+			<zipfileset dir="${connector-rxtxlib.dir}"
+					includes="${connector-rxtxlib.file} *.dll" prefix="library/" />
+			-->
+
+			<!-- RXTX library for Windows/Mac/Linux x86 -->
+			<!--
+			<zipfileset dir="${connector-rxtxlib.x86.dir}"
+					includes="README.txt" fullpath="library/README_rxtx.txt" />
+			<zipfileset dir="${connector-rxtxlib.dir}"
+					includes="${connector-rxtxlib.file} *.dll *.so *.jnilib" prefix="library/" />
+			-->
+
+			<zipfileset dir="../connector/"
+					includes="README.txt" fullpath="library/README_connector.txt" />
+			<zipfileset dir="../connector/"
+					includes="LICENSE.txt" fullpath="library/LICENSE_connector.txt" />
+			<zipfileset dir="../connector/"
+					includes="${connector-jar.name}" prefix="library/" />
+
+			<zipfileset dir="../capture/"
+					includes="README.txt" fullpath="library/README_capture.txt" />
+			<zipfileset dir="../capture/"
+					includes="LICENSE.txt" fullpath="library/LICENSE_capture.txt" />
+			<zipfileset dir="../capture/"
+					includes="${capture-jar.name}" prefix="library/" />
+
+			<zipfileset dir="../phybots/"
+					includes="README.txt" fullpath="library/README_phybots.txt" />
+			<zipfileset dir="../phybots/"
+					includes="LICENSE.txt" fullpath="library/LICENSE_phybots.txt" />
+			<zipfileset dir="../phybots/${phybots-jar.dir}"
+					includes="${phybots-jar.name}" prefix="library/" />
+			<zipfileset dir="../phybots/${phybots-jar.dir}"
+					includes="${phybots-jar-p5.name}" prefix="library/" />
+			<zipfileset dir="../phybots/${phybots-javadoc.dir}"
+					includes="**/*" prefix="reference/" />
+
+			<zipfileset dir="../phybots/${phybots-javadoc.dir}"
+					includes="**/*" prefix="reference/" />
+
+			<zipfileset dir="../phybots/"
+					includes="library.properties" />
+			<zipfileset dir="../phybots/"
+					includes="README_p5.txt" fullpath="README.txt" />
+			<zipfileset dir="../phybots/${phybots-jar.dir}"
+					includes="${phybots-jar-p5.name}" prefix="library/" />
+			<zipfileset dir="../phybots/${phybots-src-p5.dir}"
+					includes="**/*" prefix="src/" />
+
+			<zipfileset dir="../napkit/"
+					includes="README.txt" fullpath="library/README_napkit.txt" />
+			<zipfileset dir="../napkit/"
+					includes="README_mqoloader.txt" fullpath="library/README_mqoloader.txt" />
+			<zipfileset dir="../napkit/${napkit-jar.dir}"
+					includes="${napkit-jar.name}" prefix="library/" />
+			<zipfileset dir="../napkit/${napkit-jar.dir}"
+					includes="${mqoloader-jar.name}" prefix="library/" />
+			<zipfileset dir="../napkit/"
+					includes="LICENSE.txt" fullpath="library/LICENSE_napkit.txt" />
 		</zip>
 	</target>
 </project>

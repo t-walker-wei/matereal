@@ -6,7 +6,7 @@
 	<!-- ****Properties**** -->
 
 	<!-- Javadoc zip -->
-	<property name="javadoc-zip.name" value="phybots-${phybots.version}-docs.zip" />
+	<property name="javadoc-zip.name" value="phybots-docs-${phybots.version}.zip" />
 
 	<!-- Zip -->
 	<target name="javadoc-zip" depends="javadoc">
@@ -18,6 +18,27 @@
 	<!-- Javadoc -->
 	<target name="javadoc">
 		<javadoc sourcepath="../connector/${connector-src.dir};../capture/${capture-src.dir};${phybots-src-core.dir};${phybots-src.dir};../napkit/${napkit-src.dir};"
+			destdir="${phybots-javadoc.dir}"
+			packagenames="jp.digitalmuseum.*,com.phybots.*"
+			charset="UTF-8"
+			encoding="UTF-8"
+			docencoding="UTF-8"
+			locale="en"
+			classpath="${capture-classpath};${connector-classpath};${jbox2d};${piccolo2d};${jogl};${p5};../napkit/${nyar-classes.dir}"
+			windowtitle="phybots ${phybots.version} API"
+			stylesheetfile="${style}"
+			use="true"
+			bottom="${copyright}">
+				<group packages="jp.digitalmuseum.connector" title="connector" />
+				<group packages="jp.digitalmuseum.capture" title="capture" />
+				<group packages="jp.digitalmuseum.napkit,jp.digitalmuseum.napkit.*,jp.digitalmuseum.jogl.*" title="napkit" />
+				<group packages="com.phybots:com.phybots.*" title="phybots" />
+		</javadoc>
+	</target>
+
+	<!-- Javadoc for Processing -->
+	<target name="javadoc-p5">
+		<javadoc sourcepath="../connector/${connector-src.dir};../capture/${capture-src.dir};${phybots-src-core.dir};${phybots-src.dir};${phybots-src-p5.dir};../napkit/${napkit-src.dir};"
 			destdir="${phybots-javadoc.dir}"
 			packagenames="jp.digitalmuseum.*,com.phybots.*"
 			charset="UTF-8"
