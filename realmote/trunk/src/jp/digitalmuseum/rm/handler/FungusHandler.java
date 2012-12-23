@@ -15,6 +15,9 @@ public class FungusHandler implements HttpHandler {
 
 	public FungusHandler(String rootPath) {
 		this.rootPath = rootPath;
+		if (!this.rootPath.endsWith("/")) {
+			this.rootPath = this.rootPath + "/";
+		}
 	}
 
 	public void handle(HttpExchange exchange) throws IOException {
@@ -25,9 +28,10 @@ public class FungusHandler implements HttpHandler {
 			exchange.sendResponseHeaders(200, 0);
 			exchange.close();
 			return;
-		} else if (!path.contains("../")) {
-			File f = new File(rootPath + File.pathSeparator + path);
-			data = loadFile(f);
+		} else if (path.startsWith("/fungus/")
+				&& !path.contains("../")) {
+			path = path.substring("/fungus/".length());
+			data = loadFile(new File(rootPath + path));
 		}
 		
 		if (data == null) {
