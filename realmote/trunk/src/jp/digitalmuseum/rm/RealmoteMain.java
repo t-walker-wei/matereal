@@ -116,7 +116,7 @@ public class RealmoteMain implements HttpHandler {
 			this.server.stop(0);
 			return;
 
-			// Reload the setting.
+		// Reload the setting.
 		} else if (path.equals("/system/reload")) {
 			if (remoteStationHandler != null) {
 				remoteStationHandler.save(NAME_CONFIGFILE);
