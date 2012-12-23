@@ -6,7 +6,13 @@
 			<accessrule kind="accessible" pattern="com/sun/**"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/phybots"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/connector"/>
+	<classpathentry kind="lib" path="lib/bluecove-2.1.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/connector-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/phybots-core-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/RXTXcomm.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="realmote/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
