@@ -1,0 +1,1 @@
+.\realmote_x64.cmd -remote COM:COM7 -roomba btspp://00066600D69A
