@@ -3,10 +3,12 @@
 <head>
 	<title>Realmote</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css" />
-	<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
 	<script type="text/javascript">
+
+	var VERSION = "Realmote v.1b";
 
 	var commands = [];
 	var editingCommand = null;
@@ -23,6 +25,7 @@
 	});
 
 	$(function(){
+		$.mobile.showPageLoadingMsg();
 
 		var showEditPage = function(id) {
 			editingCommand = null;
@@ -38,7 +41,7 @@
 		}
 
 		var updateListView = function() {
-			var listview = $("#commands");
+			var listview = $("#remote");
 			var header = listview.children().first();
 			header.nextAll(".command").remove();
 			if (commands.length <= 0) {
@@ -160,8 +163,16 @@
 			});
 			return false;
 		});
+		
+		$("div h4").text(VERSION);
 
-		$.mobile.showPageLoadingMsg();
+		var progress = 0;
+		var completed = function() {
+			if (progress == 3) {
+				$.mobile.hidePageLoadingMsg();
+			}
+		};
+
 		$.ajax({
 			url: "/remote/list",
 			dataType: "json",
@@ -169,11 +180,43 @@
 				commands = data;
 				updateListView();
 			},
+			error: function() {
+				$("li.remote").remove();
+				var listview = $("#remote");
+				listview.append("<li>RemoteStation is not available.</li>");
+				listview.listview("refresh");
+			},
 			complete: function() {
-				$.mobile.hidePageLoadingMsg();
+				progress ++;
+				completed();
 			}
 		});
-
+		$.get("/roomba/ping")
+			.error(function() {
+				$("li.roomba").remove();
+				var listview = $("#roomba");
+				listview.append("<li>Roomba is not available.</li>");
+				listview.listview("refresh");
+			})
+			.complete(function() {
+				progress ++;
+				completed();
+			});
+		$.get("/fungus/ping")
+			.success(function() {
+				var listview = $("#fungus");
+				listview.append("<li><a href=\"/fungus/newest.jpg\"><img src=\"/fungus/newest.jpg\" /><h3>Newest photo from the camera</h3></a></li>");
+				listview.listview("refresh");
+			})
+			.error(function() {
+				var listview = $("#fungus");
+				listview.append("<li>Fungus is not available.</li>");
+				listview.listview("refresh");
+			})
+			.complete(function() {
+				progress ++;
+				completed();
+			});
 	});
 
 	</script>
@@ -189,22 +232,26 @@
 
 	<div data-role="content">
 
-		<ul data-role="listview" data-inset="true" data-split-icon="gear" data-split-theme="d" id="commands">
+		<ul data-role="listview" data-inset="true" data-split-icon="gear" data-split-theme="d" id="remote">
 			<li data-theme="a">Remote commands</li>
-			<li data-theme="e"><a href="#home" id="record">Record new command</a></li>
+			<li class="remote" data-theme="e"><a href="#home" id="record">Record new command</a></li>
 		</ul>
 
 		<ul data-role="listview" data-inset="true" id="roomba">
 			<li data-theme="a">Roomba commands</li>
-			<li><a href="#home" id="clean">Clean the room</a></li>
-			<li><a href="#home" id="clean_cancel">Cancel cleaning</a></li>
+			<li class="roomba" ><a href="#home" id="clean">Clean the room</a></li>
+			<li class="roomba"><a href="#home" id="clean_cancel">Cancel cleaning</a></li>
+		</ul>
+
+		<ul data-role="listview" data-inset="true" id="fungus">
+			<li data-theme="a">Fungus photos</li>
 		</ul>
 
 		<a href="#home" id="reload" data-role="button">Reload the page</a>
 	</div>
 
 	<div data-role="footer">
-		<h4>Realmote v.1a</h4>
+		<h4></h4>
 	</div>
 
 </div>
@@ -231,7 +278,7 @@
 	</div>
 
 	<div data-role="footer">
-		<h4>Realmote v.1a</h4>
+		<h4></h4>
 	</div>
 
 </div>
